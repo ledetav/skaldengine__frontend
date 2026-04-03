@@ -1,75 +1,156 @@
-# React + TypeScript + Vite
+# Техническое задание: Frontend-архитектура SkaldEngine (React)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Общее описание
+SkaldEngine — это интерактивная платформа для ролевого взаимодействия с ИИ. Фронтенд должен обеспечивать бесшовный стриминг текста, поддержку ветвящихся сюжетов и глубокую настройку персонажей, полностью соответствуя API Core Service.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠 Технологический стек
+- **Framework**: React 18 (Concurrent Mode).
+- **State**: Zustand (Store для дерева чата), React Query (Server Cache).
+- **Streaming**: Fetch API + TextDecoder (парсинг SSE).
+- **UI**: Tailwind CSS, Framer Motion.
+- **Validation**: Zod (валидация форм и API-ответов).
 
-## React Compiler
+---
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 📦 Блок 1: Логика Дерева Сообщений (Message Tree)
 
-Note: This will impact Vite dev & build performances.
+В соответствии с эндпоинтом `GET /chats/{id}/history`, фронтенд получает данные в структурированном виде.
 
-## Expanding the ESLint configuration
+### 1.1 Структура данных (History Sync)
+Бэкенд возвращает объект, содержащий:
+- `active_leaf_id`: ID последнего сообщения в текущей ветке.
+- `active_branch`: Линейный массив сообщений для быстрой отрисовки текущего треда.
+- `tree`: Полный список всех сообщений (`Message[]`) со всеми ответвлениями.
+- `checkpoints`: Список целей сценария с флагами `is_completed`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1.2 Навигация и Свайпы
+Каждое сообщение в `tree` содержит метаданные:
+- `siblings_count`: для отображения `< 1/3 >`.
+- `current_sibling_index`: порядковый номер варианта.
+- `children_ids`: список ID прямых ответов.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Действие "Свайп"**: При переключении варианта (сиблинга) фронтенд обновляет `active_leaf_id` локально, что перестраивает `active_branch` на основе данных из `tree`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🌊 Блок 2: SSE Стриминг и Парсинг Контента
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Backend использует стандартный SSE поток для генерации ответов.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2.1 Жизненный цикл стрима (`POST /chats/{id}/messages/stream`)
+1. **События (Events)**:
+   - `message_id`: Содержит UUID нового сообщения от ИИ.
+   - `token`: Содержит инкрементальный текст в поле `data.text`.
+   - `done`: Финализация процесса.
+2. **Логика "Внутреннего монолога"**:
+   В соответствии с реализацией бэкенда, блок анализа передается внутри обычных токенов в тегах `<Internal_Analysis>...</Internal_Analysis>`. Фронтенд должен использовать **On-the-fly Parser**, который:
+   - Парсит входящие токены.
+   - Выносит текст между тегами в поле `hiddenThought` объекта сообщения.
+   - Основной текст (вне тегов) направляет в `content`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## 🛠 Блок 3: Инструментарий Соавтора (Interactions)
+
+### 3.1 Редактирование (PUT /api/v1/messages/{id})
+- Используется для изменения контента сообщения (`new_content`).
+- **Важно**: Бэкенд не меняет оригинал, а создает новое сообщение-"сиблинг", автоматически создавая непрямую ветку.
+
+### 3.2 Регенерация (Regenerate)
+- Вызывается через `POST /api/v1/messages/{parent_id}/regenerate/stream`.
+- Где `parent_id` — это ID сообщения пользователя, на которое мы хотим получить альтернативный ответ ИИ.
+
+---
+
+## 🖼 Проектирование интерфейсов (UX/UI Plan)
+
+Ниже представлено описание ключевых экранов системы и их функциональное наполнение.
+
+### 1. Главная страница (Landing)
+*Для неавторизованных пользователей.*
+- **Header**: Логотип, навигация по якорям (О системе, Плюшки, Контакты), кнопки «Войти» и «Регистрация».
+- **Hero-Block**: Эффект «печатающегося текста» с приветствием и описанием возможностей платформы.
+- **Content**: Блоки с преимуществами системы (ветвление, RAG-память, уникальные персонажи).
+- **Footer**: Ссылки на соцсети и правовая информация.
+
+### 2. Главная консоль (Dashboard)
+*Для авторизованных пользователей.*
+- **Header**: Иконка профиля с выпадающим меню (Настройки, Выход), ссылки на «Мои персоны» и «Мои чаты».
+- **New & Popular**: Карусель с новинками (до 5 персонажей и 5 популярных сценариев).
+- **Каталог персонажей**:
+    - **Сайдбар слева**: Фильтры (пол, фандом, жанр), скрываются при нажатии. Применяются автоматически (Live Filter).
+    - **Центральная часть**: Сетка прямоугольных карточек персонажей. Сортировка по имени/дате.
+    - **Badge**: Новые персонажи подсвечиваются горящим индикатором на аватарке.
+
+### 3. Карточка персонажа (Modal)
+*Открывается поверх текущей страницы.*
+- **Левая часть**: Изображение во весь рост, информация (Имя, Описание, Фандом, Дата, Автор).
+- **Правая часть**: Настройка чата.
+    - **Режим «Песочница»**:
+        - Выбор своей персоны (карточки со списком + кнопка «Создать новую»).
+        - Переключатель «Персонажи знакомы?». Если активно — поле для описания отношений.
+        - Выбор лорбука для прикрепления.
+    - **Режим «Сценарий»**:
+        - Карусель доступных сюжетов.
+        - Выбор длины сюжета (Короткий/Средний/Длинный) — задает 2, 4 или 6 контрольных точек.
+- **Кнопка «Создать чат»**: Активируется только после заполнения обязательных полей (помечены `*`).
+
+### 4. Игровой Чат
+- **Layout**: Основное окно диалога с возможностью открыть правую панель (инфо о персонаже и текущей персоне юзера).
+- **Сообщения**: ИИ — слева, Пользователь — справа.
+- **UX**: Автоматическая прокрутка вниз после отправки или при открытии истории.
+- **Actions**: Кнопки редактирования и регенерации появляются у сообщений при наведении (Hover).
+
+### 5. Личный кабинет (Profile)
+- **Сайдбар слева**: Юзернейм, аватар, дата регистрации, статистика (кол-во чатов, лорбуков, сообщений за все время/месяц), кнопка настроек.
+- **Контент справа**: Табличный/плиточный вид с переключателями:
+    - Мои персоны.
+    - Мои лорбуки.
+    - Активные чаты.
+- Все карточки кликабельны, оснащены поиском и фильтрами.
+
+### 6. Настройки аккаунта (Modal)
+- **Данные**: Username, Email, Password.
+- **Профиль**: Дата рождения (Read-only), переключатели публичности статистики.
+- **NSFW**: Глобальный тумблер включения контента 18+ (доступен только при подтвержденном возрасте).
+
+### 7. Создание/Редактирование Персоны (Modal)
+- Интерфейс загрузки аватарки (Drag&Drop).
+- Поля: Имя, Возраст, Внешность, Характер, Факты биографии.
+
+### 8. Редактор Лорбука (Full Dashboard)
+- Полноэкранный режим управления базой знаний.
+- Таблица записей с полями: Ключевые слова, Контент, Приоритет.
+- Массовый импорт/экспорт данных.
+
+---
+
+## 🎨 UI-Kit & Дизайн-система (Aesthetics)
+Визуальная концепция базируется на смешении **Глассморфизма** (прозрачность, размытие), **Неоморфизма** (мягкие тени, объем) и **Минимализма** (чистота линий, воздух).
+
+### 1. Цветовая палитра
+- **Base (Фон)**: Глубокий черно-синий `#05070A`.
+- **Secondary (Карточки)**: `#111827` (Темный сланец) с прозрачностью 80%.
+- **Accents (Акценты)**:
+    - **Cyan (Голубой)**: `#06B6D4` (Кнопки действий, активные состояния).
+    - **Fuchsia (Фуксия)**: `#D946EF` (Индикаторы "New", важные акценты, ИИ).
+    - **Indigo (Индиго)**: `#6366F1` (Второстепенные элементы).
+- **Text (Текст)**:
+    - `Primary`: `#F8FAFC` (Белый).
+    - `Secondary`: `#94A3B8` (Серо-голубой).
+
+### 2. Типографика
+- **UI (Интерфейс)**: `Inter` / `Outfit` (Sans-serif) — современные, читабельные.
+- **Narrative (Чат)**: `Lora` / `Merriweather` (Serif) — для комфортного чтения историй.
+- **Thoughts (Мысли ИИ)**: `Playfair Display` (Italic Serif) — элегантность и "голос внутри".
+
+### 3. Эффекты
+- **Glass**: Backdrop blur (24px) + тонкие светящиеся границы (border 1px solid rgba(255,255,255,0.1)).
+- **Neumorphism**: Мягкие тени для эффекта вдавленности или выпуклости элементов (блоки статистики, кнопки).
+- **Gradients**: Плавные переходы Indigo-Fuchsia для Hero-блока и акцентов.
+
+---
+
+*ТЗ актуализировано под реализацию Core Service v1.1. Aesthetics: Cosmic / Glassmorphism.*
