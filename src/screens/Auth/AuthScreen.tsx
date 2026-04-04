@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import styles from '../../styles/screens/Auth/AuthScreen.module.css'
+import { authApi } from '../../api/auth'
 
 export default function AuthScreen() {
   const location = useLocation()
@@ -19,11 +20,14 @@ export default function AuthScreen() {
 
   // Errors State: mapping field names to an array of error messages
   const [errors, setErrors] = useState<Record<string, string[]>>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [globalError, setGlobalError] = useState<string | null>(null)
 
   useEffect(() => {
     setIsLogin(location.pathname === '/login')
     // Clear errors when switching
     setErrors({})
+    setGlobalError(null)
   }, [location.pathname])
 
   const toggleAuth = () => {
@@ -83,6 +87,7 @@ export default function AuthScreen() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
     validateField(name, value)
+    setGlobalError(null)
 
     // Re-validate confirm password if password changes
     if (name === 'password' && !isLogin && formData.confirmPassword) {
@@ -103,6 +108,32 @@ export default function AuthScreen() {
       formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate &&
       Object.values(errors).every(errs => errs.length === 0)
     )
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isFormValid() || isLoading) return
+
+    setIsLoading(true)
+    setGlobalError(null)
+
+    try {
+      if (isLogin) {
+        const result = await authApi.login(formData)
+        localStorage.setItem('token', result.access_token)
+        navigate('/') // Redirect on success
+      } else {
+        await authApi.register(formData)
+        // Success registration, now login
+        const loginResult = await authApi.login(formData)
+        localStorage.setItem('token', loginResult.access_token)
+        navigate('/')
+      }
+    } catch (err: any) {
+      setGlobalError(err.message || 'Произошла ошибка')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -135,7 +166,8 @@ export default function AuthScreen() {
               >
                 <h2 className={styles.formTitle}>Вход</h2>
                 <p className={styles.formSubtitle}>С возвращением!</p>
-                <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+                <form className={styles.form} onSubmit={handleSubmit}>
+                  {globalError && <div className={styles.globalError}>{globalError}</div>}
                   <div className={styles.inputGroup}>
                     <label className={styles.label}>Логин или Email</label>
                     <input 
@@ -160,7 +192,9 @@ export default function AuthScreen() {
                     />
                     {getErrorText('password') && <div className={styles.errorText}>{getErrorText('password')}</div>}
                   </div>
-                  <button type="submit" className={styles.submitBtn} disabled={!isFormValid()}>Войти</button>
+                  <button type="submit" className={styles.submitBtn} disabled={!isFormValid() || isLoading}>
+                    {isLoading ? 'Вход...' : 'Войти'}
+                  </button>
                 </form>
               </motion.div>
             ) : (
@@ -173,7 +207,8 @@ export default function AuthScreen() {
               >
                 <h2 className={styles.formTitle}>Регистрация</h2>
                 <p className={styles.formSubtitle}>Присоединяйтесь к комьюнити!</p>
-                <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+                <form className={styles.form} onSubmit={handleSubmit}>
+                  {globalError && <div className={styles.globalError}>{globalError}</div>}
                   <div className={styles.inputGroup}>
                     <label className={`${styles.label} ${styles.labelRequired}`}>Логин</label>
                     <input 
@@ -234,7 +269,9 @@ export default function AuthScreen() {
                     />
                     {getErrorText('confirmPassword') && <div className={styles.errorText}>{getErrorText('confirmPassword')}</div>}
                   </div>
-                  <button type="submit" className={styles.submitBtn} disabled={!isFormValid()}>Зарегистрироваться</button>
+                  <button type="submit" className={styles.submitBtn} disabled={!isFormValid() || isLoading}>
+                    {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+                  </button>
                 </form>
               </motion.div>
             )}

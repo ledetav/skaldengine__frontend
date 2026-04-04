@@ -237,6 +237,18 @@
   border-color: rgba(239, 68, 68, 0.5) !important;
 }
 
+.globalError {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
 .errorText {
   color: #ef4444;
   font-size: 12px;
