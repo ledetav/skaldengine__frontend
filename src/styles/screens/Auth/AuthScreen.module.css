@@ -23,6 +23,31 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
+.backBtn {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--border-purple);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-smooth);
+  z-index: 100;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.backBtn:hover {
+  color: var(--text-primary);
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--accent-fuchsia);
+  transform: translateX(-4px);
+}
+
 .authContainer.reverse {
   flex-direction: row-reverse;
 }
