@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import styles from './HeroSection.module.css'
+import styles from '../../../styles/screens/Landing/HeroSection.module.css'
 
 const TYPEWRITER_PHRASES = [
   'Расскажи свою историю...',

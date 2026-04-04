@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import styles from './Navbar.module.css'
+import styles from '../styles/components/Navbar.module.css'
 
 const NAV_LINKS = [
   { label: 'О системе', href: '#about' },

@@ -1,4 +1,4 @@
-import styles from './FeaturesSection.module.css'
+import styles from '../../../styles/screens/Landing/FeaturesSection.module.css'
 
 const FEATURES = [
   {

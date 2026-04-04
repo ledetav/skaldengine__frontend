@@ -1,4 +1,4 @@
-import styles from './AboutSection.module.css'
+import styles from '../../../styles/screens/Landing/AboutSection.module.css'
 
 const HOW_IT_WORKS = [
   {
