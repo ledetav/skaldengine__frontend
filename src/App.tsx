@@ -1,8 +1,16 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './styles/global/index.css'
 import LandingScreen from './screens/Landing/LandingScreen'
+import AuthScreen from './screens/Auth/AuthScreen'
 
 export default function App() {
   return (
-    <LandingScreen />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingScreen />} />
+        <Route path="/login" element={<AuthScreen />} />
+        <Route path="/register" element={<AuthScreen />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import styles from '../../../styles/screens/Landing/HeroSection.module.css'
 
 const TYPEWRITER_PHRASES = [
@@ -77,10 +78,10 @@ export default function HeroSection() {
         </p>
 
         <div className={styles.ctas}>
-          <a href="/register" id="hero-cta-register" className={styles.ctaPrimary}>
-            <span>Начать бесплатно</span>
+          <Link to="/register" id="hero-cta-register" className={styles.ctaPrimary}>
+            <span>Попробовать</span>
             <span className={styles.ctaArrow}>→</span>
-          </a>
+          </Link>
           <a href="#about" id="hero-cta-about" className={styles.ctaSecondary}>
             Узнать больше
           </a>

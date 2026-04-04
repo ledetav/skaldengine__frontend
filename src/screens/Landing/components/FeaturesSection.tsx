@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styles from '../../../styles/screens/Landing/FeaturesSection.module.css'
 
 const FEATURES = [
@@ -95,9 +96,9 @@ export default function FeaturesSection() {
         <div className={styles.bannerContent}>
           <h3 className={styles.bannerTitle}>Готов начать своё приключение?</h3>
           <p className={styles.bannerSub}>Регистрация бесплатная. Точно-точно.</p>
-          <a href="/register" id="features-cta-register" className={styles.bannerCta}>
+          <Link to="/register" id="features-cta-register" className={styles.bannerCta}>
             Создать аккаунт <span>→</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

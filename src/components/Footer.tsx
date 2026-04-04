@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styles from '../styles/components/Footer.module.css'
 
 export default function Footer() {
@@ -10,10 +11,10 @@ export default function Footer() {
       <div className={styles.inner}>
         {/* Brand */}
         <div className={styles.brand}>
-          <a href="#" className={styles.logo} aria-label="SkaldEngine Home">
+          <Link to="/" className={styles.logo} aria-label="SkaldEngine Home">
             <span className={styles.logoIcon}>⚙</span>
             <span>Skald<span className={styles.accent}>Engine</span></span>
-          </a>
+          </Link>
           <p className={styles.tagline}>
             Интерактивная RPG-платформа нового поколения с ИИ-персонажами и ветвящимися нарративами.
           </p>
@@ -36,17 +37,17 @@ export default function Footer() {
           <ul className={styles.linkList}>
             <li><a href="#about"    className={styles.link}>О системе</a></li>
             <li><a href="#features" className={styles.link}>Возможности</a></li>
-            <li><a href="/register" className={styles.link}>Регистрация</a></li>
-            <li><a href="/login"    className={styles.link}>Войти</a></li>
+            <li><Link to="/register" className={styles.link}>Регистрация</Link></li>
+            <li><Link to="/login"    className={styles.link}>Войти</Link></li>
           </ul>
         </div>
 
         <div className={styles.linksGroup}>
           <h3 className={styles.groupTitle}>Правовое</h3>
           <ul className={styles.linkList}>
-            <li><a href="/privacy"   className={styles.link}>Политика конфиденциальности</a></li>
-            <li><a href="/terms"     className={styles.link}>Условия использования</a></li>
-            <li><a href="/age-check" className={styles.link}>Возрастные ограничения</a></li>
+            <li><Link to="/privacy"   className={styles.link}>Политика конфиденциальности</Link></li>
+            <li><Link to="/terms"     className={styles.link}>Условия использования</Link></li>
+            <li><Link to="/age-check" className={styles.link}>Возрастные ограничения</Link></li>
           </ul>
         </div>
       </div>

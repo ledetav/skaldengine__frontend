@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import styles from '../styles/components/Navbar.module.css'
 
 const NAV_LINKS = [
@@ -21,12 +22,12 @@ export default function Navbar() {
     <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.inner}>
         {/* Logo */}
-        <a href="#" className={styles.logo} aria-label="SkaldEngine Home">
+        <Link to="/" className={styles.logo} aria-label="SkaldEngine Home">
           <span className={styles.logoIcon}>⚙</span>
           <span className={styles.logoText}>
             Skald<span className={styles.logoAccent}>Engine</span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className={styles.nav} aria-label="Основная навигация">
@@ -39,12 +40,12 @@ export default function Navbar() {
 
         {/* CTA Buttons */}
         <div className={styles.actions}>
-          <a href="/login" className={styles.btnSecondary} id="nav-login-btn">
+          <Link to="/login" className={styles.btnSecondary} id="nav-login-btn">
             Войти
-          </a>
-          <a href="/register" className={styles.btnPrimary} id="nav-register-btn">
+          </Link>
+          <Link to="/register" className={styles.btnPrimary} id="nav-register-btn">
             Регистрация
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Burger */}
@@ -72,8 +73,8 @@ export default function Navbar() {
             </a>
           ))}
           <div className={styles.mobileActions}>
-            <a href="/login" className={styles.btnSecondary}>Войти</a>
-            <a href="/register" className={styles.btnPrimary}>Регистрация</a>
+            <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Войти</Link>
+            <Link to="/register" className={styles.btnPrimary} onClick={() => setMenuOpen(false)}>Регистрация</Link>
           </div>
         </div>
       )}
