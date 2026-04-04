@@ -73,9 +73,9 @@
   transform: translateY(-6px);
 }
 
-.card-cyan:hover  { box-shadow: 0 20px 60px rgba(255, 107, 0, 0.15); border-color: var(--accent-orange); }
+.card-orange:hover  { box-shadow: 0 20px 60px rgba(255, 107, 0, 0.15); border-color: var(--accent-orange); }
 .card-fuchsia:hover { box-shadow: 0 20px 60px rgba(217, 70, 239, 0.15); border-color: var(--accent-fuchsia); }
-.card-indigo:hover  { box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15); border-color: var(--accent-purple); }
+.card-purple:hover  { box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15); border-color: var(--accent-purple); }
 
 /* Card Image */
 .cardImg {
@@ -101,9 +101,9 @@
   transform: scale(1.1) rotate(5deg);
 }
 
-.card-cyan .iconWrapper { color: var(--accent-orange); filter: drop-shadow(0 0 15px rgba(255, 107, 0, 0.3)); }
+.card-orange .iconWrapper { color: var(--accent-orange); filter: drop-shadow(0 0 15px rgba(255, 107, 0, 0.3)); }
 .card-fuchsia .iconWrapper { color: var(--accent-fuchsia); filter: drop-shadow(0 0 15px rgba(217, 70, 239, 0.3)); }
-.card-indigo .iconWrapper { color: var(--accent-purple); filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.3)); }
+.card-purple .iconWrapper { color: var(--accent-purple); filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.3)); }
 
 .imgGlow {
   position: absolute;
@@ -116,9 +116,9 @@
   opacity: 0.65;
 }
 
-.glow-cyan    { background: radial-gradient(circle at 50% 100%, rgba(255, 107, 0, 0.4), transparent 60%); }
+.glow-orange    { background: radial-gradient(circle at 50% 100%, rgba(255, 107, 0, 0.4), transparent 60%); }
 .glow-fuchsia { background: radial-gradient(circle at 50% 100%, rgba(217, 70, 239, 0.4), transparent 60%); }
-.glow-indigo  { background: radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.4), transparent 60%); }
+.glow-purple  { background: radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.4), transparent 60%); }
 
 /* Card Body */
 .cardBody {
@@ -140,9 +140,9 @@
   width: fit-content;
 }
 
-.tag-cyan    { color: var(--accent-orange);    background: rgba(255, 107, 0, 0.12);  }
+.tag-orange    { color: var(--accent-orange);    background: rgba(255, 107, 0, 0.12);  }
 .tag-fuchsia { color: var(--accent-fuchsia); background: rgba(217, 70, 239, 0.12); }
-.tag-indigo  { color: var(--accent-purple);  background: rgba(139, 92, 246, 0.12); }
+.tag-purple  { color: var(--accent-purple);  background: rgba(139, 92, 246, 0.12); }
 
 .cardTitle {
   font-family: var(--font-ui);
@@ -176,9 +176,9 @@
   border: 1px solid;
 }
 
-.pill-cyan    { color: var(--accent-orange);    border-color: var(--accent-orange);    background: rgba(255, 107, 0, 0.07); }
+.pill-orange    { color: var(--accent-orange);    border-color: var(--accent-orange);    background: rgba(255, 107, 0, 0.07); }
 .pill-fuchsia { color: var(--accent-fuchsia); border-color: var(--border-fuchsia); background: rgba(217, 70, 239, 0.07); }
-.pill-indigo  { color: var(--accent-purple);  border-color: var(--border-purple);  background: rgba(139, 92, 246, 0.07); }
+.pill-purple  { color: var(--accent-purple);  border-color: var(--border-purple);  background: rgba(139, 92, 246, 0.07); }
 
 /* CTA Banner */
 .ctaBanner {

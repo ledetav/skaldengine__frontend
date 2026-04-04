@@ -3,13 +3,13 @@ import styles from '../../../styles/screens/Landing/AboutSection.module.css'
 const HOW_IT_WORKS = [
   {
     step: '01',
-    color: 'cyan',
+    color: 'orange',
     title: 'Выберите персонажа',
     desc: 'Просмотрите каталог ИИ-персонажей, прописанных нашей командой.',
   },
   {
     step: '02',
-    color: 'indigo',
+    color: 'purple',
     title: 'Настройте чат',
     desc: 'Выберите режим Песочницы или запустите структурированный Сценарий, если пока нет идей.',
   },

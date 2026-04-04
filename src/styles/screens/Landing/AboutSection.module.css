@@ -317,8 +317,8 @@
 
 .step:hover { transform: translateY(-4px); }
 
-.step-cyan:hover    { box-shadow: 0 16px 40px rgba(255, 107, 0, 0.15);  border-color: var(--accent-orange); }
-.step-indigo:hover  { box-shadow: 0 16px 40px rgba(139, 92, 246, 0.15); border-color: var(--accent-purple); }
+.step-orange:hover    { box-shadow: 0 16px 40px rgba(255, 107, 0, 0.15);  border-color: var(--accent-orange); }
+.step-purple:hover  { box-shadow: 0 16px 40px rgba(139, 92, 246, 0.15); border-color: var(--accent-purple); }
 .step-fuchsia:hover { box-shadow: 0 16px 40px rgba(217, 70, 239, 0.15); border-color: var(--accent-fuchsia); }
 
 .stepNum {
@@ -330,8 +330,8 @@
   opacity: 0.25;
 }
 
-.num-cyan    { color: var(--accent-orange); }
-.num-indigo  { color: var(--accent-purple); }
+.num-orange    { color: var(--accent-orange); }
+.num-purple  { color: var(--accent-purple); }
 .num-fuchsia { color: var(--accent-fuchsia); }
 
 .stepContent {
@@ -367,8 +367,8 @@
 
 .step:hover .stepLine { opacity: 1; }
 
-.line-cyan    { background: linear-gradient(90deg, transparent, var(--accent-orange), transparent); }
-.line-indigo  { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
+.line-orange    { background: linear-gradient(90deg, transparent, var(--accent-orange), transparent); }
+.line-purple  { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
 .line-fuchsia { background: linear-gradient(90deg, transparent, var(--accent-fuchsia), transparent); }
 
 @media (max-width: 992px) {
