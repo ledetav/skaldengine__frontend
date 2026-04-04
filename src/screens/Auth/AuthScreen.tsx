@@ -39,10 +39,10 @@ export default function AuthScreen() {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className={styles.formTitle}>Вход</h2>
-                <p className={styles.formSubtitle}>С возвращением в SkaldEngine!</p>
+                <p className={styles.formSubtitle}>С возвращением!</p>
                 <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
                   <div className={styles.inputGroup}>
-                    <label className={styles.label}>Логин / Email</label>
+                    <label className={styles.label}>Логин или Email</label>
                     <input type="text" className={styles.input} placeholder="ivan_skald" />
                   </div>
                   <div className={styles.inputGroup}>
@@ -61,11 +61,15 @@ export default function AuthScreen() {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className={styles.formTitle}>Регистрация</h2>
-                <p className={styles.formSubtitle}>Станьте частью мира SkaldEngine</p>
+                <p className={styles.formSubtitle}>Присоединяйтесь к комьюнити!</p>
                 <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
                   <div className={styles.inputGroup}>
-                    <label className={styles.label}>Логин или Email</label>
-                    <input type="text" className={styles.input} placeholder="ivan_skald" />
+                    <label className={styles.label}>Логин</label>
+                    <input type="text" className={styles.input} placeholder="skald_engine" />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label className={styles.label}>Email</label>
+                    <input type="email" className={styles.input} placeholder="skaldengine@example.com" />
                   </div>
                   <div className={styles.inputGroup}>
                     <label className={styles.label}>Пароль</label>
@@ -97,12 +101,12 @@ export default function AuthScreen() {
               className={styles.panelContent}
             >
               <h2 className={styles.panelTitle}>
-                {isLogin ? 'Новенький?' : 'Уже с нами?'}
+                {isLogin ? 'Нет аккаунта?' : 'Уже с нами?'}
               </h2>
               <p className={styles.panelText}>
                 {isLogin 
-                  ? 'Присоединяйся к нашему сообществу и начни создавать свои уникальные истории уже сегодня!' 
-                  : 'Мы уже заждались! Скорее входи в свой аккаунт и продолжай приключение.'}
+                  ? 'Не беда! Нужно всего лишь заполнить небольшую регистрационную форму..' 
+                  : 'Тогда скорее жми кнопку ниже, чтобы продолжить..'}
               </p>
               <button className={styles.toggleBtn} onClick={toggleAuth}>
                 {isLogin ? 'Создать аккаунт' : 'Войти в аккаунт'}
