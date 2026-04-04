@@ -91,7 +91,7 @@ export default function HeroSection() {
         <div className={styles.stats} aria-label="Преимущества SkaldEngine">
           {[
             'Без амнезии.',
-            'Без деперсонализации.',
+            'Без жесткой цензуры.',
             'Без галлюцинаций.',
           ].map(feature => (
             <div key={feature} className={styles.stat}>
