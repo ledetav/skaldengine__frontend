@@ -11,6 +11,7 @@ const DashboardScreen: React.FC = () => {
   const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')
   const [sortBy, setSortBy] = useState('По популярности')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
@@ -56,20 +57,20 @@ const DashboardScreen: React.FC = () => {
 
     // 5. Sorting
     result.sort((a, b) => {
+      let comparison = 0
       if (sortBy === 'По популярности') {
-        return (b.total_chats || 0) - (a.total_chats || 0)
+        comparison = (b.total_chats || 0) - (a.total_chats || 0)
+      } else if (sortBy === 'Сначала новые') {
+        comparison = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      } else if (sortBy === 'А-Я') {
+        comparison = a.name.localeCompare(b.name)
       }
-      if (sortBy === 'Сначала новые') {
-        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
-      }
-      if (sortBy === 'А-Я') {
-        return a.name.localeCompare(b.name)
-      }
-      return 0
+      
+      return sortOrder === 'desc' ? comparison : -comparison
     })
 
     return result
-  }, [nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy])
+  }, [nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy, sortOrder])
 
   const getPlural = (n: number) => {
     const l1 = n % 10;
@@ -163,6 +164,13 @@ const DashboardScreen: React.FC = () => {
                     value={sortBy} 
                     onChange={setSortBy} 
                   />
+                  <button 
+                    className={`${styles.viewBtn} ${styles.sortOrderBtn}`}
+                    onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+                    title={sortOrder === 'desc' ? 'По убыванию' : 'По возрастанию'}
+                  >
+                    {sortOrder === 'desc' ? '↓' : '↑'}
+                  </button>
                 </div>
               </div>
             </div>
