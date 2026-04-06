@@ -17,6 +17,9 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
     return '👤'
   }
 
+  const isNew = character.created_at ? (new Date().getTime() - new Date(character.created_at).getTime()) < 30 * 24 * 60 * 60 * 1000 : false
+  const isHot = (character.total_chats || 0) > 10000 || (character.monthly_chats || 0) > 500
+
   const cardClass = `${styles.characterCard} ${viewMode === 'list' ? styles.isListView : ''}`
 
   return (
@@ -26,19 +29,18 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         <div className={styles.cardIconGlow} />
         <span className={styles.cardIcon}>{getIcon()}</span>
         
+        {/* Top Badges */}
+        <div className={styles.topBadgesRow}>
+          {isNew && <div className={styles.newBadge}>NEW</div>}
+          {isHot && <div className={styles.hotBadge}>HOT</div>}
+        </div>
+
         {/* NSFW Badge */}
         {character.is_nsfw && (
           <div className={styles.nsfwBadge}>
             NSFW
           </div>
         )}
-
-        {/* Hover Action */}
-        <div className={styles.cardHoverOverlay}>
-          <button className={styles.startChatBtn}>
-            Начать чат
-          </button>
-        </div>
       </div>
 
       {/* 2. Creator Bar (MIDDLE) */}
@@ -66,6 +68,18 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
           {character.fandom && <span className={styles.cardFandom}>{character.fandom}</span>}
         </div>
         <p className={styles.cardDesc}>{character.description}</p>
+        
+        {/* Mobile-only visible button */}
+        <button className={styles.mobileStartChatBtn}>
+          Начать чат
+        </button>
+      </div>
+
+      {/* Hover Action (Covers the whole card) */}
+      <div className={styles.cardHoverOverlay}>
+        <button className={styles.startChatBtn}>
+          Начать чат
+        </button>
       </div>
     </div>
   )
