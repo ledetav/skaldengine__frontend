@@ -8,6 +8,7 @@ export interface Character {
   appearance?: string
   personality?: string
   is_public: boolean
+  is_nsfw?: boolean
   creator_id?: string
 }
 

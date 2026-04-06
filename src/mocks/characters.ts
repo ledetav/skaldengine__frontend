@@ -19,6 +19,7 @@ export const MOCK_CHARACTERS: Character[] = [
     is_public: true,
     personality: 'Циничная, быстрая, верная своим принципам.',
     appearance: 'Короткие серебристые волосы, кибернетические импланты вдоль позвоночника.',
+    is_nsfw: true,
     creator_id: '@NightCity'
   },
   {
@@ -49,6 +50,7 @@ export const MOCK_CHARACTERS: Character[] = [
     is_public: true,
     personality: 'Манерная, опасная, скрытная.',
     appearance: 'Черное кружевное платье, механический веер, скрывающий бледное лицо.',
+    is_nsfw: true,
     creator_id: '@GothicQueen'
   }
 ]

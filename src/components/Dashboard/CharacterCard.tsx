@@ -23,6 +23,13 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
         <div className={styles.cardIconGlow} />
         <span className={styles.cardIcon}>{getIcon()}</span>
         
+        {/* NSFW Badge */}
+        {character.is_nsfw && (
+          <div className={styles.nsfwBadge}>
+            NSFW
+          </div>
+        )}
+
         {/* Hover Action */}
         <div className={styles.cardHoverOverlay}>
           <button className={styles.startChatBtn}>
