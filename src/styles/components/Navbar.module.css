@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 1100; /* Higher than dashboard drawers */
   padding: 0;
   transition: background 0.4s var(--ease-smooth), border-color 0.4s;
   border-bottom: 1px solid transparent;
@@ -266,9 +266,16 @@
   outline: none;
 }
 
-@media (max-width: 768px) {
-  .nav, .actions { display: none; }
+@media (max-width: 1024px) {
+  .nav, .actions, .dashboardActions { display: none; }
   .burger { display: flex; }
-  .mobileMenu { display: flex; }
+  .mobileMenu { 
+    display: flex; 
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+  }
   .inner { padding: 16px 20px; }
 }

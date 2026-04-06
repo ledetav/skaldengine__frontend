@@ -66,11 +66,17 @@
   position: relative;
   z-index: 2;
   display: flex;
-  padding: 120px 20px 40px; /* Offset for fixed navbar, reduced side padding */
-  gap: 24px; /* Slightly reduced gap */
+  padding: 120px 20px 40px;
+  gap: 24px;
   max-width: 1920px;
   margin: 0 auto;
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .mainLayout {
+    padding-top: 160px;
+  }
 }
 
 /* Sidebar Filters */
@@ -267,6 +273,10 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: sticky;
+  top: 80px; /* Desktop: Sit under navbar (~64px) + margin */
+  z-index: 10;
+  background: transparent;
 }
 
 .searchBar {
@@ -623,12 +633,35 @@
 
 .mobileStartChatBtn {
   display: none;
+  padding: 10px 24px;
   font-family: var(--font-ui);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
+  color: #fff;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition: transform 0.2s;
+  box-shadow: 0 0 20px var(--orange-glow);
+}
+
+.mobileFilterToggle {
+  display: none;
+  width: 36px;
+  height: 36px;
+  background: var(--accent-purple);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 20px var(--purple-glow);
+}
+
+.sidebarHeader, .drawerTitle, .closeDrawer, .sidebarOverlay, .applyFiltersBtn {
+  display: none;
 }
 
 /* List View Specific Card Overrides */
@@ -821,20 +854,91 @@
 }
 
 @media (max-width: 1024px) {
-  .characterGrid { grid-template-columns: repeat(2, 1fr); }
-  .mainLayout { flex-direction: column; padding: 100px 16px 40px; gap: 24px; }
+  .mainLayout { flex-direction: column; padding: 160px 16px 40px; gap: 24px; }
+  
+  .contentHeader {
+    top: 72px; /* Mobile: Sit right under the navbar header */
+  }
+  
+  .mobileFilterToggle { display: flex; }
+
+  /* Sidebar transformed into Drawer */
   .sidebar { 
-    width: 100%; 
-    flex-direction: column; 
-    position: static; 
-    padding: 24px; 
-    gap: 20px;
-  }
-  .contentArea {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    z-index: 1000;
+    background: var(--bg-secondary);
+    backdrop-filter: blur(32px);
+    border-left: 1px solid var(--border-glass);
+    border-radius: 0;
     padding: 24px;
-    gap: 32px;
+    flex-direction: column;
+    gap: 24px;
+    transform: translateX(100%);
+    transition: transform 0.4s var(--ease-smooth);
+    overflow-y: auto;
   }
-  .filterGroup { flex: 1; width: 100%; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+
+  .sidebarVisible {
+    transform: translateX(0);
+  }
+
+  .sidebarOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+
+  .sidebarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .drawerTitle {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .closeDrawer {
+    display: flex;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .applyFiltersBtn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    margin-top: auto;
+    clip-path: var(--clip-cut-sm);
+  }
+
+  .contentArea {
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+  }
+  
+  .filterGroup { flex: none; width: 100%; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 }
 
 @media (max-width: 640px) {
@@ -847,18 +951,44 @@
     gap: 16px;
   }
   .headerActions {
-    width: 100%;
+    width: auto;
     justify-content: flex-start;
   }
   .viewToggles { display: none; }
-  .sortWrapper { width: 100%; }
-  .headerVariant { width: 100%; }
+  .sortWrapper { width: auto; }
+  .headerVariant { width: auto; min-width: 150px; }
   
   /* Grid 2-columns (smaller items) */
-  .characterGrid {
+  .characterGrid, .characterList {
+    display: grid !important;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
+  
+  /* Force list cards to look like grid cards on mobile */
+  .characterCard.isListView {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+  
+  .isListView .cardImageArea {
+    width: 100% !important;
+    height: 100px !important;
+  }
+  
+  .isListView .cardCreatorBar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .isListView .cardBody {
+    padding: 8px !important;
+    justify-content: flex-start !important;
+  }
+  
+  .sortLabel { display: none; }
+  .sortWrapper { gap: 6px; }
   
   .characterCount { font-size: 16px; font-weight: 800; }
   
@@ -886,14 +1016,12 @@
   
   .mobileStartChatBtn {
     display: block !important;
-    width: 100%;
-    margin-top: 6px;
-    padding: 8px 0;
-    font-size: 10px;
-    border-radius: 6px;
-    background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-    color: #fff;
-    font-weight: 800;
+    width: fit-content;
+    align-self: center;
+    margin-top: 4px;
+    padding: 6px 16px;
+    font-size: 9px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   }
   
   .cardHoverOverlay { display: none !important; }

@@ -60,28 +60,40 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           </div>
         )}
 
-        {/* Mobile Burger (Hide in dashboard for now or adapt) */}
-        {!isDashboard && (
-          <button
-            className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
-            onClick={() => setMenuOpen(v => !v)}
-          >
-            <span /><span /><span />
-          </button>
-        )}
+        {/* Burger Button */}
+        <button
+          className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          <span /><span /><span />
+        </button>
       </div>
 
-      {menuOpen && !isDashboard && (
+      {menuOpen && (
         <div className={styles.mobileMenu}>
-          {NAV_LINKS.map(link => (
-            <a key={link.href} href={link.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-              {link.label}
-            </a>
-          ))}
-          <div className={styles.mobileActions}>
-            <Link to="/login" className={styles.btnSecondary}>Войти</Link>
-            <Link to="/register" className={styles.btnPrimary}>Регистрация</Link>
-          </div>
+          {!isDashboard ? (
+            <>
+              {NAV_LINKS.map(link => (
+                <a key={link.href} href={link.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  {link.label}
+                </a>
+              ))}
+              <div className={styles.mobileActions}>
+                <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Войти</Link>
+                <Link to="/register" className={styles.btnPrimary} onClick={() => setMenuOpen(false)}>Регистрация</Link>
+              </div>
+            </>
+          ) : (
+            <div className={styles.mobileActions}>
+              <Link to="/chats" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
+              <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Профиль юзера</Link>
+              <div className={styles.mobileDivider} />
+              {/* Note: Filters will be added here or handled separately */}
+              <div className={styles.mobileLogout}>
+                <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Выйти</Link>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </header>
