@@ -72,6 +72,46 @@ export const MOCK_CHARACTERS: Character[] = [
     monthly_chats: 210,
     total_chats: 5600,
     created_at: '2025-12-25T22:15:00Z'
+  },
+  {
+    id: '6',
+    name: 'Джонни Сильверхенд',
+    description: 'Легендарный рокер-террорист, застрявший в твоей голове.',
+    fandom: 'Cyberpunk',
+    gender: 'Мужской',
+    is_public: true,
+    personality: 'Бунтарский, харизматичный, яростный.',
+    creator_id: '@NightCity',
+    monthly_chats: 1500,
+    total_chats: 45000,
+    created_at: '2026-03-30T10:00:00Z'
+  },
+  {
+    id: '7',
+    name: 'Геральт из Ривии',
+    description: 'Охотник на чудовищ, мастер меча и знаков.',
+    fandom: 'Fantasy',
+    gender: 'Мужской',
+    is_public: true,
+    personality: 'Сдержанный, профессиональный, циничный.',
+    creator_id: '@WitcherWorld',
+    monthly_chats: 1200,
+    total_chats: 38000,
+    created_at: '2026-04-01T15:00:00Z'
+  },
+  {
+    id: '8',
+    name: 'Алита',
+    description: 'Боевой ангел с телом из берсеркера и сердцем человека.',
+    fandom: 'Sci-Fi',
+    gender: 'Женский',
+    is_public: true,
+    is_nsfw: true,
+    personality: 'Добрая, но беспощадная в бою.',
+    creator_id: '@IronCity',
+    monthly_chats: 600,
+    total_chats: 15000,
+    created_at: '2026-02-28T12:00:00Z'
   }
 ]
 

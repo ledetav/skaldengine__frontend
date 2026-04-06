@@ -3,15 +3,29 @@ import Navbar from '../../components/Navbar'
 import { MOCK_CHARACTERS } from '../../mocks/characters'
 import { CharacterCard } from '../../components/Dashboard/CharacterCard'
 import { CustomDropdown } from '../../components/Dashboard/CustomDropdown'
+import { FandomFilter } from '../../components/Dashboard/FandomFilter'
 import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
 
 const DashboardScreen: React.FC = () => {
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
-  const [fandom, setFandom] = useState('Все фандомы')
+  const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')
   const [sortBy, setSortBy] = useState('По популярности')
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+
+  const availableFandoms = useMemo(() => {
+    const counts: Record<string, number> = {}
+    MOCK_CHARACTERS.forEach(c => {
+      if (c.fandom) {
+        counts[c.fandom] = (counts[c.fandom] || 0) + 1
+      }
+    })
+    
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+  }, [])
 
   const filteredCharacters = useMemo(() => {
     let result = [...MOCK_CHARACTERS]
@@ -21,9 +35,9 @@ const DashboardScreen: React.FC = () => {
       result = result.filter(c => c.is_nsfw)
     }
 
-    // 2. Fandom Filter
-    if (fandom !== 'Все фандомы') {
-      result = result.filter(c => c.fandom?.toLowerCase().includes(fandom.toLowerCase()))
+    // 2. Fandom Filter (Multi-select)
+    if (selectedFandoms.length > 0) {
+      result = result.filter(c => c.fandom && selectedFandoms.includes(c.fandom))
     }
 
     // 3. Gender Filter
@@ -55,7 +69,7 @@ const DashboardScreen: React.FC = () => {
     })
 
     return result
-  }, [nsfwEnabled, fandom, gender, searchQuery, sortBy])
+  }, [nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy])
 
   return (
     <div className={styles.dashboard}>
@@ -73,10 +87,10 @@ const DashboardScreen: React.FC = () => {
         <aside className={styles.sidebar}>
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Фандом</h4>
-            <CustomDropdown 
-              options={['Все фандомы', 'Cthulhu', 'Cyberpunk', 'Fantasy', 'Horror', 'Sci-Fi']} 
-              value={fandom} 
-              onChange={setFandom} 
+            <FandomFilter 
+              availableFandoms={availableFandoms}
+              selectedFandoms={selectedFandoms}
+              onChange={setSelectedFandoms}
             />
           </div>
 

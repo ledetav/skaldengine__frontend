@@ -579,6 +579,152 @@
   line-clamp: 1;
 }
 
+/* Fandom Multi-select Filter */
+.fandomFilterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selectedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.chip {
+  padding: 4px 10px;
+  background: rgba(217, 70, 239, 0.1);
+  border: 1px solid rgba(217, 70, 239, 0.3);
+  border-radius: 6px;
+  color: var(--accent-fuchsia);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: chipIn 0.2s ease-out;
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.chipRemove {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 14px;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+
+.chipRemove:hover {
+  opacity: 1;
+}
+
+.fandomSearchInput {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.fandomSearchInput:focus {
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.fandomList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.fandomList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.fandomList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.fandomOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.fandomOption:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fandomOption.selected {
+  background: rgba(217, 70, 239, 0.05);
+}
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.fandomOption.selected .checkbox {
+  background: var(--accent-fuchsia);
+  border-color: var(--accent-fuchsia);
+}
+
+.checkboxInner {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  display: none;
+}
+
+.fandomOption.selected .checkboxInner {
+  display: block;
+}
+
+.fandomName {
+  font-size: 13px;
+  color: var(--text-muted);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fandomOption.selected .fandomName {
+  color: #fff;
+  font-weight: 600;
+}
+
+.fandomCount {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+}
+
 @media (max-width: 1600px) {
   .characterGrid { grid-template-columns: repeat(4, 1fr); }
 }
