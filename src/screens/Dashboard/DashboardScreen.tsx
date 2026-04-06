@@ -2,16 +2,19 @@ import React, { useState } from 'react'
 import Navbar from '../../components/Navbar'
 import { MOCK_CHARACTERS } from '../../mocks/characters'
 import { CharacterCard } from '../../components/Dashboard/CharacterCard'
+import { CustomDropdown } from '../../components/Dashboard/CustomDropdown'
 import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
 
 const DashboardScreen: React.FC = () => {
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
+  const [fandom, setFandom] = useState('Все фандомы')
+  const [gender, setGender] = useState('Любой')
+  const [sortBy, setSortBy] = useState('По популярности')
 
   return (
     <div className={styles.dashboard}>
       <Navbar variant="dashboard" />
       
-      {/* Landing-style Background Elements */}
       <div className={styles.bgContainer}>
         <div className={styles.bgGrid} />
         <div className={styles.bgOverlay} />
@@ -24,22 +27,20 @@ const DashboardScreen: React.FC = () => {
         <aside className={styles.sidebar}>
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Фандом</h4>
-            <select className={styles.select}>
-              <option>Все фандомы</option>
-              <option>Cyberpunk</option>
-              <option>Fantasy</option>
-              <option>Horror</option>
-            </select>
+            <CustomDropdown 
+              options={['Все фандомы', 'Cyberpunk', 'Fantasy', 'Horror']} 
+              value={fandom} 
+              onChange={setFandom} 
+            />
           </div>
 
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Пол</h4>
-            <select className={styles.select}>
-              <option>Любой</option>
-              <option>Мужской</option>
-              <option>Женский</option>
-              <option>Другой</option>
-            </select>
+            <CustomDropdown 
+              options={['Любой', 'Мужской', 'Женский', 'Другой']} 
+              value={gender} 
+              onChange={setGender} 
+            />
           </div>
 
           <div className={styles.filterGroup}>
@@ -75,11 +76,12 @@ const DashboardScreen: React.FC = () => {
                 </div>
                 <div className={styles.sortWrapper}>
                   <span className={styles.sortLabel}>Сортировка:</span>
-                  <select className={styles.sortSelect}>
-                    <option>По популярности</option>
-                    <option>Сначала новые</option>
-                    <option>А-Я</option>
-                  </select>
+                  <CustomDropdown 
+                    variant="header"
+                    options={['По популярности', 'Сначала новые', 'А-Я']} 
+                    value={sortBy} 
+                    onChange={setSortBy} 
+                  />
                 </div>
               </div>
             </div>
@@ -90,7 +92,6 @@ const DashboardScreen: React.FC = () => {
             {MOCK_CHARACTERS.map(char => (
               <CharacterCard key={char.id} character={char} />
             ))}
-            {/* Duplicating for density */}
             {MOCK_CHARACTERS.map(char => (
               <CharacterCard key={`${char.id}-2`} character={char} />
             ))}
