@@ -8,7 +8,11 @@ const NAV_LINKS = [
   { label: 'Контакты', href: '#footer' },
 ]
 
-export default function Navbar() {
+interface NavbarProps {
+  variant?: 'landing' | 'dashboard'
+}
+
+export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -18,63 +22,65 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const isDashboard = variant === 'dashboard'
+
   return (
-    <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.navbar} ${scrolled || isDashboard ? styles.scrolled : ''} ${isDashboard ? styles.dashboardMode : ''}`}>
       <div className={styles.inner}>
-        {/* Logo */}
-        <Link to="/" className={styles.logo} aria-label="SkaldEngine Home">
+        {/* Logo - Always on the Left */}
+        <Link to={isDashboard ? "/dashboard" : "/"} className={styles.logo} aria-label="SkaldEngine Home">
           <span className={styles.logoIcon}>⚙</span>
           <span className={styles.logoText}>
             Skald<span className={styles.logoAccent}>Engine</span>
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className={styles.nav} aria-label="Основная навигация">
-          {NAV_LINKS.map(link => (
-            <a key={link.href} href={link.href} className={styles.navLink}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        {/* Desktop Nav Tools */}
+        {!isDashboard ? (
+          <>
+            <nav className={styles.nav} aria-label="Основная навигация">
+              {NAV_LINKS.map(link => (
+                <a key={link.href} href={link.href} className={styles.navLink}>
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <div className={styles.actions}>
+              <Link to="/login" className={styles.btnSecondary}>Войти</Link>
+              <Link to="/register" className={styles.btnPrimary}>Регистрация</Link>
+            </div>
+          </>
+        ) : (
+          <div className={styles.dashboardActions}>
+            <Link to="/chats" className={styles.navLink}>Мои чаты</Link>
+            <div className={styles.userMenu}>
+              <span className={styles.userName}>Профиль юзера</span>
+              <div className={styles.avatarMini}>U</div>
+            </div>
+          </div>
+        )}
 
-        {/* CTA Buttons */}
-        <div className={styles.actions}>
-          <Link to="/login" className={styles.btnSecondary} id="nav-login-btn">
-            Войти
-          </Link>
-          <Link to="/register" className={styles.btnPrimary} id="nav-register-btn">
-            Регистрация
-          </Link>
-        </div>
-
-        {/* Mobile Burger */}
-        <button
-          className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
-          onClick={() => setMenuOpen(v => !v)}
-          aria-label="Открыть меню"
-          aria-expanded={menuOpen}
-        >
-          <span /><span /><span />
-        </button>
+        {/* Mobile Burger (Hide in dashboard for now or adapt) */}
+        {!isDashboard && (
+          <button
+            className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <span /><span /><span />
+          </button>
+        )}
       </div>
 
-      {/* Mobile Menu */}
-      {menuOpen && (
+      {menuOpen && !isDashboard && (
         <div className={styles.mobileMenu}>
           {NAV_LINKS.map(link => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={styles.mobileLink}
-              onClick={() => setMenuOpen(false)}
-            >
+            <a key={link.href} href={link.href} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
               {link.label}
             </a>
           ))}
           <div className={styles.mobileActions}>
-            <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Войти</Link>
-            <Link to="/register" className={styles.btnPrimary} onClick={() => setMenuOpen(false)}>Регистрация</Link>
+            <Link to="/login" className={styles.btnSecondary}>Войти</Link>
+            <Link to="/register" className={styles.btnPrimary}>Регистрация</Link>
           </div>
         </div>
       )}
