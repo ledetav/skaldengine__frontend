@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Navbar from '../../components/Navbar'
 import { MOCK_CHARACTERS } from '../../mocks/characters'
 import { CharacterCard } from '../../components/Dashboard/CharacterCard'
@@ -10,6 +10,52 @@ const DashboardScreen: React.FC = () => {
   const [fandom, setFandom] = useState('Все фандомы')
   const [gender, setGender] = useState('Любой')
   const [sortBy, setSortBy] = useState('По популярности')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+
+  const filteredCharacters = useMemo(() => {
+    let result = [...MOCK_CHARACTERS]
+
+    // 1. NSFW Filter
+    if (nsfwEnabled) {
+      result = result.filter(c => c.is_nsfw)
+    }
+
+    // 2. Fandom Filter
+    if (fandom !== 'Все фандомы') {
+      result = result.filter(c => c.fandom?.toLowerCase().includes(fandom.toLowerCase()))
+    }
+
+    // 3. Gender Filter
+    if (gender !== 'Любой') {
+      result = result.filter(c => c.gender === gender)
+    }
+
+    // 4. Search Query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.description?.toLowerCase().includes(query)
+      )
+    }
+
+    // 5. Sorting
+    result.sort((a, b) => {
+      if (sortBy === 'По популярности') {
+        return (b.total_chats || 0) - (a.total_chats || 0)
+      }
+      if (sortBy === 'Сначала новые') {
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      }
+      if (sortBy === 'А-Я') {
+        return a.name.localeCompare(b.name)
+      }
+      return 0
+    })
+
+    return result
+  }, [nsfwEnabled, fandom, gender, searchQuery, sortBy])
 
   return (
     <div className={styles.dashboard}>
@@ -28,7 +74,7 @@ const DashboardScreen: React.FC = () => {
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Фандом</h4>
             <CustomDropdown 
-              options={['Все фандомы', 'Cyberpunk', 'Fantasy', 'Horror']} 
+              options={['Все фандомы', 'Cthulhu', 'Cyberpunk', 'Fantasy', 'Horror', 'Sci-Fi']} 
               value={fandom} 
               onChange={setFandom} 
             />
@@ -65,14 +111,26 @@ const DashboardScreen: React.FC = () => {
                 type="text" 
                 placeholder="Поиск персонажей..." 
                 className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className={styles.resultsRow}>
-              <h2 className={styles.resultsCount}>{MOCK_CHARACTERS.length * 3} Персонажей</h2>
+              <h2 className={styles.resultsCount}>{filteredCharacters.length} Персонажей</h2>
               <div className={styles.headerActions}>
                 <div className={styles.viewToggles}>
-                  <button className={`${styles.viewBtn} ${styles.viewActive}`}>▤</button>
-                  <button className={styles.viewBtn}>☰</button>
+                  <button 
+                    className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewActive : ''}`}
+                    onClick={() => setViewMode('grid')}
+                  >
+                    ▤
+                  </button>
+                  <button 
+                    className={`${styles.viewBtn} ${viewMode === 'list' ? styles.viewActive : ''}`}
+                    onClick={() => setViewMode('list')}
+                  >
+                    ☰
+                  </button>
                 </div>
                 <div className={styles.sortWrapper}>
                   <span className={styles.sortLabel}>Сортировка:</span>
@@ -88,16 +146,16 @@ const DashboardScreen: React.FC = () => {
           </header>
 
           {/* Character Grid */}
-          <div className={styles.characterGrid}>
-            {MOCK_CHARACTERS.map(char => (
-              <CharacterCard key={char.id} character={char} />
+          <div className={viewMode === 'grid' ? styles.characterGrid : styles.characterList}>
+            {filteredCharacters.map(char => (
+              <CharacterCard key={char.id} character={char} viewMode={viewMode} />
             ))}
-            {MOCK_CHARACTERS.map(char => (
-              <CharacterCard key={`${char.id}-2`} character={char} />
-            ))}
-            {MOCK_CHARACTERS.map(char => (
-              <CharacterCard key={`${char.id}-3`} character={char} />
-            ))}
+            {filteredCharacters.length === 0 && (
+              <div className={styles.noResults}>
+                <h3>Персонажи не найдены</h3>
+                <p>Попробуйте изменить параметры поиска или фильтры</p>
+              </div>
+            )}
           </div>
         </main>
       </div>

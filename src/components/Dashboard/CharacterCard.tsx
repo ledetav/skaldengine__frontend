@@ -4,9 +4,10 @@ import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
 
 interface CharacterCardProps {
   character: Character
+  viewMode?: 'grid' | 'list'
 }
 
-export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
+export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMode = 'grid' }) => {
   const getIcon = () => {
     const fandom = character.fandom?.toLowerCase() || ''
     if (fandom.includes('cthulhu') || fandom.includes('horror')) return '👁️'
@@ -16,8 +17,10 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
     return '👤'
   }
 
+  const cardClass = `${styles.characterCard} ${viewMode === 'list' ? styles.isListView : ''}`
+
   return (
-    <div className={styles.characterCard}>
+    <div className={cardClass}>
       {/* 1. Image Area (TOP) */}
       <div className={styles.cardImageArea}>
         <div className={styles.cardIconGlow} />
@@ -47,10 +50,10 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
           <span className={styles.creatorNameMini}>{character.creator_id || '@System'}</span>
           <div className={styles.cardStats}>
             <span className={styles.statItem} title="Чатов за месяц">
-              <span className={styles.statIcon}>📅</span> 24
+              <span className={styles.statIcon}>📅</span> {character.monthly_chats?.toLocaleString() || 0}
             </span>
             <span className={styles.statItem} title="Всего чатов">
-              <span className={styles.statIcon}>💬</span> 1.2k
+              <span className={styles.statIcon}>💬</span> {character.total_chats?.toLocaleString() || 0}
             </span>
           </div>
         </div>

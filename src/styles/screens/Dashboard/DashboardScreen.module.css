@@ -343,6 +343,31 @@
   gap: 20px;
 }
 
+.characterList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.noResults h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.noResults p {
+  color: var(--text-muted);
+}
+
 /* Character Card Redesign (Axies style) */
 .characterCard {
   background: rgba(30, 25, 41, 0.4);
@@ -521,6 +546,37 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+/* List View Specific Card Overrides */
+.characterCard.isListView {
+  flex-direction: row;
+  height: 120px;
+}
+
+.isListView .cardImageArea {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  font-size: 40px;
+}
+
+.isListView .cardCreatorBar {
+  width: 200px;
+  border-bottom: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.isListView .cardBody {
+  flex: 1;
+  padding: 20px;
+  justify-content: center;
+}
+
+.isListView .cardDesc {
+  height: auto;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 @media (max-width: 1600px) {

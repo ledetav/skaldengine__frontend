@@ -3,6 +3,7 @@ export interface Character {
   name: string
   description?: string
   fandom?: string
+  gender?: 'Мужской' | 'Женский' | 'Другой'
   avatar_url?: string
   card_image_url?: string
   appearance?: string
@@ -10,6 +11,9 @@ export interface Character {
   is_public: boolean
   is_nsfw?: boolean
   creator_id?: string
+  monthly_chats?: number
+  total_chats?: number
+  created_at?: string
 }
 
 export interface Scenario {
