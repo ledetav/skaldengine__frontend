@@ -402,21 +402,21 @@
 
 /* 1. Image Area (TOP) */
 .cardImageArea {
-  height: 160px;
+  height: 130px;
   background: #fff;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 60px;
+  font-size: 50px;
 }
 
 .cardIconGlow {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   background: var(--accent-fuchsia);
-  filter: blur(40px);
+  filter: blur(30px);
   opacity: 0.2;
 }
 
@@ -431,10 +431,10 @@
 }
 
 .newBadge, .hotBadge {
-  padding: 4px 10px;
+  padding: 2px 8px;
   backdrop-filter: blur(8px);
-  border-radius: 8px;
-  font-size: 10px;
+  border-radius: 6px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -458,13 +458,13 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background: var(--red-glow);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-red);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--accent-red);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -517,14 +517,14 @@
 }
 
 .creatorAvatarMini {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-fuchsia));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
   color: #fff;
 }
@@ -556,16 +556,23 @@
 }
 
 .statIcon {
-  font-size: 10px;
+  display: flex;
+  align-items: center;
   opacity: 0.8;
 }
 
 /* 3. Info Section (BOTTOM) */
 .cardBody {
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .cardName {
