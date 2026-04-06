@@ -1,0 +1,298 @@
+.authScreen {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+.authContainer {
+  position: relative;
+  width: 1000px;
+  max-width: 95vw;
+  height: 600px;
+  background: rgba(13, 7, 24, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-purple);
+  border-radius: 24px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.backBtn {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--border-purple);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-smooth);
+  z-index: 100;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.backBtn:hover {
+  color: var(--text-primary);
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--accent-fuchsia);
+  transform: translateX(-4px);
+}
+
+.authContainer.reverse {
+  flex-direction: row-reverse;
+}
+
+/* Common Side component */
+.side {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Panel Side */
+.sidePanel {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(217, 70, 239, 0.1) 100%);
+  padding: 40px;
+  align-items: center;
+  text-align: center;
+  border-left: 1px solid rgba(139, 92, 246, 0.2);
+  border-right: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.orb1 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--accent-orange), transparent 70%);
+  top: -50px;
+  left: -50px;
+}
+
+.orb2 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, var(--accent-fuchsia), transparent 70%);
+  bottom: -80px;
+  right: -50px;
+}
+
+.panelContent {
+  color: #fff;
+  z-index: 2;
+}
+
+.panelTitle {
+  font-family: var(--font-ui);
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.panelText {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.toggleBtn {
+  padding: 12px 32px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggleBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Form Side */
+.formSide {
+  padding: 0 60px;
+  overflow-y: auto;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-start; 
+}
+
+.formSide::before,
+.formSide::after {
+  content: '';
+  display: block;
+  min-height: 40px;
+  width: 100%;
+}
+
+/* Custom Scrollbar */
+.formSide::-webkit-scrollbar {
+  width: 6px;
+}
+
+.formSide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.formSide::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 10px;
+}
+
+.formSide::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.4);
+}
+
+.formTitle {
+  font-family: var(--font-ui);
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.formSubtitle {
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+  font-size: 15px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.labelRequired::after {
+  content: '•';
+  color: var(--accent-orange);
+  margin-left: 6px;
+  font-size: 18px;
+  line-height: 0;
+  filter: drop-shadow(0 0 5px var(--accent-orange));
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input:focus {
+  border-color: var(--accent-fuchsia);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.1);
+}
+
+.inputError {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+.globalError {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-left: 4px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.submitBtn {
+  margin-top: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  transition: all 0.3s;
+}
+
+.submitBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .authContainer {
+    flex-direction: column !important;
+    height: auto;
+    min-height: 600px;
+  }
+  .side {
+    width: 100%;
+    flex: none;
+  }
+  .sidePanel {
+    order: 2;
+    padding: 30px;
+  }
+  .formSide {
+    order: 1;
+    padding: 40px 24px;
+  }
+}
