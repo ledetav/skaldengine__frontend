@@ -4,7 +4,7 @@
    Design Tokens — SkaldEngine Violet Core
 ──────────────────────────────────────────────── */
 :root {
-  /* Colors - Swapped Cyan for deep Purple and Orange accents */
+  /* Colors */
   --bg-base:        #07020d; /* Deep Void */
   --bg-secondary:   #12041d;
   --bg-card:        rgba(18, 4, 29, 0.75);

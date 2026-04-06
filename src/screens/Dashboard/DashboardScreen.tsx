@@ -104,7 +104,7 @@ const DashboardScreen: React.FC = () => {
           </div>
 
           <div className={styles.filterGroup}>
-            <h4 className={styles.filterTitle}>Пол</h4>
+            <h4 className={styles.filterTitle}>Пол персонажа</h4>
             <CustomDropdown 
               options={['Любой', 'Мужской', 'Женский', 'Другой']} 
               value={gender} 
@@ -118,7 +118,7 @@ const DashboardScreen: React.FC = () => {
               className={styles.nsfwToggle} 
               onClick={() => setNsfwEnabled(!nsfwEnabled)}
             >
-              <span className={styles.toggleLabel}>NSFW Режим</span>
+              <span className={styles.toggleLabel}>Показать только NSFW</span>
               <div className={`${styles.toggleSwitch} ${nsfwEnabled ? styles.active : ''}`}>
                 <div className={styles.toggleKnob} />
               </div>
