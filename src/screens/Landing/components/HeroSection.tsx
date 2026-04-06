@@ -58,9 +58,9 @@ export default function HeroSection() {
       </div>
 
       {/* Orbs */}
-      <div className={`${styles.orb} ${styles.orbOrange}`}   aria-hidden="true" />
+      <div className={`${styles.orb} ${styles.orbOrange}`} aria-hidden="true" />
       <div className={`${styles.orb} ${styles.orbFuchsia}`} aria-hidden="true" />
-      <div className={`${styles.orb} ${styles.orbPurple}`}  aria-hidden="true" />
+      <div className={`${styles.orb} ${styles.orbPurple}`} aria-hidden="true" />
 
       {/* Content */}
       <div className={styles.content}>

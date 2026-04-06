@@ -24,7 +24,7 @@ const DashboardScreen: React.FC = () => {
         counts[c.fandom] = (counts[c.fandom] || 0) + 1
       }
     })
-    
+
     return Object.entries(counts)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
@@ -51,8 +51,8 @@ const DashboardScreen: React.FC = () => {
     // 4. Search Query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      result = result.filter(c => 
-        c.name.toLowerCase().includes(query) || 
+      result = result.filter(c =>
+        c.name.toLowerCase().includes(query) ||
         c.description?.toLowerCase().includes(query)
       )
     }
@@ -67,7 +67,7 @@ const DashboardScreen: React.FC = () => {
       } else if (sortBy === 'А-Я') {
         comparison = a.name.localeCompare(b.name)
       }
-      
+
       return sortOrder === 'desc' ? comparison : -comparison
     })
 
@@ -86,7 +86,7 @@ const DashboardScreen: React.FC = () => {
   return (
     <div className={styles.dashboard}>
       <Navbar variant="dashboard" />
-      
+
       <div className={styles.bgContainer}>
         <div className={styles.bgGrid} />
         <div className={styles.bgOverlay} />
@@ -109,7 +109,7 @@ const DashboardScreen: React.FC = () => {
 
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Фандом</h4>
-            <FandomFilter 
+            <FandomFilter
               availableFandoms={availableFandoms}
               selectedFandoms={selectedFandoms}
               onChange={setSelectedFandoms}
@@ -118,17 +118,17 @@ const DashboardScreen: React.FC = () => {
 
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Пол персонажа</h4>
-            <CustomDropdown 
-              options={['Любой', 'Мужской', 'Женский', 'Другой']} 
-              value={gender} 
-              onChange={setGender} 
+            <CustomDropdown
+              options={['Любой', 'Мужской', 'Женский', 'Другой']}
+              value={gender}
+              onChange={setGender}
             />
           </div>
 
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Контент 18+</h4>
-            <div 
-              className={styles.nsfwToggle} 
+            <div
+              className={styles.nsfwToggle}
               onClick={() => setNsfwEnabled(!nsfwEnabled)}
             >
               <span className={styles.toggleLabel}>Показать только NSFW</span>
@@ -147,9 +147,9 @@ const DashboardScreen: React.FC = () => {
         <main className={styles.contentArea}>
           <header className={styles.contentHeader}>
             <div className={styles.searchBar}>
-              <input 
-                type="text" 
-                placeholder="Поиск персонажей..." 
+              <input
+                type="text"
+                placeholder="Поиск персонажей..."
                 className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -158,21 +158,21 @@ const DashboardScreen: React.FC = () => {
             <div className={styles.resultsRow}>
               <h2 className={styles.resultsCount}>{filteredCharacters.length} {getPlural(filteredCharacters.length)}</h2>
               <div className={styles.headerActions}>
-                <button 
+                <button
                   className={styles.mobileFilterToggle}
                   onClick={() => setIsSidebarOpen(true)}
                   title="Фильтры"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="12" x2="14" y2="12"/><line x1="18" y1="16" x2="22" y2="16"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /><line x1="2" y1="14" x2="6" y2="14" /><line x1="10" y1="12" x2="14" y2="12" /><line x1="18" y1="16" x2="22" y2="16" /></svg>
                 </button>
                 <div className={styles.viewToggles}>
-                  <button 
+                  <button
                     className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewActive : ''}`}
                     onClick={() => setViewMode('grid')}
                   >
                     ▤
                   </button>
-                  <button 
+                  <button
                     className={`${styles.viewBtn} ${viewMode === 'list' ? styles.viewActive : ''}`}
                     onClick={() => setViewMode('list')}
                   >
@@ -181,21 +181,21 @@ const DashboardScreen: React.FC = () => {
                 </div>
                 <div className={styles.sortWrapper}>
                   <span className={styles.sortLabel}>Сортировка:</span>
-                  <CustomDropdown 
+                  <CustomDropdown
                     variant="header"
-                    options={['По популярности', 'Сначала новые', 'А-Я']} 
-                    value={sortBy} 
-                    onChange={setSortBy} 
+                    options={['По популярности', 'Сначала новые', 'А-Я']}
+                    value={sortBy}
+                    onChange={setSortBy}
                   />
-                  <button 
+                  <button
                     className={`${styles.viewBtn} ${styles.sortOrderBtn}`}
                     onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
                     title={sortOrder === 'desc' ? 'По убыванию' : 'По возрастанию'}
                   >
                     {sortOrder === 'desc' ? (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="11" y1="5" x2="19" y2="5"/><line x1="11" y1="12" x2="16" y2="12"/><line x1="11" y1="19" x2="14" y2="19"/><path d="m3 12 3 3 3-3"/><path d="M6 5v10"/></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="11" y1="5" x2="19" y2="5" /><line x1="11" y1="12" x2="16" y2="12" /><line x1="11" y1="19" x2="14" y2="19" /><path d="m3 12 3 3 3-3" /><path d="M6 5v10" /></svg>
                     ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="11" y1="19" x2="19" y2="19"/><line x1="11" y1="12" x2="16" y2="12"/><line x1="11" y1="5" x2="14" y2="5"/><path d="m3 8 3-3 3 3"/><path d="M6 19V5"/></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="11" y1="19" x2="19" y2="19" /><line x1="11" y1="12" x2="16" y2="12" /><line x1="11" y1="5" x2="14" y2="5" /><path d="m3 8 3-3 3 3" /><path d="M6 19V5" /></svg>
                     )}
                   </button>
                 </div>
