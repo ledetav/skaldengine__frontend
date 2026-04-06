@@ -71,6 +71,15 @@ const DashboardScreen: React.FC = () => {
     return result
   }, [nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy])
 
+  const getPlural = (n: number) => {
+    const l1 = n % 10;
+    const l2 = n % 100;
+    if (l2 >= 11 && l2 <= 19) return 'персонажей';
+    if (l1 === 1) return 'персонаж';
+    if (l1 >= 2 && l1 <= 4) return 'персонажа';
+    return 'персонажей';
+  };
+
   return (
     <div className={styles.dashboard}>
       <Navbar variant="dashboard" />
@@ -130,7 +139,7 @@ const DashboardScreen: React.FC = () => {
               />
             </div>
             <div className={styles.resultsRow}>
-              <h2 className={styles.resultsCount}>{filteredCharacters.length} Персонажей</h2>
+              <h2 className={styles.resultsCount}>{filteredCharacters.length} {getPlural(filteredCharacters.length)}</h2>
               <div className={styles.headerActions}>
                 <div className={styles.viewToggles}>
                   <button 
