@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Character } from '../../types/character'
+import { Link } from 'react-router-dom'
 import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
 
 interface CharacterCardProps {
@@ -80,16 +81,16 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         <p className={styles.cardDesc}>{character.description}</p>
         
         {/* Mobile-only visible button */}
-        <button className={styles.mobileStartChatBtn}>
+        <Link to={`/create-chat/${character.id}`} className={styles.mobileStartChatBtn}>
           Начать чат
-        </button>
+        </Link>
       </div>
 
       {/* Hover Action (Covers the whole card) */}
       <div className={styles.cardHoverOverlay}>
-        <button className={styles.startChatBtn}>
+        <Link to={`/create-chat/${character.id}`} className={styles.startChatBtn}>
           Начать чат
-        </button>
+        </Link>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import './styles/global/index.css'
 import LandingScreen from './screens/Landing/LandingScreen'
 import AuthScreen from './screens/Auth/AuthScreen'
 import DashboardScreen from './screens/Dashboard/DashboardScreen'
+import CreateChatScreen from './screens/CreateChat/CreateChatScreen'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 
@@ -31,6 +32,8 @@ export default function App() {
         <Route path="/login" element={<AuthScreen />} />
         <Route path="/register" element={<AuthScreen />} />
         <Route path="/dashboard" element={isAuthenticated ? <DashboardScreen /> : <Navigate to="/login" replace />} />
+        <Route path="/create-chat/debug" element={<CreateChatScreen />} />
+        <Route path="/create-chat/:characterId" element={isAuthenticated ? <CreateChatScreen /> : <Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   )
