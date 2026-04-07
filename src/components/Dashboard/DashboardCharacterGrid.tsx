@@ -1,6 +1,7 @@
 import React from 'react'
 import { CharacterCard } from './CharacterCard'
 import type { Character } from '../../types/character'
+import { ErrorScreen } from '../Common/ErrorScreen'
 import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
 
 interface DashboardCharacterGridProps {
@@ -23,7 +24,7 @@ export const DashboardCharacterGrid: React.FC<DashboardCharacterGridProps> = ({
       {isLoading ? (
         <div className={styles.loadingState}>Загрузка персонажей...</div>
       ) : error ? (
-        <div className={styles.errorState}>{error}</div>
+        <ErrorScreen title="Ошибка загрузки" message={error} minimal />
       ) : (
         characters.map(char => (
           <CharacterCard 

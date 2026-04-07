@@ -8,6 +8,7 @@ import { scenariosApi } from '../../api/scenarios'
 import { lorebooksApi } from '../../api/lorebooks'
 import { chatsApi } from '../../api/chats'
 import type { Character } from '../../types/character'
+import { ErrorScreen } from '../../components/Common/ErrorScreen'
 import styles from '../../styles/screens/CreateChat/CreateChatScreen.module.css'
 
 const CreateChatScreen: React.FC = () => {
@@ -106,11 +107,10 @@ const CreateChatScreen: React.FC = () => {
 
   if (error || !character) {
     return (
-      <div className={styles.errorState}>
-        <h2>Упс! Что-то пошло не так</h2>
-        <p>{error || 'Персонаж не найден'}</p>
-        <button onClick={() => navigate('/dashboard')}>Вернуться в дашборд</button>
-      </div>
+      <ErrorScreen 
+        message={error || 'Персонаж не найден'} 
+        onRetry={() => window.location.reload()} 
+      />
     )
   }
 
