@@ -9,6 +9,7 @@ import { lorebooksApi } from '../../api/lorebooks'
 import { chatsApi } from '../../api/chats'
 import type { Character } from '../../types/character'
 import { ErrorScreen } from '../../components/Common/ErrorScreen'
+import { LoadingScreen } from '../../components/Common/LoadingScreen'
 import styles from '../../styles/screens/CreateChat/CreateChatScreen.module.css'
 
 const CreateChatScreen: React.FC = () => {
@@ -102,7 +103,7 @@ const CreateChatScreen: React.FC = () => {
   }
 
   if (isLoading) {
-    return <div className={styles.loadingState}>Загрузка данных...</div>
+    return <LoadingScreen />
   }
 
   if (error || !character) {
