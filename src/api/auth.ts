@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8001/api/v1'
+const BASE_URL = import.meta.env.VITE_AUTH_API_URL || 'http://localhost:8001/api/v1'
 
 export const authApi = {
   register: async (data: any) => {
@@ -8,8 +8,10 @@ export const authApi = {
       body: JSON.stringify({
         email: data.email,
         username: data.login,
+        handle: data.handle,
         password: data.password,
         birth_date: data.birthDate,
+        full_name: data.fullName || null,
       }),
     })
     if (!response.ok) {
@@ -33,6 +35,21 @@ export const authApi = {
     if (!response.ok) {
       const errorData = await response.json()
       throw new Error(errorData.detail || 'Login failed')
+    }
+    return response.json()
+  },
+
+  getMe: async () => {
+    const token = localStorage.getItem('token')
+    if (!token) throw new Error('No token found')
+
+    const response = await fetch(`${BASE_URL}/users/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    if (!response.ok) {
+      throw new Error('Failed to fetch user info')
     }
     return response.json()
   }

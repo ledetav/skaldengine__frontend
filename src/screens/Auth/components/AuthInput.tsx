@@ -3,6 +3,7 @@ import styles from '../../../styles/screens/Auth/AuthScreen.module.css'
 
 interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
+  description?: string
   error?: string | null
   required?: boolean
   className?: string
@@ -10,6 +11,7 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const AuthInput: React.FC<AuthInputProps> = ({ 
   label, 
+  description,
   error, 
   required, 
   className = '', 
@@ -17,9 +19,12 @@ export const AuthInput: React.FC<AuthInputProps> = ({
 }) => {
   return (
     <div className={styles.inputGroup}>
-      <label className={`${styles.label} ${required ? styles.labelRequired : ''}`}>
-        {label}
-      </label>
+      <div className={styles.labelWrapper}>
+        <label className={`${styles.label} ${required ? styles.labelRequired : ''}`}>
+          {label}
+        </label>
+        {description && <span className={styles.labelDescription}>{description}</span>}
+      </div>
       <input 
         {...props}
         className={`${styles.input} ${error ? styles.inputError : ''} ${className}`}

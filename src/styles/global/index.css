@@ -4,7 +4,7 @@
    Design Tokens — SkaldEngine Violet Core
 ──────────────────────────────────────────────── */
 :root {
-  /* Colors - Swapped Cyan for deep Purple and Orange accents */
+  /* Colors */
   --bg-base:        #07020d; /* Deep Void */
   --bg-secondary:   #12041d;
   --bg-card:        rgba(18, 4, 29, 0.75);
@@ -13,10 +13,12 @@
   --accent-purple:  #8b5cf6; /* Main Soul */
   --accent-fuchsia: #d946ef; /* Energy */
   --accent-orange:  #ff6b00; /* Fire / Action (The Skald's Accent) */
+  --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
 
   --purple-glow:    rgba(139, 92, 246, 0.3);
   --fuchsia-glow:   rgba(217, 70, 239, 0.3);
   --orange-glow:    rgba(255, 107, 0, 0.3);
+  --red-glow:       rgba(239, 68, 68, 0.3);
 
   --text-primary:   #f8fafc;
   --text-secondary: #c084fc; /* Tinted secondary */
@@ -25,6 +27,7 @@
   --border-glass:   rgba(217, 70, 239, 0.15);
   --border-purple:  rgba(139, 92, 246, 0.3);
   --border-orange:  rgba(255, 107, 0, 0.4);
+  --border-red:     rgba(239, 68, 68, 0.4);
 
   /* Typography */
   --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
