@@ -18,7 +18,8 @@
   background: transparent;
   padding: 40px 20px;
   z-index: 1;
-  min-height: 300px;
+  min-height: 400px;
+  width: 100%;
 }
 
 .errorOverlay.minimal .backgroundGlow {
@@ -28,8 +29,9 @@
 
 .errorOverlay.minimal .errorCard {
   background: rgba(255, 255, 255, 0.02);
-  padding: 30px;
-  max-width: 400px;
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .backgroundGlow {

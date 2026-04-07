@@ -9,6 +9,7 @@ interface ErrorScreenProps {
   backText?: string;
   backPath?: string;
   minimal?: boolean;
+  showActions?: boolean;
 }
 
 export const ErrorScreen: React.FC<ErrorScreenProps> = ({
@@ -17,7 +18,8 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({
   onRetry,
   backText = 'Вернуться в дашборд',
   backPath = '/dashboard',
-  minimal = false
+  minimal = false,
+  showActions = true
 }) => {
   const navigate = useNavigate();
 
@@ -42,19 +44,21 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({
           </div>
         )}
 
-        <div className={styles.errorActions}>
-          {onRetry && (
-            <button className={styles.retryBtn} onClick={onRetry}>
-              Попробовать снова
+        {showActions && (
+          <div className={styles.errorActions}>
+            {onRetry && (
+              <button className={styles.retryBtn} onClick={onRetry}>
+                Попробовать снова
+              </button>
+            )}
+            <button 
+              className={styles.backBtn} 
+              onClick={() => navigate(backPath)}
+            >
+              {backText}
             </button>
-          )}
-          <button 
-            className={styles.backBtn} 
-            onClick={() => navigate(backPath)}
-          >
-            {backText}
-          </button>
-        </div>
+          </div>
+        )}
       </div>
       
       <div className={styles.particleLayer}>

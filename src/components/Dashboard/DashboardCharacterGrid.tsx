@@ -25,7 +25,14 @@ export const DashboardCharacterGrid: React.FC<DashboardCharacterGridProps> = ({
       {isLoading ? (
         <LoadingScreen minimal />
       ) : error ? (
-        <ErrorScreen title="Ошибка загрузки" message={error} minimal />
+        <div className={styles.errorWrapper}>
+          <ErrorScreen 
+            title="Ошибка загрузки" 
+            message={error} 
+            minimal 
+            showActions={false} 
+          />
+        </div>
       ) : (
         characters.map(char => (
           <CharacterCard 

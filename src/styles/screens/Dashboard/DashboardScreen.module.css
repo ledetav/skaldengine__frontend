@@ -400,6 +400,13 @@
   border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
+.errorWrapper {
+  grid-column: 1 / -1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .noResults h3 {
   font-size: 24px;
   margin-bottom: 12px;
