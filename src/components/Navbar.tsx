@@ -73,12 +73,12 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           <div className={styles.dashboardActions}>
             <Link to="/chats" className={styles.navLink}>Мои чаты</Link>
             <div className={styles.userMenu}>
-              <span className={styles.userName}>{user?.username || 'Загрузка...'}</span>
+              <span className={styles.userName}>{user?.full_name || user?.username || 'Загрузка...'}</span>
               <div className={styles.avatarMini}>
                 {user?.avatar_url ? (
                   <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
                 ) : (
-                  user?.username?.charAt(0).toUpperCase() || 'U'
+                  (user?.full_name || user?.username || 'U').charAt(0).toUpperCase()
                 )}
               </div>
               <button onClick={handleLogout} className={styles.logoutBtn} title="Выйти">
@@ -115,7 +115,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
             <div className={styles.mobileActions}>
               <Link to="/chats" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
               <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                Профиль ({user?.username || '...'})
+                Профиль ({user?.full_name || user?.username || '...'})
               </Link>
               <div className={styles.mobileDivider} />
               <div className={styles.mobileLogout}>
