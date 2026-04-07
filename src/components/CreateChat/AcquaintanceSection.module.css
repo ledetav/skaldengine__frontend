@@ -1,0 +1,136 @@
+.acquaintanceSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toggleCard {
+  background: rgba(30, 30, 45, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.toggleCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.isActive {
+  background: rgba(138, 43, 226, 0.1);
+  border-color: rgba(138, 43, 226, 0.3);
+}
+
+.isActive.isScenarioMode {
+  background: rgba(255, 107, 0, 0.1);
+  border-color: rgba(255, 107, 0, 0.3);
+}
+
+.toggleText h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.toggleText p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.toggleSwitch {
+  width: 44px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 11px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.isActive .toggleSwitch {
+  background: var(--accent-fuchsia);
+}
+
+.isActive.isScenarioMode .toggleSwitch {
+  background: var(--accent-orange);
+}
+
+.toggleThumb {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.isActive .toggleThumb {
+  transform: translateX(22px);
+}
+
+.acquaintedFields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.textarea {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  min-height: 100px;
+  resize: vertical;
+  transition: all 0.3s ease;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.textarea:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-fuchsia);
+  box-shadow: 0 0 15px rgba(217, 70, 239, 0.15);
+}
+
+.focusScenario:focus {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.15);
+}

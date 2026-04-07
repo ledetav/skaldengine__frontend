@@ -1,0 +1,68 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.voiceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.voiceCard {
+  background: rgba(30, 30, 45, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+.voiceCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.isVoiceActive {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+}
+
+.voiceTitle {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.voiceDesc {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.isVoiceActive .voiceTitle {
+  color: var(--primary-orange);
+}

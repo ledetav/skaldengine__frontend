@@ -1,0 +1,252 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.modeSandbox .groupLabel::after {
+  background: linear-gradient(90deg, rgba(217, 70, 239, 0.3), transparent);
+}
+
+.modeScenario .groupLabel::after {
+  background: linear-gradient(90deg, rgba(255, 107, 0, 0.3), transparent);
+}
+
+.personaSelector {
+  position: relative;
+  width: 100%;
+}
+
+.isSelectorOpen {
+  z-index: 100;
+}
+
+.personaActiveCard {
+  background: rgba(30, 30, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.personaActiveCard:hover, .personaActiveCard.isOpen {
+  background: rgba(40, 40, 60, 0.8);
+  transform: translateY(-1px);
+}
+
+.modeSandbox .personaActiveCard:hover {
+  border-color: var(--accent-fuchsia);
+  box-shadow: 0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 10px rgba(217, 70, 239, 0.1);
+}
+
+.modeSandbox .personaActiveCard.isOpen {
+  border-color: var(--accent-fuchsia);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.modeScenario .personaActiveCard:hover {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 25px rgba(255, 107, 0, 0.4), inset 0 0 10px rgba(255, 107, 0, 0.1);
+}
+
+.modeScenario .personaActiveCard.isOpen {
+  border-color: var(--accent-orange);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.personaAvatarSquare {
+  width: 54px;
+  height: 54px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.personaAvatarSquare img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.personaContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.personaHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.personaName {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.personaMeta {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.personaDesc {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownArrow {
+  padding: 0 10px;
+  color: rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.isOpen .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.personaDropdown {
+  margin-top: 8px;
+  background: rgba(26, 26, 46, 0.98);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: auto;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: dropdownSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownSlideDown {
+  from { 
+    max-height: 0; 
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to { 
+    max-height: 400px; 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modeSandbox .personaDropdown {
+  border-color: rgba(217, 70, 239, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(217, 70, 239, 0.25);
+}
+
+.modeScenario .personaDropdown {
+  border-color: rgba(255, 107, 0, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 107, 0, 0.25);
+}
+
+.personaOptionCard, .personaOptionCreate {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.personaOptionCard:hover, .personaOptionCreate:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.modeSandbox .personaOptionCard:hover, 
+.modeSandbox .personaOptionCreate:hover {
+  background: rgba(217, 70, 239, 0.05);
+}
+
+.modeScenario .personaOptionCard:hover, 
+.modeScenario .personaOptionCreate:hover {
+  background: rgba(255, 107, 0, 0.05);
+}
+
+.modeSandbox .personaOptionCard.selected {
+  background: rgba(217, 70, 239, 0.08);
+  border-bottom-color: var(--accent-fuchsia);
+}
+
+.modeScenario .personaOptionCard.selected {
+  background: rgba(255, 107, 0, 0.08);
+  border-bottom-color: var(--accent-orange);
+}
+
+.createAvatarDash {
+  width: 54px;
+  height: 54px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modeSandbox .createAvatarDash {
+  color: var(--accent-fuchsia);
+  border-color: rgba(217, 70, 239, 0.3);
+}
+
+.modeScenario .createAvatarDash {
+  color: var(--accent-orange);
+  border-color: rgba(255, 107, 0, 0.3);
+}
+
+.createLabel {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.modeSandbox .createLabel {
+  color: var(--accent-fuchsia);
+}
+
+.modeScenario .createLabel {
+  color: var(--accent-orange);
+}
+
+.personaBackdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+}
+
+.placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+}

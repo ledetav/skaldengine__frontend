@@ -1,0 +1,115 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.gameModeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.gameModeCard {
+  background: rgba(30, 30, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+.gameModeCard:hover {
+  background: rgba(40, 40, 60, 0.7);
+  transform: translateY(-2px);
+}
+
+.isSandboxCard:hover {
+  border-color: var(--accent-fuchsia);
+  box-shadow: 0 0 15px rgba(217, 70, 239, 0.2);
+}
+
+.isScenarioCard:hover {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+}
+
+.isSandboxSelected {
+  background: rgba(217, 70, 239, 0.12);
+  border: 2px solid var(--accent-fuchsia);
+  box-shadow: 0 0 25px rgba(217, 70, 239, 0.35), 
+              inset 0 0 15px rgba(217, 70, 239, 0.1);
+  transform: translateY(-5px) scale(1.02);
+  z-index: 2;
+}
+
+.isScenarioSelected {
+  background: rgba(255, 107, 0, 0.15);
+  border: 2px solid var(--accent-orange);
+  box-shadow: 0 0 25px rgba(255, 107, 0, 0.4), 
+              inset 0 0 15px rgba(255, 107, 0, 0.15);
+  transform: translateY(-5px) scale(1.02);
+  z-index: 2;
+}
+
+.isSandboxSelected h3 {
+  color: #fff;
+  text-shadow: 0 0 15px var(--accent-fuchsia), 0 0 30px rgba(217, 70, 239, 0.4);
+}
+
+.isScenarioSelected h3 {
+  color: #fff;
+  text-shadow: 0 0 15px var(--accent-orange), 0 0 25px rgba(255, 107, 0, 0.4);
+}
+
+.isSandboxSelected svg {
+  filter: drop-shadow(0 0 5px var(--accent-fuchsia));
+  color: var(--accent-fuchsia);
+  scale: 1.1;
+}
+
+.isScenarioSelected svg {
+  filter: drop-shadow(0 0 5px var(--accent-orange));
+  color: var(--accent-orange);
+  scale: 1.1;
+}
+
+.gameModeCard h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gameModeCard p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.35;
+}
+
+.isSandboxSelected p,
+.isScenarioSelected p {
+  color: rgba(255, 255, 255, 0.7);
+}
