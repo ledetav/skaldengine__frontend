@@ -1,49 +1,117 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { 
-  mockCharacter, 
-  mockScenarios, 
-  mockLorebooks, 
-  gameModes,
-  mockPersonas 
-} from './mockData'
-import type { GameModeType, UserPersona } from '../../types/chat'
+import { gameModes } from './mockData'
+import type { GameModeType, UserPersona, Scenario, Lorebook, NarrativeVoiceType } from '../../types/chat'
+import { charactersApi } from '../../api/characters'
+import { personasApi } from '../../api/personas'
+import { scenariosApi } from '../../api/scenarios'
+import { lorebooksApi } from '../../api/lorebooks'
+import { chatsApi } from '../../api/chats'
+import type { Character } from '../../types/character'
 import styles from '../../styles/screens/CreateChat/CreateChatScreen.module.css'
 
 const CreateChatScreen: React.FC = () => {
   const { characterId } = useParams<{ characterId: string }>()
   const navigate = useNavigate()
   
+  // Data State
+  const [character, setCharacter] = useState<Character | null>(null)
+  const [personas, setPersonas] = useState<UserPersona[]>([])
+  const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   // Form State
   const [gameMode, setGameMode] = useState<GameModeType>('scenario')
-  const [selectedPersonaId, setSelectedPersonaId] = useState<string>(mockPersonas[0].id)
+  const [selectedPersonaId, setSelectedPersonaId] = useState<string>('')
   const [isPersonaOpen, setIsPersonaOpen] = useState(false)
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string>(mockScenarios[0].id)
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string>('')
   const [campaignDuration, setCampaignDuration] = useState<'short' | 'medium' | 'long'>('medium')
+  const [narrativeVoice, setNarrativeVoice] = useState<NarrativeVoiceType>('third')
   const [selectedLorebookId, setSelectedLorebookId] = useState<string>('')
   
   // Sandbox specific
   const [areAcquainted, setAreAcquainted] = useState(false)
   const [relationshipDesc, setRelationshipDesc] = useState('')
-  
-  // Use mock character if id is 'debug' or matches mock
-  const character = (characterId === 'debug' || characterId === mockCharacter.id) 
-    ? mockCharacter 
-    : mockCharacter // Fallback to mock for now
 
-  const handleStartChat = () => {
-    console.log('Creating chat with:', {
-      persona_id: selectedPersonaId,
-      game_mode: gameMode,
-      scenario_id: gameMode === 'scenario' ? selectedScenarioId : undefined,
-      duration: gameMode === 'scenario' ? campaignDuration : undefined,
-      lorebook_id: selectedLorebookId,
-      are_acquainted: areAcquainted,
-      relationship: areAcquainted ? relationshipDesc : undefined
-    })
-    // For now, just navigate back to dashboard or stay here
-    alert('Чат успешно создан! (Эмуляция)')
-    navigate('/dashboard')
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const [charData, personasData, scenariosData, lorebooksData] = await Promise.all([
+          characterId ? charactersApi.getCharacter(characterId) : Promise.reject('No character ID'),
+          personasApi.getPersonas(),
+          scenariosApi.getScenarios(characterId),
+          lorebooksApi.getLorebooks()
+        ])
+
+        setCharacter(charData)
+        setPersonas(personasData as any)
+        setScenarios(scenariosData)
+        setLorebooks(lorebooksData as any)
+        
+        if (personasData.length > 0) setSelectedPersonaId(personasData[0].id)
+        if (scenariosData.length > 0) setSelectedScenarioId(scenariosData[0].id)
+      } catch (err: any) {
+        console.error('Error fetching creation data:', err)
+        setError(err.message || 'Ошибка при загрузке данных')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [characterId])
+
+  const mapDurationToCheckpoints = (duration: string): number => {
+    switch (duration) {
+      case 'short': return 2
+      case 'medium': return 4
+      case 'long': return 6
+      default: return 4
+    }
+  }
+
+  const handleStartChat = async () => {
+    if (!character || !selectedPersonaId) return
+
+    try {
+      setIsSubmitting(true)
+      const chatData = {
+        character_id: character.id,
+        user_persona_id: selectedPersonaId,
+        scenario_id: gameMode === 'scenario' ? selectedScenarioId : undefined,
+        is_acquainted: areAcquainted,
+        relationship_dynamic: areAcquainted ? relationshipDesc : undefined,
+        language: 'ru', // Default for now
+        narrative_voice: narrativeVoice,
+        persona_lorebook_id: selectedLorebookId || undefined,
+        checkpoints_count: mapDurationToCheckpoints(campaignDuration)
+      }
+
+      const newChat = await chatsApi.createChat(chatData as any)
+      navigate(`/chat/${newChat.id}`)
+    } catch (err: any) {
+      alert(`Ошибка при создании чата: ${err.message}`)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className={styles.loadingState}>Загрузка данных...</div>
+  }
+
+  if (error || !character) {
+    return (
+      <div className={styles.errorState}>
+        <h2>Упс! Что-то пошло не так</h2>
+        <p>{error || 'Персонаж не найден'}</p>
+        <button onClick={() => navigate('/dashboard')}>Вернуться в дашборд</button>
+      </div>
+    )
   }
 
   const renderPersonaSelector = () => (
@@ -54,19 +122,22 @@ const CreateChatScreen: React.FC = () => {
           className={`${styles.personaActiveCard} ${isPersonaOpen ? styles.isOpen : ''}`}
           onClick={() => setIsPersonaOpen(!isPersonaOpen)}
         >
-          {mockPersonas.find(p => p.id === selectedPersonaId) ? (
+          {personas.find(p => p.id === selectedPersonaId) ? (
             <>
               <div className={styles.personaAvatarSquare}>
-                <img src={mockPersonas.find(p => p.id === selectedPersonaId)?.avatar_url} alt="Avatar" />
+                <img src={personas.find(p => p.id === selectedPersonaId)?.avatar_url} alt="Avatar" />
               </div>
               <div className={styles.personaContent}>
                 <div className={styles.personaHeader}>
-                  <span className={styles.personaName}>{mockPersonas.find(p => p.id === selectedPersonaId)?.name}</span>
+                  <span className={styles.personaName}>{personas.find(p => p.id === selectedPersonaId)?.name}</span>
                   <span className={styles.personaMeta}>
-                    {mockPersonas.find(p => p.id === selectedPersonaId)?.age} лет, {mockPersonas.find(p => p.id === selectedPersonaId)?.gender}
+                    {personas.find(p => p.id === selectedPersonaId)?.age} лет, {personas.find(p => p.id === selectedPersonaId)?.gender}
                   </span>
                 </div>
-                <p className={styles.personaDesc}>{mockPersonas.find(p => p.id === selectedPersonaId)?.description}</p>
+                <p className={styles.personaDesc}>
+                  {personas.find(p => p.id === selectedPersonaId)?.description || 
+                   personas.find(p => p.id === selectedPersonaId)?.appearance}
+                </p>
               </div>
             </>
           ) : (
@@ -79,7 +150,7 @@ const CreateChatScreen: React.FC = () => {
 
         {isPersonaOpen && (
           <div className={styles.personaDropdown}>
-            <div className={styles.personaOptionCreate}>
+            <div className={styles.personaOptionCreate} onClick={() => navigate('/personas/create')}>
               <div className={styles.createAvatarDash}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
@@ -88,7 +159,7 @@ const CreateChatScreen: React.FC = () => {
               </div>
             </div>
             
-            {mockPersonas.map(persona => (
+            {personas.map(persona => (
               <div 
                 key={persona.id}
                 className={`${styles.personaOptionCard} ${selectedPersonaId === persona.id ? styles.selected : ''}`}
@@ -105,7 +176,7 @@ const CreateChatScreen: React.FC = () => {
                     <span className={styles.personaName}>{persona.name}</span>
                     <span className={styles.personaMeta}>{persona.age} лет, {persona.gender}</span>
                   </div>
-                  <p className={styles.personaDesc}>{persona.description}</p>
+                  <p className={styles.personaDesc}>{persona.description || persona.appearance}</p>
                 </div>
               </div>
             ))}
@@ -114,12 +185,6 @@ const CreateChatScreen: React.FC = () => {
       </div>
     </div>
   )
-
-  const getDensityLabel = (count: number) => {
-    if (count <= 2) return 'Прямое повествование'
-    if (count <= 4) return 'Сбалансированная плотность'
-    return 'Высокая детализация сюжета'
-  }
 
   const renderLorebookSelector = () => (
     <div className={styles.formGroup}>
@@ -133,8 +198,8 @@ const CreateChatScreen: React.FC = () => {
           <span className={styles.lorebookCreateLabel}>Создать новый</span>
         </div>
 
-        {/* Mock Lorebooks */}
-        {mockLorebooks.map(lib => (
+        {/* Real Lorebooks */}
+        {lorebooks.map(lib => (
           <div 
             key={lib.id} 
             className={`${styles.lorebookCard} ${selectedLorebookId === lib.id ? styles.isSelected : ''}`}
@@ -142,11 +207,14 @@ const CreateChatScreen: React.FC = () => {
           >
             <div className={styles.lorebookHeader}>
               <span className={styles.lorebookName}>{lib.name}</span>
-              <span className={styles.lorebookCount}>{lib.entries_count} зап.</span>
+              <span className={styles.lorebookCount}>{lib.entries_count || 0} зап.</span>
             </div>
-            <p className={styles.lorebookDesc}>{lib.description}</p>
+            <p className={styles.lorebookDesc}>{lib.description || 'База знаний для погружения в мир.'}</p>
           </div>
         ))}
+        {lorebooks.length === 0 && (
+          <p className={styles.emptyHint}>У вас пока нет созданных лорбуков.</p>
+        )}
       </div>
     </div>
   )
@@ -195,8 +263,8 @@ const CreateChatScreen: React.FC = () => {
           <span className={styles.lorebookCreateLabel}>Создать сюжет</span>
         </div>
 
-        {/* Scenarios */}
-        {mockScenarios.map(scen => (
+        {/* Real Scenarios */}
+        {scenarios.map(scen => (
           <div 
             key={scen.id} 
             className={`${styles.lorebookCard} ${styles.isScenarioCard} ${selectedScenarioId === scen.id ? styles.isSelectedScenario : ''}`}
@@ -208,6 +276,9 @@ const CreateChatScreen: React.FC = () => {
             <p className={styles.lorebookDesc}>{scen.description}</p>
           </div>
         ))}
+        {scenarios.length === 0 && (
+          <p className={styles.emptyHint}>Для этого персонажа пока нет сценариев.</p>
+        )}
       </div>
     </div>
   )
@@ -233,6 +304,29 @@ const CreateChatScreen: React.FC = () => {
       </div>
     </div>
   )
+
+  const renderVoiceSelector = () => (
+    <div className={styles.formGroup}>
+      <label className={styles.groupLabel}>Лицо повествования (POV)</label>
+      <div className={styles.voiceGrid}>
+        {[
+          { id: 'first', title: '1-е лицо', desc: '«Я посмотрел на неё...»' },
+          { id: 'second', title: '2-е лицо', desc: '«Вы входите в комнату...»' },
+          { id: 'third', title: '3-е лицо', desc: '«Он медленно обернулся...»' }
+        ].map(v => (
+          <div 
+            key={v.id}
+            className={`${styles.voiceCard} ${narrativeVoice === v.id ? styles.isVoiceActive : ''}`}
+            onClick={() => setNarrativeVoice(v.id as any)}
+          >
+            <span className={styles.voiceTitle}>{v.title}</span>
+            <p className={styles.voiceDesc}>{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
   return (
     <div className={styles.screen}>
       <div className={styles.background} />
@@ -289,31 +383,13 @@ const CreateChatScreen: React.FC = () => {
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Сценариев</span>
-                  <span className={styles.statValue}>{character.scenarios_count || 0}</span>
+                  <span className={styles.statValue}>{scenarios.length}</span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>По сценариям</span>
-                  <span className={styles.statValue}>{character.scenario_chats_count || 0}</span>
+                  <span className={styles.statValue}>{character.total_chats_count || 0}</span>
                 </div>
               </div>
-
-              <div className={styles.separator} />
-
-              {/* Author Card */}
-              {character.author && (
-                <div className={styles.authorCard}>
-                  <div className={styles.authorAvatar}>
-                    <img src={character.author.avatar_url} alt={character.author.name} />
-                  </div>
-                  <div className={styles.authorInfo}>
-                    <span className={styles.authorName}>{character.author.name}</span>
-                    <span className={styles.authorUsername}>{character.author.username}</span>
-                    {character.author.role && (
-                      <span className={styles.authorRole}>{character.author.role}</span>
-                    )}
-                  </div>
-                </div>
-              )}
 
               <div className={styles.separator} />
 
@@ -364,7 +440,14 @@ const CreateChatScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* 1. Persona Selection (Sandbox Only) */}
+          <div className={styles.separator} />
+
+          {/* 1. Voice Selector */}
+          {renderVoiceSelector()}
+
+          <div className={styles.separator} />
+
+          {/* 2. Persona Selection */}
           {gameMode === 'sandbox' && (
             <div className={`${styles.sandboxSection} ${styles.modeSandbox}`}>
               {renderPersonaSelector()}
@@ -372,7 +455,7 @@ const CreateChatScreen: React.FC = () => {
             </div>
           )}
 
-          {/* 2. Scenario Section (if Scenario mode) */}
+          {/* 3. Scenario Section (if Scenario mode) */}
           {gameMode === 'scenario' && (
             <div className={`${styles.scenarioSectionFull} ${styles.modeScenario}`}>
               {renderScenarioSelector()}
@@ -382,12 +465,14 @@ const CreateChatScreen: React.FC = () => {
             </div>
           )}
 
-          {/* 3. Lorebook (Handled inside acquaintance section for both modes now) */}
-
           {/* Start Action */}
           <div className={styles.footer}>
-            <button className={styles.startBtn} onClick={handleStartChat}>
-              Начать историю
+            <button 
+              className={styles.startBtn} 
+              onClick={handleStartChat}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Создание истории...' : 'Начать историю'}
               <svg className={styles.btnArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </div>

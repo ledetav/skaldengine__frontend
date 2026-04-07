@@ -1,4 +1,5 @@
 export type GameModeType = 'sandbox' | 'scenario'
+export type NarrativeVoiceType = 'first' | 'second' | 'third'
 
 export interface Scenario {
   id: string
@@ -8,17 +9,21 @@ export interface Scenario {
 }
 
 export interface CreateChatRequest {
-  persona_id: string
-  game_mode: GameModeType
+  character_id: string
+  user_persona_id: string
   scenario_id?: string
+  is_acquainted: boolean
+  relationship_dynamic?: string
+  language: string
+  narrative_voice: NarrativeVoiceType
+  persona_lorebook_id?: string
   checkpoints_count: number // 2-6
-  lorebook_id?: string
 }
 
 export interface Lorebook {
   id: string
   name: string
-  description: string
+  description?: string
   entries_count?: number
 }
 
@@ -29,4 +34,6 @@ export interface UserPersona {
   gender?: string
   description?: string
   avatar_url?: string
+  appearance?: string
+  personality?: string
 }

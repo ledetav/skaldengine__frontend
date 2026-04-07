@@ -1288,3 +1288,121 @@
     grid-template-columns: 1fr;
   }
 }
+/* Voice Selector */
+.voiceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.voiceCard {
+  background: rgba(30, 30, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+.voiceCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.voiceCard.isVoiceActive {
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid var(--accent-orange);
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+}
+
+.voiceTitle {
+  display: block;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.voiceDesc {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.isVoiceActive .voiceTitle {
+  color: var(--accent-orange);
+}
+
+.isVoiceActive .voiceDesc {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* States */
+.loadingState, .errorState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: #fff;
+  min-height: 400px;
+}
+
+.errorState p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.emptyHint {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.startBtn {
+  width: 100%;
+  background: var(--accent-orange);
+  border: none;
+  color: #fff;
+  padding: 18px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+}
+
+.startBtn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+}
+
+.startBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.btnArrow {
+  transition: transform 0.3s ease;
+}
+
+.startBtn:hover .btnArrow {
+  transform: translateX(5px);
+}
