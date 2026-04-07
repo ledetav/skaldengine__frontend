@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { authApi } from '../api/auth'
 import styles from '../styles/components/Navbar.module.css'
 
 const NAV_LINKS = [
@@ -13,14 +14,32 @@ interface NavbarProps {
 }
 
 export default function Navbar({ variant = 'landing' }: NavbarProps) {
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
+    
+    if (variant === 'dashboard') {
+      authApi.getMe()
+        .then(data => setUser(data))
+        .catch(err => {
+          console.error('Failed to fetch user:', err)
+          // Optionally logout if token is invalid
+        })
+    }
+
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [variant])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    window.dispatchEvent(new Event('auth-change'))
+    navigate('/')
+  }
 
   const isDashboard = variant === 'dashboard'
 
@@ -54,8 +73,17 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           <div className={styles.dashboardActions}>
             <Link to="/chats" className={styles.navLink}>Мои чаты</Link>
             <div className={styles.userMenu}>
-              <span className={styles.userName}>Профиль юзера</span>
-              <div className={styles.avatarMini}>U</div>
+              <span className={styles.userName}>{user?.username || 'Загрузка...'}</span>
+              <div className={styles.avatarMini}>
+                {user?.avatar_url ? (
+                  <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
+                ) : (
+                  user?.username?.charAt(0).toUpperCase() || 'U'
+                )}
+              </div>
+              <button onClick={handleLogout} className={styles.logoutBtn} title="Выйти">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              </button>
             </div>
           </div>
         )}
@@ -86,11 +114,12 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           ) : (
             <div className={styles.mobileActions}>
               <Link to="/chats" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
-              <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Профиль юзера</Link>
+              <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                Профиль ({user?.username || '...'})
+              </Link>
               <div className={styles.mobileDivider} />
-              {/* Note: Filters will be added here or handled separately */}
               <div className={styles.mobileLogout}>
-                <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Выйти</Link>
+                <button className={styles.btnSecondary} onClick={handleLogout}>Выйти</button>
               </div>
             </div>
           )}

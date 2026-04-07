@@ -28,9 +28,48 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       <p className={styles.formSubtitle}>Присоединяйтесь к комьюнити!</p>
       <form className={styles.form} onSubmit={onSubmit}>
         {globalError && <div className={styles.globalError}>{globalError}</div>}
+
+        <div className={styles.requiredInfo}>
+          <span className={styles.bulletMini}>•</span> — обязательное поле
+        </div>
         
         <AuthInput 
+          label="Твое имя"
+          description="Будет отображаться на твоей странице. Например, Скальдик."
+          name="fullName"
+          type="text"
+          placeholder="Иван Иванов"
+          value={formData.fullName}
+          onChange={onChange}
+          error={getErrorText('fullName')}
+        />
+
+        <AuthInput 
+          label="Юзернейм"
+          description="По нему тебя смогут найти другие пользователи. Например, @Skaldik"
+          name="handle"
+          type="text"
+          placeholder="@handle"
+          value={formData.handle}
+          onChange={onChange}
+          error={getErrorText('handle')}
+          required
+        />
+
+        <AuthInput 
+          label="Дата рождения"
+          description="Дата твоего рождения. Нужна по закону, нам не особо интересно."
+          name="birthDate"
+          type="date"
+          value={formData.birthDate}
+          onChange={onChange}
+          error={getErrorText('birthDate')}
+          required
+        />
+
+        <AuthInput 
           label="Логин"
+          description="По нему ты сможешь войти, он никому не виден."
           name="login"
           type="text"
           placeholder="skald_engine"
@@ -41,23 +80,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         />
 
         <AuthInput 
-          label="Email"
+          label="Почта"
+          description="По ней ты сможешь тоже войти на сайт, а еще восстановить пароль."
           name="email"
           type="email"
           placeholder="skaldengine@example.com"
           value={formData.email}
           onChange={onChange}
           error={getErrorText('email')}
-          required
-        />
-
-        <AuthInput 
-          label="Дата рождения"
-          name="birthDate"
-          type="date"
-          value={formData.birthDate}
-          onChange={onChange}
-          error={getErrorText('birthDate')}
           required
         />
 

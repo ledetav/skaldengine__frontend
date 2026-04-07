@@ -9,10 +9,10 @@ export interface Character {
   appearance?: string
   personality?: string
   is_public: boolean
-  is_nsfw?: boolean
+  nsfw_allowed: boolean
   creator_id?: string
-  monthly_chats?: number
-  total_chats?: number
+  monthly_chats_count?: number
+  total_chats_count?: number
   created_at?: string
 }
 
