@@ -1,7 +1,7 @@
 import React from 'react'
 import { CustomDropdown } from './CustomDropdown'
 import { FandomFilter } from './FandomFilter'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface DashboardSidebarProps {
   isOpen: boolean

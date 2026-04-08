@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface FandomInfo {
   name: string

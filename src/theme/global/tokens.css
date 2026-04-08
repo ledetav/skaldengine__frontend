@@ -1,0 +1,61 @@
+:root {
+  /* Colors */
+  --bg-dark: #0a0a0c;
+  --bg-card: rgba(30, 30, 35, 0.4);
+  --accent-primary: #ff8c42;
+  --accent-secondary: #ff3e00;
+  --text-primary: #f8f9fa;
+  --text-secondary: rgba(248, 249, 250, 0.7);
+  
+  /* Buttons */
+  --btn-primary-bg: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+  
+  /* Borders & Glass */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-blur: blur(8px);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--btn-primary-bg);
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+}
+
+.btn-secondary {
+  padding: 0.875rem 1.5rem;
+  background: var(--btn-secondary-bg);
+  color: var(--text-primary);
+  border-radius: 12px;
+  border: var(--glass-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 20px;
+}

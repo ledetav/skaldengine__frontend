@@ -1,9 +1,9 @@
 import React from 'react'
 import { CharacterCard } from './CharacterCard'
-import type { Character } from '../../types/character'
-import { ErrorScreen } from '../Common/ErrorScreen'
-import { LoadingScreen } from '../Common/LoadingScreen'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import type { Character } from '@/core/types/character'
+import { ErrorScreen } from '@/components/ui/ErrorScreen'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface DashboardCharacterGridProps {
   characters: Character[]
