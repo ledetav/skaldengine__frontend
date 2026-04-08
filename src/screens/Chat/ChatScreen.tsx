@@ -109,12 +109,14 @@ export default function ChatScreen() {
           id: m.id,
           author: m.role === 'user' ? (personaData.name || 'Вы') : charData.name,
           content: m.content,
-          role: m.role,
-          thought: m.hidden_thought,
+          role: m.role as any,
+          hidden_thought: m.hidden_thought,
+          chat_id: m.chat_id,
           parent_id: m.parent_id,
           siblings_count: m.siblings_count,
           current_sibling_index: m.current_sibling_index,
-          is_edited: m.is_edited
+          is_edited: m.is_edited,
+          created_at: m.created_at
         }))
         
         setMessages(mappedMessages)
@@ -156,17 +158,19 @@ export default function ChatScreen() {
       setActiveLeafId(historyData.active_leaf_id)
       setMessageTree(historyData.tree)
       
-      const mapped: Message[] = historyData.active_branch.map(m => ({
-        id: m.id,
-        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
-        content: m.content,
-        role: m.role,
-        thought: m.hidden_thought,
-        parent_id: m.parent_id,
-        siblings_count: m.siblings_count,
-        current_sibling_index: m.current_sibling_index,
-        is_edited: m.is_edited
-      }))
+        const mapped: Message[] = historyData.active_branch.map(m => ({
+          id: m.id,
+          author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+          content: m.content,
+          role: m.role as any,
+          hidden_thought: m.hidden_thought,
+          chat_id: m.chat_id,
+          parent_id: m.parent_id,
+          siblings_count: m.siblings_count,
+          current_sibling_index: m.current_sibling_index,
+          is_edited: m.is_edited,
+          created_at: m.created_at
+        }))
       setMessages(mapped)
     } catch (err: any) {
       console.error('Sibling switch failed:', err)
@@ -215,7 +219,7 @@ export default function ChatScreen() {
         m.id === aiMsgId ? {
           ...m,
           id: lastAiMsg.id,
-          thought: lastAiMsg.hidden_thought,
+          hidden_thought: lastAiMsg.hidden_thought,
           siblings_count: lastAiMsg.siblings_count,
           current_sibling_index: lastAiMsg.current_sibling_index
         } : m
@@ -261,12 +265,14 @@ export default function ChatScreen() {
         id: m.id,
         author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
         content: m.content,
-        role: m.role,
-        thought: m.hidden_thought,
+        role: m.role as any,
+        hidden_thought: m.hidden_thought,
+        chat_id: m.chat_id,
         parent_id: m.parent_id,
         siblings_count: m.siblings_count,
         current_sibling_index: m.current_sibling_index,
-        is_edited: m.is_edited
+        is_edited: m.is_edited,
+        created_at: m.created_at
       })))
     } catch (err: any) {
       console.error('Send failed:', err)
@@ -285,12 +291,14 @@ export default function ChatScreen() {
         id: m.id,
         author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
         content: m.content,
-        role: m.role,
-        thought: m.hidden_thought,
+        role: m.role as any,
+        hidden_thought: m.hidden_thought,
+        chat_id: m.chat_id,
         parent_id: m.parent_id,
         siblings_count: m.siblings_count,
         current_sibling_index: m.current_sibling_index,
-        is_edited: m.is_edited
+        is_edited: m.is_edited,
+        created_at: m.created_at
       })))
     } catch (err: any) {
       console.error('Sibling switch failed:', err)
@@ -333,8 +341,8 @@ export default function ChatScreen() {
               isLast={idx === messages.length - 1}
               isGenerating={isGenerating}
               showThoughtsGlobal={showThoughtsGlobal}
-              personaAvatar={persona?.avatar}
-              characterAvatar={character?.avatar}
+              personaAvatar={persona?.avatar_url || undefined}
+              characterAvatar={character?.avatar_url}
               onEdit={handleEditMessage}
               onRegenerate={handleRegenerate}
               onSiblingSwitch={handleSiblingSwitch}

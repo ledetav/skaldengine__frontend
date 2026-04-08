@@ -3,12 +3,9 @@ export interface Character {
   name: string
   description?: string
   fandom?: string
-  gender?: 'Мужской' | 'Женский' | 'Другой'
-  avatar?: string
+  gender?: string
   avatar_url?: string
-  cover_image?: string
   card_image_url?: string
-  has_lorebook?: boolean
   appearance?: string
   personality?: string
   is_public: boolean
@@ -27,7 +24,7 @@ export interface Character {
   }
 }
 
-export interface Scenario {
+export interface ExampleScenario {
   id: string
   character_id?: string
   title: string

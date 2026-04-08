@@ -36,7 +36,7 @@ export function PersonaSection({ persona }: { persona: UserPersona | null }) {
                 <>
                   <div className={styles.personaHeaderSidebar}>
                     <div className={styles.personaAvatarSidebar}>
-                      <img src={persona.avatar} alt="Avatar" />
+                      <img src={persona.avatar_url || ''} alt="Avatar" />
                     </div>
                     <div className={styles.personaMetaSidebar}>
                       <h4 className={styles.personaNameSidebar}>{persona.name}</h4>

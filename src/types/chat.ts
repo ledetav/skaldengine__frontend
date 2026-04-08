@@ -8,6 +8,54 @@ export interface Scenario {
   image_url?: string
 }
 
+export interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  chat_id: string
+  parent_id?: string
+  hidden_thought?: string
+  is_edited: boolean
+  created_at: string
+  
+  // UI-specific additions (mapped in frontend)
+  author?: string
+  siblings_count?: number
+  current_sibling_index?: number
+}
+
+export interface UserPersona {
+  id: string
+  name: string
+  description?: string | null
+  avatar_url?: string | null
+  age?: number | null
+  appearance?: string | null
+  personality?: string | null
+  gender?: string | null
+  facts?: string | null
+  created_at: string
+}
+
+export interface Chat {
+  id: string
+  user_id: string
+  character_id: string
+  user_persona_id: string
+  scenario_id?: string
+  title?: string
+  is_acquainted: boolean
+  relationship_dynamic?: string
+  language: string
+  narrative_voice: NarrativeVoiceType
+  persona_lorebook_id?: string
+  checkpoints_count: number
+  mode: string
+  active_leaf_id?: string
+  created_at: string
+  updated_at?: string
+}
+
 export interface CreateChatRequest {
   character_id: string
   user_persona_id: string
@@ -17,7 +65,7 @@ export interface CreateChatRequest {
   language: string
   narrative_voice: NarrativeVoiceType
   persona_lorebook_id?: string
-  checkpoints_count: number // 2-6
+  checkpoints_count: number
 }
 
 export interface Lorebook {
@@ -25,28 +73,4 @@ export interface Lorebook {
   name: string
   description?: string
   entries_count?: number
-}
-
-export interface UserPersona {
-  id: string
-  name: string
-  age?: number
-  gender?: string
-  description?: string
-  avatar?: string
-  avatar_url?: string
-  appearance?: string
-  personality?: string
-}
-
-export interface Message {
-  id: string
-  author: string
-  content: string
-  role: 'user' | 'assistant'
-  thought?: string
-  parent_id?: string
-  siblings_count?: number
-  current_sibling_index?: number
-  is_edited?: boolean
 }

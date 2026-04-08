@@ -9,7 +9,7 @@ interface Message {
   author: string
   content: string
   role: 'user' | 'assistant'
-  thought?: string
+  hidden_thought?: string
   parent_id?: string
   siblings_count?: number
   current_sibling_index?: number
@@ -78,9 +78,9 @@ export function MessageItem({
         </span>
         
         <div className={isUser ? styles.bubbleUser : styles.bubbleAI}>
-          {msg.thought && showThoughtsGlobal && (
+          {msg.hidden_thought && showThoughtsGlobal && (
             <ThoughtBlock 
-              thought={msg.thought} 
+              thought={msg.hidden_thought} 
               onToggle={() => setTimeout(() => scrollToBottom('smooth'), 100)}
             />
           )}

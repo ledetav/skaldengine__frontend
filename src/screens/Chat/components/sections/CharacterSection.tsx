@@ -35,11 +35,11 @@ export function CharacterSection({ character }: { character: Character | null })
               {character ? (
                 <>
                   <div className={styles.charImageWrap}>
-                    <img src={character.cover_image} alt="Cover" className={styles.charImage} />
+                    <img src={character.card_image_url} alt="Cover" className={styles.charImage} />
                     <div className={styles.charCoverGradient} />
                     <div className={styles.charOverlayMini}>
                       <div className={styles.avatarCircleMini}>
-                        <img src={character.avatar} alt={character.name} />
+                        <img src={character.avatar_url} alt={character.name} />
                       </div>
                       <div className={styles.charMainInfoMini}>
                         <h4>{character.name}</h4>
