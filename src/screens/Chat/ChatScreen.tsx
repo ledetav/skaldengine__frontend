@@ -33,8 +33,6 @@ export default function ChatScreen() {
   const [chat, setChat] = useState<ChatType | null>(null)
   const [character, setCharacter] = useState<Character | null>(null)
   const [persona, setPersona] = useState<UserPersona | null>(null)
-  const [scenario, setScenario] = useState<{title: string, description: string} | null>(null)
-  
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null)
@@ -46,7 +44,9 @@ export default function ChatScreen() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date>(new Date())
-  const [error, setError] = useState<string | null>(null)
+  // Use error state in the UI or remove it. I'll remove it for now to pass build if it's truly unused.
+  // Actually, I'll keep it but underscore it if I don't want to render it, or just remove if I want to be clean.
+  // I'll remove it and the setError calls to be thorough.
 
   // Local Settings
   const [perspective, setPerspective] = useState<ChatType['narrative_voice']>(() => 
@@ -122,7 +122,6 @@ export default function ChatScreen() {
 
       } catch (err: any) {
         console.error('Failed to load chat data:', err)
-        setError(err.message)
       }
     }
 
@@ -170,7 +169,7 @@ export default function ChatScreen() {
       }))
       setMessages(mapped)
     } catch (err: any) {
-      setError(err.message)
+      console.error('Sibling switch failed:', err)
     }
   }
 
@@ -223,7 +222,7 @@ export default function ChatScreen() {
       ))
       setLastSaved(new Date())
     } catch (err: any) {
-      setError(err.message)
+      console.error('Send failed:', err)
     } finally {
       setIsGenerating(false)
     }
@@ -270,7 +269,7 @@ export default function ChatScreen() {
         is_edited: m.is_edited
       })))
     } catch (err: any) {
-      setError(err.message)
+      console.error('Send failed:', err)
     } finally {
       setIsGenerating(false)
     }
@@ -294,7 +293,7 @@ export default function ChatScreen() {
         is_edited: m.is_edited
       })))
     } catch (err: any) {
-      setError(err.message)
+      console.error('Sibling switch failed:', err)
     }
   }
 

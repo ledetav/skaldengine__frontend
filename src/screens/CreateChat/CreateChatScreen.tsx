@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-const gameModes = [
+const gameModes: { id: GameModeType, title: string, description: string }[] = [
   {
     id: 'sandbox',
     title: 'Песочница',

@@ -4,8 +4,11 @@ export interface Character {
   description?: string
   fandom?: string
   gender?: 'Мужской' | 'Женский' | 'Другой'
+  avatar?: string
   avatar_url?: string
+  cover_image?: string
   card_image_url?: string
+  has_lorebook?: boolean
   appearance?: string
   personality?: string
   is_public: boolean
