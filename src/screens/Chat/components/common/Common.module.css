@@ -1,0 +1,266 @@
+.thoughtContainer {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.thoughtTag {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 0.5em 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-smooth);
+  width: fit-content;
+  color: var(--accent-purple);
+  font-family: inherit;
+  font-size: 0.85em;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+.thoughtTag:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 15px var(--purple-glow);
+}
+
+.thoughtTag svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.chevron {
+  opacity: 0.6;
+  transition: transform 0.3s ease;
+}
+
+.thoughtContent {
+  margin-top: 0.8em;
+  padding: 1em 1.2em;
+  background: rgba(139, 92, 246, 0.05);
+  border-left: 2px solid var(--accent-purple);
+  font-family: var(--font-ui);
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-style: italic;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+
+.customSelectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.customSelectTrigger {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+.customSelectTrigger:hover, .isOpen {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--border-purple);
+}
+
+.rotate { transform: rotate(180deg); }
+
+.selectBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.customSelectDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(18, 12, 33, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-purple);
+  z-index: 1001;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.customSelectOption {
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.customSelectOption:hover {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--text-primary);
+}
+
+.activeOption {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 5, 15, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+}
+
+.modalWrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2001;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.apiKeyModal {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(18, 12, 33, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  pointer-events: auto;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
+}
+
+.modalHeader {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s;
+}
+
+.modalCloseBtn:hover {
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+.modalBody {
+  padding: 28px;
+}
+
+.modalBody p {
+  margin: 0 0 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.inputGroup {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.modalInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 4px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.modalInput:focus {
+  border-color: var(--accent-purple);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.modalHint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.modalFooter {
+  padding: 20px 28px 28px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  background: none;
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.saveBtnModal {
+  padding: 10px 24px;
+  background: var(--accent-purple);
+  border: none;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+.saveBtnModal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--purple-glow);
+}

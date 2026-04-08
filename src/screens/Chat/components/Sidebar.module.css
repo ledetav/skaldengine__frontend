@@ -1,0 +1,81 @@
+.sidebar {
+  width: 380px;
+  height: 100%;
+  background: rgba(18, 12, 33, 0.6);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border-glass);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 1000;
+  scrollbar-width: thin;
+}
+
+.sidebarClosed {
+  margin-right: -380px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.closeSidebarBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 10;
+  padding: 4px;
+  transition: all 0.2s;
+}
+
+.closeSidebarBtn:hover {
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+.sidebarSection {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.sectionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.sectionHeader:hover {
+  color: var(--accent-orange);
+}
+
+.sectionTitle {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+.sectionChevron {
+  transition: transform 0.3s;
+  color: var(--text-muted);
+}
+
+.chevronRotate { transform: rotate(180deg); }
+
+.sectionContent {
+  padding-top: 12px;
+}
