@@ -5,6 +5,11 @@ SkaldEngine — это интерактивная платформа для ро
 
 ---
 
+> [!TIP]
+> **Новый в проекте?** Прочитайте [ARCHITECTURE.md](./ARCHITECTURE.md), чтобы быстро разобраться в структуре и принципах разработки.
+
+---
+
 ## 🛠 Технологический стек
 - **Framework**: React 18 (Concurrent Mode).
 - **State**: Zustand (Store для дерева чата), React Query (Server Cache).
