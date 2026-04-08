@@ -1,5 +1,5 @@
 ---
-trigger: model_decision
+trigger: manual
 description: Soft, extruded UI elements with inner and outer shadows on monochromatic surfaces for a tactile, embedded look.
 ---
 

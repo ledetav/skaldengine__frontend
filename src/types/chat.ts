@@ -33,7 +33,20 @@ export interface UserPersona {
   age?: number
   gender?: string
   description?: string
+  avatar?: string
   avatar_url?: string
   appearance?: string
   personality?: string
+}
+
+export interface Message {
+  id: string
+  author: string
+  content: string
+  role: 'user' | 'assistant'
+  thought?: string
+  parent_id?: string
+  siblings_count?: number
+  current_sibling_index?: number
+  is_edited?: boolean
 }

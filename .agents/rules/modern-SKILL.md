@@ -1,5 +1,5 @@
 ---
-trigger: model_decision
+trigger: manual
 description: Contemporary editorial style with serif typography, minimal palettes, and clean layouts for polished digital products.
 ---
 

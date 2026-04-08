@@ -1,0 +1,96 @@
+.footer {
+  padding: 24px;
+  background: linear-gradient(to top, var(--bg-main) 70%, transparent);
+  flex-shrink: 0;
+}
+
+.inputWrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: rgba(20, 15, 35, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  padding: 8px 12px 8px 24px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: all 0.3s;
+  clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+}
+
+.textarea {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  padding: 8px 0;
+  resize: none;
+  min-height: 24px;
+  max-height: 120px;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: height 0.1s ease-out;
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.sendBtn {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+  flex-shrink: 0;
+}
+
+.sendBtn:hover:not(:disabled) {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.sendBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.stopBtn {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+  flex-shrink: 0;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.stopBtn:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.stopBtn svg {
+  animation: pulseStop 1.5s infinite;
+}
+
+@keyframes pulseStop {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}

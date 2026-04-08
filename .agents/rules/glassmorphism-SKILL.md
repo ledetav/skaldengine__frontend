@@ -1,5 +1,5 @@
 ---
-trigger: model_decision
+trigger: manual
 description: Frosted glass effect with translucent layers, subtle blur, and luminous borders for depth and modern elegance.
 ---
 

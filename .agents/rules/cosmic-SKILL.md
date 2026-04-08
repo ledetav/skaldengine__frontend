@@ -1,5 +1,5 @@
 ---
-trigger: model_decision
+trigger: manual
 description: Futuristic sci-fi aesthetic with dark themes, vibrant neon accents, and immersive spatial elements.
 ---
 
