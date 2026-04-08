@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface CustomDropdownProps {
   options: string[]

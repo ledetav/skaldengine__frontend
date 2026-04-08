@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 export const DashboardBackground: React.FC = () => {
   return (

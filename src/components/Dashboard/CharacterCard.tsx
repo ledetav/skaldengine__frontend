@@ -1,7 +1,7 @@
 import React from 'react'
-import type { Character } from '../../types/character'
+import type { Character } from '@/core/types/character'
 import { Link } from 'react-router-dom'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface CharacterCardProps {
   character: Character

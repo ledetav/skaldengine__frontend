@@ -1,13 +1,14 @@
 import React from 'react'
-import type { Scenario } from '../../types/character'
-import styles from '../../styles/screens/Dashboard/DashboardScreen.module.css'
+import type { Scenario } from '@/core/types/chat'
+import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface ScenarioCardProps {
   scenario: Scenario
 }
 
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  const isHot = Math.random() > 0.5
+  // Use deterministic logic to avoid impure Math.random during render
+  const isHot = (scenario.id.length + scenario.title.length) % 2 === 0
   
   return (
     <div className={styles.scenarioCard}>

@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,400;1,500&display=swap');
+@import './tokens.css';
+
+/* ──────────────────────────────────────────────
+   Design Tokens — SkaldEngine Violet Core
+──────────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --bg-base:        #07020d; /* Deep Void */
+  --bg-secondary:   #12041d;
+  --bg-card:        rgba(18, 4, 29, 0.75);
+  --bg-glass:       rgba(29, 9, 45, 0.4);
+
+  --accent-purple:  #8b5cf6; /* Main Soul */
+  --accent-fuchsia: #d946ef; /* Energy */
+  --accent-orange:  #ff6b00; /* Fire / Action (The Skald's Accent) */
+  --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
+
+  --purple-glow:    rgba(139, 92, 246, 0.3);
+  --fuchsia-glow:   rgba(217, 70, 239, 0.3);
+  --orange-glow:    rgba(255, 107, 0, 0.3);
+  --red-glow:       rgba(239, 68, 68, 0.3);
+
+  --text-primary:   #f8fafc;
+  --text-secondary: #c084fc; /* Tinted secondary */
+  --text-muted:     #6b21a8;
+
+  --border-glass:   rgba(217, 70, 239, 0.15);
+  --border-purple:  rgba(139, 92, 246, 0.3);
+  --border-orange:  rgba(255, 107, 0, 0.4);
+  --border-red:     rgba(239, 68, 68, 0.4);
+
+  /* Typography */
+  --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
+  --font-narrative: 'Lora', Georgia, serif;
+  --font-thought:   'Playfair Display', Georgia, serif;
+
+  /* Shapes - Angular & Technical */
+  --clip-cut: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+  --clip-cut-sm: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  --radius-angle: 4px;
+
+  /* Transitions */
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ──────────────────────────────────────────────
+   Reset & Base
+──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-purple) var(--bg-secondary);
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ──────────────────────────────────────────────
+   Utility Classes
+──────────────────────────────────────────────── */
+.angular-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  clip-path: var(--clip-cut);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-fuchsia) 50%, var(--accent-orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-angular {
+  position: relative;
+  clip-path: var(--clip-cut-sm);
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.btn-angular:active {
+  transform: scale(0.98);
+}
