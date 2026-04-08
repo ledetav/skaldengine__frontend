@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { gameModes } from './mockData'
+const gameModes = [
+  {
+    id: 'sandbox',
+    title: 'Песочница',
+    description: 'Свободная игра без заранее определенного сюжета. Вы сами направляете историю.'
+  },
+  {
+    id: 'scenario',
+    title: 'Сценарий',
+    description: 'Увлекательное приключение с заданными целями и ключевыми моментами сюжета.'
+  }
+]
 import type { GameModeType, UserPersona, Scenario, Lorebook, NarrativeVoiceType } from '../../types/chat'
 import { charactersApi } from '../../api/characters'
 import { personasApi } from '../../api/personas'
