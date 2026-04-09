@@ -5,6 +5,7 @@ import AuthScreen from '@/features/Auth/AuthScreen'
 import DashboardScreen from '@/features/Dashboard/DashboardScreen'
 import CreateChatScreen from '@/features/CreateChat/CreateChatScreen'
 import ChatScreen from '@/features/Chat/ChatScreen'
+import ProfileScreen from '@/features/Profile/ProfileScreen'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/dashboard" element={isAuthenticated ? <DashboardScreen /> : <Navigate to="/login" replace />} />
         <Route path="/create-chat/:characterId" element={isAuthenticated ? <CreateChatScreen /> : <Navigate to="/login" replace />} />
         <Route path="/chat/:chatId" element={isAuthenticated ? <ChatScreen /> : <Navigate to="/login" replace />} />
+        <Route path="/profile/debug" element={<ProfileScreen />} />
       </Routes>
     </BrowserRouter>
   )
