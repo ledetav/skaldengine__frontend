@@ -37,13 +37,13 @@ export default function MainTab({ user, lastChats }: MainTabProps) {
               </div>
               
               <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                  <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>{chat.title || 'Безымянный чат'}</h4>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', gap: '0.5rem' }}>
+                  <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.title || 'Безымянный чат'}</h4>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
                     {chat.updated_at ? new Date(chat.updated_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : 'Недавно'}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', gap: '0.75rem' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <span>Режим: <strong style={{ color: 'var(--accent-fuchsia)' }}>{chat.mode === 'scenario' ? 'Сценарий' : 'Песочница'}</strong></span>
                   <span>Сообщений: <strong>{chat.checkpoints_count}</strong></span>
                 </div>

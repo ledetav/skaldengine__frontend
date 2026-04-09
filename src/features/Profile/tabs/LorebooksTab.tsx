@@ -51,7 +51,10 @@ export default function LorebooksTab({ lorebooks }: LorebooksTabProps) {
               fontSize: '1.05rem', 
               fontWeight: 800,
               lineHeight: 1.2,
-              color: '#fff'
+              color: '#fff',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}>
               {lb.name}
             </h3>

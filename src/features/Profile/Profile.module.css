@@ -245,16 +245,15 @@
 .tabsNav {
   margin-bottom: 1.25rem;
   display: flex;
-  gap: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
-  padding: 4px;
-  border-radius: 12px;
+  padding: 6px;
+  border-radius: 14px;
   border: 1px solid var(--border-glass);
   width: fit-content;
   max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
 }
 
 .tabsNav::-webkit-scrollbar {
@@ -473,12 +472,18 @@
   }
 
   .tabsNav {
-    padding: 3px;
-    gap: 2px;
+    padding: 6px;
+    gap: 4px;
+    width: 100%;
+    justify-content: center;
+    border-radius: 12px;
   }
 
   .tabBtn {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.7rem;
+    flex: 1 1 auto;
+    text-align: center;
+    min-width: fit-content;
   }
 }
