@@ -1,0 +1,529 @@
+.profilePage {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Background elements copied/adapted from Dashboard */
+.bgContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bgGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(217, 70, 239, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 70, 239, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(139, 92, 246, 0.05) 0%,
+    transparent 80%
+  );
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.orbPurple {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 70%);
+  top: -100px;
+  right: -100px;
+}
+
+.orbFuchsia {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(217, 70, 239, 0.15), transparent 70%);
+  bottom: 10%;
+  left: -50px;
+}
+
+.profileContainer {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 110px 20px 40px;
+  max-width: 1140px; /* Reduced from 1200px */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.layoutWrapper {
+  display: flex;
+  gap: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--accent-primary);
+  animation: spin 1s linear infinite;
+}
+
+.retryButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 280px; /* Reduced from 320px */
+  position: sticky;
+  top: 90px;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0; /* Prevent flex overflow */
+}
+
+/* Header (now Sidebar Card) */
+.header {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  clip-path: var(--clip-cut);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+
+.cover {
+  height: 140px; /* Reduced from 160px */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coverOverlay {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s var(--ease-smooth);
+  cursor: pointer;
+  clip-path: var(--clip-cut-sm);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.header:hover .coverOverlay {
+  opacity: 1;
+}
+
+.coverBottomGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, rgba(7, 2, 13, 0.9) 0%, transparent 100%);
+  z-index: 1;
+}
+
+.userInfo {
+  padding: 0 1.25rem 1.25rem;
+  margin-top: -35px; /* Offset to overlap cover - adjusted for smaller avatar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 80px; /* Reduced from 100px */
+  height: 80px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-fuchsia));
+  box-shadow: 0 0 20px var(--purple-glow);
+  clip-path: var(--clip-cut-sm);
+  margin-bottom: 0.75rem;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  clip-path: var(--clip-cut-sm);
+  object-fit: cover;
+  background: var(--bg-base);
+  border: 3px solid var(--bg-base);
+}
+
+.avatarOverlay {
+  position: absolute;
+  inset: 3px;
+  background: rgba(7, 2, 13, 0.6);
+  clip-path: var(--clip-cut-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.avatarWrapper:hover .avatarOverlay {
+  opacity: 1;
+}
+
+.displayName {
+  font-size: 1.3rem; /* Reduced from 1.5rem */
+  font-weight: 800;
+  margin-bottom: 0.1rem;
+  font-family: var(--font-ui);
+}
+
+.username {
+  font-size: 0.8rem; /* Reduced from 0.9rem */
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.25rem;
+}
+
+/* Sidebar Stats */
+.sidebarStats {
+  width: 100%;
+  border-top: 1px solid var(--border-glass);
+  padding-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.sidebarStatItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebarStatLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.25rem;
+}
+
+.sidebarStatValue {
+  font-size: 1rem; /* Reduced from 1.1rem */
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Tabs */
+.tabsNav {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border-glass);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tabsNav::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-smooth);
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.tabBtn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeTab {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+/* Content Area */
+.contentArea {
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 1.25rem; /* Reduced from 1.5rem */
+}
+
+/* Grid & Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--accent-fuchsia);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-glass), transparent);
+}
+
+/* Card refinement */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+/* Interactive Cards */
+.interactiveCard {
+  cursor: pointer;
+}
+
+.interactiveCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-fuchsia);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.cardShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(7, 2, 13, 0.8));
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-smooth);
+  z-index: 4;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s var(--ease-smooth);
+  background: rgba(7, 2, 13, 0.4);
+}
+
+.interactiveCard:hover .cardOverlay {
+  opacity: 1;
+}
+
+.actionBtn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  color: white;
+  padding: 8px;
+  cursor: pointer;
+  clip-path: var(--clip-cut-sm);
+  transition: all 0.2s;
+}
+
+.editBtn:hover { background: var(--accent-purple); border-color: var(--accent-purple); }
+.deleteBtn:hover { background: var(--accent-red); border-color: var(--accent-red); }
+
+.addCard {
+  border: 1px dashed var(--border-glass);
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  gap: 0.75rem;
+}
+
+.addIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+/* Settings Form */
+.settingsTabWrapper {
+  width: 100%;
+}
+
+.settingsForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.inputField {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: white;
+  font-size: 0.95rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .layoutWrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .sidebar {
+    flex: 1;
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .profileContainer {
+    padding-top: 80px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .avatarWrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  .contentArea {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .tabsNav {
+    padding: 6px;
+    gap: 4px;
+    width: 100%;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .tabBtn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.7rem;
+    flex: 1 1 auto;
+    text-align: center;
+    min-width: fit-content;
+  }
+}
