@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import '@/theme/global/index.css'
 import LandingScreen from '@/features/Landing/LandingScreen'
 import AuthScreen from '@/features/Auth/AuthScreen'
@@ -6,19 +7,16 @@ import DashboardScreen from '@/features/Dashboard/DashboardScreen'
 import CreateChatScreen from '@/features/CreateChat/CreateChatScreen'
 import ChatScreen from '@/features/Chat/ChatScreen'
 import ProfileScreen from '@/features/Profile/ProfileScreen'
-import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('token'))
 
   useEffect(() => {
-    // Listen for changes (e.g. login/logout)
     const handleAuthChange = () => {
       setIsAuthenticated(!!localStorage.getItem('token'))
     }
     window.addEventListener('storage', handleAuthChange)
-    // Custom event for same-tab updates if needed
     window.addEventListener('auth-change', handleAuthChange)
     
     return () => {
@@ -30,13 +28,35 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Guest Routes */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingScreen />} />
-        <Route path="/login" element={<AuthScreen />} />
-        <Route path="/register" element={<AuthScreen />} />
-        <Route path="/dashboard" element={isAuthenticated ? <DashboardScreen /> : <Navigate to="/login" replace />} />
-        <Route path="/create-chat/:characterId" element={isAuthenticated ? <CreateChatScreen /> : <Navigate to="/login" replace />} />
-        <Route path="/chat/:chatId" element={isAuthenticated ? <ChatScreen /> : <Navigate to="/login" replace />} />
-        <Route path="/profile/debug" element={<ProfileScreen />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
+
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <DashboardScreen />
+          </ProtectedRoute>
+        } />
+        <Route path="/create-chat/:characterId" element={
+          <ProtectedRoute>
+            <CreateChatScreen />
+          </ProtectedRoute>
+        } />
+        <Route path="/chat/:chatId" element={
+          <ProtectedRoute>
+            <ChatScreen />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <ProfileScreen />
+          </ProtectedRoute>
+        } />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -13,10 +13,11 @@ export interface UserProfile {
   username: string;
   full_name: string | null;
   avatar_url: string | null;
-  cover_url: string | null; // Missing in backend
+  cover_url: string | null;
   role: string;
   created_at: string;
-  statistics: UserStatistics; // Missing in backend
+  birth_date: string;
+  statistics: UserStatistics;
 }
 
 export interface ProfilePersona {
@@ -28,6 +29,9 @@ export interface ProfilePersona {
   gender: string | null;
   lorebook_count: number; // Missing in backend
   chat_count: number; // Missing in backend
+  appearance: string | null;
+  personality: string | null;
+  facts: string | null;
 }
 
 export interface ProfileLorebook {
@@ -37,4 +41,5 @@ export interface ProfileLorebook {
   character_name?: string;
   user_persona_id?: string;
   entries_count: number;
+  fandom: string | null;
 }

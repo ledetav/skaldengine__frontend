@@ -4,11 +4,12 @@ export interface UserPersona {
   id: string
   name: string
   description: string
-  appearance?: string
   personality?: string
   background?: string
   owner_id: string
   created_at: string
+  lorebook_count: number
+  chat_count: number
 }
 
 export interface UserPersonaCreate {
@@ -38,5 +39,9 @@ export const personasApi = {
   
   deletePersona: async (id: string): Promise<void> => {
     return ApiClient.delete('core', `/personas/${id}`)
+  },
+  
+  getStats: async (): Promise<any> => {
+    return ApiClient.get('core', '/personas/stats')
   }
 }

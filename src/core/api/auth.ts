@@ -26,6 +26,7 @@ export const authApi = {
   },
 
   getMe: async () => {
-    return ApiClient.get('auth', '/users/me')
+    const response: any = await ApiClient.get('auth', '/users/me')
+    return response.data
   }
 }
