@@ -252,6 +252,13 @@
   border-radius: 12px;
   border: 1px solid var(--border-glass);
   width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.tabsNav::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .tabBtn {
@@ -266,6 +273,7 @@
   border-radius: 8px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .tabBtn:hover {
@@ -445,10 +453,32 @@
 @media (max-width: 768px) {
   .profileContainer {
     padding-top: 80px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .avatarWrapper {
     width: 90px;
     height: 90px;
+  }
+
+  .contentArea {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .tabsNav {
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .tabBtn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
   }
 }
