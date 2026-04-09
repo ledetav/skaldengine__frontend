@@ -68,7 +68,7 @@ export default function ProfileScreen() {
       <main className={styles.profileContainer}>
         <div className={styles.layoutWrapper}>
           <aside className={styles.sidebar}>
-            <ProfileHeader user={MOCK_USER} />
+            <ProfileHeader user={user} />
           </aside>
 
           <div className={styles.mainContent}>
