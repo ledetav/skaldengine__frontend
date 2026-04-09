@@ -5,15 +5,19 @@ export type ProfileTabType = 'main' | 'personas' | 'lorebooks' | 'settings';
 interface ProfileTabsProps {
   activeTab: ProfileTabType;
   setActiveTab: (tab: ProfileTabType) => void;
+  isPublic?: boolean;
 }
 
-export default function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
+export default function ProfileTabs({ activeTab, setActiveTab, isPublic = false }: ProfileTabsProps) {
   const tabs: { id: ProfileTabType; label: string }[] = [
     { id: 'main', label: 'Основная информация' },
-    { id: 'personas', label: 'Ваши персоны' },
-    { id: 'lorebooks', label: 'Ваши лорбуки' },
-    { id: 'settings', label: 'Настройки' },
   ];
+
+  if (!isPublic) {
+    tabs.push({ id: 'personas', label: 'Ваши персоны' });
+    tabs.push({ id: 'lorebooks', label: 'Ваши лорбуки' });
+    tabs.push({ id: 'settings', label: 'Настройки' });
+  }
 
   return (
     <nav className={styles.tabsNav}>

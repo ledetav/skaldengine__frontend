@@ -54,6 +54,9 @@ export default function App() {
             <ProfileScreen />
           </ProtectedRoute>
         } />
+        <Route path="/profile/:username" element={
+          <ProfileScreen />
+        } />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -27,5 +27,9 @@ export const authApi = {
 
   getMe: async () => {
     return ApiClient.get<any>('auth', '/users/me')
+  },
+
+  getPublicProfile: async (username: string) => {
+    return ApiClient.get<any>('auth', `/users/profile/${username}`)
   }
 }

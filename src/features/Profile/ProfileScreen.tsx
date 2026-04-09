@@ -12,9 +12,12 @@ import styles from './Profile.module.css';
 
 // --- Chats from useProfile ---
 
+import { useParams } from 'react-router-dom';
+
 export default function ProfileScreen() {
+  const { username } = useParams<{ username?: string }>();
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
-  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile();
+  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username);
 
   if (isLoading) {
     return (
@@ -67,11 +70,11 @@ export default function ProfileScreen() {
       <main className={styles.profileContainer}>
         <div className={styles.layoutWrapper}>
           <aside className={styles.sidebar}>
-            <ProfileHeader user={user} />
+            <ProfileHeader user={user} isPublic={!!username} />
           </aside>
 
           <div className={styles.mainContent}>
-            <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} isPublic={!!username} />
             
             <div className={styles.contentArea}>
               {renderTabContent()}
