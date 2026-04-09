@@ -18,11 +18,8 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [user, setUser] = useState<{
-    id: string
-    username: string
-    handle: string
-    full_name?: string
     avatar_url?: string
+    role: string
   } | null>(null)
 
   useEffect(() => {
@@ -77,15 +74,25 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
         ) : (
           <div className={styles.dashboardActions}>
             <Link to="/chats" className={styles.navLink}>Мои чаты</Link>
+            <Link to="/lorebooks" className={styles.navLink}>Лорбуки</Link>
+            
+            {(user?.role === 'admin' || user?.role === 'moderator') && (
+              <Link to="/admin" className={`${styles.navLink} ${styles.adminLink}`}>
+                Панель администратора
+              </Link>
+            )}
+
             <div className={styles.userMenu}>
               <span className={styles.userName}>{user?.full_name || user?.username || 'Загрузка...'}</span>
-              <div className={styles.avatarMini}>
-                {user?.avatar_url ? (
-                  <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
-                ) : (
-                  (user?.full_name || user?.username || 'U').charAt(0).toUpperCase()
-                )}
-              </div>
+              <Link to="/profile" className={styles.avatarLink}>
+                <div className={styles.avatarMini}>
+                  {user?.avatar_url ? (
+                    <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
+                  ) : (
+                    (user?.full_name || user?.username || 'U').charAt(0).toUpperCase()
+                  )}
+                </div>
+              </Link>
               <button onClick={handleLogout} className={styles.logoutBtn} title="Выйти">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               </button>
@@ -119,6 +126,14 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           ) : (
             <div className={styles.mobileActions}>
               <Link to="/chats" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
+              <Link to="/lorebooks" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Лорбуки</Link>
+              
+              {(user?.role === 'admin' || user?.role === 'moderator') && (
+                <Link to="/admin" className={`${styles.mobileLink} ${styles.adminLink}`} onClick={() => setMenuOpen(false)}>
+                  Панель администратора
+                </Link>
+              )}
+
               <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
                 Профиль ({user?.full_name || user?.username || '...'})
               </Link>

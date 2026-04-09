@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { authApi } from '@/core/api/auth'
-import { personasApi } from '@/core/api/personas'
-import { lorebooksApi } from '@/core/api/lorebooks'
+import { chatsApi } from '@/core/api/chats'
 import type { UserProfile, ProfilePersona, ProfileLorebook } from '@/core/types/profile'
+import type { Chat } from '@/core/types/chat'
 
 export const useProfile = () => {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [personas, setPersonas] = useState<ProfilePersona[]>([])
   const [lorebooks, setLorebooks] = useState<ProfileLorebook[]>([])
+  const [lastChats, setLastChats] = useState<Chat[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,23 +17,22 @@ export const useProfile = () => {
         setIsLoading(true)
         setError(null)
 
-        // Fetch User Info and Stats in parallel
-        const [userData, statsResponse, personasResponse, lorebooksResponse] = await Promise.all([
+        // Fetch User Info, Stats, Personas, Lorebooks and Chats in parallel
+        const [userData, statsResponse, personasResponse, lorebooksResponse, chatsResponse] = await Promise.all([
           authApi.getMe(),
           personasApi.getStats(),
           personasApi.getPersonas(),
-          lorebooksApi.getLorebooks()
+          lorebooksApi.getLorebooks(),
+          chatsApi.getChats(0, 5) // Fetch last 5 chats
         ])
-
-        // The personas and lorebooks might be wrapped in BaseResponse depending on implementation
-        // But useDashboard.ts showed they return direct data (actually let me double check that)
         
-        const personasData = Array.isArray(personasResponse) ? personasResponse : (personasResponse as any).data || []
-        const lorebooksData = Array.isArray(lorebooksResponse) ? lorebooksResponse : (lorebooksResponse as any).data || []
+        const personasData = personasResponse || []
+        const lorebooksData = lorebooksResponse || []
+        const chatsData = chatsResponse || []
 
         setUser({
           ...userData,
-          statistics: statsResponse.data || {
+          statistics: statsResponse || {
             total_chats: 0,
             total_personas: 0,
             total_lorebooks: 0,
@@ -56,6 +55,7 @@ export const useProfile = () => {
         })))
 
         setLorebooks(lorebooksData)
+        setLastChats(chatsData)
 
       } catch (err: any) {
         console.error('Error fetching profile data:', err)
@@ -72,6 +72,7 @@ export const useProfile = () => {
     user,
     personas,
     lorebooks,
+    lastChats,
     isLoading,
     error
   }

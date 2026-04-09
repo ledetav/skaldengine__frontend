@@ -31,11 +31,18 @@ export class ApiClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.detail || `Request failed: ${response.statusText}`)
+      throw new Error(errorData.detail || errorData.message || `Request failed: ${response.statusText}`)
     }
 
     if (response.status === 204) return {} as T
-    return response.json()
+    
+    const json = await response.json()
+    // Unwrap BaseResponse if it follows the pattern { success, data, ... }
+    if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
+      return json.data as T
+    }
+    
+    return json as T
   }
 
   static get<T>(type: ApiType, endpoint: string, options?: RequestInit) {

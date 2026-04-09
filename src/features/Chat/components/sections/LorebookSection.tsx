@@ -39,7 +39,7 @@ export function LorebookSection({ userRole }: { userRole: string }) {
                 <button className={styles.loreChangeBtn}>Сменить</button>
               </div>
 
-              {(userRole === 'admin' || userRole === 'mod') && (
+              {(userRole === 'admin' || userRole === 'moderator') && (
                 <>
                   <div className={styles.loreItem}>
                     <div className={styles.loreMainInfo}>
