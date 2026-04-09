@@ -1,5 +1,7 @@
 import React from 'react'
 import type { GameModeType, Lorebook } from '@/core/types/chat'
+import type { Character } from '@/core/types/character'
+import type { UserProfile } from '@/core/types/profile'
 import { LorebookSelector } from './LorebookSelector'
 import styles from './AcquaintanceSection.module.css'
 
@@ -13,6 +15,8 @@ interface AcquaintanceSectionProps {
   selectedLorebookId: string
   onLorebookSelect: (id: string) => void
   onCreateLorebook?: () => void
+  currentUser: UserProfile | null
+  currentCharacter?: Character | null
 }
 
 export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
@@ -24,8 +28,31 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
   lorebooks,
   selectedLorebookId,
   onLorebookSelect,
-  onCreateLorebook
+  onCreateLorebook,
+  currentUser,
+  currentCharacter
 }) => {
+  const isAdmin = currentUser?.role === 'admin'
+  const isModerator = currentUser?.role === 'moderator'
+
+  const filteredLorebooks = lorebooks.filter(lib => {
+    // Admins see everything
+    if (isAdmin) return true
+    
+    // Moderators see character lorebooks only if they created the character
+    if (isModerator) {
+      if (lib.character_id) {
+         return currentCharacter?.creator_id === currentUser?.id
+      }
+      return true // See others (fandom/etc)? User didn't specify, assuming yes or just character filter
+    }
+
+    // Ordinary users see ONLY their own persona lorebooks
+    if (lib.user_persona_id) return true
+    
+    return false
+  })
+
   return (
     <div className={styles.acquaintanceSection}>
       <div 
@@ -53,7 +80,7 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
             />
           </div>
           <LorebookSelector 
-            lorebooks={lorebooks}
+            lorebooks={filteredLorebooks}
             selectedLorebookId={selectedLorebookId}
             onSelect={onLorebookSelect}
             onCreateClick={onCreateLorebook}

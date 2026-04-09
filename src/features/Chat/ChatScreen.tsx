@@ -39,7 +39,7 @@ export default function ChatScreen() {
   const [inputValue, setInputValue] = useState('')
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null)
   const [messageTree, setMessageTree] = useState<Message[]>([])
-  const [userRole, setUserRole] = useState<'user' | 'mod' | 'admin'>('user')
+  const [userRole, setUserRole] = useState<string>('user')
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024)
@@ -126,7 +126,8 @@ export default function ChatScreen() {
         }))
         
         setMessages(mappedMessages)
-        setUserRole('admin') 
+        const userMe = await authApi.getMe()
+        setUserRole(userMe.role)
 
       } catch (err: unknown) {
         console.error('Failed to load chat data:', err)

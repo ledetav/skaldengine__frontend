@@ -5,8 +5,10 @@ import { charactersApi } from '@/core/api/characters'
 import { personasApi } from '@/core/api/personas'
 import { scenariosApi } from '@/core/api/scenarios'
 import { lorebooksApi } from '@/core/api/lorebooks'
+import { authApi } from '@/core/api/auth'
 import { chatsApi } from '@/core/api/chats'
 import type { Character } from '@/core/types/character'
+import type { UserProfile } from '@/core/types/profile'
 import { ErrorScreen } from '@/components/ui/ErrorScreen'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
@@ -43,6 +45,7 @@ const CreateChatScreen: React.FC = () => {
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [scenarios, setScenarios] = useState<Scenario[]>([])
   const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,20 +66,22 @@ const CreateChatScreen: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const [charData, personasData, scenariosData, lorebooksData] = await Promise.all([
+        const [charData, personasData, scenariosData, lorebooksData, userData] = await Promise.all([
           characterId ? charactersApi.getCharacter(characterId) : Promise.reject('No character ID'),
           personasApi.getPersonas(),
           scenariosApi.getScenarios(characterId),
-          lorebooksApi.getLorebooks()
+          lorebooksApi.getLorebooks(),
+          authApi.getMe()
         ])
 
         setCharacter(charData)
-        setPersonas(personasData)
-        setScenarios(scenariosData)
-        setLorebooks(lorebooksData)
+        setPersonas(personasData || [])
+        setScenarios(scenariosData || [])
+        setLorebooks(lorebooksData || [])
+        setCurrentUser(userData)
         
-        if (personasData.length > 0) setSelectedPersonaId(personasData[0].id)
-        if (scenariosData.length > 0) setSelectedScenarioId(scenariosData[0].id)
+        if (personasData && personasData.length > 0) setSelectedPersonaId(personasData[0].id)
+        if (scenariosData && scenariosData.length > 0) setSelectedScenarioId(scenariosData[0].id)
       } catch (err: unknown) {
         console.error('Error fetching creation data:', err)
         setError(err instanceof Error ? err.message : 'Ошибка при загрузке данных')
@@ -155,6 +160,7 @@ const CreateChatScreen: React.FC = () => {
           <CharacterCard 
             character={character} 
             scenariosCount={scenarios.length} 
+            currentUser={currentUser}
           />
         </section>
 
@@ -197,6 +203,8 @@ const CreateChatScreen: React.FC = () => {
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}
+                currentUser={currentUser}
+                currentCharacter={character}
               />
             </div>
           )}
@@ -229,6 +237,8 @@ const CreateChatScreen: React.FC = () => {
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}
+                currentUser={currentUser}
+                currentCharacter={character}
               />
             </div>
           )}

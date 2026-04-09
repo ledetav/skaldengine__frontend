@@ -7,14 +7,31 @@ interface LorebookSelectorProps {
   selectedLorebookId: string
   onSelect: (id: string) => void
   onCreateClick?: () => void
+  type?: 'all' | 'persona' | 'character' | 'fandom'
 }
 
 export const LorebookSelector: React.FC<LorebookSelectorProps> = ({ 
   lorebooks, 
   selectedLorebookId, 
   onSelect,
-  onCreateClick
+  onCreateClick,
+  type = 'all'
 }) => {
+  const getLabel = (lib: Lorebook) => {
+    if (lib.user_persona_id) return 'Личный'
+    if (lib.character_id) return 'Персонаж'
+    if (lib.fandom) return 'Фандом'
+    return 'Общий'
+  }
+
+  const filteredLorebooks = lorebooks.filter(lib => {
+    if (type === 'all') return true
+    if (type === 'persona') return !!lib.user_persona_id
+    if (type === 'character') return !!lib.character_id
+    if (type === 'fandom') return !!lib.fandom
+    return true
+  })
+
   return (
     <div className={styles.formGroup}>
       <label className={styles.groupLabel}>Локальная база знаний (Lorebook)</label>
@@ -28,21 +45,24 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
         </div>
 
         {/* Real Lorebooks */}
-        {lorebooks.map(lib => (
+        {filteredLorebooks.map(lib => (
           <div 
             key={lib.id} 
             className={`${styles.lorebookCard} ${selectedLorebookId === lib.id ? styles.isSelected : ''}`}
             onClick={() => onSelect(lib.id === selectedLorebookId ? '' : lib.id)}
           >
             <div className={styles.lorebookHeader}>
-              <span className={styles.lorebookName}>{lib.name}</span>
+              <div className={styles.lorebookMeta}>
+                <span className={styles.lorebookBadge}>{getLabel(lib)}</span>
+                <span className={styles.lorebookName}>{lib.name}</span>
+              </div>
               <span className={styles.lorebookCount}>{lib.entries_count || 0} зап.</span>
             </div>
             <p className={styles.lorebookDesc}>{lib.description || 'База знаний для погружения в мир.'}</p>
           </div>
         ))}
-        {lorebooks.length === 0 && (
-          <p className={styles.emptyHint}>У вас пока нет созданных лорбуков.</p>
+        {filteredLorebooks.length === 0 && (
+          <p className={styles.emptyHint}>Нет доступных лорбуков данного типа.</p>
         )}
       </div>
     </div>

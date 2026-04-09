@@ -34,6 +34,9 @@ export interface UserPersona {
   personality?: string | null
   gender?: string | null
   facts?: string | null
+  owner_id: string
+  lorebook_count: number
+  chat_count: number
   created_at: string
 }
 
@@ -91,5 +94,8 @@ export interface Lorebook {
   id: string
   name: string
   description?: string
+  character_id?: string
+  user_persona_id?: string
+  fandom?: string
   entries_count?: number
 }

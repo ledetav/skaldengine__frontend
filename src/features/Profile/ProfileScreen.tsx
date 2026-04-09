@@ -10,12 +10,11 @@ import Navbar from '@/components/ui/Navbar';
 import { useProfile } from '@/core/hooks/useProfile';
 import styles from './Profile.module.css';
 
-// --- Temporary Mock for Chats (until Chat API is integrated in Profile) ---
-const MOCK_CHATS: any[] = []; 
+// --- Chats from useProfile ---
 
 export default function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
-  const { user, personas, lorebooks, isLoading, error } = useProfile();
+  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile();
 
   if (isLoading) {
     return (
@@ -45,11 +44,11 @@ export default function ProfileScreen() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'main': return <MainTab user={user} lastChats={MOCK_CHATS} />;
+      case 'main': return <MainTab user={user} lastChats={lastChats} />;
       case 'personas': return <PersonasTab personas={personas} />;
       case 'lorebooks': return <LorebooksTab lorebooks={lorebooks} />;
       case 'settings': return <SettingsTab />;
-      default: return <MainTab user={user} lastChats={MOCK_CHATS} />;
+      default: return <MainTab user={user} lastChats={lastChats} />;
     }
   };
 
