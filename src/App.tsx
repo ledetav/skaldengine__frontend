@@ -6,7 +6,9 @@ import AuthScreen from '@/features/Auth/AuthScreen'
 import DashboardScreen from '@/features/Dashboard/DashboardScreen'
 import CreateChatScreen from '@/features/CreateChat/CreateChatScreen'
 import ChatScreen from '@/features/Chat/ChatScreen'
+
 import ProfileScreen from '@/features/Profile/ProfileScreen'
+import AdminDashboard from '@/features/Admin/AdminDashboard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function App() {
@@ -57,6 +59,9 @@ export default function App() {
         <Route path="/profile/:username" element={
           <ProfileScreen />
         } />
+
+        {/* Debug/Admin Route */}
+        <Route path="/admin/debug" element={<AdminDashboard />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
