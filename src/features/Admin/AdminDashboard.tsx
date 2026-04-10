@@ -1,11 +1,36 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+
 import styles from './Admin.module.css'
 import { AdminSidebar, type AdminTab } from './components/AdminSidebar'
 import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'
+import { CharacterProfileView } from './components/CharacterProfileView'
+import { mockCharacters, mockLorebooks } from './mockData'
+import type { Character, Lorebook } from './types'
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null)
+  
+  // State lifted from children for real-time updates
+  const [characters, setCharacters] = useState(mockCharacters)
+  const [lorebooks, setLorebooks] = useState(mockLorebooks)
+
+  const handleUpdateCharacter = (updatedChar: Character) => {
+    setCharacters(prev => prev.map(c => c.id === updatedChar.id ? updatedChar : c))
+  }
+
+  const handleUpdateLorebooks = (updatedLorebooks: Lorebook[]) => {
+    setLorebooks(updatedLorebooks)
+  }
+  
+  // Mock current user for the badge
+  const currentUser = {
+    username: 'nordh',
+    login: 'Nordh',
+    role: 'admin',
+    avatar_url: null
+  }
 
   return (
     <div className={styles.adminPage}>
@@ -33,16 +58,46 @@ export default function AdminDashboard() {
           
           <div className={styles.headerActions}>
             <div className={styles.userBadge}>
-              <span className={styles.userRole}>Master Admin</span>
-              <div className={styles.userAvatar}>A</div>
+              <div className={styles.userBadgeInfo}>
+                <span className={styles.userBadgeName}>{currentUser.login}</span>
+                <span className={styles.userBadgeRole}>
+                  {currentUser.role === 'admin' ? 'Master Admin' : 'Moderator'}
+                </span>
+              </div>
+              <div className={styles.userBadgeAvatar}>
+                {currentUser.avatar_url ? (
+                  <img src={currentUser.avatar_url} alt="" />
+                ) : (
+                  currentUser.username.charAt(0).toUpperCase()
+                )}
+                <div className={styles.statusIndicator} />
+              </div>
             </div>
           </div>
         </header>
 
         <section className={styles.contentArea}>
-          {activeTab === 'characters' && <CharacterSection />}
+          {activeTab === 'characters' && !selectedCharacterId && (
+            <CharacterSection 
+              characters={characters}
+              onSelectCharacter={setSelectedCharacterId} 
+            />
+          )}
           {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character') && (
-            <LorebookSection type={activeTab === 'lorebooks_fandom' ? 'fandom' : 'character'} />
+            <LorebookSection 
+              type={activeTab === 'lorebooks_fandom' ? 'fandom' : 'character'} 
+              lorebooks={lorebooks}
+            />
+          )}
+          {selectedCharacterId && (
+            <CharacterProfileView 
+              characterId={selectedCharacterId} 
+              characters={characters}
+              allLorebooks={lorebooks}
+              onBack={() => setSelectedCharacterId(null)} 
+              onUpdateCharacter={handleUpdateCharacter}
+              onUpdateLorebooks={handleUpdateLorebooks}
+            />
           )}
         </section>
       </main>
