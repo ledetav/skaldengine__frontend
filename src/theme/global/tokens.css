@@ -17,6 +17,9 @@
   --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
   --accent-pink:    #d946ef; /* Alias for fuchsia */
 
+  --white:          #f0ece9;
+  --black:          #111010;
+
   /* ─── Glows & Effects ───────────────────────────── */
   --purple-glow:    rgba(139, 92, 246, 0.3);
   --fuchsia-glow:   rgba(217, 70, 239, 0.3);

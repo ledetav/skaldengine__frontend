@@ -91,7 +91,7 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin: 0;
-  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.5));
+  background: linear-gradient(135deg, var(--white) 30%, rgba(255,255,255,0.5));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -331,7 +331,7 @@
   left: 3px;
   width: 18px;
   height: 18px;
-  background: #fff;
+  background: var(--white);
   border-radius: 50%;
   transition: transform 0.2s var(--ease-bounce);
 }
@@ -399,7 +399,7 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-.cancelBtn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.cancelBtn:hover { background: rgba(255,255,255,0.08); color: var(--white); }
 
 .submitBtn {
   display: inline-flex;
@@ -407,7 +407,7 @@
   gap: 8px;
   padding: 12px 26px;
   background: linear-gradient(135deg, var(--accent-orange) 0%, #ff3e00 100%);
-  color: #fff;
+  color: var(--white);
   border: none;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   font-family: var(--font-ui);

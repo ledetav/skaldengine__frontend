@@ -92,7 +92,7 @@
   justify-content: center;
   font-weight: 950;
   font-size: 1.35rem;
-  color: #fff;
+  color: var(--white);
   box-shadow: 0 4px 15px rgba(255, 140, 66, 0.2);
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
@@ -106,7 +106,7 @@
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--white);
   line-height: 1;
   text-transform: uppercase;
 }
@@ -159,7 +159,7 @@
 
 .activeNavItem {
   background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  color: var(--white);
   border-color: var(--item-accent);
 }
 
@@ -234,7 +234,7 @@
   font-weight: 950;
   margin: 0;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.6) 100%);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(255, 255, 255, 0.6) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -276,7 +276,7 @@
 .userBadgeName {
   font-size: 0.9rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
   letter-spacing: -0.01em;
 }
 
@@ -299,7 +299,7 @@
   justify-content: center;
   font-weight: 900;
   font-size: 0.9rem;
-  color: #fff;
+  color: var(--white);
   position: relative;
   box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
@@ -351,7 +351,7 @@
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 10px;
   padding: 10px 18px; /* Reduced from 15px 24px */
-  color: #fff;
+  color: var(--white);
   font-size: 0.85rem; /* Reduced from 1rem */
   font-weight: 500;
   transition: all 0.3s ease;
@@ -391,13 +391,13 @@
 
 .activeViewBtn {
   background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  color: var(--white);
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
 }
 
 .createBtn {
   background: linear-gradient(135deg, var(--accent-orange), #ff5e00);
-  color: #fff;
+  color: var(--white);
   border: none;
   padding: 10px 20px; /* Reduced from 14px 30px */
   font-weight: 800;
@@ -450,7 +450,7 @@
 
 .compactTable tr:hover td {
   background: rgba(255, 255, 255, 0.012);
-  color: #fff;
+  color: var(--white);
 }
 
 /* Grid View */
@@ -559,7 +559,7 @@
 .statValue {
   font-size: 0.9rem; /* Reduced from 1.05rem */
   font-weight: 900;
-  color: #fff;
+  color: var(--white);
 }
 
 @keyframes slideUp {
@@ -571,13 +571,14 @@
 .characterProfileOverlay {
   position: absolute;
   inset: 0;
-  background: var(--bg-dark);
+  background: var(--bg-base);
   z-index: 100;
   display: flex;
   flex-direction: column;
   gap: 0px; /* Changed from 30px to handle header/content spacing separately */
   padding: 30px 40px;
   animation: slideInFromRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
 }
 
 @keyframes slideInFromRight {
@@ -590,7 +591,6 @@
   gap: 30px;
   flex: 1;
   padding-bottom: 40px;
-  overflow: hidden;
 }
 
 .sidebarWrapper {
@@ -669,7 +669,7 @@
   font-size: 1.6rem;
   font-weight: 950;
   margin: 0 0 6px 0;
-  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.6) 100%);
+  background: linear-gradient(135deg, var(--white) 0%, rgba(255, 255, 255, 0.6) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -778,7 +778,7 @@
 
 .secondaryBtn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  color: var(--white);
   border-color: rgba(255,255,255,0.2);
 }
 
@@ -806,7 +806,7 @@
 
 .backBtn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  color: var(--white);
   transform: translateX(-4px);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
@@ -824,7 +824,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: #fff;
+  color: var(--white);
   padding: 12px 16px;
   font-family: inherit;
   font-size: 0.95rem;
@@ -881,7 +881,7 @@
   left: 3px;
   width: 16px;
   height: 16px;
-  background: #fff;
+  background: var(--white);
   border-radius: 50%;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -905,7 +905,7 @@
 }
 
 .toggleActive .toggleLabel {
-  color: #fff;
+  color: var(--white);
 }
 
 /* Image Edit Pencil */
@@ -927,7 +927,7 @@
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
-  color: #fff;
+  color: var(--white);
   z-index: 2;
 }
 
@@ -942,7 +942,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 16px;
   border-radius: 12px;
-  color: #fff;
+  color: var(--white);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -991,7 +991,7 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 8px 12px;
-  color: #fff;
+  color: var(--white);
   font-size: 0.85rem;
 }
 
@@ -1011,7 +1011,7 @@
 
 .dropdownOption:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  color: var(--white);
   padding-left: 20px;
 }
 
@@ -1053,7 +1053,7 @@
 
 .lorebookMiniName {
   font-weight: 700;
-  color: #fff;
+  color: var(--white);
   font-size: 0.9rem;
 }
 
