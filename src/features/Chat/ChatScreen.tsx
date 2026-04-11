@@ -216,6 +216,12 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
     setIsGenerating(true)
     setChatError(null)
 
+    if (!apiKey) {
+      setChatError('Для работы ИИ необходи��о добавить API-ключ в настройках вашего профиля.')
+      setIsGenerating(false)
+      return
+    }
+
     const tempUserMsg: Message = {
       id: Date.now().toString(),
       author: persona?.name || 'Вы',
@@ -263,7 +269,7 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
       console.error('Send failed:', err)
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id))
       if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
-        setChatError('Для работы ИИ необходимо установить API-ключ в настройках боковой панели.')
+        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
       } else {
         setChatError('Произошла ошибка при генерации ответа. Пожалуйста, попробуйте позже.')
       }
@@ -276,6 +282,13 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
     if (isGenerating || !chatId) return
     setIsGenerating(true)
     setChatError(null)
+
+    if (!apiKey) {
+      setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
+      setIsGenerating(false)
+      return
+    }
+
     const targetMsg = messages.find(m => m.id === msgId)
     if (!targetMsg || !targetMsg.parent_id) {
        setIsGenerating(false)
@@ -319,7 +332,7 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
     } catch (err: any) {
       console.error('Regeneration failed:', err)
       if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
-        setChatError('Для работы ИИ необходимо установить API-ключ в настройках боковой панели.')
+        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
       } else {
         setChatError('Произошла ошибка при регенерации. Пожалуйста, попробуйте позже.')
       }
@@ -421,7 +434,6 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
             <button 
               onClick={() => {
                 setChatError(null);
-                if (chatError.includes('API-ключ')) setIsApiKeyModalOpen(true);
               }}
               style={{
                 background: 'transparent',
@@ -434,7 +446,7 @@ export default function ChatScreen({ isDebug }: ChatScreenProps) {
                 textDecoration: 'underline'
               }}
             >
-              Рассказать, как исправить
+              Закрыть
             </button>
           </div>
         )}
