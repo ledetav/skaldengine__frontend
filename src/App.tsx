@@ -74,7 +74,9 @@ export default function App() {
           <Route path="/admin/characters/:id/edit/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/characters/create/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/users/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/users/:id/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/personas/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/personas/:id/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/lorebooks/fandom/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/lorebooks/characters/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/lorebooks/personas/debug" element={<ProtectedRoute isDebug><AdminDashboard /></ProtectedRoute>} />

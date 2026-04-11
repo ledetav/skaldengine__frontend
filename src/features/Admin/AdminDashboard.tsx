@@ -11,6 +11,7 @@ import type { Character, Lorebook, User, UserPersona } from './types'
 import { useProfile } from '@/core/hooks/useProfile'
 import { Badge } from '@/components/ui'
 import { UserProfileView } from './components/UserProfileView'
+import { PersonaProfileView } from './components/PersonaProfileView'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
@@ -127,6 +128,7 @@ export default function AdminDashboard() {
 
   const isDetailView = (pathname.includes('/characters/') || isCreateMode) && (id || tempNewCharacter)
   const isUserDetail = pathname.includes('/users/') && id
+  const isPersonaDetail = pathname.includes('/personas/') && id
   const isLorebookDetail = pathname.includes('/lorebooks/') && id && !pathname.includes('/fandom/') && !pathname.includes('/characters/')
 
   return (
@@ -225,7 +227,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === 'personas' && (
+          {activeTab === 'personas' && !isPersonaDetail && (
             <div className={styles.tableWrapper}>
               <table className={styles.compactTable}>
                 <thead>
@@ -234,24 +236,25 @@ export default function AdminDashboard() {
                     <th>Владелец</th>
                     <th>Чаты</th>
                     <th>Лоры</th>
-                    <th>ID</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {personas.map(p => (
-                    <tr key={p.id}>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <img src={p.avatar_url} alt="" style={{ width: '24px', height: '24px', borderRadius: '6px', objectFit: 'cover' }} />
-                          <span style={{ fontWeight: 700 }}>{p.name}</span>
-                        </div>
-                      </td>
-                      <td><Badge variant="teal">{p.owner_id}</Badge></td>
-                      <td>{p.chat_count}</td>
-                      <td>{p.lorebook_count}</td>
-                      <td><code style={{ fontSize: '0.7rem', opacity: 0.3 }}>{p.id}</code></td>
-                    </tr>
-                  ))}
+                  {personas.map(p => {
+                    const owner = users.find(u => u.id === p.owner_id)
+                    return (
+                      <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <img src={p.avatar_url} alt="" style={{ width: '24px', height: '24px', borderRadius: '6px', objectFit: 'cover' }} />
+                            <span style={{ fontWeight: 700 }}>{p.name}</span>
+                          </div>
+                        </td>
+                        <td><Badge variant="teal">{owner ? `@${owner.username}` : p.owner_id}</Badge></td>
+                        <td>{p.chat_count}</td>
+                        <td>{p.lorebook_count}</td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -274,6 +277,15 @@ export default function AdminDashboard() {
               userId={id!}
               users={users}
               onBack={() => navigateDebug('/admin/users')}
+            />
+          )}
+
+          {isPersonaDetail && (
+            <PersonaProfileView 
+              personaId={id!}
+              personas={personas}
+              users={users}
+              onBack={() => navigateDebug('/admin/personas')}
             />
           )}
         </section>
