@@ -17,15 +17,17 @@ export const useProfile = (username?: string, isDebug?: boolean) => {
 
   useEffect(() => {
     if (isDebug) {
-      const mockMe = mockUsers[2] // Default User
+      const role = localStorage.getItem('user_role') || 'user'
+      const mockMe = mockUsers.find(u => u.role === role) || mockUsers[2]
+      
       setUser({
-        id: 'user-1',
+        id: role === 'admin' ? 'user-1' : role === 'moderator' ? 'user-2' : 'user-3',
         login: mockMe.login,
         username: mockMe.username,
-        email: 'user@example.com',
+        email: `${role}@example.com`,
         full_name: mockMe.fullName,
         role: mockMe.role,
-        avatar_url: null,
+        avatar_url: role === 'admin' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' : role === 'moderator' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=mod' : null,
         cover_url: null,
         about: 'Я обожаю ролевые игры и создание новых миров.',
         birth_date: '1995-05-15',
@@ -37,22 +39,23 @@ export const useProfile = (username?: string, isDebug?: boolean) => {
           total_messages: 156
         }
       })
-      setPersonas([
+      // Personas and Lorebooks for debug
+      setPersonas(role === 'user' ? [
         { 
-          id: 'p1', 
-          name: 'Герой', 
-          description: 'Отважный воин из северных земель.', 
-          chat_count: 5, 
+          id: 'persona-1', 
+          name: 'Алекс', 
+          description: 'Опытный путешественник и мастер меча.', 
+          chat_count: 14, 
           lorebook_count: 1, 
           created_at: new Date().toISOString(),
-          avatar_url: null,
-          age: 25,
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex',
+          age: 24,
           gender: 'Мужской',
-          appearance: 'Высокий, мускулистый',
-          personality: 'Храбрый',
-          facts: 'Не любит лук'
+          appearance: 'Высокий, со шрамом на левом глазу.',
+          personality: 'Молчаливый и храбрый.',
+          facts: 'Знает язык эльфов.'
         } as any
-      ])
+      ] : [])
       setLorebooks(mockLorebooks.map(lb => ({
         id: lb.id,
         name: lb.name,

@@ -36,7 +36,13 @@ const gameModes: { id: GameModeType, title: string, description: string }[] = [
   }
 ]
 
-const CreateChatScreen: React.FC = () => {
+import { mockCharacters, mockLorebooks } from '../Admin/mockData'
+
+interface CreateChatScreenProps {
+  isDebug?: boolean
+}
+
+const CreateChatScreen: React.FC<CreateChatScreenProps> = ({ isDebug }) => {
   const { characterId } = useParams<{ characterId: string }>()
   const navigate = useNavigate()
   
@@ -64,6 +70,15 @@ const CreateChatScreen: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isDebug) {
+        setIsLoading(true)
+        const char = mockCharacters.find(c => c.id === characterId) || mockCharacters[0]
+        setCharacter(char)
+        setLorebooks(mockLorebooks as any)
+        setIsLoading(false)
+        return
+      }
+
       try {
         setIsLoading(true)
         const [charData, personasData, scenariosData, lorebooksData, userData] = await Promise.all([

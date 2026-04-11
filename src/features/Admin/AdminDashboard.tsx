@@ -8,6 +8,8 @@ import { LorebookSection } from './components/LorebookSection'
 import { CharacterProfileView } from './components/CharacterProfileView'
 import { mockCharacters, mockLorebooks, mockUsersList, mockPersonas } from './mockData'
 import type { Character, Lorebook, User, UserPersona } from './types'
+import { useProfile } from '@/core/hooks/useProfile'
+import { Badge } from '@/components/ui'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
@@ -100,8 +102,10 @@ export default function AdminDashboard() {
     }
   }, [id, pathname, lorebooks, isCreateMode])
 
-  // Mock current user for the badge
-  const currentUser = {
+  // Get profile state for the badge
+  const { user: profileUser } = useProfile(undefined, pathname.includes('/debug'))
+  
+  const currentUser = profileUser || {
     username: 'nordh',
     login: 'Nordh',
     role: 'admin',
@@ -141,7 +145,9 @@ export default function AdminDashboard() {
           <div className={styles.headerActions}>
             <div className={styles.userBadge}>
               <div className={styles.userBadgeInfo}>
-                <span className={styles.userBadgeName}>{currentUser.login}</span>
+                <span className={styles.userBadgeName}>
+                  {currentUser.full_name || currentUser.login || currentUser.username || 'Admin'}
+                </span>
                 <span className={styles.userBadgeRole}>
                   {currentUser.role === 'admin' ? 'Master Admin' : 'Moderator'}
                 </span>
@@ -150,7 +156,7 @@ export default function AdminDashboard() {
                 {currentUser.avatar_url ? (
                   <img src={currentUser.avatar_url} alt="" />
                 ) : (
-                  currentUser.username.charAt(0).toUpperCase()
+                  (currentUser.login || currentUser.username || 'A').charAt(0).toUpperCase()
                 )}
                 <div className={styles.statusIndicator} />
               </div>
@@ -193,7 +199,7 @@ export default function AdminDashboard() {
                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
                             {u.avatar_url && <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%' }} />}
                           </div>
-                          <span style={{ fontWeight: 700 }}>{u.username}</span>
+                          <span style={{ fontWeight: 700 }}>{u.full_name || u.login || u.username}</span>
                         </div>
                       </td>
                       <td><Badge variant={u.role === 'admin' ? 'orange' : 'purple'}>{u.role}</Badge></td>

@@ -9,10 +9,23 @@ import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
 import { AuthPanel } from './components/AuthPanel'
 
-export default function AuthScreen() {
+import { mockUsers } from '../Admin/mockData'
+
+interface AuthScreenProps {
+  isDebug?: boolean
+}
+
+export default function AuthScreen({ isDebug }: AuthScreenProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isLogin, setIsLogin] = useState(location.pathname === '/login')
+  const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
+
+  const handleDebugLogin = (role: 'admin' | 'moderator' | 'user') => {
+    const mockUser = mockUsers.find(u => u.role === role)
+    if (mockUser) {
+      setFormData(prev => ({ ...prev, login: mockUser.login, password: mockUser.password }))
+    }
+  }
 
   // Form State
   const [formData, setFormData] = useState({
@@ -31,13 +44,13 @@ export default function AuthScreen() {
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   useEffect(() => {
-    setIsLogin(location.pathname === '/login')
+    setIsLogin(location.pathname.startsWith('/login'))
     setErrors({})
     setGlobalError(null)
   }, [location.pathname])
 
   const toggleAuth = () => {
-    navigate(isLogin ? '/register' : '/login')
+    navigate(isLogin ? (isDebug ? '/register/debug' : '/register') : (isDebug ? '/login/debug' : '/login'))
   }
 
   // Validation Logic
@@ -128,6 +141,27 @@ export default function AuthScreen() {
     setIsLoading(true)
     setGlobalError(null)
 
+    if (isDebug && isLogin) {
+      setTimeout(() => {
+        const mockUser = mockUsers.find(u => u.login === formData.login && u.password === formData.password)
+        if (mockUser) {
+          localStorage.setItem('token', `mock_token_${mockUser.role}`)
+          localStorage.setItem('user_role', mockUser.role)
+          window.dispatchEvent(new Event('auth-change'))
+          
+          if (mockUser.role === 'admin' || mockUser.role === 'moderator') {
+            navigate('/admin/characters/debug')
+          } else {
+            navigate('/dashboard/debug')
+          }
+        } else {
+          setGlobalError('Неверный логин или пароль (DEBUG)')
+        }
+        setIsLoading(false)
+      }, 500)
+      return
+    }
+
     try {
       if (isLogin) {
         const result = await authApi.login(formData) as { access_token: string }
@@ -165,6 +199,15 @@ export default function AuthScreen() {
           <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
         </svg>
       </Link>
+
+      {isDebug && (
+        <div className={styles.debugLoginBar}>
+          <span className={styles.debugTitle}>DEBUGLOGIN:</span>
+          <button onClick={() => handleDebugLogin('admin')} className={styles.debugBtn}>Admin</button>
+          <button onClick={() => handleDebugLogin('moderator')} className={styles.debugBtn}>Mod</button>
+          <button onClick={() => handleDebugLogin('user')} className={styles.debugBtn}>User</button>
+        </div>
+      )}
 
       <motion.div 
         layout 

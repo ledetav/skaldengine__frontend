@@ -8,6 +8,8 @@ import { scenariosApi } from '@/core/api/scenarios'
 import { messagesApi } from '@/core/api/messages'
 import { charactersApi } from '@/core/api/characters'
 import { personasApi } from '@/core/api/personas'
+import { authApi } from '@/core/api/auth'
+import { mockCharacters } from '../Admin/mockData'
 import type { Character } from '@/core/types/character'
 import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType } from '@/core/types/chat'
 
@@ -28,7 +30,11 @@ import { LorebookSection } from './components/sections/LorebookSection'
 // Common
 import { ApiKeyModal } from './components/common/ApiKeyModal'
 
-export default function ChatScreen() {
+interface ChatScreenProps {
+  isDebug?: boolean
+}
+
+export default function ChatScreen({ isDebug }: ChatScreenProps) {
   const { chatId } = useParams<{ chatId: string }>()
   
   const [chat, setChat] = useState<ChatType | null>(null)
@@ -87,9 +93,29 @@ export default function ChatScreen() {
 
   // Data Loading
   useEffect(() => {
-    if (!chatId) return
+    if (!chatId && !isDebug) return
 
     const loadData = async () => {
+      if (isDebug) {
+        setChat({
+          id: 'chat-debug',
+          title: 'Тестовый чат',
+          character_id: mockCharacters[0].id,
+          user_persona_id: 'p1',
+          mode: 'sandbox',
+          language: 'RU',
+          narrative_voice: 'third',
+          checkpoints_count: 5,
+          created_at: new Date().toISOString()
+        } as any)
+        setCharacter(mockCharacters[0])
+        setMessages([
+          { id: '1', author: mockCharacters[0].name, content: 'Привет! Я готов к приключениям.', role: 'assistant', created_at: new Date().toISOString() },
+          { id: '2', author: 'Вы', content: 'Отлично, начнем!', role: 'user', created_at: new Date().toISOString() }
+        ])
+        return
+      }
+
       try {
         const chatData = await chatsApi.getChat(chatId)
         setChat(chatData)
@@ -348,8 +374,8 @@ export default function ChatScreen() {
               isLast={idx === messages.length - 1}
               isGenerating={isGenerating}
               showThoughtsGlobal={showThoughtsGlobal}
-              personaAvatar={persona?.avatar_url || undefined}
-              characterAvatar={character?.avatar_url}
+              personaAvatar={persona?.avatar_url || ''}
+              characterAvatar={character?.avatar_url || ''}
               onEdit={handleEditMessage}
               onRegenerate={handleRegenerate}
               onSiblingSwitch={handleSiblingSwitch}
