@@ -222,7 +222,11 @@ export function LorebookSection({
                       {initialType === 'fandom' ? 'Фандом' : initialType === 'persona' ? 'Персона' : 'Персонаж'}
                     </Badge>
                       <span style={{ fontWeight: 700, fontSize: '1rem', opacity: 0.8 }}>
-                        {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
+                        {initialType === 'fandom' 
+                          ? lb.fandom 
+                          : initialType === 'persona' 
+                            ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
+                            : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                       </span>
                     </div>
                   )}
@@ -389,7 +393,15 @@ export function LorebookSection({
               {filteredLorebooks.map(lb => (
                 <tr key={lb.id} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
-                  <td><Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>{initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}</Badge></td>
+                  <td>
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                      {initialType === 'fandom' 
+                        ? lb.fandom 
+                        : initialType === 'persona' 
+                          ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
+                          : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
+                    </Badge>
+                  </td>
                   <td>{lb.entries?.length || lb.entries_count || 0}</td>
                 </tr>
               ))}
@@ -420,7 +432,11 @@ export function LorebookSection({
                   <h3 className={styles.cardName}>{lb.name}</h3>
                   <div style={{ marginTop: '6px' }}>
                     <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
-                      {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
+                      {initialType === 'fandom' 
+                        ? lb.fandom 
+                        : initialType === 'persona' 
+                          ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
+                          : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                     </Badge>
                   </div>
                 </div>
