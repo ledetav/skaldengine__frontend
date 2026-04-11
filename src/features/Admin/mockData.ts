@@ -32,6 +32,34 @@ export const mockCharacters: Character[] = [
     nsfw_allowed: true,
     is_public: true,
     is_deleted: false
+  },
+  {
+    id: 'char-3',
+    name: 'Мастер Ли',
+    description: 'Учитель боевых искусств из затерянного храма.',
+    fandom: 'Уся / Боевые искусства',
+    avatar_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=200',
+    card_image_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=800',
+    total_chats_count: 500,
+    monthly_chats_count: 50,
+    gender: 'мужской',
+    nsfw_allowed: false,
+    is_public: true,
+    is_deleted: false
+  },
+  {
+    id: 'char-4',
+    name: 'Командор Кросс',
+    description: 'Опытный стратег звездного флота.',
+    fandom: 'Космическая опера',
+    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+    card_image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800',
+    total_chats_count: 2100,
+    monthly_chats_count: 450,
+    gender: 'мужской',
+    nsfw_allowed: false,
+    is_public: true,
+    is_deleted: false
   }
 ]
 
@@ -63,5 +91,29 @@ export const mockLorebooks: Lorebook[] = [
         priority: 5
       }
     ]
+  }
+]
+
+export const mockUsers = [
+  {
+    login: 'admin',
+    password: 'admin',
+    role: 'admin',
+    username: 'master_admin',
+    fullName: 'Skald Admin'
+  },
+  {
+    login: 'moderator',
+    password: 'moderator',
+    role: 'moderator',
+    username: 'mod_user',
+    fullName: 'Lore Moderator'
+  },
+  {
+    login: 'user',
+    password: 'user',
+    role: 'user',
+    username: 'active_player',
+    fullName: 'Regular Player'
   }
 ]

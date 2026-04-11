@@ -1,12 +1,14 @@
 import { useState, useMemo, useEffect } from 'react'
 import { charactersApi } from '@/core/api/characters'
 import type { Character } from '@/core/types/character'
+import { mockCharacters } from '@/features/Admin/mockData'
 
-export const useDashboard = () => {
-  const [characters, setCharacters] = useState<Character[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export const useDashboard = (isDebug?: boolean) => {
+  const [characters, setCharacters] = useState<Character[]>(isDebug ? mockCharacters : [])
+  const [isLoading, setIsLoading] = useState(!isDebug)
   const [error, setError] = useState<string | null>(null)
 
+  // ... rest of state
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
   const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')
@@ -17,6 +19,8 @@ export const useDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
+    if (isDebug) return
+
     const fetchCharacters = async () => {
       try {
         setIsLoading(true)
