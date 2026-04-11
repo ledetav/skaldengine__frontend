@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useLocation, useNavigate, Navigate } from 'react-router-dom'
 
 import styles from './Admin.module.css'
@@ -12,6 +12,7 @@ import { useProfile } from '@/core/hooks/useProfile'
 import { Badge } from '@/components/ui'
 import { UserProfileView } from './components/UserProfileView'
 import { PersonaProfileView } from './components/PersonaProfileView'
+import { AdminFilterModal, type FilterState } from './components/AdminFilterModal'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
@@ -32,111 +33,81 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState(mockUsersList)
   const [personas, setPersonas] = useState(mockPersonas)
 
-  const isCreateMode = pathname.includes('/create/')
-  
-  const NEW_CHARACTER: Character = {
-    id: 'new-' + Date.now(),
-    name: '',
-    description: '',
-    fandom: '',
-    avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=new',
-    card_image_url: '',
-    appearance: '',
-    personality: '',
-    total_chats_count: 0,
-    monthly_chats_count: 0,
-    nsfw_allowed: false,
-    is_public: true,
-    is_deleted: false
-  }
+  // Filter State
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [activeFilters, setActiveFilters] = useState<FilterState>({})
 
-  const [tempNewCharacter, setTempNewCharacter] = useState<Character | null>(null)
+  const { profile: currentUser, isLoading } = useProfile()
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'moderator' || pathname.includes('/debug')
 
-  // Initialize temp character for create mode
   useEffect(() => {
-    if (isCreateMode && !tempNewCharacter) {
-      setTempNewCharacter(NEW_CHARACTER)
-    } else if (!isCreateMode) {
-      setTempNewCharacter(null)
-    }
-  }, [isCreateMode])
+    if (pathname.includes('/admin/users')) setActiveTab('users')
+    else if (pathname.includes('/admin/personas')) setActiveTab('personas')
+    else if (pathname.includes('/admin/characters')) setActiveTab('characters')
+    else if (pathname.includes('/admin/lorebooks/fandom')) setActiveTab('lorebooks_fandom')
+    else if (pathname.includes('/admin/lorebooks/characters')) setActiveTab('lorebooks_character')
+    else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
+  }, [pathname])
 
-  const handleUpdateCharacter = (updatedChar: Character) => {
-    if (isCreateMode) {
-      setTempNewCharacter(updatedChar)
-    } else {
-      setCharacters(prev => prev.map(c => c.id === updatedChar.id ? updatedChar : c))
-    }
-  }
-
-  const handleSaveNewCharacter = () => {
-    if (tempNewCharacter) {
-      setCharacters(prev => [tempNewCharacter, ...prev])
-      navigateDebug(`/admin/characters/${tempNewCharacter.id}`)
-    }
-  }
-
-  const handleUpdateLorebooks = (updatedLorebooks: Lorebook[]) => {
-    setLorebooks(updatedLorebooks)
-  }
-
-  // Auto-switch tab and detail state based on URL
-  useEffect(() => {
-    if (pathname.includes('/lorebooks/fandom/')) {
-      setActiveTab('lorebooks_fandom')
-    } else if (pathname.includes('/lorebooks/characters/')) {
-      setActiveTab('lorebooks_character')
-    } else if (pathname.includes('/lorebooks/personas/')) {
-      setActiveTab('lorebooks_persona')
-    } else if (pathname.includes('/lorebooks/') && id) {
-      const lb = lorebooks.find(l => l.id === id)
-      if (lb) {
-        if (lb.fandom) setActiveTab('lorebooks_fandom')
-        else if (lb.character_id) setActiveTab('lorebooks_character')
-        else if (lb.user_persona_id) setActiveTab('lorebooks_persona')
-      }
-    } else if (pathname.includes('/characters/') || isCreateMode) {
-      setActiveTab('characters')
-    } else if (pathname.includes('/users/')) {
-      setActiveTab('users')
-    } else if (pathname.includes('/personas/')) {
-      setActiveTab('personas')
-    }
-  }, [id, pathname, lorebooks, isCreateMode])
-
-  // Get profile state for the badge and access control
-  const isDebug = pathname.includes('/debug')
-  const { user: profileUser, isLoading } = useProfile(undefined, isDebug)
-  
-  if (isLoading) return null
-
-  if (!profileUser && !isDebug) {
-    return <Navigate to="/" replace />
-  }
-
-  const currentUser = profileUser || {
-    username: 'nordh',
-    login: 'Nordh',
-    role: 'admin',
-    avatar_url: null
-  }
-
-  // Final check: only admin and moderator can access admin panel
-  if (currentUser.role === 'user') {
-    return <Navigate to={isDebug ? '/login/debug' : '/'} replace />
-  }
-
-  const isDetailView = (pathname.includes('/characters/') || isCreateMode) && (id || tempNewCharacter)
+  const isDetailView = id && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
+  const isLorebookDetail = pathname.includes('/lorebooks/') && id && !pathname.includes('/fandom/') && !pathname.includes('/characters/') && !pathname.includes('/personas/')
   const isUserDetail = pathname.includes('/users/') && id
   const isPersonaDetail = pathname.includes('/personas/') && id
-  const isLorebookDetail = pathname.includes('/lorebooks/') && id && !pathname.includes('/fandom/') && !pathname.includes('/characters/')
+
+  // --- Filtering Logic ---
+  const filteredUsers = useMemo(() => {
+    return users.filter(u => {
+      if (activeFilters.roles?.length && !activeFilters.roles.includes(u.role)) return false
+      if (activeFilters.regDateStart && new Date(u.created_at) < new Date(activeFilters.regDateStart)) return false
+      if (activeFilters.regDateEnd && new Date(u.created_at) > new Date(activeFilters.regDateEnd)) return false
+      return true
+    })
+  }, [users, activeFilters])
+
+  const filteredPersonas = useMemo(() => {
+    return personas.filter(p => {
+      if (activeFilters.userIds?.length && !activeFilters.userIds.includes(p.owner_id)) return false
+      if (activeFilters.chatCountMin !== undefined && (p.chat_count || 0) < activeFilters.chatCountMin) return false
+      if (activeFilters.chatCountMax !== undefined && (p.chat_count || 0) > activeFilters.chatCountMax) return false
+      if (activeFilters.lorebookCountMin !== undefined && (p.lorebook_count || 0) < activeFilters.lorebookCountMin) return false
+      if (activeFilters.lorebookCountMax !== undefined && (p.lorebook_count || 0) > activeFilters.lorebookCountMax) return false
+      return true
+    })
+  }, [personas, activeFilters])
+
+  const filteredCharacters = useMemo(() => {
+    return characters.filter(c => {
+      if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
+      if (activeFilters.isPublic === 'public' && !c.is_public) return false
+      if (activeFilters.isPublic === 'private' && c.is_public) return false
+      if (activeFilters.isNSFW === 'safe' && c.is_nsfw) return false
+      if (activeFilters.isNSFW === 'nsfw' && !c.is_nsfw) return false
+      return true
+    })
+  }, [characters, activeFilters])
+
+  const filteredLorebooks = useMemo(() => {
+    return lorebooks.filter(lb => {
+      if (activeTab === 'lorebooks_fandom' && activeFilters.fandoms?.length && !activeFilters.fandoms.includes(lb.fandom || '')) return false
+      if (activeTab === 'lorebooks_character' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.character_id || '')) return false
+      if (activeTab === 'lorebooks_persona' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.user_persona_id || '')) return false
+      
+      const count = lb.entries?.length || lb.entries_count || 0
+      if (activeFilters.entriesCountMin !== undefined && count < activeFilters.entriesCountMin) return false
+      if (activeFilters.entriesCountMax !== undefined && count > activeFilters.entriesCountMax) return false
+      return true
+    })
+  }, [lorebooks, activeFilters, activeTab])
+
+  if (isLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div></div>
+  if (!isAdmin) return <Navigate to="/dashboard" replace />
+  if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
+
+  const isAnyFilterActive = Object.keys(activeFilters).length > 0
 
   return (
     <div className={styles.adminPage}>
-      {/* Premium Background Elements */}
-      <div className={styles.bgContainer}>
-        <div className={styles.bgGrid} />
-        <div className={styles.bgOverlay} />
+      <div className={styles.backgroundEffects}>
         <div className={`${styles.orb} ${styles.orbPurple}`} />
         <div className={`${styles.orb} ${styles.orbPink}`} />
         <div className={`${styles.orb} ${styles.orbOrange}`} />
@@ -159,20 +130,31 @@ export default function AdminDashboard() {
           </div>
           
           <div className={styles.headerActions}>
+            <button 
+              className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
+              onClick={() => setIsFilterOpen(true)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Фильтры
+              {isAnyFilterActive && <span className={styles.statusDot} style={{ position: 'static', marginLeft: '4px' }} />}
+            </button>
+
             <div className={styles.userBadge}>
               <div className={styles.userBadgeInfo}>
                 <span className={styles.userBadgeName}>
-                  {currentUser.full_name || currentUser.login || currentUser.username || 'Admin'}
+                  {currentUser?.full_name || currentUser?.login || currentUser?.username || 'Admin'}
                 </span>
                 <span className={styles.userBadgeRole}>
-                  {currentUser.role === 'admin' ? 'Master Admin' : 'Moderator'}
+                  {currentUser?.role === 'admin' ? 'Master Admin' : 'Moderator'}
                 </span>
               </div>
               <div className={styles.userBadgeAvatar}>
-                {currentUser.avatar_url ? (
+                {currentUser?.avatar_url ? (
                   <img src={currentUser.avatar_url} alt="" />
                 ) : (
-                  (currentUser.login || currentUser.username || 'A').charAt(0).toUpperCase()
+                  (currentUser?.login || currentUser?.username || 'A').charAt(0).toUpperCase()
                 )}
                 <div className={styles.statusIndicator} />
               </div>
@@ -183,7 +165,7 @@ export default function AdminDashboard() {
         <section className={styles.contentArea}>
           {activeTab === 'characters' && !isDetailView && (
             <CharacterSection 
-              characters={characters}
+              characters={filteredCharacters}
               onSelectCharacter={(cid) => navigateDebug(`/admin/characters/${cid}`)} 
             />
           )}
@@ -191,7 +173,10 @@ export default function AdminDashboard() {
           {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character' || activeTab === 'lorebooks_persona') && (
             <LorebookSection 
               type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
-              lorebooks={lorebooks}
+              lorebooks={filteredLorebooks}
+              characters={characters}
+              users={users}
+              personas={personas}
             />
           )}
 
@@ -207,7 +192,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map(u => (
+                  {filteredUsers.map(u => (
                     <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -232,6 +217,7 @@ export default function AdminDashboard() {
               <table className={styles.compactTable}>
                 <thead>
                   <tr>
+                    <th>Разворот</th>
                     <th>Персона</th>
                     <th>Владелец</th>
                     <th>Чаты</th>
@@ -239,19 +225,15 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {personas.map(p => {
+                  {filteredPersonas.map(p => {
                     const owner = users.find(u => u.id === p.owner_id)
                     return (
                       <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img src={p.avatar_url} alt="" style={{ width: '24px', height: '24px', borderRadius: '6px', objectFit: 'cover' }} />
-                            <span style={{ fontWeight: 700 }}>{p.name}</span>
-                          </div>
-                        </td>
-                        <td><Badge variant="teal">{owner ? `@${owner.username}` : p.owner_id}</Badge></td>
-                        <td>{p.chat_count}</td>
-                        <td>{p.lorebook_count}</td>
+                        <td style={{ width: '40px' }}><div className={styles.charAvatarWrapper} style={{ width: '32px', height: '32px', position: 'static' }}><img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" /></div></td>
+                        <td><span style={{ fontWeight: 700 }}>{p.name}</span></td>
+                        <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>{owner ? `@${owner.username}` : p.owner_id}</span></td>
+                        <td><span style={{ fontWeight: 600 }}>{p.chat_count}</span></td>
+                        <td><Badge variant="teal">{p.lorebook_count}</Badge></td>
                       </tr>
                     )
                   })}
@@ -262,13 +244,12 @@ export default function AdminDashboard() {
 
           {isDetailView && (
             <CharacterProfileView 
-              characterId={isCreateMode ? tempNewCharacter!.id : id!} 
+              characterId={id!} 
               characters={characters}
               allLorebooks={lorebooks}
-              onBack={() => navigateDebug('/admin/characters')} 
-              onUpdateCharacter={handleUpdateCharacter}
-              onUpdateLorebooks={handleUpdateLorebooks}
-              onSave={isCreateMode ? handleSaveNewCharacter : undefined}
+              onBack={() => navigateDebug('/admin/characters')}
+              onUpdateCharacter={(updated) => setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))}
+              onUpdateLorebooks={(updated) => setLorebooks(updated)}
             />
           )}
 
@@ -276,7 +257,7 @@ export default function AdminDashboard() {
             <UserProfileView 
               userId={id!}
               users={users}
-              currentUser={currentUser}
+              currentUser={currentUser!}
               onBack={() => navigateDebug('/admin/users')}
             />
           )}
@@ -291,6 +272,18 @@ export default function AdminDashboard() {
             />
           )}
         </section>
+
+        <AdminFilterModal 
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          tab={activeTab}
+          onApply={(f) => setActiveFilters(f)}
+          initialFilters={activeFilters}
+          users={users}
+          personas={personas}
+          characters={characters}
+          lorebooks={lorebooks}
+        />
       </main>
     </div>
   )

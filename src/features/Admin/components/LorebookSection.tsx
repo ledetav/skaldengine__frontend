@@ -1,17 +1,26 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
-import type { Lorebook } from '../types'
+import type { Lorebook, Character, User, UserPersona } from '../types'
 
 interface LorebookSectionProps {
   type: 'fandom' | 'character' | 'persona'
   lorebooks: Lorebook[]
+  characters?: Character[]
+  users?: User[]
+  personas?: UserPersona[]
 }
 
 type ViewMode = 'grid' | 'table'
 
-export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
+export function LorebookSection({ 
+  type: initialType, 
+  lorebooks, 
+  characters = [], 
+  users = [], 
+  personas = [] 
+}: LorebookSectionProps) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -25,25 +34,46 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const { success } = useToast()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
+  // Edit State
   const isEditMode = pathname.includes('/edit/')
   const isDetailMode = !!id
+  const lb = useMemo(() => lorebooks.find(l => l.id === id), [lorebooks, id])
+
+  const [editType, setEditType] = useState<'fandom' | 'character' | 'persona'>(initialType)
+  const [selectedFandom, setSelectedFandom] = useState(lb?.fandom || '')
+  const [isNewFandom, setIsNewFandom] = useState(false)
+  const [selectedCharId, setSelectedCharId] = useState(lb?.character_id || '')
+  const [selectedUserId, setSelectedUserId] = useState(lb?.owner_id || personas.find(p => p.id === lb?.user_persona_id)?.owner_id || '')
+  const [selectedPersonaId, setSelectedPersonaId] = useState(lb?.user_persona_id || '')
+
+  const allFandoms = useMemo(() => {
+    const s = new Set<string>()
+    lorebooks.forEach(l => { if (l.fandom) s.add(l.fandom) })
+    characters.forEach(c => { if (c.fandom) s.add(c.fandom) })
+    return Array.from(s).sort()
+  }, [lorebooks, characters])
+
+  const userPersonas = useMemo(() => {
+    return personas.filter(p => p.owner_id === selectedUserId)
+  }, [personas, selectedUserId])
 
   const filteredLorebooks = lorebooks.filter(lb => {
     const matchesSearch = lb.name.toLowerCase().includes(search.toLowerCase()) || 
                          lb.fandom?.toLowerCase().includes(search.toLowerCase()) ||
                          lb.user_persona_name?.toLowerCase().includes(search.toLowerCase())
     
-    if (type === 'fandom') return matchesSearch && !!lb.fandom && !lb.character_id && !lb.user_persona_id
-    if (type === 'character') return matchesSearch && !!lb.character_id
-    if (type === 'persona') return matchesSearch && !!lb.user_persona_id
+    if (initialType === 'fandom') return matchesSearch && !!lb.fandom && !lb.character_id && !lb.user_persona_id
+    if (initialType === 'character') return matchesSearch && !!lb.character_id
+    if (initialType === 'persona') return matchesSearch && !!lb.user_persona_id
     return matchesSearch
   })
 
   const handleEdit = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}/edit`)
   const handleView = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}`)
   const handleBack = () => {
-    const tab = type === 'fandom' ? 'fandom' : type === 'persona' ? 'personas' : 'characters'
+    const tab = initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'personas' : 'characters'
     navigateDebug(`/admin/lorebooks/${tab}`)
   }
   const handleSave = () => {
@@ -52,7 +82,6 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
   }
 
   if (isDetailMode) {
-    const lb = lorebooks.find(l => l.id === id)
     if (!lb) return <div style={{ color: 'var(--accent-red)', padding: '40px' }}>Лорбук не найден</div>
 
     return (
@@ -87,36 +116,105 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                 <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Тип / Привязка</div>
                   {isEditMode ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                       <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
                         <button 
-                          className={`${styles.roleBtn} ${type === 'fandom' ? styles.roleBtnActive : ''}`}
-                          onClick={() => {/* update type to fandom */}}
+                          className={`${styles.roleBtn} ${editType === 'fandom' ? styles.roleBtnActive : ''}`}
+                          onClick={() => setEditType('fandom')}
                         >
                           Фандом
                         </button>
                         <button 
-                          className={`${styles.roleBtn} ${type === 'character' ? styles.roleBtnActive : ''}`}
-                          onClick={() => {/* update type to character */}}
+                          className={`${styles.roleBtn} ${editType === 'character' ? styles.roleBtnActive : ''}`}
+                          onClick={() => setEditType('character')}
                         >
                           Персонаж
                         </button>
                         <button 
-                          className={`${styles.roleBtn} ${type === 'persona' ? styles.roleBtnActive : ''}`}
-                          onClick={() => {/* update type to persona */}}
+                          className={`${styles.roleBtn} ${editType === 'persona' ? styles.roleBtnActive : ''}`}
+                          onClick={() => setEditType('persona')}
                         >
                           Персона
                         </button>
                       </div>
-                      <Input defaultValue={type === 'fandom' ? lb.fandom : type === 'persona' ? (lb.user_persona_name || lb.user_persona_id) : (lb.character_name || lb.character_id)} />
+
+                      {/* Binding Inputs */}
+                      {editType === 'fandom' && (
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                          <select 
+                            className={styles.dropdownSelected} 
+                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                            value={isNewFandom ? 'new' : selectedFandom}
+                            onChange={(e) => {
+                              if (e.target.value === 'new') {
+                                setIsNewFandom(true)
+                                setSelectedFandom('')
+                              } else {
+                                setIsNewFandom(false)
+                                setSelectedFandom(e.target.value)
+                              }
+                            }}
+                          >
+                            <option value="">Выберите фандом...</option>
+                            <option value="new">+ Создать свой</option>
+                            {allFandoms.map(f => <option key={f} value={f}>{f}</option>)}
+                          </select>
+                          {isNewFandom && (
+                            <Input 
+                              placeholder="Название нового фандома" 
+                              value={selectedFandom} 
+                              onChange={(e) => setSelectedFandom(e.target.value)} 
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {editType === 'character' && (
+                        <select 
+                          className={styles.dropdownSelected} 
+                          style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                          value={selectedCharId}
+                          onChange={(e) => setSelectedCharId(e.target.value)}
+                        >
+                          <option value="">Выберите персонажа...</option>
+                          {characters.map(c => <option key={c.id} value={c.id}>{c.name} ({c.fandom || 'Оригинальный'})</option>)}
+                        </select>
+                      )}
+
+                      {editType === 'persona' && (
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                          <select 
+                            className={styles.dropdownSelected} 
+                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                            value={selectedUserId}
+                            onChange={(e) => {
+                              setSelectedUserId(e.target.value)
+                              setSelectedPersonaId('')
+                            }}
+                          >
+                            <option value="">Выберите пользователя...</option>
+                            {users.map(u => <option key={u.id} value={u.id}>@{u.username}</option>)}
+                          </select>
+                          <select 
+                            className={styles.dropdownSelected} 
+                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                            value={selectedPersonaId}
+                            onChange={(e) => setSelectedPersonaId(e.target.value)}
+                            disabled={!selectedUserId}
+                          >
+                            <option value="">Выберите персону...</option>
+                            {userPersonas.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>
-                      {type === 'fandom' ? 'Фандом' : type === 'persona' ? 'Персона' : 'Персонаж'}
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                      {initialType === 'fandom' ? 'Фандом' : initialType === 'persona' ? 'Персона' : 'Персонаж'}
                     </Badge>
                       <span style={{ fontWeight: 700, fontSize: '1rem', opacity: 0.8 }}>
-                        {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
+                        {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
                       </span>
                     </div>
                   )}
@@ -132,14 +230,21 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                 </div>
               </div>
 
-              <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0 }}>
+              <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0, justifyContent: 'space-between' }}>
                 {isEditMode ? (
                   <>
-                    <Button variant="ghost" onClick={() => handleView(lb.id)}>Отмена</Button>
-                    <Button variant="orange" onClick={handleSave}>Сохранить изменения</Button>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <Button variant="ghost" onClick={() => handleView(lb.id)}>Отмена</Button>
+                      <Button variant="orange" onClick={handleSave}>Сохранить изменения</Button>
+                    </div>
                   </>
                 ) : (
-                  <Button variant="orange" onClick={() => handleEdit(lb.id)}>Редактировать</Button>
+                  <>
+                    <Button variant="orange" onClick={() => handleEdit(lb.id)}>Редактировать</Button>
+                    {initialType !== 'persona' && (
+                      <Button variant="danger" onClick={() => setShowDeleteModal(true)}>Удалить лорбук</Button>
+                    )}
+                  </>
                 )}
               </div>
             </Card>
@@ -169,7 +274,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                       <td>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                           {entry.keywords?.map(kw => (
-                            <Badge key={kw} variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
+                            <Badge key={kw} variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
                           ))}
                         </div>
                       </td>
@@ -185,41 +290,49 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                           {entry.content}
                         </div>
                       </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                          <button className={styles.iconBtn} title="Редактировать">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                          </button>
-                          <button className={styles.iconBtn} title="Удалить" style={{ color: 'var(--accent-red)' }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                          </button>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                          <button className={styles.iconBtn}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                          <button className={styles.iconBtn}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                         </div>
                       </td>
                     </tr>
                   ))}
-                  {!lb.entries?.length && (
-                    <tr>
-                      <td colSpan={4} style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>Записей пока нет</td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+
+        {showDeleteModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+              <h3 className={styles.modalTitle}>Удалить лорбук?</h3>
+              <p className={styles.modalDescription}>
+                Это действие необратимо. Лорбук <strong>{lb.name}</strong> будет полностью удален.
+              </p>
+              <div className={styles.modalActions}>
+                <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
+                <Button variant="danger" onClick={() => { setShowDeleteModal(false); handleBack(); }}>Да, удалить</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
-
 
   return (
     <div className={styles.sectionContainer}>
       <div className={styles.sectionHeader}>
         <div className={styles.searchWrapper}>
+          <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input 
             type="text" 
-            placeholder={`Поиск лорбуков ${type === 'fandom' ? 'вселенных' : 'персонажей'}...`} 
-            className={styles.searchBox}
+            placeholder="Поиск по названию или привязке..." 
+            className={styles.searchInput}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -240,7 +353,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
               Карточки
             </button>
           </div>
-          {type !== 'persona' && <button className={styles.createBtn}>+ Создать</button>}
+          {initialType !== 'persona' && <button className={styles.createBtn}>+ Создать</button>}
         </div>
       </div>
 
@@ -250,26 +363,18 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
             <thead>
               <tr>
                 <th>Название</th>
-                <th>{type === 'fandom' ? 'Вселенная' : type === 'persona' ? 'Владелец' : 'Персонаж'}</th>
+                <th>{initialType === 'fandom' ? 'Вселенная' : initialType === 'persona' ? 'Владелец' : 'Персонаж'}</th>
                 <th>Записей</th>
                 <th>ID</th>
-                <th>Действия</th>
               </tr>
             </thead>
             <tbody>
               {filteredLorebooks.map(lb => (
                 <tr key={lb.id} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
-                  <td><Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>{type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_id}</Badge></td>
-                  <td>{lb.entries.length}</td>
+                  <td><Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>{initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}</Badge></td>
+                  <td>{lb.entries?.length || 0}</td>
                   <td><code style={{ fontSize: '0.7rem', opacity: 0.5 }}>{lb.id}</code></td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button className={styles.iconBtn} onClick={(e) => { e.stopPropagation(); handleEdit(lb.id); }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                      </button>
-                    </div>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -283,14 +388,23 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                 <button className={`${styles.iconBtn} ${styles.editBtn}`} onClick={(e) => { e.stopPropagation(); handleEdit(lb.id); }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
+                {initialType !== 'persona' && (
+                  <button 
+                    className={`${styles.iconBtn} ${styles.dangerBtn}`} 
+                    style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties}
+                    onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); /* note: in a real app would set current delete ID */ }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                )}
               </div>
 
               <div className={styles.cardTop}>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{lb.name}</h3>
                   <div style={{ marginTop: '6px' }}>
-                    <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>
-                      {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                      {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
                     </Badge>
                   </div>
                 </div>
@@ -310,12 +424,6 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {filteredLorebooks.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '100px 0', opacity: 0.5 }}>
-          Лорбуки не найдены
         </div>
       )}
     </div>

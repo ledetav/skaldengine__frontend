@@ -21,8 +21,10 @@ export function CharacterProfileView({
   onBack, 
   onUpdateCharacter,
   onUpdateLorebooks,
+  onDeleteCharacter,
   onSave
 }: CharacterProfileViewProps) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -364,14 +366,17 @@ export function CharacterProfileView({
               </div>
             </div>
 
-            <div className={styles.actionRow}>
+            <div className={styles.actionRow} style={{ justifyContent: 'space-between' }}>
               {!isEditing ? (
-                <button 
-                  className={styles.createBtn} 
-                  onClick={() => navigateDebug(`/admin/characters/${characterId}/edit`)}
-                >
-                  Редактировать
-                </button>
+                <>
+                  <button 
+                    className={styles.createBtn} 
+                    onClick={() => navigateDebug(`/admin/characters/${characterId}/edit`)}
+                  >
+                    Редактировать
+                  </button>
+                  <Button variant="danger" onClick={() => setShowDeleteModal(true)}>Удалить персонажа</Button>
+                </>
               ) : (
                 <button 
                   className={styles.createBtn} 
@@ -384,6 +389,20 @@ export function CharacterProfileView({
           </div>
         </main>
       </div>
+      {showDeleteModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Удалить персонажа?</h3>
+            <p className={styles.modalDescription}>
+              Это действие необратимо. Персонаж <strong>{character.name}</strong> будет полностью удален из системы.
+            </p>
+            <div className={styles.modalActions}>
+              <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
+              <Button variant="danger" onClick={() => { setShowDeleteModal(false); onBack(); }}>Да, удалить</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

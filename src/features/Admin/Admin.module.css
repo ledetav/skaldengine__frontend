@@ -1290,7 +1290,7 @@
   padding: 14px 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   color: rgba(255, 255, 255, 0.5);
   font-weight: 800;
   font-size: 0.8rem;
@@ -1314,4 +1314,116 @@
   border-color: var(--accent-purple);
   color: var(--accent-purple);
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+/* Filter Styles */
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+}
+
+.filterBtnActive {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+}
+
+.filterGroup {
+  margin-bottom: 24px;
+}
+
+.filterLabel {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rangeInput {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--white);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.chipsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--border-purple);
+  border-radius: 6px;
+  color: var(--accent-purple);
+  font-size: 0.75rem;
+  font-weight: 700;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%);
+}
+
+.chipRemove {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  display: flex;
+}
+
+.chipRemove:hover {
+  opacity: 1;
+}
+
+.filterOptionList {
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.filterOption {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s;
+}
+
+.filterOption:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--white);
 }
