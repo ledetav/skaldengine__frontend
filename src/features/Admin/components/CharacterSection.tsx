@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import { mockCharacters } from '../mockData'
 import type { Character } from '../types'
@@ -6,8 +7,13 @@ import type { Character } from '../types'
 type ViewMode = 'grid' | 'table'
 type SortField = 'name' | 'total_chats_count' | 'monthly_chats_count'
 
-export function CharacterSection() {
-  const [characters] = useState<Character[]>(mockCharacters)
+interface CharacterSectionProps {
+  characters: Character[]
+  onSelectCharacter?: (id: string) => void
+}
+
+export function CharacterSection({ characters, onSelectCharacter }: CharacterSectionProps) {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const [sortField, setSortField] = useState<SortField>('name')
@@ -52,7 +58,7 @@ export function CharacterSection() {
               Карточки
             </button>
           </div>
-          <button className={styles.createBtn}>+ Создать</button>
+          <button className={styles.createBtn} onClick={() => navigate('/admin/characters/create/debug')}>+ Создать</button>
         </div>
       </div>
 
@@ -71,7 +77,7 @@ export function CharacterSection() {
             </thead>
             <tbody>
               {filteredCharacters.map(char => (
-                <tr key={char.id}>
+                <tr key={char.id} onClick={() => onSelectCharacter?.(char.id)} style={{ cursor: 'pointer' }}>
                   <td style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <img src={char.avatar_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
                     <span style={{ fontWeight: 700 }}>{char.name}</span>
@@ -86,7 +92,7 @@ export function CharacterSection() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                      <button className={styles.iconBtn}>
+                      <button className={styles.iconBtn} onClick={(e) => { e.stopPropagation(); navigate(`/admin/characters/${char.id}/edit/debug`) }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
                       <button className={styles.iconBtn}>
@@ -102,9 +108,12 @@ export function CharacterSection() {
       ) : (
         <div className={styles.grid}>
           {filteredCharacters.map(char => (
-            <div key={char.id} className={styles.adminCard}>
+            <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter?.(char.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardActions}>
-                <button className={`${styles.iconBtn} ${styles.editBtn}`}>
+                <button 
+                  className={`${styles.iconBtn} ${styles.editBtn}`}
+                  onClick={(e) => { e.stopPropagation(); navigate(`/admin/characters/${char.id}/edit/debug`) }}
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
                 <button className={`${styles.iconBtn} ${styles.deleteBtn}`}>

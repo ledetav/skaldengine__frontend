@@ -273,6 +273,18 @@
   color: var(--accent-orange);
 }
 
+.ds-badge--fuchsia {
+  background: rgba(217, 70, 239, 0.12);
+  border-color: var(--border-glass);
+  color: var(--accent-fuchsia);
+}
+
+.ds-badge--purple {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: var(--border-purple);
+  color: var(--accent-purple);
+}
+
 .ds-badge--red {
   background: rgba(239, 68, 68, 0.12);
   border-color: var(--border-red);

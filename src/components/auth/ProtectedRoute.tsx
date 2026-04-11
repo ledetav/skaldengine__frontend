@@ -3,14 +3,15 @@ import { Navigate } from 'react-router-dom'
 
 interface ProtectedRouteProps {
   children: ReactNode
+  isDebug?: boolean
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, isDebug }: ProtectedRouteProps) {
   const token = localStorage.getItem('token')
   
   if (!token) {
-    // Redirect to Landing if not authenticated
-    return <Navigate to="/" replace />
+    const redirectPath = isDebug ? '/login/debug' : '/'
+    return <Navigate to={redirectPath} replace />
   }
 
   return <>{children}</>
