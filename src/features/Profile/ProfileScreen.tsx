@@ -54,7 +54,7 @@ export default function ProfileScreen({ isDebug }: ProfileScreenProps) {
       case 'main': return <MainTab user={user} lastChats={lastChats} />;
       case 'personas': return <PersonasTab personas={personas} />;
       case 'lorebooks': return <LorebooksTab lorebooks={lorebooks} />;
-      case 'settings': return <SettingsTab />;
+      case 'settings': return <SettingsTab user={user} />;
       default: return <MainTab user={user} lastChats={lastChats} />;
     }
   };

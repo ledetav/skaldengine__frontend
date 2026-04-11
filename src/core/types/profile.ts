@@ -18,6 +18,7 @@ export interface UserProfile {
   role: string;
   created_at: string;
   birth_date: string;
+  polza_api_key: string | null;
   statistics: UserStatistics;
 }
 

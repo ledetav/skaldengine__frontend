@@ -31,6 +31,7 @@ export const useProfile = (username?: string, isDebug?: boolean) => {
         cover_url: null,
         about: 'Я обожаю ролевые игры и создание новых миров.',
         birth_date: '1995-05-15',
+        polza_api_key: null,
         created_at: new Date().toISOString(),
         statistics: {
           total_chats: 12,
@@ -156,6 +157,7 @@ export const useProfile = (username?: string, isDebug?: boolean) => {
 
   return {
     user,
+    profile: user, // Alias used by AdminDashboard
     personas,
     lorebooks,
     lastChats,

@@ -8,13 +8,15 @@ interface UserProfileViewProps {
   users: User[]
   currentUser: User
   onBack: () => void
+  onDelete: (id: string) => void
 }
 
 export function UserProfileView({ 
   userId, 
   users, 
   currentUser,
-  onBack 
+  onBack,
+  onDelete
 }: UserProfileViewProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRoleModal, setShowRoleModal] = useState(false)
@@ -182,7 +184,10 @@ export function UserProfileView({
             </p>
             <div className={styles.modalActions}>
               <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
-              <Button variant="danger" onClick={() => setShowDeleteModal(false)}>Да, удалить</Button>
+              <Button variant="danger" onClick={() => {
+                onDelete(user.id)
+                setShowDeleteModal(false)
+              }}>Да, удалить</Button>
             </div>
           </div>
         </div>

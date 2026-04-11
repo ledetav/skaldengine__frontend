@@ -35,7 +35,7 @@ export const personasApi = {
   },
   
   updatePersona: async (id: string, persona: Partial<UserPersonaCreate>): Promise<UserPersona> => {
-    return ApiClient.put('core', `/personas/${id}`, persona)
+    return ApiClient.patch('core', `/personas/${id}`, persona)
   },
   
   deletePersona: async (id: string): Promise<void> => {

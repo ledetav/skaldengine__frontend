@@ -87,7 +87,7 @@ export interface MessageCreate {
 }
 
 export interface MessageEdit {
-  new_content: string
+  content: string
 }
 
 export interface Lorebook {
