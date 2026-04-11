@@ -48,50 +48,43 @@ export default function App() {
           {/* ─── Guest Routes ─── */}
           <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingScreen />} />
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
-          <Route path="/login/debug" element={isAuthenticated ? <Navigate to="/dashboard/debug" replace /> : <AuthScreen isDebug />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
-          <Route path="/register/debug" element={isAuthenticated ? <Navigate to="/dashboard/debug" replace /> : <AuthScreen isDebug />} />
 
           {/* ─── Protected Routes ─── */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardScreen /></ProtectedRoute>} />
-          <Route path="/dashboard/debug" element={<ProtectedRoute isDebug><DashboardScreen isDebug /></ProtectedRoute>} />
 
           <Route path="/chat/create/:characterId" element={<ProtectedRoute><CreateChatScreen /></ProtectedRoute>} />
-          <Route path="/chat/create/:characterId/debug" element={<ProtectedRoute isDebug><CreateChatScreen isDebug /></ProtectedRoute>} />
 
           <Route path="/chat/:chatId" element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} />
-          <Route path="/chat/:chatId/debug" element={<ProtectedRoute isDebug><ChatScreen isDebug /></ProtectedRoute>} />
 
           <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
-          <Route path="/profile/debug" element={<ProtectedRoute isDebug><ProfileScreen isDebug /></ProtectedRoute>} />
           <Route path="/profile/:username" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
 
-          {/* ─── Admin Debug Routes (Protected — Admin/Moderator Only) ─── */}
-          <Route path="/admin" element={<Navigate to="/admin/characters/debug" replace />} />
-          <Route path="/admin/debug" element={<Navigate to="/admin/characters/debug" replace />} />
-          <Route path="/admin/characters/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/characters/:id/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/characters/:id/edit/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/characters/create/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/users/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/users/:id/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/personas/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/personas/:id/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/lorebooks/fandom/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/lorebooks/characters/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/lorebooks/personas/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/lorebooks/:id/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/lorebooks/:id/edit/debug" element={<ProtectedRoute isDebug adminOnly><AdminDashboard /></ProtectedRoute>} />
+          {/* ─── Admin Routes (Protected — Admin/Moderator Only) ─── */}
+          <Route path="/admin" element={<Navigate to="/admin/characters" replace />} />
+          <Route path="/admin/characters" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/characters/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/characters/:id/edit" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/characters/create" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/users/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/personas" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/personas/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/lorebooks/fandom" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/lorebooks/characters" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/lorebooks/personas" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/lorebooks/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/lorebooks/:id/edit" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
 
-          {/* ─── User (Persona & Lorebook) Debug Routes (Protected) ─── */}
-          <Route path="/user/personas/debug" element={<ProtectedRoute isDebug><PersonasListScreen /></ProtectedRoute>} />
-          <Route path="/user/personas/create/debug" element={<ProtectedRoute isDebug><PersonaFormScreen /></ProtectedRoute>} />
-          <Route path="/user/personas/:id/edit/debug" element={<ProtectedRoute isDebug><PersonaFormScreen /></ProtectedRoute>} />
+          {/* ─── User (Persona & Lorebook) Routes (Protected) ─── */}
+          <Route path="/user/personas" element={<ProtectedRoute><PersonasListScreen /></ProtectedRoute>} />
+          <Route path="/user/personas/create" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
+          <Route path="/user/personas/:id/edit" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
 
-          <Route path="/user/lorebooks/debug" element={<ProtectedRoute isDebug><LorebooksListScreen /></ProtectedRoute>} />
-          <Route path="/user/lorebooks/create/debug" element={<ProtectedRoute isDebug><LorebookFormScreen /></ProtectedRoute>} />
-          <Route path="/user/lorebooks/:id/debug" element={<ProtectedRoute isDebug><LorebookDetailScreen /></ProtectedRoute>} />
-          <Route path="/user/lorebooks/:id/edit/debug" element={<ProtectedRoute isDebug><LorebookFormScreen /></ProtectedRoute>} />
+          <Route path="/user/lorebooks" element={<ProtectedRoute><LorebooksListScreen /></ProtectedRoute>} />
+          <Route path="/user/lorebooks/create" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
+          <Route path="/user/lorebooks/:id" element={<ProtectedRoute><LorebookDetailScreen /></ProtectedRoute>} />
+          <Route path="/user/lorebooks/:id/edit" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
 
           {/* ─── Fallback ─── */}
           <Route path="*" element={<Navigate to="/" replace />} />

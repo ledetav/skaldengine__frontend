@@ -19,6 +19,7 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     oldPassword: '',
     newPassword: '',
   });
+  const [apiKey, setApiKey] = useState(localStorage.getItem('skald_apiKey') || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -90,17 +91,38 @@ export default function SettingsTab({ user }: SettingsTabProps) {
             </div>
           </div>
 
+          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-light)' }}>
+            <h2 className={styles.sectionTitle} style={{ marginBottom: '1rem', color: 'var(--accent-purple)' }}>Настройки AI</h2>
+            <div className={styles.inputGroup}>
+              <label>API Ключ AI (Skald)</label>
+              <input 
+                type="password" 
+                className={styles.inputField} 
+                value={apiKey} 
+                onChange={e => setApiKey(e.target.value)} 
+                placeholder="sk-..." 
+                style={{ padding: '10px 14px' }} 
+              />
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
+                Ключ необходим для генерации сообщений в чате. Он сохраняется только локально в вашем браузере.
+              </p>
+            </div>
+          </div>
+
           <button 
             className="btn-primary" 
             style={{ marginTop: '2rem', width: '100%', justifyContent: 'center', height: '48px', fontSize: '1rem' }}
-            onClick={handleUpdateProfile}
+            onClick={() => {
+              handleUpdateProfile();
+              localStorage.setItem('skald_apiKey', apiKey);
+            }}
             disabled={isUpdating}
           >
             {isUpdating ? 'Сохранение...' : 'Сохранить изменения'}
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
           <div className={`${styles.card} angular-card`} style={{ padding: '1.25rem 1.5rem' }}>
             <h2 className={styles.sectionTitle} style={{ marginBottom: '1.25rem', color: 'var(--accent-purple)' }}>Безопасность</h2>
 
