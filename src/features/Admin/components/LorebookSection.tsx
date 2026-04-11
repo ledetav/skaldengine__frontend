@@ -340,7 +340,7 @@ export function LorebookSection({
           <input 
             type="text" 
             placeholder="Поиск по названию или привязке..." 
-            className={styles.searchInput}
+            className={styles.searchBox}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

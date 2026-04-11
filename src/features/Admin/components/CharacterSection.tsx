@@ -40,7 +40,7 @@ export function CharacterSection({
           <input 
             type="text" 
             placeholder="Поиск персонажей..." 
-            className={styles.searchInput}
+            className={styles.searchBox}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -93,14 +93,16 @@ export function CharacterSection({
               {filteredCharacters.map(char => (
                 <tr key={char.id} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
                   <td>
-                    <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '32px', height: '32px', display: 'inline-flex', verticalAlign: 'middle', marginRight: '10px' }}>
-                      <img src={char.avatar_url} className={styles.charAvatar} alt={char.name} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0 }}>
+                        <img src={char.avatar_url} className={styles.charAvatar} alt={char.name} />
+                      </div>
+                      <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
-                    <strong>{char.name}</strong>
                   </td>
                   <td><span style={{ opacity: 0.7 }}>{char.fandom || 'Оригинальный'}</span></td>
                   <td>{char.total_chats_count.toLocaleString()}</td>
-                  <td>{char.scenario_count || 0}</td>
+                  <td>{char.scenarios_count || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -126,11 +128,11 @@ export function CharacterSection({
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Сценариев</span>
-                  <span className={styles.statValue}>{char.scenario_count || 0}</span>
+                  <span className={styles.statValue}>{char.scenarios_count || 0}</span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Лоры</span>
-                  <span className={styles.statValue}>{char.lorebooks_count || 0}</span>
+                  <span className={styles.statValue}>0</span>
                 </div>
               </div>
             </div>

@@ -41,6 +41,9 @@ export default function AdminDashboard() {
   const [sortField, setSortField] = useState<string>('')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
+  const [userSearch, setUserSearch] = useState('')
+  const [personaSearch, setPersonaSearch] = useState('')
+
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
@@ -86,16 +89,22 @@ export default function AdminDashboard() {
 
   const filteredUsers = useMemo(() => {
     const list = users.filter(u => {
+      const searchMatch = u.username.toLowerCase().includes(userSearch.toLowerCase()) || 
+                        (u.full_name || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+                        u.login.toLowerCase().includes(userSearch.toLowerCase())
+      if (!searchMatch) return false
       if (activeFilters.roles?.length && !activeFilters.roles.includes(u.role)) return false
       if (activeFilters.regDateStart && new Date(u.created_at) < new Date(activeFilters.regDateStart)) return false
       if (activeFilters.regDateEnd && new Date(u.created_at) > new Date(activeFilters.regDateEnd)) return false
       return true
     })
     return applySort(list)
-  }, [users, activeFilters, sortField, sortDir])
+  }, [users, activeFilters, sortField, sortDir, userSearch])
 
   const filteredPersonas = useMemo(() => {
     const list = personas.filter(p => {
+      const searchMatch = p.name.toLowerCase().includes(personaSearch.toLowerCase())
+      if (!searchMatch) return false
       if (activeFilters.userIds?.length && !activeFilters.userIds.includes(p.owner_id)) return false
       if (activeFilters.chatCountMin !== undefined && (p.chat_count || 0) < activeFilters.chatCountMin) return false
       if (activeFilters.chatCountMax !== undefined && (p.chat_count || 0) > activeFilters.chatCountMax) return false
@@ -104,7 +113,7 @@ export default function AdminDashboard() {
       return true
     })
     return applySort(list)
-  }, [personas, activeFilters, sortField, sortDir])
+  }, [personas, activeFilters, sortField, sortDir, personaSearch])
 
   const filteredCharacters = useMemo(() => {
     const list = characters.filter(c => {
@@ -136,7 +145,23 @@ export default function AdminDashboard() {
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
 
-  const isAnyFilterActive = Object.keys(activeFilters).length > 0
+  const isFilterActiveForTab = (filters: FilterState, tab: AdminTab) => {
+    if (tab === 'users') {
+      return !!(filters.roles?.length || filters.regDateStart || filters.regDateEnd)
+    }
+    if (tab === 'personas') {
+      return !!(filters.userIds?.length || filters.chatCountMin !== undefined || filters.chatCountMax !== undefined || filters.lorebookCountMin !== undefined || filters.lorebookCountMax !== undefined)
+    }
+    if (tab === 'characters') {
+      return !!(filters.fandoms?.length || (filters.isPublic && filters.isPublic !== 'all') || (filters.isNSFW && filters.isNSFW !== 'all'))
+    }
+    if (tab.startsWith('lorebooks_')) {
+      return !!(filters.fandoms?.length || filters.characterIds?.length || filters.entriesCountMin !== undefined || filters.entriesCountMax !== undefined)
+    }
+    return false
+  }
+
+  const isAnyFilterActive = isFilterActiveForTab(activeFilters, activeTab)
 
   return (
     <div className={styles.adminPage}>
@@ -181,6 +206,9 @@ export default function AdminDashboard() {
                 <div className={styles.statusIndicator} />
               </div>
             </div>
+            <button className={styles.logoutBtn} onClick={() => navigate('/auth')} title="Выйти">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
           </div>
         </header>
 
@@ -212,7 +240,19 @@ export default function AdminDashboard() {
 
           {activeTab === 'users' && !isUserDetail && (
             <div className={styles.sectionContainer}>
-              <div className={styles.sectionHeader} style={{ justifyContent: 'flex-end', marginBottom: '16px' }}>
+              <div className={styles.sectionHeader} style={{ marginBottom: '16px' }}>
+                <div className={styles.searchWrapper}>
+                  <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Поиск по пользователям..." 
+                    className={styles.searchBox}
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                  />
+                </div>
                 <button 
                   className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
                   onClick={() => setIsFilterOpen(true)}
@@ -255,7 +295,19 @@ export default function AdminDashboard() {
 
           {activeTab === 'personas' && !isPersonaDetail && (
             <div className={styles.sectionContainer}>
-              <div className={styles.sectionHeader} style={{ justifyContent: 'flex-end', marginBottom: '16px' }}>
+              <div className={styles.sectionHeader} style={{ marginBottom: '16px' }}>
+                <div className={styles.searchWrapper}>
+                  <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Поиск по персонам..." 
+                    className={styles.searchBox}
+                    value={personaSearch}
+                    onChange={(e) => setPersonaSearch(e.target.value)}
+                  />
+                </div>
                 <button 
                   className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
                   onClick={() => setIsFilterOpen(true)}
@@ -268,7 +320,6 @@ export default function AdminDashboard() {
                 <table className={styles.compactTable}>
                   <thead>
                     <tr>
-                      <th>Разворот</th>
                       <th onClick={() => handleSort('name')} style={{ cursor: 'pointer' }}>Персона <SortIcon field="name" /></th>
                       <th onClick={() => handleSort('owner_id')} style={{ cursor: 'pointer' }}>Владелец <SortIcon field="owner_id" /></th>
                       <th onClick={() => handleSort('chat_count')} style={{ cursor: 'pointer' }}>Чаты <SortIcon field="chat_count" /></th>
@@ -280,11 +331,21 @@ export default function AdminDashboard() {
                       const owner = users.find(u => u.id === p.owner_id)
                       return (
                         <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
-                          <td style={{ width: '40px' }}><div className={styles.charAvatarWrapper} style={{ width: '32px', height: '32px', position: 'static' }}><img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" /></div></td>
-                          <td><span style={{ fontWeight: 700 }}>{p.name}</span></td>
-                          <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>{owner ? `@${owner.username}` : p.owner_id}</span></td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0 }}>
+                                <img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" />
+                              </div>
+                              <span style={{ fontWeight: 700 }}>{p.name}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <Badge variant="purple" style={{ opacity: 0.9 }}>
+                              {owner ? `@${owner.username}` : p.owner_id}
+                            </Badge>
+                          </td>
                           <td><span style={{ fontWeight: 600 }}>{p.chat_count}</span></td>
-                          <td><Badge variant="teal">{p.lorebook_count}</Badge></td>
+                          <td><span style={{ opacity: 0.7 }}>{p.lorebook_count}</span></td>
                         </tr>
                       )
                     })}
@@ -311,6 +372,10 @@ export default function AdminDashboard() {
               users={users}
               currentUser={currentUser!}
               onBack={() => navigateDebug('/admin/users')}
+              onDelete={(uid) => {
+                setUsers(prev => prev.filter(u => u.id !== uid))
+                navigateDebug('/admin/users')
+              }}
             />
           )}
 
