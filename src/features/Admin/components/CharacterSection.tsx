@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import { mockCharacters } from '../mockData'
 import type { Character } from '../types'
@@ -14,6 +14,13 @@ interface CharacterSectionProps {
 
 export function CharacterSection({ characters, onSelectCharacter }: CharacterSectionProps) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const navigateDebug = (route: string) => {
+    const isDebug = pathname.includes('/debug')
+    const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
+    navigate(finalRoute)
+  }
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const [sortField, setSortField] = useState<SortField>('name')
@@ -58,7 +65,7 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
               Карточки
             </button>
           </div>
-          <button className={styles.createBtn} onClick={() => navigate('/admin/characters/create/debug')}>+ Создать</button>
+          <button className={styles.createBtn} onClick={() => navigateDebug('/admin/characters/create')}>+ Создать</button>
         </div>
       </div>
 
@@ -92,7 +99,7 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                      <button className={styles.iconBtn} onClick={(e) => { e.stopPropagation(); navigate(`/admin/characters/${char.id}/edit/debug`) }}>
+                      <button className={styles.iconBtn} onClick={(e) => { e.stopPropagation(); navigateDebug(`/admin/characters/${char.id}/edit`) }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
                       <button className={styles.iconBtn}>
@@ -112,7 +119,7 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
               <div className={styles.cardActions}>
                 <button 
                   className={`${styles.iconBtn} ${styles.editBtn}`}
-                  onClick={(e) => { e.stopPropagation(); navigate(`/admin/characters/${char.id}/edit/debug`) }}
+                  onClick={(e) => { e.stopPropagation(); navigateDebug(`/admin/characters/${char.id}/edit`) }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>

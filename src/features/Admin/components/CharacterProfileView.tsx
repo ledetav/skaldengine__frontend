@@ -24,6 +24,12 @@ export function CharacterProfileView({
 }: CharacterProfileViewProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+
+  const navigateDebug = (route: string) => {
+    const isDebug = pathname.includes('/debug')
+    const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
+    navigate(finalRoute)
+  }
   const character = characters.find(c => c.id === characterId)
   
   const isEditing = pathname.includes('/edit/') || pathname.includes('/create/')
@@ -102,7 +108,7 @@ export function CharacterProfileView({
                   alt="Cover" 
                 />
                 {isEditing && (
-                  <div className={styles.pencilOverlay}>
+                  <div className={styles.pencilOverlay} onClick={() => navigateDebug(`/admin/characters/${characterId}/edit`)}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   </div>
                 )}
@@ -361,14 +367,14 @@ export function CharacterProfileView({
               {!isEditing ? (
                 <button 
                   className={styles.createBtn} 
-                  onClick={() => navigate(`/admin/characters/${characterId}/edit/debug`)}
+                  onClick={() => navigateDebug(`/admin/characters/${characterId}/edit`)}
                 >
                   Редактировать
                 </button>
               ) : (
                 <button 
                   className={styles.createBtn} 
-                  onClick={() => onSave ? onSave() : navigate(`/admin/characters/${characterId}/debug`)}
+                  onClick={() => onSave ? onSave() : navigateDebug(`/admin/characters/${characterId}`)}
                 >
                   {onSave ? 'Создать персонажа' : 'Сохранить'}
                 </button>

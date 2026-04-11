@@ -5,7 +5,7 @@ import styles from '../Admin.module.css'
 import type { Lorebook } from '../types'
 
 interface LorebookSectionProps {
-  type: 'fandom' | 'character'
+  type: 'fandom' | 'character' | 'persona'
   lorebooks: Lorebook[]
 }
 
@@ -15,6 +15,13 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+
+  const navigateDebug = (route: string) => {
+    const isDebug = pathname.includes('/debug')
+    const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
+    navigate(finalRoute)
+  }
+
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const { success } = useToast()
@@ -24,17 +31,20 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
 
   const filteredLorebooks = lorebooks.filter(lb => {
     const matchesSearch = lb.name.toLowerCase().includes(search.toLowerCase()) || 
-                         lb.fandom?.toLowerCase().includes(search.toLowerCase())
+                         lb.fandom?.toLowerCase().includes(search.toLowerCase()) ||
+                         lb.user_persona_name?.toLowerCase().includes(search.toLowerCase())
     
-    if (type === 'fandom') return matchesSearch && !!lb.fandom && !lb.character_id
-    return matchesSearch && !!lb.character_id
+    if (type === 'fandom') return matchesSearch && !!lb.fandom && !lb.character_id && !lb.user_persona_id
+    if (type === 'character') return matchesSearch && !!lb.character_id
+    if (type === 'persona') return matchesSearch && !!lb.user_persona_id
+    return matchesSearch
   })
 
-  const handleEdit = (lbId: string) => navigate(`/admin/lorebooks/${lbId}/edit/debug`)
-  const handleView = (lbId: string) => navigate(`/admin/lorebooks/${lbId}/debug`)
-  const handleBack = () => navigate('/admin/debug')
+  const handleEdit = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}/edit`)
+  const handleView = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}`)
+  const handleBack = () => navigateDebug('/admin')
   const handleSave = () => {
-    navigate(`/admin/lorebooks/${id}/debug`)
+    navigateDebug(`/admin/lorebooks/${id}`)
     success('Лорбук успешно обновлен')
   }
 
@@ -77,11 +87,11 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                     <Input defaultValue={type === 'fandom' ? lb.fandom : lb.character_id} />
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Badge variant={type === 'fandom' ? 'fuchsia' : 'purple'}>
-                        {type === 'fandom' ? 'Фандом' : 'Персонаж'}
+                      <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'emerald' : 'purple'}>
+                        {type === 'fandom' ? 'Фандом' : type === 'persona' ? 'Персона' : 'Персонаж'}
                       </Badge>
                       <span style={{ fontWeight: 700, fontSize: '1rem', opacity: 0.8 }}>
-                        {type === 'fandom' ? lb.fandom : lb.character_name || lb.character_id}
+                        {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
                       </span>
                     </div>
                   )}
@@ -134,7 +144,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                       <td>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                           {entry.keywords?.map(kw => (
-                            <Badge key={kw} variant={type === 'fandom' ? 'fuchsia' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
+                            <Badge key={kw} variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'emerald' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
                           ))}
                         </div>
                       </td>
@@ -215,7 +225,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
             <thead>
               <tr>
                 <th>Название</th>
-                <th>{type === 'fandom' ? 'Вселенная' : 'Персонаж'}</th>
+                <th>{type === 'fandom' ? 'Вселенная' : type === 'persona' ? 'Владелец' : 'Персонаж'}</th>
                 <th>Записей</th>
                 <th>ID</th>
                 <th>Действия</th>
@@ -225,7 +235,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
               {filteredLorebooks.map(lb => (
                 <tr key={lb.id} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
-                  <td><Badge variant={type === 'fandom' ? 'fuchsia' : 'purple'}>{type === 'fandom' ? lb.fandom : lb.character_id}</Badge></td>
+                  <td><Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'emerald' : 'purple'}>{type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_id}</Badge></td>
                   <td>{lb.entries.length}</td>
                   <td><code style={{ fontSize: '0.7rem', opacity: 0.5 }}>{lb.id}</code></td>
                   <td>
@@ -252,8 +262,8 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
 
               <h3 className={styles.cardName}>{lb.name}</h3>
               <div style={{ marginBottom: '16px' }}>
-                <Badge variant={type === 'fandom' ? 'fuchsia' : 'purple'}>
-                  {type === 'fandom' ? lb.fandom : lb.character_id}
+                <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'emerald' : 'purple'}>
+                  {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_id}
                 </Badge>
               </div>
 
