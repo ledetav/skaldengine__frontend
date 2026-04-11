@@ -218,7 +218,7 @@ export function LorebookSection({
                     </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
                       {initialType === 'fandom' ? 'Фандом' : initialType === 'persona' ? 'Персона' : 'Персонаж'}
                     </Badge>
                       <span style={{ fontWeight: 700, fontSize: '1rem', opacity: 0.8 }}>
@@ -394,7 +394,7 @@ export function LorebookSection({
                 <tr key={lb.id} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
                   <td>
-                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
                       {initialType === 'fandom' 
                         ? lb.fandom 
                         : initialType === 'persona' 
@@ -431,7 +431,7 @@ export function LorebookSection({
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{lb.name}</h3>
                   <div style={{ marginTop: '6px' }}>
-                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>
+                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
                       {initialType === 'fandom' 
                         ? lb.fandom 
                         : initialType === 'persona' 
