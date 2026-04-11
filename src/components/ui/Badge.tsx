@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'purple' | 'orange' | 'fuchsia' | 'red'
+  variant?: 'purple' | 'orange' | 'fuchsia' | 'red' | 'blue' | 'teal' | 'green'
 }
 
 export function Badge({ 
@@ -10,18 +10,13 @@ export function Badge({
   className = '', 
   ...props 
 }: BadgeProps) {
-  const getVariantClass = () => {
-    switch (variant) {
-      case 'orange': return 'ds-badge--orange'
-      case 'fuchsia': return 'ds-badge--fuchsia'
-      case 'purple': return 'ds-badge--purple'
-      case 'red': return 'ds-badge--red'
-      default: return 'ds-badge'
-    }
-  }
-
+  const variantClass = variant ? `ds-badge--${variant}` : ''
+  
   return (
-    <span className={`${getVariantClass()} ${className}`} {...props}>
+    <span 
+      className={`ds-badge ${variantClass} ${className}`.trim().replace(/\s+/g, ' ')} 
+      {...props}
+    >
       {children}
     </span>
   )

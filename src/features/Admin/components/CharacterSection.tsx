@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
-import { mockCharacters } from '../mockData'
 import type { Character } from '../types'
+import { Badge } from '@/components/ui'
 
 type ViewMode = 'grid' | 'table'
 type SortField = 'name' | 'total_chats_count' | 'monthly_chats_count'
@@ -89,13 +89,13 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
                     <img src={char.avatar_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
                     <span style={{ fontWeight: 700 }}>{char.name}</span>
                   </td>
-                  <td><span className={styles.cardTag}>{char.fandom || '—'}</span></td>
+                  <td><Badge variant="orange">{char.fandom || '—'}</Badge></td>
                   <td>{char.total_chats_count.toLocaleString()}</td>
                   <td>{char.nsfw_allowed ? '✅' : '❌'}</td>
                   <td>
-                    <span style={{ color: char.is_public ? '#4ade80' : '#fb7185', fontSize: '0.8rem', fontWeight: 700 }}>
+                    <Badge variant={char.is_public ? 'green' : 'red'}>
                       {char.is_public ? 'PUBLIC' : 'PRIVATE'}
-                    </span>
+                    </Badge>
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '6px' }}>
@@ -133,15 +133,11 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <span className={styles.cardTag} title="Публичный">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                      {char.is_public ? 'Public' : 'Private'}
-                    </span>
+                    <Badge variant="orange">
+                      {char.fandom || 'Original'}
+                    </Badge>
                     {char.nsfw_allowed && (
-                      <span className={styles.cardTag} style={{ color: '#ff4d4d' }} title="NSFW">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        NSFW
-                      </span>
+                      <Badge variant="red">NSFW</Badge>
                     )}
                   </div>
                 </div>

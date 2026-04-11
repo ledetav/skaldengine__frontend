@@ -22,7 +22,7 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
     },
     { 
       id: 'personas', 
-      label: 'Персоны Юзеров', 
+      label: 'Персоны пользователей', 
       route: '/admin/personas',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,7 +33,7 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
     },
     { 
       id: 'characters', 
-      label: 'Персонажи AI', 
+      label: 'Персонажи', 
       route: '/admin/characters',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -44,7 +44,7 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
     },
     { 
       id: 'lorebooks_fandom', 
-      label: 'Лоры фандомов', 
+      label: 'Лорбуки фандомов', 
       route: '/admin/lorebooks/fandom',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +55,7 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
     },
     { 
       id: 'lorebooks_character', 
-      label: 'Лоры героев AI', 
+      label: 'Лорбуки персонажей', 
       route: '/admin/lorebooks/characters',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -66,7 +66,7 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
     },
     { 
       id: 'lorebooks_persona', 
-      label: 'Лоры персон', 
+      label: 'Лорбуки персон', 
       route: '/admin/lorebooks/personas',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

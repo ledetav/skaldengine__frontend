@@ -16,6 +16,9 @@
   --accent-orange:  #ff6b00; /* Fire / Action (The Skald's Accent) */
   --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
   --accent-pink:    #d946ef; /* Alias for fuchsia */
+  --accent-blue:    #3b82f6; 
+  --accent-teal:    #14b8a6;
+  --accent-green:   #10b981;
 
   --white:          #f0ece9;
   --black:          #111010;
@@ -36,6 +39,9 @@
   --border-purple:  rgba(139, 92, 246, 0.3);
   --border-orange:  rgba(255, 107, 0, 0.4);
   --border-red:     rgba(239, 68, 68, 0.4);
+  --border-blue:    rgba(59, 130, 246, 0.4);
+  --border-teal:    rgba(20, 184, 166, 0.4);
+  --border-green:   rgba(16, 185, 129, 0.4);
 
   /* ─── Typography ───────────────────────────────── */
   --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
@@ -256,39 +262,69 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.25rem 0.6rem;
-  background: rgba(139, 92, 246, 0.12);
+  padding: 0.2rem 0.75rem;
+  background: rgba(139, 92, 246, 0.08);
   border: 1px solid var(--border-purple);
   color: var(--accent-purple);
   font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.ds-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  opacity: 0.2;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+  pointer-events: none;
 }
 
 .ds-badge--orange {
-  background: rgba(255, 107, 0, 0.12);
+  background: rgba(255, 107, 0, 0.08);
   border-color: var(--border-orange);
   color: var(--accent-orange);
 }
 
 .ds-badge--fuchsia {
-  background: rgba(217, 70, 239, 0.12);
+  background: rgba(217, 70, 239, 0.08);
   border-color: var(--border-glass);
   color: var(--accent-fuchsia);
 }
 
 .ds-badge--purple {
-  background: rgba(139, 92, 246, 0.12);
+  background: rgba(139, 92, 246, 0.08);
   border-color: var(--border-purple);
   color: var(--accent-purple);
 }
 
 .ds-badge--red {
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(239, 68, 68, 0.08);
   border-color: var(--border-red);
   color: var(--accent-red);
+}
+
+.ds-badge--blue {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: var(--border-blue);
+  color: var(--accent-blue);
+}
+
+.ds-badge--teal {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: var(--border-teal);
+  color: var(--accent-teal);
+}
+
+.ds-badge--green {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--border-green);
+  color: var(--accent-green);
 }
 
 /* ─── Sidebar nav item ────────────────────────── */

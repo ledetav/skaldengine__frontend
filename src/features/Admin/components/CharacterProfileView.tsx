@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
+import { Badge } from '@/components/ui'
 
 interface CharacterProfileViewProps {
   characterId: string
@@ -215,11 +216,11 @@ export function CharacterProfileView({
                 <div className={styles.charStatBox} style={{ gridColumn: 'span 2', paddingBottom: '20px' }}>
                   <span className={styles.statLabel}>Настройки доступа</span>
                   <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                    <span className={styles.cardTag} style={{ color: character.is_public ? '#4ade80' : '#fb7185', background: character.is_public ? 'rgba(74, 222, 128, 0.05)' : 'rgba(251, 113, 133, 0.05)' }}>
+                    <Badge variant={character.is_public ? 'green' : 'red'}>
                       {character.is_public ? 'Public' : 'Private'}
-                    </span>
+                    </Badge>
                     {character.nsfw_allowed && (
-                      <span className={styles.cardTag} style={{ color: '#ff4d4d', background: 'rgba(255, 77, 77, 0.05)' }}>NSFW</span>
+                      <Badge variant="red">NSFW</Badge>
                     )}
                   </div>
                 </div>

@@ -10,6 +10,7 @@ import { mockCharacters, mockLorebooks, mockUsersList, mockPersonas } from './mo
 import type { Character, Lorebook, User, UserPersona } from './types'
 import { useProfile } from '@/core/hooks/useProfile'
 import { Badge } from '@/components/ui'
+import { UserProfileView } from './components/UserProfileView'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
@@ -125,6 +126,7 @@ export default function AdminDashboard() {
   }
 
   const isDetailView = (pathname.includes('/characters/') || isCreateMode) && (id || tempNewCharacter)
+  const isUserDetail = pathname.includes('/users/') && id
   const isLorebookDetail = pathname.includes('/lorebooks/') && id && !pathname.includes('/fandom/') && !pathname.includes('/characters/')
 
   return (
@@ -144,12 +146,12 @@ export default function AdminDashboard() {
         <header className={styles.mainHeader}>
           <div className={styles.titleGroup}>
             <h1 className={styles.mainTitle}>
-              {activeTab === 'users' && 'Управление Пользователями'}
-              {activeTab === 'personas' && 'Персоны Пользователей'}
-              {activeTab === 'characters' && 'Персонажи AI'}
-              {activeTab === 'lorebooks_fandom' && 'Лорбуки Вселенных'}
-              {activeTab === 'lorebooks_character' && 'Лорбуки Героев AI'}
-              {activeTab === 'lorebooks_persona' && 'Лорбуки Персон'}
+              {activeTab === 'users' && 'Управление пользователями'}
+              {activeTab === 'personas' && 'Персоны пользователей'}
+              {activeTab === 'characters' && 'Персонажи'}
+              {activeTab === 'lorebooks_fandom' && 'Лорбуки фандомов'}
+              {activeTab === 'lorebooks_character' && 'Лорбуки персонажей'}
+              {activeTab === 'lorebooks_persona' && 'Лорбуки персон'}
             </h1>
             <p className={styles.mainSubtitle}>Система мониторинга и редактирования контента</p>
           </div>
@@ -191,33 +193,33 @@ export default function AdminDashboard() {
             />
           )}
 
-          {activeTab === 'users' && (
+          {activeTab === 'users' && !isUserDetail && (
             <div className={styles.tableWrapper}>
               <table className={styles.compactTable}>
                 <thead>
                   <tr>
-                    <th>Пользователь</th>
-                    <th>Роль</th>
-                    <th>Email</th>
-                    <th>Дата регистрации</th>
                     <th>ID</th>
+                    <th>Имя пользователя</th>
+                    <th>Роль</th>
+                    <th>Дата регистрации</th>
+                    <th>Email</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(u => (
-                    <tr key={u.id}>
+                    <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
+                      <td><code style={{ fontSize: '0.7rem', opacity: 0.3 }}>{u.id}</code></td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
-                            {u.avatar_url && <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%' }} />}
+                            <img src={u.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`} alt="" style={{ width: '100%', height: '100%' }} />
                           </div>
-                          <span style={{ fontWeight: 700 }}>{u.full_name || u.login || u.username}</span>
+                          <span style={{ fontWeight: 700 }}>{u.full_name || u.login}</span>
                         </div>
                       </td>
                       <td><Badge variant={u.role === 'admin' ? 'orange' : 'purple'}>{u.role}</Badge></td>
-                      <td><span style={{ opacity: 0.7 }}>{u.email}</span></td>
                       <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
-                      <td><code style={{ fontSize: '0.7rem', opacity: 0.3 }}>{u.id}</code></td>
+                      <td><span style={{ opacity: 0.7 }}>{u.email}</span></td>
                     </tr>
                   ))}
                 </tbody>
@@ -226,31 +228,34 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'personas' && (
-            <div className={styles.grid}>
-              {personas.map(p => (
-                <div key={p.id} className={styles.adminCard}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
-                      {p.avatar_url && <img src={p.avatar_url} alt="" style={{ width: '100%', height: '100%' }} />}
-                    </div>
-                    <div>
-                      <h3 className={styles.cardName} style={{ margin: 0 }}>{p.name}</h3>
-                      <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>Владелец: {p.owner_id}</span>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '12px', minHeight: '3em' }}>{p.description}</p>
-                  <div className={styles.cardStats}>
-                    <div className={styles.statItem}>
-                      <span className={styles.statLabel}>Чаты</span>
-                      <span className={styles.statValue}>{p.chat_count}</span>
-                    </div>
-                    <div className={styles.statItem}>
-                      <span className={styles.statLabel}>Лоры</span>
-                      <span className={styles.statValue}>{p.lorebook_count}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className={styles.tableWrapper}>
+              <table className={styles.compactTable}>
+                <thead>
+                  <tr>
+                    <th>Персона</th>
+                    <th>Владелец</th>
+                    <th>Чаты</th>
+                    <th>Лоры</th>
+                    <th>ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {personas.map(p => (
+                    <tr key={p.id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <img src={p.avatar_url} alt="" style={{ width: '24px', height: '24px', borderRadius: '6px', objectFit: 'cover' }} />
+                          <span style={{ fontWeight: 700 }}>{p.name}</span>
+                        </div>
+                      </td>
+                      <td><Badge variant="teal">{p.owner_id}</Badge></td>
+                      <td>{p.chat_count}</td>
+                      <td>{p.lorebook_count}</td>
+                      <td><code style={{ fontSize: '0.7rem', opacity: 0.3 }}>{p.id}</code></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
@@ -263,6 +268,14 @@ export default function AdminDashboard() {
               onUpdateCharacter={handleUpdateCharacter}
               onUpdateLorebooks={handleUpdateLorebooks}
               onSave={isCreateMode ? handleSaveNewCharacter : undefined}
+            />
+          )}
+
+          {isUserDetail && (
+            <UserProfileView 
+              userId={id!}
+              users={users}
+              onBack={() => navigateDebug('/admin/users')}
             />
           )}
         </section>
