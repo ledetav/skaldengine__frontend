@@ -6,17 +6,20 @@ import { Button } from '@/components/ui'
 interface UserProfileViewProps {
   userId: string
   users: User[]
+  currentUser: User
   onBack: () => void
 }
 
 export function UserProfileView({ 
   userId, 
   users, 
+  currentUser,
   onBack 
 }: UserProfileViewProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRoleModal, setShowRoleModal] = useState(false)
   const [selectedRole, setSelectedRole] = useState('')
+  const [errorVisible, setErrorVisible] = useState(false)
 
   const user = users.find(u => u.id === userId)
   
@@ -29,6 +32,15 @@ export function UserProfileView({
         </div>
       </div>
     )
+  }
+
+  const handleDeleteClick = () => {
+    if (user.id === currentUser.id) {
+      setErrorVisible(true)
+      setTimeout(() => setErrorVisible(false), 3000)
+      return
+    }
+    setShowDeleteModal(true)
   }
 
   return (
@@ -46,7 +58,6 @@ export function UserProfileView({
       </header>
 
       <div className={styles.characterProfileContent}>
-        {/* LEFT: Sidebar style card (MATCHING CHARACTER PROFILE) */}
         <aside className={styles.sidebarWrapper}>
           <div className={styles.charSidebarCard}>
             <div className={styles.charCover}>
@@ -84,7 +95,12 @@ export function UserProfileView({
             <div className={styles.charStatsGrid}>
               <div className={styles.charStatBox}>
                 <span className={styles.statLabel}>Роль</span>
-                <span className={styles.statValue} style={{ color: user.role === 'admin' ? 'var(--accent-orange)' : 'var(--accent-pink)', fontSize: '0.9rem' }}>
+                <span className={styles.statValue} style={{ 
+                  color: user.role === 'admin' ? 'var(--accent-orange)' : 
+                         user.role === 'moderator' ? 'var(--accent-purple)' : 
+                         'var(--accent-pink)', 
+                  fontSize: '0.9rem' 
+                }}>
                   {user.role.toUpperCase()}
                 </span>
               </div>
@@ -96,7 +112,6 @@ export function UserProfileView({
           </div>
         </aside>
 
-        {/* RIGHT: Detailed content (MATCHING CHARACTER PROFILE) */}
         <main className={styles.mainContentWrapper}>
           <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>
@@ -133,14 +148,31 @@ export function UserProfileView({
               </div>
               <div className={styles.actionRow} style={{ justifyContent: 'flex-start', borderTop: 'none', paddingTop: 0, gap: '16px' }}>
                 <Button variant="ghost" onClick={() => { setSelectedRole(user.role); setShowRoleModal(true); }}>Изменить роль</Button>
-                <Button variant="danger" onClick={() => setShowDeleteModal(true)}>Удалить пользователя</Button>
+                <div style={{ position: 'relative' }}>
+                  <Button variant="danger" onClick={handleDeleteClick}>Удалить пользователя</Button>
+                  {errorVisible && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '-40px',
+                      left: '0',
+                      background: 'var(--accent-red)',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      whiteSpace: 'nowrap',
+                      zIndex: 10
+                    }}>
+                      Вы не можете удалить самого себя!
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </main>
       </div>
 
-      {/* Modals */}
       {showDeleteModal && (
         <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>

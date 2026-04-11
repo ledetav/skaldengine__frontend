@@ -1235,12 +1235,22 @@
 .modalContent {
   background: #1a1b23;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
   padding: 32px;
   max-width: 450px;
   width: 100%;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 0 0 40px rgba(139, 92, 246, 0.1);
   animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%, 0 25px);
+  position: relative;
+}
+
+.modalContent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  clip-path: polygon(25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%, 0 25px);
+  pointer-events: none;
 }
 
 @keyframes modalEnter {

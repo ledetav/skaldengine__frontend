@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
-                      <td><Badge variant={u.role === 'admin' ? 'orange' : 'fuchsia'}>{u.role}</Badge></td>
+                      <td><Badge variant={u.role === 'admin' ? 'orange' : u.role === 'moderator' ? 'purple' : 'fuchsia'}>{u.role}</Badge></td>
                       <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                     </tr>
                   ))}
@@ -235,7 +235,7 @@ export default function AdminDashboard() {
                     <th>Персона</th>
                     <th>Владелец</th>
                     <th>Чаты</th>
-                    <th>Лоры</th>
+                    <th>Лорбуки</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -276,6 +276,7 @@ export default function AdminDashboard() {
             <UserProfileView 
               userId={id!}
               users={users}
+              currentUser={currentUser}
               onBack={() => navigateDebug('/admin/users')}
             />
           )}

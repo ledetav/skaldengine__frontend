@@ -86,7 +86,7 @@ export function PersonaProfileView({
                 <span className={styles.statValue}>{persona.chat_count}</span>
               </div>
               <div className={styles.charStatBox}>
-                <span className={styles.statLabel}>Лоры</span>
+                <span className={styles.statLabel}>Лорбуки</span>
                 <span className={styles.statValue}>{persona.lorebook_count}</span>
               </div>
               <div className={styles.charStatBox} style={{ gridColumn: 'span 2' }}>

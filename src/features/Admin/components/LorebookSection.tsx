@@ -42,7 +42,10 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
 
   const handleEdit = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}/edit`)
   const handleView = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}`)
-  const handleBack = () => navigateDebug('/admin')
+  const handleBack = () => {
+    const tab = type === 'fandom' ? 'fandom' : type === 'persona' ? 'personas' : 'characters'
+    navigateDebug(`/admin/lorebooks/${tab}`)
+  }
   const handleSave = () => {
     navigateDebug(`/admin/lorebooks/${id}`)
     success('Лорбук успешно обновлен')
@@ -84,7 +87,29 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
                 <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Тип / Привязка</div>
                   {isEditMode ? (
-                    <Input defaultValue={type === 'fandom' ? lb.fandom : lb.character_id} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
+                        <button 
+                          className={`${styles.roleBtn} ${type === 'fandom' ? styles.roleBtnActive : ''}`}
+                          onClick={() => {/* update type to fandom */}}
+                        >
+                          Фандом
+                        </button>
+                        <button 
+                          className={`${styles.roleBtn} ${type === 'character' ? styles.roleBtnActive : ''}`}
+                          onClick={() => {/* update type to character */}}
+                        >
+                          Персонаж
+                        </button>
+                        <button 
+                          className={`${styles.roleBtn} ${type === 'persona' ? styles.roleBtnActive : ''}`}
+                          onClick={() => {/* update type to persona */}}
+                        >
+                          Персона
+                        </button>
+                      </div>
+                      <Input defaultValue={type === 'fandom' ? lb.fandom : type === 'persona' ? (lb.user_persona_name || lb.user_persona_id) : (lb.character_name || lb.character_id)} />
+                    </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>
@@ -215,7 +240,7 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
               Карточки
             </button>
           </div>
-          <button className={styles.createBtn}>+ Создать</button>
+          {type !== 'persona' && <button className={styles.createBtn}>+ Создать</button>}
         </div>
       </div>
 
