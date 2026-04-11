@@ -37,6 +37,24 @@ export default function AdminDashboard() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState<FilterState>({})
 
+  // Sorting State
+  const [sortField, setSortField] = useState<string>('')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDir('asc')
+    }
+  }
+
+  const SortIcon = ({ field }: { field: string }) => {
+    if (sortField !== field) return <span style={{ opacity: 0.2, marginLeft: '4px' }}>⇅</span>
+    return sortDir === 'asc' ? <span style={{ color: 'var(--accent-purple)', marginLeft: '4px' }}>↑</span> : <span style={{ color: 'var(--accent-purple)', marginLeft: '4px' }}>↓</span>
+  }
+
   const { profile: currentUser, isLoading } = useProfile()
   const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'moderator' || pathname.includes('/debug')
 
@@ -54,18 +72,30 @@ export default function AdminDashboard() {
   const isUserDetail = pathname.includes('/users/') && id
   const isPersonaDetail = pathname.includes('/personas/') && id
 
-  // --- Filtering Logic ---
+  // --- Filtering & Sorting Logic ---
+  const applySort = (data: any[]) => {
+    if (!sortField) return data
+    return [...data].sort((a, b) => {
+      const valA = a[sortField] || ''
+      const valB = b[sortField] || ''
+      if (valA < valB) return sortDir === 'asc' ? -1 : 1
+      if (valA > valB) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+  }
+
   const filteredUsers = useMemo(() => {
-    return users.filter(u => {
+    const list = users.filter(u => {
       if (activeFilters.roles?.length && !activeFilters.roles.includes(u.role)) return false
       if (activeFilters.regDateStart && new Date(u.created_at) < new Date(activeFilters.regDateStart)) return false
       if (activeFilters.regDateEnd && new Date(u.created_at) > new Date(activeFilters.regDateEnd)) return false
       return true
     })
-  }, [users, activeFilters])
+    return applySort(list)
+  }, [users, activeFilters, sortField, sortDir])
 
   const filteredPersonas = useMemo(() => {
-    return personas.filter(p => {
+    const list = personas.filter(p => {
       if (activeFilters.userIds?.length && !activeFilters.userIds.includes(p.owner_id)) return false
       if (activeFilters.chatCountMin !== undefined && (p.chat_count || 0) < activeFilters.chatCountMin) return false
       if (activeFilters.chatCountMax !== undefined && (p.chat_count || 0) > activeFilters.chatCountMax) return false
@@ -73,10 +103,11 @@ export default function AdminDashboard() {
       if (activeFilters.lorebookCountMax !== undefined && (p.lorebook_count || 0) > activeFilters.lorebookCountMax) return false
       return true
     })
-  }, [personas, activeFilters])
+    return applySort(list)
+  }, [personas, activeFilters, sortField, sortDir])
 
   const filteredCharacters = useMemo(() => {
-    return characters.filter(c => {
+    const list = characters.filter(c => {
       if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
       if (activeFilters.isPublic === 'public' && !c.is_public) return false
       if (activeFilters.isPublic === 'private' && c.is_public) return false
@@ -84,10 +115,11 @@ export default function AdminDashboard() {
       if (activeFilters.isNSFW === 'nsfw' && !c.is_nsfw) return false
       return true
     })
-  }, [characters, activeFilters])
+    return applySort(list)
+  }, [characters, activeFilters, sortField, sortDir])
 
   const filteredLorebooks = useMemo(() => {
-    return lorebooks.filter(lb => {
+    const list = lorebooks.filter(lb => {
       if (activeTab === 'lorebooks_fandom' && activeFilters.fandoms?.length && !activeFilters.fandoms.includes(lb.fandom || '')) return false
       if (activeTab === 'lorebooks_character' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.character_id || '')) return false
       if (activeTab === 'lorebooks_persona' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.user_persona_id || '')) return false
@@ -97,7 +129,8 @@ export default function AdminDashboard() {
       if (activeFilters.entriesCountMax !== undefined && count > activeFilters.entriesCountMax) return false
       return true
     })
-  }, [lorebooks, activeFilters, activeTab])
+    return applySort(list)
+  }, [lorebooks, activeFilters, activeTab, sortField, sortDir])
 
   if (isLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div></div>
   if (!isAdmin) return <Navigate to="/dashboard" replace />
@@ -130,17 +163,6 @@ export default function AdminDashboard() {
           </div>
           
           <div className={styles.headerActions}>
-            <button 
-              className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
-              onClick={() => setIsFilterOpen(true)}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-              </svg>
-              Фильтры
-              {isAnyFilterActive && <span className={styles.statusDot} style={{ position: 'static', marginLeft: '4px' }} />}
-            </button>
-
             <div className={styles.userBadge}>
               <div className={styles.userBadgeInfo}>
                 <span className={styles.userBadgeName}>
@@ -166,7 +188,11 @@ export default function AdminDashboard() {
           {activeTab === 'characters' && !isDetailView && (
             <CharacterSection 
               characters={filteredCharacters}
-              onSelectCharacter={(cid) => navigateDebug(`/admin/characters/${cid}`)} 
+              onSelectCharacter={(cid) => navigateDebug(`/admin/characters/${cid}`)}
+              onToggleFilter={() => setIsFilterOpen(true)}
+              isFilterActive={isAnyFilterActive}
+              onSort={handleSort}
+              renderSortIcon={(f) => <SortIcon field={f} />}
             />
           )}
 
@@ -177,68 +203,94 @@ export default function AdminDashboard() {
               characters={characters}
               users={users}
               personas={personas}
+              onToggleFilter={() => setIsFilterOpen(true)}
+              isFilterActive={isAnyFilterActive}
+              onSort={handleSort}
+              renderSortIcon={(f) => <SortIcon field={f} />}
             />
           )}
 
           {activeTab === 'users' && !isUserDetail && (
-            <div className={styles.tableWrapper}>
-              <table className={styles.compactTable}>
-                <thead>
-                  <tr>
-                    <th>Имя пользователя</th>
-                    <th>Никнейм</th>
-                    <th>Роль</th>
-                    <th>Дата регистрации</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map(u => (
-                    <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
-                            <img src={u.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`} alt="" style={{ width: '100%', height: '100%' }} />
-                          </div>
-                          <span style={{ fontWeight: 700 }}>{u.full_name || u.login}</span>
-                        </div>
-                      </td>
-                      <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
-                      <td><Badge variant={u.role === 'admin' ? 'orange' : u.role === 'moderator' ? 'purple' : 'fuchsia'}>{u.role}</Badge></td>
-                      <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
+            <div className={styles.sectionContainer}>
+              <div className={styles.sectionHeader} style={{ justifyContent: 'flex-end', marginBottom: '16px' }}>
+                <button 
+                  className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
+                  onClick={() => setIsFilterOpen(true)}
+                  style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                </button>
+              </div>
+              <div className={styles.tableWrapper}>
+                <table className={styles.compactTable}>
+                  <thead>
+                    <tr>
+                      <th onClick={() => handleSort('full_name')} style={{ cursor: 'pointer' }}>Имя пользователя <SortIcon field="full_name" /></th>
+                      <th onClick={() => handleSort('username')} style={{ cursor: 'pointer' }}>Никнейм <SortIcon field="username" /></th>
+                      <th onClick={() => handleSort('role')} style={{ cursor: 'pointer' }}>Роль <SortIcon field="role" /></th>
+                      <th onClick={() => handleSort('created_at')} style={{ cursor: 'pointer' }}>Дата регистрации <SortIcon field="created_at" /></th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.map(u => (
+                      <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
+                              <img src={u.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`} alt="" style={{ width: '100%', height: '100%' }} />
+                            </div>
+                            <span style={{ fontWeight: 700 }}>{u.full_name || u.login}</span>
+                          </div>
+                        </td>
+                        <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
+                        <td><Badge variant={u.role === 'admin' ? 'orange' : u.role === 'moderator' ? 'purple' : 'fuchsia'}>{u.role}</Badge></td>
+                        <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
           {activeTab === 'personas' && !isPersonaDetail && (
-            <div className={styles.tableWrapper}>
-              <table className={styles.compactTable}>
-                <thead>
-                  <tr>
-                    <th>Разворот</th>
-                    <th>Персона</th>
-                    <th>Владелец</th>
-                    <th>Чаты</th>
-                    <th>Лорбуки</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPersonas.map(p => {
-                    const owner = users.find(u => u.id === p.owner_id)
-                    return (
-                      <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
-                        <td style={{ width: '40px' }}><div className={styles.charAvatarWrapper} style={{ width: '32px', height: '32px', position: 'static' }}><img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" /></div></td>
-                        <td><span style={{ fontWeight: 700 }}>{p.name}</span></td>
-                        <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>{owner ? `@${owner.username}` : p.owner_id}</span></td>
-                        <td><span style={{ fontWeight: 600 }}>{p.chat_count}</span></td>
-                        <td><Badge variant="teal">{p.lorebook_count}</Badge></td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+            <div className={styles.sectionContainer}>
+              <div className={styles.sectionHeader} style={{ justifyContent: 'flex-end', marginBottom: '16px' }}>
+                <button 
+                  className={`${styles.filterBtn} ${isAnyFilterActive ? styles.filterBtnActive : ''}`}
+                  onClick={() => setIsFilterOpen(true)}
+                  style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                </button>
+              </div>
+              <div className={styles.tableWrapper}>
+                <table className={styles.compactTable}>
+                  <thead>
+                    <tr>
+                      <th>Разворот</th>
+                      <th onClick={() => handleSort('name')} style={{ cursor: 'pointer' }}>Персона <SortIcon field="name" /></th>
+                      <th onClick={() => handleSort('owner_id')} style={{ cursor: 'pointer' }}>Владелец <SortIcon field="owner_id" /></th>
+                      <th onClick={() => handleSort('chat_count')} style={{ cursor: 'pointer' }}>Чаты <SortIcon field="chat_count" /></th>
+                      <th onClick={() => handleSort('lorebook_count')} style={{ cursor: 'pointer' }}>Лорбуки <SortIcon field="lorebook_count" /></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPersonas.map(p => {
+                      const owner = users.find(u => u.id === p.owner_id)
+                      return (
+                        <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
+                          <td style={{ width: '40px' }}><div className={styles.charAvatarWrapper} style={{ width: '32px', height: '32px', position: 'static' }}><img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" /></div></td>
+                          <td><span style={{ fontWeight: 700 }}>{p.name}</span></td>
+                          <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>{owner ? `@${owner.username}` : p.owner_id}</span></td>
+                          <td><span style={{ fontWeight: 600 }}>{p.chat_count}</span></td>
+                          <td><Badge variant="teal">{p.lorebook_count}</Badge></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 

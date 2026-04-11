@@ -1,50 +1,46 @@
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Button, Card, Input } from '@/components/ui'
 import styles from '../Admin.module.css'
 import type { Character } from '../types'
-import { Badge } from '@/components/ui'
-
-type ViewMode = 'grid' | 'table'
-type SortField = 'name' | 'total_chats_count' | 'monthly_chats_count'
 
 interface CharacterSectionProps {
   characters: Character[]
-  onSelectCharacter?: (id: string) => void
+  onSelectCharacter: (id: string) => void
+  onToggleFilter?: () => void
+  isFilterActive?: boolean
+  onSort?: (field: string) => void
+  renderSortIcon?: (field: string) => React.ReactNode
 }
 
-export function CharacterSection({ characters, onSelectCharacter }: CharacterSectionProps) {
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
+type ViewMode = 'grid' | 'table'
 
-  const navigateDebug = (route: string) => {
-    const isDebug = pathname.includes('/debug')
-    const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
-    navigate(finalRoute)
-  }
+export function CharacterSection({ 
+  characters, 
+  onSelectCharacter,
+  onToggleFilter,
+  isFilterActive,
+  onSort,
+  renderSortIcon
+}: CharacterSectionProps) {
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
-  const [sortField, setSortField] = useState<SortField>('name')
 
-  const filteredCharacters = characters
-    .filter(c => 
-      c.name.toLowerCase().includes(search.toLowerCase()) || 
-      c.fandom?.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (typeof a[sortField] === 'string' && typeof b[sortField] === 'string') {
-        return (a[sortField] as string).localeCompare(b[sortField] as string)
-      }
-      return (b[sortField] as number) - (a[sortField] as number)
-    })
+  const filteredCharacters = characters.filter(char => 
+    char.name.toLowerCase().includes(search.toLowerCase()) ||
+    char.fandom?.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className={styles.sectionContainer}>
       <div className={styles.sectionHeader}>
         <div className={styles.searchWrapper}>
+          <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input 
             type="text" 
             placeholder="Поиск персонажей..." 
-            className={styles.searchBox}
+            className={styles.searchInput}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -64,8 +60,21 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
             >
               Карточки
             </button>
+
+            <button 
+              className={`${styles.filterBtn} ${isFilterActive ? styles.filterBtnActive : ''}`}
+              onClick={onToggleFilter}
+              style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center', marginLeft: '8px' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </button>
           </div>
-          <button className={styles.createBtn} onClick={() => navigateDebug('/admin/characters/create')}>+ Создать</button>
+          <button 
+            className={styles.createBtn}
+            onClick={() => onSelectCharacter('create')}
+          >
+            + Создать
+          </button>
         </div>
       </div>
 
@@ -74,32 +83,24 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
           <table className={styles.compactTable}>
             <thead>
               <tr>
-                <th onClick={() => setSortField('name')} style={{ cursor: 'pointer' }}>Имя {sortField === 'name' && '↓'}</th>
-                <th>Фандом</th>
-                <th onClick={() => setSortField('total_chats_count')} style={{ cursor: 'pointer' }}>Всего чатов {sortField === 'total_chats_count' && '↓'}</th>
-                <th onClick={() => setSortField('monthly_chats_count')} style={{ cursor: 'pointer' }}>За месяц {sortField === 'monthly_chats_count' && '↓'}</th>
-                <th>Сценарии</th>
-                <th>NSFW</th>
-                <th>Доступ</th>
+                <th onClick={() => onSort?.('name')} style={{ cursor: 'pointer' }}>Имя персонажа {renderSortIcon?.('name')}</th>
+                <th onClick={() => onSort?.('fandom')} style={{ cursor: 'pointer' }}>Вселенная {renderSortIcon?.('fandom')}</th>
+                <th onClick={() => onSort?.('total_chats_count')} style={{ cursor: 'pointer' }}>Чатов/мес {renderSortIcon?.('total_chats_count')}</th>
+                <th onClick={() => onSort?.('scenario_count')} style={{ cursor: 'pointer' }}>Сценариев {renderSortIcon?.('scenario_count')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredCharacters.map(char => (
-                <tr key={char.id} onClick={() => onSelectCharacter?.(char.id)} style={{ cursor: 'pointer' }}>
-                  <td style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <img src={char.avatar_url} alt="" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
-                    <span style={{ fontWeight: 700 }}>{char.name}</span>
-                  </td>
-                  <td><Badge variant="orange">{char.fandom || '—'}</Badge></td>
-                  <td>{char.total_chats_count.toLocaleString()}</td>
-                  <td>{char.monthly_chats_count.toLocaleString()}</td>
-                  <td>{char.scenarios_count || 0}</td>
-                  <td>{char.nsfw_allowed ? '✅' : '❌'}</td>
+                <tr key={char.id} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
                   <td>
-                    <Badge variant={char.is_public ? 'green' : 'red'}>
-                      {char.is_public ? 'PUBLIC' : 'PRIVATE'}
-                    </Badge>
+                    <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '32px', height: '32px', display: 'inline-flex', verticalAlign: 'middle', marginRight: '10px' }}>
+                      <img src={char.avatar_url} className={styles.charAvatar} alt={char.name} />
+                    </div>
+                    <strong>{char.name}</strong>
                   </td>
+                  <td><span style={{ opacity: 0.7 }}>{char.fandom || 'Оригинальный'}</span></td>
+                  <td>{char.total_chats_count.toLocaleString()}</td>
+                  <td>{char.scenario_count || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -108,54 +109,28 @@ export function CharacterSection({ characters, onSelectCharacter }: CharacterSec
       ) : (
         <div className={styles.grid}>
           {filteredCharacters.map(char => (
-            <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter?.(char.id)} style={{ cursor: 'pointer' }}>
-              <div className={styles.cardActions}>
-                <button 
-                  className={`${styles.iconBtn} ${styles.editBtn}`}
-                  onClick={(e) => { e.stopPropagation(); navigateDebug(`/admin/characters/${char.id}/edit`) }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-                <button className={`${styles.iconBtn} ${styles.deleteBtn}`}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                </button>
-              </div>
-              
+            <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardTop}>
-                <img src={char.avatar_url} alt={char.name} className={styles.cardAvatar} />
+                <div className={styles.cardAvatarWrapper}>
+                  <img src={char.avatar_url} className={styles.cardAvatar} alt={char.name} />
+                </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <Badge variant="orange">
-                      {char.fandom || 'Original'}
-                    </Badge>
-                    {char.nsfw_allowed && (
-                      <Badge variant="red">NSFW</Badge>
-                    )}
-                  </div>
+                  <div className={styles.cardFandom}>{char.fandom || 'Оригинальный'}</div>
                 </div>
               </div>
-
-              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', height: '2.5rem', overflow: 'hidden', margin: '0' }}>
-                {char.description}
-              </p>
-
               <div className={styles.cardStats}>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>Чаты</span>
-                  <span className={styles.statValue}>{char.total_chats_count}</span>
+                  <span className={styles.statLabel}>Чатов</span>
+                  <span className={styles.statValue}>{char.total_chats_count.toLocaleString()}</span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>Доступ</span>
-                  <span className={styles.statValue} style={{ color: char.is_public ? '#4ade80' : '#fb7185' }}>
-                    {char.is_public ? 'Public' : 'Private'}
-                  </span>
+                  <span className={styles.statLabel}>Сценариев</span>
+                  <span className={styles.statValue}>{char.scenario_count || 0}</span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>NSFW</span>
-                  <span className={styles.statValue}>
-                    {char.nsfw_allowed ? '✅' : '❌'}
-                  </span>
+                  <span className={styles.statLabel}>Лоры</span>
+                  <span className={styles.statValue}>{char.lorebooks_count || 0}</span>
                 </div>
               </div>
             </div>

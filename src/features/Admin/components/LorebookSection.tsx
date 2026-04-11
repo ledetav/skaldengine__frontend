@@ -10,6 +10,10 @@ interface LorebookSectionProps {
   characters?: Character[]
   users?: User[]
   personas?: UserPersona[]
+  onToggleFilter?: () => void
+  isFilterActive?: boolean
+  onSort?: (field: string) => void
+  renderSortIcon?: (field: string) => React.ReactNode
 }
 
 type ViewMode = 'grid' | 'table'
@@ -19,7 +23,11 @@ export function LorebookSection({
   lorebooks, 
   characters = [], 
   users = [], 
-  personas = [] 
+  personas = [],
+  onToggleFilter,
+  isFilterActive,
+  onSort,
+  renderSortIcon
 }: LorebookSectionProps) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -352,6 +360,14 @@ export function LorebookSection({
             >
               Карточки
             </button>
+
+            <button 
+              className={`${styles.filterBtn} ${isFilterActive ? styles.filterBtnActive : ''}`}
+              onClick={onToggleFilter}
+              style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center', marginLeft: '8px' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </button>
           </div>
           {initialType !== 'persona' && <button className={styles.createBtn}>+ Создать</button>}
         </div>
@@ -362,10 +378,11 @@ export function LorebookSection({
           <table className={styles.compactTable}>
             <thead>
               <tr>
-                <th>Название</th>
-                <th>{initialType === 'fandom' ? 'Вселенная' : initialType === 'persona' ? 'Владелец' : 'Персонаж'}</th>
-                <th>Записей</th>
-                <th>ID</th>
+                <th onClick={() => onSort?.('name')} style={{ cursor: 'pointer' }}>Название {renderSortIcon?.('name')}</th>
+                <th onClick={() => onSort?.(initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'user_persona_id' : 'character_id')} style={{ cursor: 'pointer' }}>
+                  {initialType === 'fandom' ? 'Вселенная' : initialType === 'persona' ? 'Владелец' : 'Персонаж'} {renderSortIcon?.(initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'user_persona_id' : 'character_id')}
+                </th>
+                <th onClick={() => onSort?.('entries_count')} style={{ cursor: 'pointer' }}>Записей {renderSortIcon?.('entries_count')}</th>
               </tr>
             </thead>
             <tbody>
@@ -373,8 +390,7 @@ export function LorebookSection({
                 <tr key={lb.id} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
                   <td><Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'}>{initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}</Badge></td>
-                  <td>{lb.entries?.length || 0}</td>
-                  <td><code style={{ fontSize: '0.7rem', opacity: 0.5 }}>{lb.id}</code></td>
+                  <td>{lb.entries?.length || lb.entries_count || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -392,7 +408,7 @@ export function LorebookSection({
                   <button 
                     className={`${styles.iconBtn} ${styles.dangerBtn}`} 
                     style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties}
-                    onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); /* note: in a real app would set current delete ID */ }}
+                    onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); }}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
@@ -416,9 +432,9 @@ export function LorebookSection({
                   <span className={styles.statValue}>{lb.entries?.length || lb.entries_count || 0}</span>
                 </div>
                 <div className={styles.statItem} style={{ gridColumn: 'span 2' }}>
-                  <span className={styles.statLabel}>ID Лорбука</span>
+                  <span className={styles.statLabel}>Лорбук</span>
                   <span className={styles.statValue} style={{ fontSize: '0.75rem', opacity: 0.4, fontFamily: 'monospace' }}>
-                    {lb.id.split('-')[0]}...
+                    {initialType.toUpperCase()}
                   </span>
                 </div>
               </div>
