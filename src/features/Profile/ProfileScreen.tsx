@@ -14,10 +14,14 @@ import styles from './Profile.module.css';
 
 import { useParams } from 'react-router-dom';
 
-export default function ProfileScreen() {
+interface ProfileScreenProps {
+  isDebug?: boolean
+}
+
+export default function ProfileScreen({ isDebug }: ProfileScreenProps) {
   const { username } = useParams<{ username?: string }>();
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
-  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username);
+  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username, isDebug);
 
   if (isLoading) {
     return (

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
 import { mockLorebooks } from './lorebookMockData'
 import type { Lorebook, LorebookEntry } from './lorebookMockData'
-import { useToast } from '@/components/ui/Toast'
+import { useToast, Button, Card, Badge, Input, Textarea } from '@/components/ui'
 
 /* ─── Add Single Entry Panel ───────────────────── */
 function AddSingleEntry({ onAdd, onCancel }: {
@@ -33,43 +33,44 @@ function AddSingleEntry({ onAdd, onCancel }: {
   }
 
   return (
-    <div className={styles.addEntryPanel}>
+    <Card style={{ padding: '28px', marginBottom: '24px' }}>
       <div className={styles.panelTitle}>Добавить запись</div>
       <form onSubmit={handleSubmit} noValidate>
         <div className={styles.formRow}>
           <div className={styles.inputRow}>
-            <input
-              className={styles.formInput}
+            <Input
+              label="Ключевые слова"
               value={keywords}
               onChange={e => setKeywords(e.target.value)}
-              placeholder="Ключевые слова через запятую: магия, заклинание, артефакт"
+              placeholder="магия, заклинание, артефакт"
             />
-            <input
-              className={`${styles.formInput} ${styles.numberInput}`}
-              type="number"
-              value={priority}
-              onChange={e => setPriority(e.target.value)}
-              min={0}
-              max={100}
-              title="Приоритет (0-100)"
-            />
+            <div style={{ width: '100px' }}>
+              <Input
+                label="Приоритет"
+                type="number"
+                value={priority}
+                onChange={e => setPriority(e.target.value)}
+                min="0"
+                max="100"
+              />
+            </div>
           </div>
-          <textarea
-            className={styles.formTextarea}
+          <Textarea
+            label="Содержание"
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder="Содержание записи — факт, описание, правило мира..."
+            placeholder="Факт, описание или правило мира..."
             rows={4}
           />
           <div className={styles.formActions}>
-            <button type="button" className={styles.cancelBtn} onClick={onCancel}>Отмена</button>
-            <button type="submit" className={styles.submitBtn} disabled={submitting}>
-              {submitting ? 'Добавляем...' : 'Добавить запись'}
-            </button>
+            <Button variant="ghost" type="button" onClick={onCancel}>Отмена</Button>
+            <Button variant="primary" type="submit" loading={submitting}>
+              Добавить запись
+            </Button>
           </div>
         </div>
       </form>
-    </div>
+    </Card>
   )
 }
 
@@ -110,7 +111,7 @@ function BatchImportPanel({ onImport, onCancel }: {
   }
 
   return (
-    <div className={styles.addEntryPanel}>
+    <Card style={{ padding: '28px', marginBottom: '24px' }}>
       <div className={styles.panelTitle}>Пакетный импорт (JSON)</div>
       <p className={styles.batchHint}>
         Вставьте массив JSON в формате:
@@ -118,8 +119,7 @@ function BatchImportPanel({ onImport, onCancel }: {
       </p>
       {result && <div className={styles.batchResult}>{result}</div>}
       {parseError && <div className={styles.batchError}>Ошибка парсинга: {parseError}</div>}
-      <textarea
-        className={styles.formTextarea}
+      <Textarea
         value={json}
         onChange={e => setJson(e.target.value)}
         placeholder={BATCH_EXAMPLE}
@@ -127,12 +127,12 @@ function BatchImportPanel({ onImport, onCancel }: {
         style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}
       />
       <div className={styles.formActions} style={{ marginTop: 12 }}>
-        <button className={styles.cancelBtn} onClick={onCancel}>Закрыть</button>
-        <button className={styles.submitBtn} onClick={handleImport} disabled={!json.trim()}>
+        <Button variant="ghost" onClick={onCancel}>Закрыть</Button>
+        <Button variant="primary" onClick={handleImport} disabled={!json.trim()}>
           Импортировать
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -307,32 +307,26 @@ export default function LorebookDetailScreen() {
             </div>
             <div className={styles.entriesActions}>
               {entries.length > 0 && (
-                <button className={styles.exportBtn} onClick={handleExport}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <Button variant="ghost" onClick={handleExport} style={{ fontSize: '0.75rem' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
                   </svg>
-                  Экспорт JSON
-                </button>
+                  Экспорт
+                </Button>
               )}
-              <button
-                className={styles.editBtn}
+              <Button
+                variant="ghost"
                 onClick={() => setAddMode(m => m === 'batch' ? 'none' : 'batch')}
-                style={addMode === 'batch' ? { borderColor: 'var(--border-purple)', color: 'var(--accent-purple)' } : {}}
+                active={addMode === 'batch'}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>
-                </svg>
                 Батч-импорт
-              </button>
-              <button
-                className={styles.createBtn}
+              </Button>
+              <Button
+                variant="primary"
                 onClick={() => setAddMode(m => m === 'single' ? 'none' : 'single')}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                Добавить запись
-              </button>
+                + Добавить запись
+              </Button>
             </div>
           </div>
 

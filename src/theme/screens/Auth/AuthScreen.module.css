@@ -310,22 +310,49 @@
   box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .authContainer {
-    flex-direction: column !important;
-    height: auto;
-    min-height: 600px;
+    max-width: 98vw;
   }
-  .side {
-    width: 100%;
-    flex: none;
-  }
-  .sidePanel {
-    order: 2;
-    padding: 30px;
-  }
-  .formSide {
-    order: 1;
-    padding: 40px 24px;
-  }
+}
+
+/* Debug Styles */
+.debugLoginBar {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--accent-orange);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.debugTitle {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--accent-orange);
+  letter-spacing: 1px;
+}
+
+.debugBtn {
+  background: rgba(255, 140, 66, 0.1);
+  border: 1px solid rgba(255, 140, 66, 0.3);
+  color: var(--white);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.debugBtn:hover {
+  background: rgba(255, 140, 66, 0.3);
+  border-color: var(--accent-orange);
 }

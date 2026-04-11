@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useParams, useLocation, useNavigate, Navigate } from 'react-router-dom'
 
 import styles from './Admin.module.css'
 import { AdminSidebar, type AdminTab } from './components/AdminSidebar'
@@ -102,14 +102,26 @@ export default function AdminDashboard() {
     }
   }, [id, pathname, lorebooks, isCreateMode])
 
-  // Get profile state for the badge
-  const { user: profileUser } = useProfile(undefined, pathname.includes('/debug'))
+  // Get profile state for the badge and access control
+  const isDebug = pathname.includes('/debug')
+  const { user: profileUser, isLoading } = useProfile(undefined, isDebug)
   
+  if (isLoading) return null
+
+  if (!profileUser && !isDebug) {
+    return <Navigate to="/" replace />
+  }
+
   const currentUser = profileUser || {
     username: 'nordh',
     login: 'Nordh',
     role: 'admin',
     avatar_url: null
+  }
+
+  // Final check: only admin and moderator can access admin panel
+  if (currentUser.role === 'user') {
+    return <Navigate to={isDebug ? '/login/debug' : '/'} replace />
   }
 
   const isDetailView = (pathname.includes('/characters/') || isCreateMode) && (id || tempNewCharacter)

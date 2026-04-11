@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authApi } from '@/core/api/auth'
 import styles from '@/theme/components/Navbar.module.css'
 
@@ -15,9 +15,23 @@ interface NavbarProps {
 
 export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  
+  const isDebug = pathname.includes('/debug')
+  // Helper to ensure links maintain debug mode if active
+  const getDebugHref = (baseHref: string) => {
+    if (!isDebug) return baseHref;
+    // Don't append if already there
+    if (baseHref.endsWith('/debug')) return baseHref;
+    // Append /debug, considering trailing slash
+    return baseHref.replace(/\/?$/, '/debug');
+  }
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [user, setUser] = useState<{
+    full_name?: string
+    login?: string
+    username?: string
     avatar_url?: string
     role: string
   } | null>(null)
@@ -49,7 +63,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
     <header className={`${styles.navbar} ${scrolled || isDashboard ? styles.scrolled : ''} ${isDashboard ? styles.dashboardMode : ''}`}>
       <div className={styles.inner}>
         {/* Logo - Always on the Left */}
-        <Link to={isDashboard ? "/dashboard" : "/"} className={styles.logo} aria-label="SkaldEngine Home">
+        <Link to={getDebugHref(isDashboard ? "/dashboard" : "/")} className={styles.logo} aria-label="SkaldEngine Home">
           <span className={styles.logoIcon}>⚙</span>
           <span className={styles.logoText}>
             Skald<span className={styles.logoAccent}>Engine</span>
@@ -67,24 +81,24 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
               ))}
             </nav>
             <div className={styles.actions}>
-              <Link to="/login" className={styles.btnSecondary}>Войти</Link>
-              <Link to="/register" className={styles.btnPrimary}>Регистрация</Link>
+              <Link to={getDebugHref("/login")} className={styles.btnSecondary}>Войти</Link>
+              <Link to={getDebugHref("/register")} className={styles.btnPrimary}>Регистрация</Link>
             </div>
           </>
         ) : (
           <div className={styles.dashboardActions}>
-            <Link to="/chats" className={styles.navLink}>Мои чаты</Link>
-            <Link to="/lorebooks" className={styles.navLink}>Лорбуки</Link>
+            <Link to={getDebugHref("/chats")} className={styles.navLink}>Мои чаты</Link>
+            <Link to={getDebugHref("/lorebooks")} className={styles.navLink}>Лорбуки</Link>
             
             {(user?.role === 'admin' || user?.role === 'moderator') && (
-              <Link to="/admin" className={`${styles.navLink} ${styles.adminLink}`}>
+              <Link to={getDebugHref("/admin")} className={`${styles.navLink} ${styles.adminLink}`}>
                 Панель администратора
               </Link>
             )}
 
             <div className={styles.userMenu}>
               <span className={styles.userName}>{user?.full_name || user?.username || 'Загрузка...'}</span>
-              <Link to="/profile" className={styles.avatarLink}>
+              <Link to={getDebugHref("/profile")} className={styles.avatarLink}>
                 <div className={styles.avatarMini}>
                   {user?.avatar_url ? (
                     <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
@@ -119,22 +133,22 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
                 </a>
               ))}
               <div className={styles.mobileActions}>
-                <Link to="/login" className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Войти</Link>
-                <Link to="/register" className={styles.btnPrimary} onClick={() => setMenuOpen(false)}>Регистрация</Link>
+                <Link to={getDebugHref("/login")} className={styles.btnSecondary} onClick={() => setMenuOpen(false)}>Войти</Link>
+                <Link to={getDebugHref("/register")} className={styles.btnPrimary} onClick={() => setMenuOpen(false)}>Регистрация</Link>
               </div>
             </>
           ) : (
             <div className={styles.mobileActions}>
-              <Link to="/chats" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
-              <Link to="/lorebooks" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Лорбуки</Link>
+              <Link to={getDebugHref("/chats")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
+              <Link to={getDebugHref("/lorebooks")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Лорбуки</Link>
               
               {(user?.role === 'admin' || user?.role === 'moderator') && (
-                <Link to="/admin" className={`${styles.mobileLink} ${styles.adminLink}`} onClick={() => setMenuOpen(false)}>
+                <Link to={getDebugHref("/admin")} className={`${styles.mobileLink} ${styles.adminLink}`} onClick={() => setMenuOpen(false)}>
                   Панель администратора
                 </Link>
               )}
 
-              <Link to="/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+              <Link to={getDebugHref("/profile")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
                 Профиль ({user?.full_name || user?.username || '...'})
               </Link>
               <div className={styles.mobileDivider} />

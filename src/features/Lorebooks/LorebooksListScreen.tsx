@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
 import { mockLorebooks } from './lorebookMockData'
 import type { Lorebook } from './lorebookMockData'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@/components/ui'
 
 function BookIcon() {
   return (

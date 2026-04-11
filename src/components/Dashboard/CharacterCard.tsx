@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Character } from '@/core/types/character'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
 interface CharacterCardProps {
@@ -10,6 +10,14 @@ interface CharacterCardProps {
 }
 
 export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMode = 'grid', isHotOverride }) => {
+  const { pathname } = useLocation()
+  const isDebug = pathname.includes('/debug')
+  
+  const getDebugHref = (baseHref: string) => {
+    if (!isDebug) return baseHref;
+    if (baseHref.endsWith('/debug')) return baseHref;
+    return baseHref.replace(/\/?$/, '/debug');
+  }
   const getIcon = () => {
     const fandom = character.fandom?.toLowerCase() || ''
     if (fandom.includes('cthulhu') || fandom.includes('horror')) return '👁️'
@@ -81,14 +89,14 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         <p className={styles.cardDesc}>{character.description}</p>
         
         {/* Mobile-only visible button */}
-        <Link to={`/create-chat/${character.id}`} className={styles.mobileStartChatBtn}>
+        <Link to={getDebugHref(`/chat/create/${character.id}`)} className={styles.mobileStartChatBtn}>
           Начать чат
         </Link>
       </div>
 
       {/* Hover Action (Covers the whole card) */}
       <div className={styles.cardHoverOverlay}>
-        <Link to={`/create-chat/${character.id}`} className={styles.startChatBtn}>
+        <Link to={getDebugHref(`/chat/create/${character.id}`)} className={styles.startChatBtn}>
           Начать чат
         </Link>
       </div>
