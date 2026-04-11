@@ -163,6 +163,11 @@
   border-color: var(--item-accent);
 }
 
+.navLabel {
+  text-align: left;
+  flex: 1;
+}
+
 .navIcon {
   display: flex;
   align-items: center;

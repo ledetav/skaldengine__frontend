@@ -198,17 +198,15 @@ export default function AdminDashboard() {
               <table className={styles.compactTable}>
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Имя пользователя</th>
+                    <th>Никнейм</th>
                     <th>Роль</th>
                     <th>Дата регистрации</th>
-                    <th>Email</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(u => (
                     <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
-                      <td><code style={{ fontSize: '0.7rem', opacity: 0.3 }}>{u.id}</code></td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
@@ -217,9 +215,9 @@ export default function AdminDashboard() {
                           <span style={{ fontWeight: 700 }}>{u.full_name || u.login}</span>
                         </div>
                       </td>
+                      <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
                       <td><Badge variant={u.role === 'admin' ? 'orange' : 'purple'}>{u.role}</Badge></td>
                       <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
-                      <td><span style={{ opacity: 0.7 }}>{u.email}</span></td>
                     </tr>
                   ))}
                 </tbody>
