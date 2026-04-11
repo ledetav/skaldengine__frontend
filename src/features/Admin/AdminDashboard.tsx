@@ -188,7 +188,7 @@ export default function AdminDashboard() {
             />
           )}
 
-          {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character' || activeTab === 'lorebooks_persona') && !isLorebookDetail && (
+          {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character' || activeTab === 'lorebooks_persona') && (
             <LorebookSection 
               type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
               lorebooks={lorebooks}
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
-                      <td><Badge variant={u.role === 'admin' ? 'orange' : 'purple'}>{u.role}</Badge></td>
+                      <td><Badge variant={u.role === 'admin' ? 'orange' : 'fuchsia'}>{u.role}</Badge></td>
                       <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                     </tr>
                   ))}
@@ -285,6 +285,7 @@ export default function AdminDashboard() {
               personaId={id!}
               personas={personas}
               users={users}
+              allLorebooks={lorebooks}
               onBack={() => navigateDebug('/admin/personas')}
             />
           )}

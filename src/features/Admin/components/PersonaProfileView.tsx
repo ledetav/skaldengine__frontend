@@ -1,12 +1,12 @@
 import React from 'react'
 import styles from '../Admin.module.css'
-import type { UserPersona, User } from '../types'
-import { Badge } from '@/components/ui'
+import type { UserPersona, User, Lorebook } from '../types'
 
 interface PersonaProfileViewProps {
   personaId: string
   personas: UserPersona[]
   users: User[]
+  allLorebooks: Lorebook[]
   onBack: () => void
 }
 
@@ -14,10 +14,13 @@ export function PersonaProfileView({
   personaId, 
   personas, 
   users,
+  allLorebooks,
   onBack 
 }: PersonaProfileViewProps) {
   const persona = personas.find(p => p.id === personaId)
   const owner = users.find(u => u.id === persona?.owner_id)
+  
+  const personaLorebooks = allLorebooks.filter(lb => lb.user_persona_id === personaId)
   
   if (!persona) {
     return (
@@ -115,21 +118,54 @@ export function PersonaProfileView({
             </div>
 
             <div className={styles.detailGroup}>
-              <div className={styles.detailTitle}>Внешность</div>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                Внешность
+              </div>
               <p className={styles.detailText}>{persona.appearance || 'Описание внешности не задано.'}</p>
             </div>
 
             <div className={styles.detailGroup}>
-              <div className={styles.detailTitle}>Личность</div>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Личность
+              </div>
               <p className={styles.detailText}>{persona.personality || 'Описание личности не задано.'}</p>
             </div>
 
-            {persona.facts && (
-              <div className={styles.detailGroup}>
-                <div className={styles.detailTitle}>Дополнительные факты</div>
-                <p className={styles.detailText}>{persona.facts}</p>
+            <div className={styles.detailGroup}>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Лорбуки персоны
               </div>
-            )}
+              <div className={styles.lorebookList}>
+                {personaLorebooks.length > 0 ? (
+                  personaLorebooks.map(lb => (
+                    <div key={lb.id} className={styles.lorebookMiniCard}>
+                      <div className={styles.lorebookMiniInfo}>
+                        <span className={styles.lorebookMiniName}>{lb.name}</span>
+                        <span className={styles.lorebookMiniDesc}>
+                          {lb.entries?.length || 0} записей • {lb.id}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.02)', 
+                    padding: '24px',
+                    borderRadius: '16px',
+                    color: 'rgba(255,255,255,0.3)',
+                    fontSize: '0.9rem',
+                    fontStyle: 'italic',
+                    textAlign: 'center',
+                    border: '1px solid rgba(255,255,255,0.03)'
+                  }}>
+                    Лорбуки не привязаны.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </main>
       </div>

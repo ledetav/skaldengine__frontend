@@ -256,26 +256,30 @@ export function LorebookSection({ type, lorebooks }: LorebookSectionProps) {
             <div key={lb.id} className={styles.adminCard} onClick={() => handleView(lb.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardActions}>
                 <button className={`${styles.iconBtn} ${styles.editBtn}`} onClick={(e) => { e.stopPropagation(); handleEdit(lb.id); }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
               </div>
 
-              <h3 className={styles.cardName}>{lb.name}</h3>
-              <div style={{ marginBottom: '16px' }}>
-                <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>
-                  {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_id}
-                </Badge>
+              <div className={styles.cardTop}>
+                <div className={styles.cardInfo}>
+                  <h3 className={styles.cardName}>{lb.name}</h3>
+                  <div style={{ marginTop: '6px' }}>
+                    <Badge variant={type === 'fandom' ? 'fuchsia' : type === 'persona' ? 'teal' : 'purple'}>
+                      {type === 'fandom' ? lb.fandom : type === 'persona' ? lb.user_persona_name || lb.user_persona_id : lb.character_name || lb.character_id}
+                    </Badge>
+                  </div>
+                </div>
               </div>
 
-              <div className={styles.cardStats}>
+              <div className={styles.cardStats} style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px' }}>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Записей</span>
-                  <span className={styles.statValue}>{lb.entries.length}</span>
+                  <span className={styles.statValue}>{lb.entries?.length || lb.entries_count || 0}</span>
                 </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statLabel}>ID</span>
-                  <span className={styles.statValue} style={{ fontSize: '0.7rem', opacity: 0.5 }}>
-                    {lb.id.split('-')[0]}
+                <div className={styles.statItem} style={{ gridColumn: 'span 2' }}>
+                  <span className={styles.statLabel}>ID Лорбука</span>
+                  <span className={styles.statValue} style={{ fontSize: '0.75rem', opacity: 0.4, fontFamily: 'monospace' }}>
+                    {lb.id.split('-')[0]}...
                   </span>
                 </div>
               </div>

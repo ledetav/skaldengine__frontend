@@ -1,7 +1,7 @@
-import React from 'react'
+import { useState } from 'react'
 import styles from '../Admin.module.css'
 import type { User } from '../types'
-import { Badge } from '@/components/ui'
+import { Button } from '@/components/ui'
 
 interface UserProfileViewProps {
   userId: string
@@ -14,6 +14,10 @@ export function UserProfileView({
   users, 
   onBack 
 }: UserProfileViewProps) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showRoleModal, setShowRoleModal] = useState(false)
+  const [selectedRole, setSelectedRole] = useState('')
+
   const user = users.find(u => u.id === userId)
   
   if (!user) {
@@ -37,12 +41,12 @@ export function UserProfileView({
         </button>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span className={styles.mainSubtitle}>Панель управления пользователем</span>
-          <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>{user.full_name || user.login || user.username}</h2>
+          <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>{user.full_name || user.username}</h2>
         </div>
       </header>
 
       <div className={styles.characterProfileContent}>
-        {/* LEFT: Sidebar style card */}
+        {/* LEFT: Sidebar style card (MATCHING CHARACTER PROFILE) */}
         <aside className={styles.sidebarWrapper}>
           <div className={styles.charSidebarCard}>
             <div className={styles.charCover}>
@@ -61,8 +65,8 @@ export function UserProfileView({
             </div>
 
             <div className={styles.charBasicInfo}>
-              <h1 className={styles.charProfileName}>{user.full_name || user.login}</h1>
-              <p className={styles.charProfileFandom} style={{ color: 'var(--accent-blue)' }}>@{user.username}</p>
+              <h1 className={styles.charProfileName}>{user.full_name || user.username}</h1>
+              <p className={styles.charProfileFandom} style={{ color: 'var(--accent-pink)' }}>@{user.username}</p>
               
               <div style={{ marginTop: '20px' }}>
                 <p style={{ 
@@ -72,7 +76,7 @@ export function UserProfileView({
                   margin: 0,
                   fontWeight: 500
                 }}>
-                  {user.about || 'Информация о себе не заполнена.'}
+                  {user.about || 'Пользователь еще не заполнил информацию о себе.'}
                 </p>
               </div>
             </div>
@@ -80,40 +84,44 @@ export function UserProfileView({
             <div className={styles.charStatsGrid}>
               <div className={styles.charStatBox}>
                 <span className={styles.statLabel}>Роль</span>
-                <Badge variant={user.role === 'admin' ? 'orange' : 'purple'}>{user.role}</Badge>
+                <span className={styles.statValue} style={{ color: user.role === 'admin' ? 'var(--accent-orange)' : 'var(--accent-pink)', fontSize: '0.9rem' }}>
+                  {user.role.toUpperCase()}
+                </span>
               </div>
               <div className={styles.charStatBox}>
-                <span className={styles.statLabel}>Дата регистрации</span>
+                <span className={styles.statLabel}>Регистрация</span>
                 <span className={styles.statValue} style={{ fontSize: '0.8rem' }}>{new Date(user.created_at).toLocaleDateString()}</span>
               </div>
             </div>
           </div>
         </aside>
 
-        {/* RIGHT: Detailed content */}
+        {/* RIGHT: Detailed content (MATCHING CHARACTER PROFILE) */}
         <main className={styles.mainContentWrapper}>
           <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>
               <div className={styles.detailTitle}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Аккаунт
+                О пользователе
+              </div>
+              <p className={styles.detailText} style={{ lineHeight: '1.8', opacity: 0.8 }}>
+                {user.about || 'Информация о себе отсутствует.'}
+              </p>
+            </div>
+
+            <div className={styles.detailGroup}>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Личные данные
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div>
-                  <span className={styles.dsLabel}>Email</span>
-                  <p className={styles.detailText}>{user.email}</p>
-                </div>
-                <div>
-                  <span className={styles.dsLabel}>ID пользователя</span>
-                  <code style={{ fontSize: '0.8rem', opacity: 0.5 }}>{user.id}</code>
-                </div>
                 <div>
                   <span className={styles.dsLabel}>Дата рождения</span>
                   <p className={styles.detailText}>{user.birth_date ? new Date(user.birth_date).toLocaleDateString() : 'Не указана'}</p>
                 </div>
                 <div>
-                  <span className={styles.dsLabel}>Логин</span>
-                  <p className={styles.detailText}>{user.login}</p>
+                  <span className={styles.dsLabel}>ID пользователя</span>
+                  <code style={{ fontSize: '0.8rem', opacity: 0.5, display: 'block', marginTop: '4px' }}>{user.id}</code>
                 </div>
               </div>
             </div>
@@ -121,17 +129,58 @@ export function UserProfileView({
             <div className={styles.detailGroup}>
               <div className={styles.detailTitle}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1V11a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H11a2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15z"/></svg>
-                Действия администратора
+                Управление аккаунтом
               </div>
-              <div className={styles.actionRow} style={{ justifyContent: 'flex-start', borderTop: 'none', paddingTop: 0 }}>
-                <button className={styles.secondaryBtn}>Сбросить пароль</button>
-                <button className={styles.secondaryBtn} style={{ color: 'var(--accent-orange)' }}>Изменить роль</button>
-                <button className={styles.secondaryBtn} style={{ color: 'var(--accent-red)' }}>Заблокировать</button>
+              <div className={styles.actionRow} style={{ justifyContent: 'flex-start', borderTop: 'none', paddingTop: 0, gap: '16px' }}>
+                <Button variant="ghost" onClick={() => { setSelectedRole(user.role); setShowRoleModal(true); }}>Изменить роль</Button>
+                <Button variant="danger" onClick={() => setShowDeleteModal(true)}>Удалить пользователя</Button>
               </div>
             </div>
           </div>
         </main>
       </div>
+
+      {/* Modals */}
+      {showDeleteModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Удалить пользователя?</h3>
+            <p className={styles.modalDescription}>
+              Это действие необратимо. Пользователь <strong>{user.username}</strong> будет полностью удален из системы вместе со всеми данными.
+            </p>
+            <div className={styles.modalActions}>
+              <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
+              <Button variant="danger" onClick={() => setShowDeleteModal(false)}>Да, удалить</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRoleModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowRoleModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Изменение роли</h3>
+            <p className={styles.modalDescription}>Выберите новую роль для пользователя <strong>{user.username}</strong>:</p>
+            
+            <div className={styles.roleBtnGroup}>
+              {['user', 'moderator', 'admin'].map(role => (
+                <button 
+                  key={role}
+                  className={`${styles.roleBtn} ${selectedRole === role ? styles.roleBtnActive : ''}`}
+                  onClick={() => setSelectedRole(role)}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.modalActions}>
+              <Button variant="ghost" onClick={() => setShowRoleModal(false)}>Отмена</Button>
+              <Button variant="orange" onClick={() => setShowRoleModal(false)}>Сохранить</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
