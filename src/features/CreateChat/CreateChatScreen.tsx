@@ -36,8 +36,6 @@ const gameModes: { id: GameModeType, title: string, description: string }[] = [
   }
 ]
 
-import { mockCharacters, mockLorebooks, mockPersonas } from '../Admin/mockData'
-
 interface CreateChatScreenProps {
   isDebug?: boolean
 }
@@ -70,17 +68,6 @@ const CreateChatScreen: React.FC<CreateChatScreenProps> = ({ isDebug }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isDebug) {
-        setIsLoading(true)
-        const char = mockCharacters.find(c => c.id === characterId) || mockCharacters[0]
-        setCharacter(char)
-        setLorebooks(mockLorebooks as any)
-        setPersonas(mockPersonas as any)
-        if (mockPersonas.length > 0) setSelectedPersonaId(mockPersonas[0].id)
-        setIsLoading(false)
-        return
-      }
-
       try {
         setIsLoading(true)
         const [charData, personasData, scenariosData, lorebooksData, userData] = await Promise.all([
