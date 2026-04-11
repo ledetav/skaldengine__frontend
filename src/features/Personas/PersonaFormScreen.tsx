@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './PersonaForm.module.css'
-import { mockPersonas } from './personaMockData'
 import type { UserPersona } from '@/core/types/chat'
+import { personasApi } from '@/core/api/personas'
 import { useToast } from '@/components/ui'
 
 interface PersonaFormData {
@@ -49,13 +49,16 @@ export default function PersonaFormScreen() {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
-    if (isEdit) {
-      const existing = mockPersonas.find(p => p.id === id)
-      if (existing) {
-        setForm(toFormData(existing))
-      } else {
-        setNotFound(true)
+    if (isEdit && id) {
+      const fetchPersona = async () => {
+        try {
+          const existing = await personasApi.getPersona(id)
+          setForm(toFormData(existing))
+        } catch (err) {
+          setNotFound(true)
+        }
       }
+      fetchPersona()
     }
   }, [id, isEdit])
 
@@ -78,16 +81,31 @@ export default function PersonaFormScreen() {
     if (!validate()) return
 
     setSubmitting(true)
-    // Simulate API call delay
-    await new Promise(r => setTimeout(r, 700))
-    setSubmitting(false)
 
-    if (isEdit) {
-      success(`Персона «${form.name}» обновлена`)
-    } else {
-      success(`Персона «${form.name}» создана`)
+    try {
+      const payload = {
+        name: form.name,
+        description: form.description || undefined,
+        gender: form.gender || undefined,
+        age: form.age ? parseInt(form.age, 10) : undefined,
+        appearance: form.appearance || undefined,
+        personality: form.personality || undefined,
+        facts: form.facts || undefined,
+      }
+      
+      if (isEdit && id) {
+        await personasApi.updatePersona(id, payload)
+        success(`Персона «${form.name}» обновлена`)
+      } else {
+        await personasApi.createPersona(payload as any)
+        success(`Персона «${form.name}» создана`)
+      }
+      navigate('/personas')
+    } catch (err: any) {
+      success(`Ошибка сохр��нения: ${err.message}`)
+    } finally {
+      setSubmitting(false)
     }
-    navigate('/personas/debug')
   }
 
   if (notFound) {
@@ -95,7 +113,7 @@ export default function PersonaFormScreen() {
       <div className={styles.page}>
         <div className={styles.content} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
           <h2 style={{ color: 'rgba(255,255,255,0.5)' }}>Персона не найдена</h2>
-          <button className={styles.cancelBtn} onClick={() => navigate('/personas/debug')} style={{ marginTop: 16 }}>
+          <button className={styles.cancelBtn} onClick={() => navigate('/personas')} style={{ marginTop: 16 }}>
             Вернуться к списку
           </button>
         </div>
@@ -114,7 +132,7 @@ export default function PersonaFormScreen() {
       <div className={styles.content}>
         {/* Header */}
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={() => navigate('/personas/debug')}>
+          <button className={styles.backBtn} onClick={() => navigate('/personas')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
             </svg>
@@ -123,14 +141,9 @@ export default function PersonaFormScreen() {
           <h1 className={styles.title}>{isEdit ? `Редактирование: ${form.name || '...'}` : 'Новая Персона'}</h1>
           <p className={styles.subtitle}>
             {isEdit
-              ? 'Обновите данные вашей игровой личности'
+              ? 'Обновите данные в��шей игровой личности'
               : 'Создайте игровую личность, от лица которой будете общаться с персонажами'}
           </p>
-        </div>
-
-        {/* Debug banner */}
-        <div className={styles.debugBanner}>
-          🔧 Debug — {isEdit ? `PATCH /personas/${id}` : 'POST /personas/'}
         </div>
 
         {/* Form */}
@@ -234,7 +247,7 @@ export default function PersonaFormScreen() {
               <button
                 type="button"
                 className={styles.cancelBtn}
-                onClick={() => navigate('/personas/debug')}
+                onClick={() => navigate('/personas')}
               >
                 Отмена
               </button>

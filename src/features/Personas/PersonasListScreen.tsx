@@ -1,29 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Personas.module.css'
-import { mockPersonas, mockPersonaStats } from './personaMockData'
 import type { UserPersona } from '@/core/types/chat'
+import { personasApi } from '@/core/api/personas'
 import { useToast } from '@/components/ui'
-
-/* ─── Debug banner ─────────────────────────────── */
-function DebugBanner() {
-  return (
-    <div style={{
-      background: 'rgba(139,92,246,0.12)',
-      border: '1px solid var(--border-purple)',
-      padding: '8px 16px',
-      fontSize: '0.72rem',
-      fontWeight: 700,
-      letterSpacing: '0.08em',
-      textTransform: 'uppercase',
-      color: 'var(--accent-purple)',
-      textAlign: 'center',
-      marginBottom: 0,
-    }}>
-      🔧 DEBUG MODE — Используются мок-данные / POST /personas/ · PATCH /personas/&#123;id&#125; · DELETE /personas/&#123;id&#125;
-    </div>
-  )
-}
 
 /* ─── Confirm Delete Modal ─────────────────────── */
 function ConfirmDeleteModal({ persona, onConfirm, onCancel }: {
@@ -112,20 +92,46 @@ function PersonaCard({ persona, onEdit, onDelete }: {
 /* ─── Main Component ───────────────────────────── */
 export default function PersonasListScreen() {
   const navigate = useNavigate()
-  const { success } = useToast()
-  const [personas, setPersonas] = useState<UserPersona[]>(mockPersonas)
+  const { success, error } = useToast()
+  const [personas, setPersonas] = useState<UserPersona[]>([])
+  const [stats, setStats] = useState({ total_personas: 0, total_chats: 0, total_lorebooks: 0 })
   const [toDelete, setToDelete] = useState<UserPersona | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleDelete = (persona: UserPersona) => {
-    setPersonas(prev => prev.filter(p => p.id !== persona.id))
-    setToDelete(null)
-    success(`Персона «${persona.name}» удалена`)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const [personasData, statsData] = await Promise.all([
+          personasApi.getPersonas(),
+          personasApi.getStats()
+        ])
+        setPersonas(personasData || [])
+        setStats(statsData || { total_personas: 0, total_chats: 0, total_lorebooks: 0 })
+      } catch (err: any) {
+        console.error('Error fetching personas:', err)
+        error('Не удалось загрузить списк персон')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [error])
+
+  const handleDelete = async (persona: UserPersona) => {
+    try {
+      await personasApi.deletePersona(persona.id)
+      setPersonas(prev => prev.filter(p => p.id !== persona.id))
+      success(`Персона «${persona.name}» удалена`)
+    } catch (err: any) {
+      error(`Ошибка при удалении: ${err.message}`)
+    } finally {
+      setToDelete(null)
+    }
   }
 
   return (
     <div className={styles.page}>
-      <DebugBanner />
-
       <div className={styles.bgOrbs}>
         <div className={`${styles.orb} ${styles.orbPurple}`} />
         <div className={`${styles.orb} ${styles.orbFuchsia}`} />
@@ -144,7 +150,7 @@ export default function PersonasListScreen() {
             <h1 className={styles.title}>Мои Персоны</h1>
             <p className={styles.subtitle}>Управляйте своими игровыми личностями</p>
           </div>
-          <button className={styles.createBtn} onClick={() => navigate('/personas/create/debug')}>
+          <button className={styles.createBtn} onClick={() => navigate('/personas/create')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
@@ -156,44 +162,47 @@ export default function PersonasListScreen() {
         <div className={styles.statsBar}>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Персон</span>
-            <span className={`${styles.statValue} ${styles['statValue--purple']}`}>{personas.length}</span>
+            <span className={`${styles.statValue} ${styles['statValue--purple']}`}>{stats.total_personas || personas.length}</span>
           </div>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Всего чатов</span>
-            <span className={styles.statValue}>{mockPersonaStats.total_chats}</span>
+            <span className={styles.statValue}>{stats.total_chats || personas.reduce((acc, p) => acc + (p.chat_count || 0), 0)}</span>
           </div>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Лорбуков</span>
-            <span className={`${styles.statValue} ${styles['statValue--orange']}`}>{mockPersonaStats.total_lorebooks}</span>
+            <span className={`${styles.statValue} ${styles['statValue--orange']}`}>{stats.total_lorebooks || personas.reduce((acc, p) => acc + (p.lorebook_count || 0), 0)}</span>
           </div>
         </div>
 
-        {/* Grid */}
-        <div className={styles.grid}>
-          {personas.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
+        {isLoading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>Загрузка...</div>
+        ) : (
+          <div className={styles.grid}>
+            {personas.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <h3 className={styles.emptyTitle}>Персон пока нет</h3>
+                <p className={styles.emptyText}>Создайте игровую личность, чтобы начать приключения</p>
+                <button className={styles.createBtn} onClick={() => navigate('/personas/create')}>
+                  Создать первую персону
+                </button>
               </div>
-              <h3 className={styles.emptyTitle}>Персон пока нет</h3>
-              <p className={styles.emptyText}>Создайте игровую личность, чтобы начать приключения</p>
-              <button className={styles.createBtn} onClick={() => navigate('/personas/create/debug')}>
-                Создать первую персону
-              </button>
-            </div>
-          ) : (
-            personas.map(persona => (
-              <PersonaCard
-                key={persona.id}
-                persona={persona}
-                onEdit={() => navigate(`/personas/${persona.id}/edit/debug`)}
-                onDelete={() => setToDelete(persona)}
-              />
-            ))
-          )}
-        </div>
+            ) : (
+              personas.map(persona => (
+                <PersonaCard
+                  key={persona.id}
+                  persona={persona}
+                  onEdit={() => navigate(`/personas/${persona.id}/edit`)}
+                  onDelete={() => setToDelete(persona)}
+                />
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {toDelete && (
