@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   }
 
   const isDebug = pathname.includes('/debug')
-  const { profile: currentUser, isLoading } = useProfile(undefined, isDebug)
+  const { profile: currentUser, isLoading } = useProfile(undefined)
   // Determine admin status: use real role from currentUser, or fallback to localStorage in debug mode
   const roleFromStorage = localStorage.getItem('user_role')
   const effectiveRole = currentUser?.role || (isDebug ? roleFromStorage : null)

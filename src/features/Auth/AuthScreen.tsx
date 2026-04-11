@@ -9,8 +9,6 @@ import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
 import { AuthPanel } from './components/AuthPanel'
 
-import { mockUsers } from '../Admin/mockData'
-
 interface AuthScreenProps {
   isDebug?: boolean
 }
@@ -21,10 +19,7 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
   const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
 
   const handleDebugLogin = (role: 'admin' | 'moderator' | 'user') => {
-    const mockUser = mockUsers.find(u => u.role === role)
-    if (mockUser) {
-      setFormData(prev => ({ ...prev, login: mockUser.login, password: mockUser.password }))
-    }
+    
   }
 
   // Form State
@@ -140,27 +135,6 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
 
     setIsLoading(true)
     setGlobalError(null)
-
-    if (isDebug && isLogin) {
-      setTimeout(() => {
-        const mockUser = mockUsers.find(u => u.login === formData.login && u.password === formData.password)
-        if (mockUser) {
-          localStorage.setItem('token', `mock_token_${mockUser.role}`)
-          localStorage.setItem('user_role', mockUser.role)
-          window.dispatchEvent(new Event('auth-change'))
-          
-          if (mockUser.role === 'admin' || mockUser.role === 'moderator') {
-            navigate('/admin/characters/debug')
-          } else {
-            navigate('/dashboard/debug')
-          }
-        } else {
-          setGlobalError('Неверный логин или пароль (DEBUG)')
-        }
-        setIsLoading(false)
-      }, 500)
-      return
-    }
 
     try {
       if (isLogin) {
