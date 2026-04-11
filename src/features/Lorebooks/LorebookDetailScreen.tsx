@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
-import { mockLorebooks } from './lorebookMockData'
-import type { Lorebook, LorebookEntry } from './lorebookMockData'
+import { lorebooksApi } from '@/core/api/lorebooks'
+import type { Lorebook } from '@/core/types/chat'
 import { useToast, Button, Card, Badge, Input, Textarea } from '@/components/ui'
+
+// Define LorebookEntry based on what the UI expects, since it's not in types/chat.ts
+export interface LorebookEntry {
+  id: string
+  lorebook_id: string
+  keywords: string[]
+  content: string
+  priority: number
+  created_at: string
+}
 
 /* ─── Add Single Entry Panel ───────────────────── */
 function AddSingleEntry({ onAdd, onCancel }: {
@@ -203,50 +213,98 @@ type AddMode = 'none' | 'single' | 'batch'
 export default function LorebookDetailScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { success } = useToast()
+  const { success, error } = useToast()
 
-  const found = mockLorebooks.find(l => l.id === id)
-  const [lorebook] = useState<Lorebook | null>(found || null)
-  const [entries, setEntries] = useState<LorebookEntry[]>(found?.entries || [])
+  const [lorebook, setLorebook] = useState<Lorebook | null>(null)
+  const [entries, setEntries] = useState<LorebookEntry[]>([])
   const [addMode, setAddMode] = useState<AddMode>('none')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function load() {
+      if (!id) return
+      try {
+        setLoading(true)
+        const data = await lorebooksApi.getLorebook(id)
+        setLorebook(data)
+        setEntries(data.entries || [])
+      } catch (err) {
+        error('Ошибка загрузки лорбука')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [id, error])
+
+  if (loading) {
+    return (
+      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading...</p>
+      </div>
+    )
+  }
 
   if (!lorebook) {
     return (
       <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 16 }}>Лорбук не найден</h2>
-          <button className={styles.cancelBtn} onClick={() => navigate('/lorebooks/debug')}>Вернуться к списку</button>
+          <button className={styles.cancelBtn} onClick={() => navigate('/lorebooks')}>Вернуться к списку</button>
         </div>
       </div>
     )
   }
 
-  const handleAddEntry = (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => {
+  const handleAddEntry = async (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => {
     const newEntry: LorebookEntry = {
       id: `entry-${Date.now()}`,
       lorebook_id: lorebook.id,
       ...entry,
       created_at: new Date().toISOString(),
     }
-    setEntries(prev => [...prev, newEntry])
-    setAddMode('none')
-    success('Запись добавлена')
+    
+    const updatedEntries = [...entries, newEntry];
+    try {
+      if (!id) return;
+      await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
+      setEntries(updatedEntries)
+      setAddMode('none')
+      success('Запись добавлена')
+    } catch (err) {
+      error('Ошибка при добавлении записи')
+    }
   }
 
-  const handleBatchImport = (newEntries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => {
+  const handleBatchImport = async (newEntries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => {
     const created: LorebookEntry[] = newEntries.map(e => ({
       id: `entry-${Date.now()}-${Math.random()}`,
       lorebook_id: lorebook.id,
       ...e,
       created_at: new Date().toISOString(),
     }))
-    setEntries(prev => [...prev, ...created])
-    success(`Импортировано ${created.length} записей`)
+    const updatedEntries = [...entries, ...created];
+    try {
+        if (!id) return;
+        await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
+        setEntries(updatedEntries)
+        success(`Импортировано ${created.length} записей`)
+        setAddMode('none')
+    } catch (err) {
+        error('Ошибка при импорте записей')
+    }
   }
 
-  const handleDeleteEntry = (entryId: string) => {
-    setEntries(prev => prev.filter(e => e.id !== entryId))
-    success('Запись удалена')
+  const handleDeleteEntry = async (entryId: string) => {
+    const updatedEntries = entries.filter(e => e.id !== entryId)
+    try {
+      if (!id) return;
+      await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
+      setEntries(updatedEntries)
+      success('Запись удалена')
+    } catch (err) {
+      error('Ошибка при удалении записи')
+    }
   }
 
   const handleExport = () => {
@@ -263,10 +321,6 @@ export default function LorebookDetailScreen() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.debugBanner}>
-        🔧 Debug — GET /lorebooks/entries/&#123;id&#125; · POST /lorebooks/{lorebook.id}/entries · DELETE /lorebooks/entries/&#123;id&#125;
-      </div>
-
       <div className={styles.bgOrbs}>
         <div className={`${styles.orb} ${styles.orbPurple}`} />
         <div className={`${styles.orb} ${styles.orbFuchsia}`} />
@@ -276,7 +330,7 @@ export default function LorebookDetailScreen() {
         {/* Header */}
         <div className={styles.detailTop}>
           <div className={styles.headerLeft}>
-            <button className={styles.backBtn} onClick={() => navigate('/lorebooks/debug')}>
+            <button className={styles.backBtn} onClick={() => navigate('/lorebooks')}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
               </svg>
@@ -288,7 +342,7 @@ export default function LorebookDetailScreen() {
             )}
           </div>
           <div className={styles.detailActions}>
-            <button className={styles.editBtn} onClick={() => navigate(`/lorebooks/${lorebook.id}/edit/debug`)}>
+            <button className={styles.editBtn} onClick={() => navigate(`/lorebooks/${lorebook.id}/edit`)}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -317,7 +371,7 @@ export default function LorebookDetailScreen() {
               <Button
                 variant="ghost"
                 onClick={() => setAddMode(m => m === 'batch' ? 'none' : 'batch')}
-                active={addMode === 'batch'}
+                style={{ opacity: addMode === 'batch' ? 1 : 0.7 }}
               >
                 Батч-импорт
               </Button>
