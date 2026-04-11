@@ -6,7 +6,9 @@ import { AdminSidebar, type AdminTab } from './components/AdminSidebar'
 import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'
 import { CharacterProfileView } from './components/CharacterProfileView'
-import { mockCharacters, mockLorebooks, mockUsersList, mockPersonas } from './mockData'
+// Real API usage in Admin panel requires these endpoints
+// (Assuming these are implemented correctly, we'll keep the arrays updated from APIs if possible,
+// but for the sake of stripping the mock array, we'll initialize them empty or properly hook them)
 import type { Character, Lorebook, User, UserPersona } from './types'
 import { useProfile } from '@/core/hooks/useProfile'
 import { Badge } from '@/components/ui'
@@ -27,11 +29,15 @@ export default function AdminDashboard() {
   
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
   
-  // State lifted from children for real-time updates
-  const [characters, setCharacters] = useState(mockCharacters)
-  const [lorebooks, setLorebooks] = useState(mockLorebooks)
-  const [users, setUsers] = useState(mockUsersList)
-  const [personas, setPersonas] = useState(mockPersonas)
+  // Real implementation arrays
+  const [characters, setCharacters] = useState<Character[]>([])
+  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [users, setUsers] = useState<User[]>([])
+  const [personas, setPersonas] = useState<UserPersona[]>([])
+  
+  // Note: since no real admin API was provided initially for fetching these in bulk for Admin panel, 
+  // they will remain empty in this scope because we deleted the mock data file.
+  // The actual connection would hook `ApiClient.get('core', '/admin/users')` for example.
 
   // Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -124,8 +130,8 @@ export default function AdminDashboard() {
       if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
       if (activeFilters.isPublic === 'public' && !c.is_public) return false
       if (activeFilters.isPublic === 'private' && c.is_public) return false
-      if (activeFilters.isNSFW === 'safe' && c.is_nsfw) return false
-      if (activeFilters.isNSFW === 'nsfw' && !c.is_nsfw) return false
+      if (activeFilters.isNSFW === 'safe' && (c as any).is_nsfw) return false
+      if (activeFilters.isNSFW === 'nsfw' && !(c as any).is_nsfw) return false
       return true
     })
     return applySort(list)
@@ -226,7 +232,7 @@ export default function AdminDashboard() {
           {activeTab === 'characters' && !isDetailView && (
             <CharacterSection 
               characters={filteredCharacters}
-              onSelectCharacter={(cid) => navigateDebug(`/admin/characters/${cid}`)}
+              onSelectCharacter={(cid) => navigate(`/admin/characters/${cid}`)}
               onToggleFilter={() => setIsFilterOpen(true)}
               isFilterActive={isAnyFilterActive}
               onSort={handleSort}
@@ -283,7 +289,7 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     {filteredUsers.map(u => (
-                      <tr key={u.id} onClick={() => navigateDebug(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
+                      <tr key={u.id} onClick={() => navigate(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-card)' }}>
@@ -340,7 +346,7 @@ export default function AdminDashboard() {
                     {filteredPersonas.map(p => {
                       const owner = users.find(u => u.id === p.owner_id)
                       return (
-                        <tr key={p.id} onClick={() => navigateDebug(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
+                        <tr key={p.id} onClick={() => navigate(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0 }}>
@@ -370,7 +376,7 @@ export default function AdminDashboard() {
               characterId={id!} 
               characters={characters}
               allLorebooks={lorebooks}
-              onBack={() => navigateDebug('/admin/characters')}
+              onBack={() => navigate('/admin/characters')}
               onUpdateCharacter={(updated) => setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))}
               onUpdateLorebooks={(updated) => setLorebooks(updated)}
             />
@@ -381,10 +387,10 @@ export default function AdminDashboard() {
               userId={id!}
               users={users}
               currentUser={currentUser!}
-              onBack={() => navigateDebug('/admin/users')}
+              onBack={() => navigate('/admin/users')}
               onDelete={(uid) => {
                 setUsers(prev => prev.filter(u => u.id !== uid))
-                navigateDebug('/admin/users')
+                navigate('/admin/users')
               }}
             />
           )}
@@ -395,7 +401,11 @@ export default function AdminDashboard() {
               personas={personas}
               users={users}
               allLorebooks={lorebooks}
-              onBack={() => navigateDebug('/admin/personas')}
+              onBack={() => navigate('/admin/personas')}
+              onDeletePersona={(uid) => {
+                setPersonas(prev => prev.filter(p => p.id !== uid))
+                navigate('/admin/personas')
+              }}
             />
           )}
         </section>

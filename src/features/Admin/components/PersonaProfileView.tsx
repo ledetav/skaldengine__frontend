@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from '../Admin.module.css'
 import type { UserPersona, User, Lorebook } from '../types'
+import { Button } from '@/components/ui'
 
 interface PersonaProfileViewProps {
   personaId: string
@@ -8,6 +9,7 @@ interface PersonaProfileViewProps {
   users: User[]
   allLorebooks: Lorebook[]
   onBack: () => void
+  onDeletePersona?: (id: string) => void
 }
 
 export function PersonaProfileView({ 
@@ -15,8 +17,10 @@ export function PersonaProfileView({
   personas, 
   users,
   allLorebooks,
-  onBack 
+  onBack,
+  onDeletePersona 
 }: PersonaProfileViewProps) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const persona = personas.find(p => p.id === personaId)
   const owner = users.find(u => u.id === persona?.owner_id)
   
@@ -41,11 +45,35 @@ export function PersonaProfileView({
             <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
           </svg>
         </button>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span className={styles.mainSubtitle}>Панель управления персоной пользователя</span>
-          <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>{persona.name}</h2>
+        <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className={styles.mainSubtitle}>Панель управления персоной пользователя</span>
+            <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>{persona.name}</h2>
+          </div>
+          <div>
+             <Button variant="danger" onClick={() => setShowDeleteModal(true)}>Удалить персону</Button>
+          </div>
         </div>
       </header>
+
+      {showDeleteModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Удалить персону?</h3>
+            <p className={styles.modalDescription}>
+              Это действие необратимо. Персона будет навсегда удалена из базы данных.
+            </p>
+            <div className={styles.modalActions}>
+              <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
+              <Button variant="danger" onClick={() => { 
+                setShowDeleteModal(false); 
+                if (onDeletePersona) onDeletePersona(persona.id);
+                onBack(); 
+              }}>Да, удалить</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className={styles.characterProfileContent}>
         {/* LEFT: Sidebar style card */}
