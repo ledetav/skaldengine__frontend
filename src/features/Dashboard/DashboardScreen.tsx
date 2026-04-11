@@ -38,7 +38,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ isDebug }) => {
     filteredCharacters,
     hotIds,
     resultsLabel
-  } = useDashboard(isDebug)
+  } = useDashboard()
 
   return (
     <div className={styles.dashboard}>

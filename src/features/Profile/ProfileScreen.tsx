@@ -21,7 +21,7 @@ interface ProfileScreenProps {
 export default function ProfileScreen({ isDebug }: ProfileScreenProps) {
   const { username } = useParams<{ username?: string }>();
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
-  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username, isDebug);
+  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username);
 
   if (isLoading) {
     return (

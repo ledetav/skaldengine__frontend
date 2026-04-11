@@ -5,9 +5,7 @@ import { lorebooksApi } from '@/core/api/lorebooks'
 import { chatsApi } from '@/core/api/chats'
 import type { UserProfile, ProfilePersona, ProfileLorebook } from '@/core/types/profile'
 import type { Chat } from '@/core/types/chat'
-import { mockUsers, mockLorebooks } from '@/features/Admin/mockData'
-
-export const useProfile = (username?: string, isDebug?: boolean) => {
+export const useProfile = (username?: string) => {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [personas, setPersonas] = useState<ProfilePersona[]>([])
   const [lorebooks, setLorebooks] = useState<ProfileLorebook[]>([])
@@ -16,59 +14,6 @@ export const useProfile = (username?: string, isDebug?: boolean) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (isDebug) {
-      const role = localStorage.getItem('user_role') || 'user'
-      const mockMe = mockUsers.find(u => u.role === role) || mockUsers[2]
-      
-      setUser({
-        id: role === 'admin' ? 'user-1' : role === 'moderator' ? 'user-2' : 'user-3',
-        login: mockMe.login,
-        username: mockMe.username,
-        email: `${role}@example.com`,
-        full_name: mockMe.fullName,
-        role: mockMe.role,
-        avatar_url: role === 'admin' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' : role === 'moderator' ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=mod' : null,
-        cover_url: null,
-        about: 'Я обожаю ролевые игры и создание новых миров.',
-        birth_date: '1995-05-15',
-        polza_api_key: null,
-        created_at: new Date().toISOString(),
-        statistics: {
-          total_chats: 12,
-          total_personas: 3,
-          total_lorebooks: 2,
-          total_messages: 156
-        }
-      })
-      // Personas and Lorebooks for debug
-      setPersonas(role === 'user' ? [
-        { 
-          id: 'persona-1', 
-          name: 'Алекс', 
-          description: 'Опытный путешественник и мастер меча.', 
-          chat_count: 14, 
-          lorebook_count: 1, 
-          created_at: new Date().toISOString(),
-          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex',
-          age: 24,
-          gender: 'Мужской',
-          appearance: 'Высокий, со шрамом на левом глазу.',
-          personality: 'Молчаливый и храбрый.',
-          facts: 'Знает язык эльфов.'
-        } as any
-      ] : [])
-      setLorebooks(mockLorebooks.map(lb => ({
-        id: lb.id,
-        name: lb.name,
-        description: lb.description || null,
-        entries_count: lb.entries?.length || 0,
-        fandom: lb.fandom || null
-      })))
-      setLastChats([])
-      setIsLoading(false)
-      return
-    }
-
     const fetchProfileData = async () => {
       try {
         setIsLoading(true)
