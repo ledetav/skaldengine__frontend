@@ -95,7 +95,11 @@ export interface Lorebook {
   name: string
   description?: string
   character_id?: string
+  character_name?: string
   user_persona_id?: string
+  user_persona_name?: string
   fandom?: string
+  entries?: any[]
   entries_count?: number
+  created_at: string
 }

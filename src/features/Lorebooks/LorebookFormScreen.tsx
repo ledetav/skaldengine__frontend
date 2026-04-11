@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
-import { mockLorebooks } from './lorebookMockData'
-import type { Lorebook } from './lorebookMockData'
-import { mockPersonas } from '../Personas/personaMockData'
+import type { Lorebook } from '@/core/types/chat'
+import { lorebooksApi } from '@/core/api/lorebooks'
+import { personasApi } from '@/core/api/personas'
+import { charactersApi } from '@/core/api/characters'
+import type { UserPersona } from '@/core/types/chat'
+import type { Character } from '@/core/types/character'
 import { useToast, Button, Input, Textarea, Card } from '@/components/ui'
 
 interface FormData {
@@ -36,11 +39,28 @@ export default function LorebookFormScreen() {
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [submitting, setSubmitting] = useState(false)
 
+  const [personas, setPersonas] = useState<UserPersona[]>([])
+  const [characters, setCharacters] = useState<Character[]>([])
+
   useEffect(() => {
-    if (isEdit) {
-      const existing = mockLorebooks.find(l => l.id === id)
-      if (existing) setForm(toForm(existing))
+    const loadData = async () => {
+      try {
+        const [ps, cs] = await Promise.all([
+          personasApi.getPersonas(),
+          charactersApi.getCharacters()
+        ])
+        setPersonas(ps || [])
+        setCharacters(cs || [])
+
+        if (isEdit && id) {
+          const existing = await lorebooksApi.getLorebook(id)
+          setForm(toForm(existing))
+        }
+      } catch (err: any) {
+        console.error('Ошибка загрузки данных', err)
+      }
     }
+    loadData()
   }, [id, isEdit])
 
   const set = (field: keyof FormData) => (
@@ -61,10 +81,28 @@ export default function LorebookFormScreen() {
     e.preventDefault()
     if (!validate()) return
     setSubmitting(true)
-    await new Promise(r => setTimeout(r, 600))
-    setSubmitting(false)
-    success(isEdit ? `Лорбук «${form.name}» обновлён` : `Лорбук «${form.name}» создан`)
-    navigate('/lorebooks/debug')
+    try {
+      const payload: Partial<Lorebook> = {
+        name: form.name,
+        description: form.description || undefined,
+        fandom: form.fandom || undefined,
+        character_id: form.character_id || undefined,
+        user_persona_id: form.user_persona_id || undefined
+      }
+      
+      if (isEdit && id) {
+        await lorebooksApi.updateLorebook(id, payload)
+        success('Лорбук успешно обновлён')
+      } else {
+        await lorebooksApi.createLorebook(payload)
+        success('Лорбук создан')
+      }
+      navigate('/lorebooks')
+    } catch (err: any) {
+      success(`Ошибка сохранения: ${err.message}`)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -83,7 +121,7 @@ export default function LorebookFormScreen() {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            <button className={styles.backBtn} onClick={() => navigate('/lorebooks/debug')}>
+            <button className={styles.backBtn} onClick={() => navigate('/lorebooks')}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
               </svg>
@@ -146,13 +184,18 @@ export default function LorebookFormScreen() {
                   rows={4}
                 />
 
-                <Input
-                  label="Вселенная / Фандом"
-                  value={form.fandom}
-                  onChange={set('fandom')}
-                  placeholder="Fantasy, Genshin Impact, и т.д."
-                  hint="Оставьте пустым для оригинальной вселенной"
-                />
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Вселенная / Фандом</label>
+                  <input 
+                    className={styles.formInput}
+                    value={form.fandom}
+                    onChange={set('fandom')}
+                    placeholder="Fantasy, Genshin Impact, и т.д."
+                  />
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '4px' }}>
+                    Оставьте пустым для оригинальной вселенной
+                  </div>
+                </div>
 
                 <div className={styles.sectionTitle} style={{ marginTop: '12px' }}>Связи и контекст</div>
 
@@ -166,18 +209,21 @@ export default function LorebookFormScreen() {
                       style={{ cursor: 'pointer' }}
                     >
                       <option value="">— Без привязки —</option>
-                      {mockPersonas.map(p => (
+                      {personas.map(p => (
                         <option key={p.id} value={p.id}>{p.name}</option>
                       ))}
                     </select>
                   </div>
 
-                  <Input
-                    label="ID Персонажа (AI)"
-                    value={form.character_id}
-                    onChange={set('character_id')}
-                    placeholder="UUID если это лорбук конкретного персонажа"
-                  />
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>К персонажу</label>
+                    <select className={styles.formInput} value={form.character_id} onChange={set('character_id')}>
+                      <option value="">— Без привязки —</option>
+                      {characters.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div style={{ 
@@ -188,7 +234,7 @@ export default function LorebookFormScreen() {
                   paddingTop: '32px',
                   borderTop: '1px solid rgba(255,255,255,0.05)'
                 }}>
-                  <Button variant="ghost" type="button" onClick={() => navigate('/lorebooks/debug')}>
+                  <Button variant="ghost" type="button" onClick={() => navigate('/lorebooks')}>
                     Отмена
                   </Button>
                   <Button variant="orange" type="submit" loading={submitting}>
