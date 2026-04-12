@@ -30,7 +30,7 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
     confirmPassword: '',
     birthDate: '',
     fullName: '',
-    handle: '@',
+    handle: '',
   })
 
   // Errors State
@@ -68,10 +68,10 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldErrors.push('Некорректный формат email')
       }
       if (name === 'handle') {
-        const handleValue = value.slice(1) // Remove @
-        if (!value || value === '@') fieldErrors.push('Обязательное поле')
+        const handleValue = value // No @ to remove
+        if (!value) fieldErrors.push('Обязательное поле')
         else if (handleValue.trim() !== handleValue) fieldErrors.push('Не должно быть пробелов')
-        else if (!/^@[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
+        else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-"  "_"')
       }
       if (name === 'fullName') {
         // Optional field
@@ -98,12 +98,6 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value } = e.target
     
-    // Unerasable @ for handle
-    if (name === 'handle') {
-      if (!value.startsWith('@')) {
-        value = '@' + value.replace(/^@*/, '')
-      }
-    }
 
     setFormData(prev => ({ ...prev, [name]: value }))
     validateField(name, value)
@@ -124,7 +118,7 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
       return !!(formData.login && formData.password && !errors.login?.length && !errors.password?.length)
     }
     return !!(
-      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && (formData.handle && formData.handle !== '@') &&
+      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && formData.handle &&
       Object.values(errors).every(errs => errs.length === 0)
     )
   }

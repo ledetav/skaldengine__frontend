@@ -201,7 +201,7 @@ export function LorebookSection({
                             }}
                           >
                             <option value="">Выберите пользователя...</option>
-                            {users.map(u => <option key={u.id} value={u.id}>@{u.username}</option>)}
+                            {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
                           </select>
                           <select 
                             className={styles.dropdownSelected} 

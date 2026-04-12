@@ -55,7 +55,7 @@ export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderP
         
         <h1 className={`${styles.displayName} gradient-text`}>{user.full_name || user.login}</h1>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-          <div className={styles.username}>{user.username}</div>
+          <div className={styles.username}>@{user.username}</div>
           <div style={{ 
             fontSize: '0.65rem', 
             background: 'rgba(139, 92, 246, 0.1)', 

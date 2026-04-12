@@ -90,16 +90,25 @@ export interface MessageEdit {
   content: string
 }
 
+export interface LorebookEntry {
+  id: string
+  lorebook_id: string
+  keywords: string[]
+  content: string
+  priority: number
+  created_at: string
+}
+
 export interface Lorebook {
   id: string
   name: string
   description?: string
+  fandom?: string
   character_id?: string
   character_name?: string
   user_persona_id?: string
   user_persona_name?: string
-  fandom?: string
-  entries?: any[]
+  entries?: LorebookEntry[]
   entries_count?: number
   created_at: string
 }

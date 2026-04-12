@@ -5,7 +5,7 @@ export const authApi = {
     return ApiClient.post('auth', '/auth/register', {
       email: data.email,
       login: data.login,
-      username: data.handle?.replace(/^@/, '') || data.login, // username = handle without @
+      username: data.handle || data.login,
       full_name: data.fullName || null,
       password: data.password,
       birth_date: data.birthDate,

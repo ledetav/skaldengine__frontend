@@ -179,7 +179,7 @@ export function AdminFilterModal({
 
           {tab === 'personas' && (
             <>
-              {renderMultiSelect('Пользователь', 'userIds', users.map(u => ({id: u.id, name: `@${u.username}`})), fandomSearch, setFandomSearch)}
+              {renderMultiSelect('Пользователь', 'userIds', users.map(u => ({id: u.id, name: u.username})), fandomSearch, setFandomSearch)}
               {renderRange('Количество чатов', 'chatCountMin', 'chatCountMax')}
               {renderRange('Количество лорбуков', 'lorebookCountMin', 'lorebookCountMax')}
             </>

@@ -2,18 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
 import { lorebooksApi } from '@/core/api/lorebooks'
-import type { Lorebook } from '@/core/types/chat'
+import type { Lorebook, LorebookEntry } from '@/core/types/chat'
 import { useToast, Button, Card, Badge, Input, Textarea } from '@/components/ui'
-
-// Define LorebookEntry based on what the UI expects, since it's not in types/chat.ts
-export interface LorebookEntry {
-  id: string
-  lorebook_id: string
-  keywords: string[]
-  content: string
-  priority: number
-  created_at: string
-}
 
 /* ─── Add Single Entry Panel ───────────────────── */
 function AddSingleEntry({ onAdd, onCancel }: {
@@ -257,18 +247,21 @@ export default function LorebookDetailScreen() {
   }
 
   const handleAddEntry = async (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => {
-    const newEntry: LorebookEntry = {
-      id: `entry-${Date.now()}`,
-      lorebook_id: lorebook.id,
-      ...entry,
-      created_at: new Date().toISOString(),
-    }
-    
-    const updatedEntries = [...entries, newEntry];
     try {
       if (!id) return;
-      await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
-      setEntries(updatedEntries)
+      await lorebooksApi.createLorebookEntry(id, {
+        keywords: entry.keywords,
+        content: entry.content,
+        priority: entry.priority
+      });
+      // We can refetch or just push to local state loosely for now:
+      const newEntry: LorebookEntry = {
+        id: `entry-${Date.now()}`, // Temporary ID if we don't return the full model right away
+        lorebook_id: lorebook.id,
+        ...entry,
+        created_at: new Date().toISOString(),
+      }
+      setEntries([...entries, newEntry])
       setAddMode('none')
       success('Запись добавлена')
     } catch (err) {
@@ -277,30 +270,32 @@ export default function LorebookDetailScreen() {
   }
 
   const handleBatchImport = async (newEntries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => {
-    const created: LorebookEntry[] = newEntries.map(e => ({
-      id: `entry-${Date.now()}-${Math.random()}`,
-      lorebook_id: lorebook.id,
-      ...e,
-      created_at: new Date().toISOString(),
-    }))
-    const updatedEntries = [...entries, ...created];
     try {
-        if (!id) return;
-        await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
-        setEntries(updatedEntries)
-        success(`Импортировано ${created.length} записей`)
-        setAddMode('none')
+      if (!id) return;
+      
+      // Call REST sequential inserts depending on performance requirements
+      // Or potentially bulk import. Let's do sequential for now if bulk endpoint is not yet defined
+      for (const entry of newEntries) {
+        await lorebooksApi.createLorebookEntry(id, {
+          keywords: entry.keywords,
+          content: entry.content,
+          priority: entry.priority
+        })
+      }
+
+      setAddMode('none')
+      success(`Импортировано ${newEntries.length} записей. Пожалуйста, обновите страницу для просмотра.`)
     } catch (err) {
         error('Ошибка при импорте записей')
     }
   }
 
   const handleDeleteEntry = async (entryId: string) => {
-    const updatedEntries = entries.filter(e => e.id !== entryId)
     try {
       if (!id) return;
-      await lorebooksApi.updateLorebook(id, { entries: updatedEntries });
-      setEntries(updatedEntries)
+      // Depending on structure sometimes fake ids are generated, but if it has a real UUID it comes from GET
+      await lorebooksApi.deleteLorebookEntry(id, entryId);
+      setEntries(entries.filter(e => e.id !== entryId))
       success('Запись удалена')
     } catch (err) {
       error('Ошибка при удалении записи')

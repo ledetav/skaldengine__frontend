@@ -298,7 +298,7 @@ export default function AdminDashboard() {
                             <span style={{ fontWeight: 700 }}>{u.full_name || u.login}</span>
                           </div>
                         </td>
-                        <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>@{u.username}</span></td>
+                        <td><span style={{ opacity: 0.6, fontSize: '0.85rem' }}>{u.username}</span></td>
                         <td><Badge variant={u.role === 'admin' ? 'orange' : u.role === 'moderator' ? 'purple' : 'fuchsia'}>{u.role}</Badge></td>
                         <td><span style={{ opacity: 0.5, fontSize: '0.8rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                       </tr>
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
                           </td>
                           <td>
                             <Badge variant="purple" style={{ opacity: 0.9 }}>
-                              {owner ? `@${owner.username}` : p.owner_id}
+                              {owner ? owner.username : p.owner_id}
                             </Badge>
                           </td>
                           <td><span style={{ fontWeight: 600 }}>{p.chat_count}</span></td>
