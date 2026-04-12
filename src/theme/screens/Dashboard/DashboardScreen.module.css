@@ -108,7 +108,7 @@
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: var(--white);
   letter-spacing: 0.5px;
 }
 
@@ -187,7 +187,7 @@
 
 .dropdownItem:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  color: var(--white);
 }
 
 .activeItem {
@@ -244,7 +244,7 @@
 .toggleKnob {
   width: 14px;
   height: 14px;
-  background: #fff;
+  background: var(--white);
   border-radius: 50%;
   position: absolute;
   top: 2px;
@@ -347,7 +347,7 @@
 
 .viewActive {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--white);
 }
 
 .sortWrapper {
@@ -368,7 +368,7 @@
 
 .sortOrderBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--white);
 }
 
 .sortLabel {
@@ -410,7 +410,7 @@
 .noResults h3 {
   font-size: 24px;
   margin-bottom: 12px;
-  color: #fff;
+  color: var(--white);
 }
 
 .noResults p {
@@ -439,7 +439,7 @@
 /* 1. Image Area (TOP) */
 .cardImageArea {
   height: 130px;
-  background: #fff;
+  background: var(--white);
   position: relative;
   display: flex;
   align-items: center;
@@ -530,7 +530,7 @@
   font-size: 13px;
   font-weight: 800;
   background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-  color: #fff;
+  color: var(--white);
   border: none;
   cursor: pointer;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
@@ -562,7 +562,7 @@
   justify-content: center;
   font-size: 10px;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
 }
 
 .creatorInfoStack {
@@ -575,7 +575,7 @@
 .creatorNameMini {
   font-size: 12px;
   font-weight: 600;
-  color: #fff;
+  color: var(--white);
 }
 
 .cardStats {
@@ -614,7 +614,7 @@
 .cardName {
   font-size: 16px;
   font-weight: 700;
-  color: #fff;
+  color: var(--white);
   letter-spacing: -0.2px;
 }
 
@@ -645,7 +645,7 @@
   font-size: 13px;
   font-weight: 800;
   background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-  color: #fff;
+  color: var(--white);
   border: none;
   cursor: pointer;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
@@ -658,7 +658,7 @@
   width: 36px;
   height: 36px;
   background: var(--accent-purple);
-  color: #fff;
+  color: var(--white);
   border: none;
   border-radius: 8px;
   align-items: center;
@@ -818,7 +818,7 @@
 }
 
 .checkboxInner {
-  color: #fff;
+  color: var(--white);
   font-size: 10px;
   font-weight: 900;
   display: none;
@@ -838,7 +838,7 @@
 }
 
 .fandomOption.selected .fandomName {
-  color: #fff;
+  color: var(--white);
   font-weight: 600;
 }
 
@@ -913,7 +913,7 @@
     display: block;
     font-size: 20px;
     font-weight: 800;
-    color: #fff;
+    color: var(--white);
   }
 
   .closeDrawer {
@@ -930,7 +930,7 @@
     width: 100%;
     padding: 14px;
     background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-    color: #fff;
+    color: var(--white);
     border: none;
     border-radius: 12px;
     font-weight: 800;

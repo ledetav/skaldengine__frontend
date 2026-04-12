@@ -87,15 +87,31 @@ export interface MessageCreate {
 }
 
 export interface MessageEdit {
-  new_content: string
+  content: string
 }
+
+export interface LorebookEntry {
+  id: string
+  lorebook_id: string
+  keywords: string[]
+  content: string
+  priority: number
+  created_at: string
+}
+
+export type LorebookType = 'Fandom' | 'Character' | 'Persona'
 
 export interface Lorebook {
   id: string
   name: string
+  type: LorebookType
   description?: string
-  character_id?: string
-  user_persona_id?: string
   fandom?: string
+  character_id?: string
+  character_name?: string
+  user_persona_id?: string
+  user_persona_name?: string
+  entries?: LorebookEntry[]
   entries_count?: number
+  created_at: string
 }

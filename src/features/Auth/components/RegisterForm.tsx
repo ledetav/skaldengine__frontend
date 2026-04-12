@@ -45,12 +45,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         />
 
         <AuthInput 
-          label="Юзернейм"
-          description="По нему тебя смогут найти другие пользователи. Например, @Skaldik"
-          name="handle"
-          type="text"
-          placeholder="@handle"
-          value={formData.handle}
+                  label="Юзернейм"
+                  description="По нему тебя смогут найти другие пользователи. Например, Skaldik"
+                  name="handle"
+                  type="text"
+                  placeholder="handle"
+                  value={formData.handle}
           onChange={onChange}
           error={getErrorText('handle')}
           required

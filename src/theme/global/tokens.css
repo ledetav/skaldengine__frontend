@@ -1,61 +1,371 @@
+/* ═══════════════════════════════════════════════════
+   SkaldEngine Design System — One Source of Truth
+   (Consolidated Design Tokens & Utility Classes)
+   Violet Core + Skald Flame Aesthetic
+═══════════════════════════════════════════════════ */
+
 :root {
-  /* Colors */
-  --bg-dark: #0a0a0c;
-  --bg-card: rgba(30, 30, 35, 0.4);
-  --accent-primary: #ff8c42;
-  --accent-secondary: #ff3e00;
-  --text-primary: #f8f9fa;
-  --text-secondary: rgba(248, 249, 250, 0.7);
-  
-  /* Buttons */
-  --btn-primary-bg: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
-  
-  /* Borders & Glass */
-  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --glass-blur: blur(8px);
+  /* ─── Colors (Violet Core) ─────────────────────── */
+  --bg-base:        #07020d; /* Deep Void */
+  --bg-secondary:   #12041d;
+  --bg-card:        rgba(18, 4, 29, 0.75);
+  --bg-glass:       rgba(29, 9, 45, 0.4);
+
+  --accent-purple:  #8b5cf6; /* Main Soul */
+  --accent-fuchsia: #d946ef; /* Energy */
+  --accent-orange:  #ff6b00; /* Fire / Action (The Skald's Accent) */
+  --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
+  --accent-pink:    #d946ef; /* Alias for fuchsia */
+  --accent-blue:    #3b82f6; 
+  --accent-teal:    #14b8a6;
+  --accent-green:   #10b981;
+
+  --white:          #f0ece9;
+  --black:          #111010;
+
+  /* ─── Glows & Effects ───────────────────────────── */
+  --purple-glow:    rgba(139, 92, 246, 0.3);
+  --fuchsia-glow:   rgba(217, 70, 239, 0.3);
+  --orange-glow:    rgba(255, 107, 0, 0.3);
+  --red-glow:       rgba(239, 68, 68, 0.3);
+
+  /* ─── Text ─────────────────────────────────────── */
+  --text-primary:   #f8fafc;
+  --text-secondary: #c084fc; /* Tinted secondary */
+  --text-muted:     #6b21a8;
+
+  /* ─── Borders ──────────────────────────────────── */
+  --border-glass:   rgba(217, 70, 239, 0.15);
+  --border-purple:  rgba(139, 92, 246, 0.3);
+  --border-orange:  rgba(255, 107, 0, 0.4);
+  --border-red:     rgba(239, 68, 68, 0.4);
+  --border-blue:    rgba(59, 130, 246, 0.4);
+  --border-teal:    rgba(20, 184, 166, 0.4);
+  --border-green:   rgba(16, 185, 129, 0.4);
+
+  /* ─── Typography ───────────────────────────────── */
+  --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
+  --font-narrative: 'Lora', Georgia, serif;
+  --font-thought:   'Playfair Display', Georgia, serif;
+
+  /* ─── Shapes (Angular/Technical) ───────────────── */
+  --clip-cut: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  --clip-cut-sm: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  --radius-angle: 4px;
+
+  /* ─── Transitions ─────────────────────────────── */
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.btn-primary {
+/* ──────────────────────────────────────────────────
+   Utility Classes (BEM-like)
+────────────────────────────────────────────────── */
+
+/* ─── Buttons ─────────────────────────────────── */
+.ds-btn--primary, .btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1.5rem;
-  background: var(--btn-primary-bg);
-  color: white;
-  border-radius: 12px;
-  font-weight: 600;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-fuchsia) 100%);
+  color: #fff;
   border: none;
+  border-radius: 0;
+  clip-path: var(--clip-cut-sm);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: 0 4px 20px var(--purple-glow);
+  white-space: nowrap;
 }
 
-.btn-primary:hover {
+.ds-btn--primary:hover:not(:disabled), .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+  box-shadow: 0 8px 30px var(--fuchsia-glow);
+  filter: brightness(1.1);
 }
 
-.btn-secondary {
-  padding: 0.875rem 1.5rem;
-  background: var(--btn-secondary-bg);
-  color: var(--text-primary);
-  border-radius: 12px;
-  border: var(--glass-border);
+.ds-btn--primary:disabled, .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ds-btn--orange, .btn-orange {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent-orange) 0%, #ff3e00 100%);
+  color: #fff;
+  border: none;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: 0 4px 20px var(--orange-glow);
+  white-space: nowrap;
+}
+
+.ds-btn--orange:hover:not(:disabled), .btn-orange:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255, 107, 0, 0.5);
+}
+
+.ds-btn--ghost, .btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  clip-path: var(--clip-cut-sm);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+  white-space: nowrap;
+}
+
+.ds-btn--ghost:hover:not(:disabled), .btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ds-btn--danger, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accent-red);
+  border: 1px solid var(--border-red);
+  clip-path: var(--clip-cut-sm);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.ds-btn--danger:hover:not(:disabled), .btn-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  box-shadow: 0 4px 16px var(--red-glow);
+}
+
+/* ─── Form Controls ───────────────────────────── */
+.ds-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  outline: none;
+  transition: border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth);
+}
+
+.ds-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.ds-input:focus {
+  border-color: var(--border-purple);
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.ds-input--error {
+  border-color: var(--border-red) !important;
+  background: rgba(239, 68, 68, 0.04) !important;
+}
+
+.ds-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s var(--ease-smooth);
+}
+
+.ds-textarea:focus {
+  border-color: var(--border-purple);
+  background: rgba(139, 92, 246, 0.06);
+}
+
+/* ─── Cards ───────────────────────────────────── */
+.ds-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  clip-path: var(--clip-cut);
+}
+
+.ds-card-sm {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+/* ─── Label ───────────────────────────────────── */
+.ds-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ─── Form Group ──────────────────────────────── */
+.ds-form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.ds-error-msg {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent-red);
+  margin-top: 0.4rem;
+}
+
+/* ─── Badge ───────────────────────────────────── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.75rem;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid var(--border-purple);
+  color: var(--accent-purple);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+  position: relative;
   transition: all 0.2s ease;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+.ds-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  opacity: 0.2;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+  pointer-events: none;
 }
 
-.glass-card {
-  background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  border: var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  border-radius: 20px;
+.ds-badge--orange {
+  background: rgba(255, 107, 0, 0.08);
+  border-color: var(--border-orange);
+  color: var(--accent-orange);
+}
+
+.ds-badge--fuchsia {
+  background: rgba(217, 70, 239, 0.08);
+  border-color: var(--border-glass);
+  color: var(--accent-fuchsia);
+}
+
+.ds-badge--purple {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: var(--border-purple);
+  color: var(--accent-purple);
+}
+
+.ds-badge--red {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: var(--border-red);
+  color: var(--accent-red);
+}
+
+.ds-badge--blue {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: var(--border-blue);
+  color: var(--accent-blue);
+}
+
+.ds-badge--teal {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: var(--border-teal);
+  color: var(--accent-teal);
+}
+
+.ds-badge--green {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--border-green);
+  color: var(--accent-green);
+}
+
+/* ─── Sidebar nav item ────────────────────────── */
+.ds-sidebar-item, .ds-nav-item {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-smooth);
+  position: relative;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+.ds-sidebar-item:hover, .ds-nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+
+.ds-sidebar-item--active, .ds-nav-item--active {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+}
+
+/* ─── Misc Utility ────────────────────────────── */
+.ds-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-glass), transparent);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-fuchsia) 50%, var(--accent-orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

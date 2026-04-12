@@ -9,10 +9,18 @@ import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
 import { AuthPanel } from './components/AuthPanel'
 
-export default function AuthScreen() {
+interface AuthScreenProps {
+  isDebug?: boolean
+}
+
+export default function AuthScreen({ isDebug }: AuthScreenProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isLogin, setIsLogin] = useState(location.pathname === '/login')
+  const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
+
+  const handleDebugLogin = (role: 'admin' | 'moderator' | 'user') => {
+    
+  }
 
   // Form State
   const [formData, setFormData] = useState({
@@ -22,7 +30,7 @@ export default function AuthScreen() {
     confirmPassword: '',
     birthDate: '',
     fullName: '',
-    handle: '@',
+    handle: '',
   })
 
   // Errors State
@@ -31,13 +39,13 @@ export default function AuthScreen() {
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   useEffect(() => {
-    setIsLogin(location.pathname === '/login')
+    setIsLogin(location.pathname.startsWith('/login'))
     setErrors({})
     setGlobalError(null)
   }, [location.pathname])
 
   const toggleAuth = () => {
-    navigate(isLogin ? '/register' : '/login')
+    navigate(isLogin ? (isDebug ? '/register/debug' : '/register') : (isDebug ? '/login/debug' : '/login'))
   }
 
   // Validation Logic
@@ -60,10 +68,10 @@ export default function AuthScreen() {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldErrors.push('Некорректный формат email')
       }
       if (name === 'handle') {
-        const handleValue = value.slice(1) // Remove @
-        if (!value || value === '@') fieldErrors.push('Обязательное поле')
+        const handleValue = value // No @ to remove
+        if (!value) fieldErrors.push('Обязательное поле')
         else if (handleValue.trim() !== handleValue) fieldErrors.push('Не должно быть пробелов')
-        else if (!/^@[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
+        else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-"  "_"')
       }
       if (name === 'fullName') {
         // Optional field
@@ -90,12 +98,6 @@ export default function AuthScreen() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value } = e.target
     
-    // Unerasable @ for handle
-    if (name === 'handle') {
-      if (!value.startsWith('@')) {
-        value = '@' + value.replace(/^@*/, '')
-      }
-    }
 
     setFormData(prev => ({ ...prev, [name]: value }))
     validateField(name, value)
@@ -116,7 +118,7 @@ export default function AuthScreen() {
       return !!(formData.login && formData.password && !errors.login?.length && !errors.password?.length)
     }
     return !!(
-      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && (formData.handle && formData.handle !== '@') &&
+      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && formData.handle &&
       Object.values(errors).every(errs => errs.length === 0)
     )
   }
@@ -165,6 +167,15 @@ export default function AuthScreen() {
           <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
         </svg>
       </Link>
+
+      {isDebug && (
+        <div className={styles.debugLoginBar}>
+          <span className={styles.debugTitle}>DEBUGLOGIN:</span>
+          <button onClick={() => handleDebugLogin('admin')} className={styles.debugBtn}>Admin</button>
+          <button onClick={() => handleDebugLogin('moderator')} className={styles.debugBtn}>Mod</button>
+          <button onClick={() => handleDebugLogin('user')} className={styles.debugBtn}>User</button>
+        </div>
+      )}
 
       <motion.div 
         layout 

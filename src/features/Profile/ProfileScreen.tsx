@@ -12,9 +12,16 @@ import styles from './Profile.module.css';
 
 // --- Chats from useProfile ---
 
-export default function ProfileScreen() {
+import { useParams } from 'react-router-dom';
+
+interface ProfileScreenProps {
+  isDebug?: boolean
+}
+
+export default function ProfileScreen({ isDebug }: ProfileScreenProps) {
+  const { username } = useParams<{ username?: string }>();
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
-  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile();
+  const { user, personas, lorebooks, lastChats, isLoading, error } = useProfile(username);
 
   if (isLoading) {
     return (
@@ -47,7 +54,7 @@ export default function ProfileScreen() {
       case 'main': return <MainTab user={user} lastChats={lastChats} />;
       case 'personas': return <PersonasTab personas={personas} />;
       case 'lorebooks': return <LorebooksTab lorebooks={lorebooks} />;
-      case 'settings': return <SettingsTab />;
+      case 'settings': return <SettingsTab user={user} />;
       default: return <MainTab user={user} lastChats={lastChats} />;
     }
   };
@@ -67,11 +74,11 @@ export default function ProfileScreen() {
       <main className={styles.profileContainer}>
         <div className={styles.layoutWrapper}>
           <aside className={styles.sidebar}>
-            <ProfileHeader user={user} />
+            <ProfileHeader user={user} isPublic={!!username} />
           </aside>
 
           <div className={styles.mainContent}>
-            <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} isPublic={!!username} />
             
             <div className={styles.contentArea}>
               {renderTabContent()}

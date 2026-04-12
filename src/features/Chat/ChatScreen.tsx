@@ -8,6 +8,7 @@ import { scenariosApi } from '@/core/api/scenarios'
 import { messagesApi } from '@/core/api/messages'
 import { charactersApi } from '@/core/api/characters'
 import { personasApi } from '@/core/api/personas'
+import { authApi } from '@/core/api/auth'
 import type { Character } from '@/core/types/character'
 import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType } from '@/core/types/chat'
 
@@ -28,7 +29,11 @@ import { LorebookSection } from './components/sections/LorebookSection'
 // Common
 import { ApiKeyModal } from './components/common/ApiKeyModal'
 
-export default function ChatScreen() {
+interface ChatScreenProps {
+  isDebug?: boolean
+}
+
+export default function ChatScreen({ isDebug }: ChatScreenProps) {
   const { chatId } = useParams<{ chatId: string }>()
   
   const [chat, setChat] = useState<ChatType | null>(null)
@@ -46,9 +51,7 @@ export default function ChatScreen() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date>(new Date())
-  // Use error state in the UI or remove it. I'll remove it for now to pass build if it's truly unused.
-  // Actually, I'll keep it but underscore it if I don't want to render it, or just remove if I want to be clean.
-  // I'll remove it and the setError calls to be thorough.
+  const [chatError, setChatError] = useState<string | null>(null)
 
   // Local Settings
   const [perspective, setPerspective] = useState<ChatType['narrative_voice']>(() => 
@@ -91,6 +94,7 @@ export default function ChatScreen() {
 
     const loadData = async () => {
       try {
+        if (!chatId) return;
         const chatData = await chatsApi.getChat(chatId)
         setChat(chatData)
         setPerspective(chatData.narrative_voice)
@@ -189,6 +193,13 @@ export default function ChatScreen() {
     const userMsgContent = inputValue
     setInputValue('')
     setIsGenerating(true)
+    setChatError(null)
+
+    if (!apiKey) {
+      setChatError('Для работы ИИ необходи��о добавить API-ключ в настройках вашего профиля.')
+      setIsGenerating(false)
+      return
+    }
 
     const tempUserMsg: Message = {
       id: Date.now().toString(),
@@ -220,6 +231,7 @@ export default function ChatScreen() {
 
       const updatedHistory = await chatsApi.getChatHistory(chatId)
       setActiveLeafId(updatedHistory.active_leaf_id)
+      setMessageTree(updatedHistory.tree)
       const lastAiMsg = updatedHistory.active_branch[updatedHistory.active_branch.length - 1]
       
       setMessages(prev => prev.map(m => 
@@ -234,6 +246,12 @@ export default function ChatScreen() {
       setLastSaved(new Date())
     } catch (err: any) {
       console.error('Send failed:', err)
+      setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id))
+      if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
+        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
+      } else {
+        setChatError('Произошла ошибка при генерации ответа. Пожалуйста, попробуйте позже.')
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -242,6 +260,14 @@ export default function ChatScreen() {
   const handleRegenerate = async (msgId: string) => {
     if (isGenerating || !chatId) return
     setIsGenerating(true)
+    setChatError(null)
+
+    if (!apiKey) {
+      setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
+      setIsGenerating(false)
+      return
+    }
+
     const targetMsg = messages.find(m => m.id === msgId)
     if (!targetMsg || !targetMsg.parent_id) {
        setIsGenerating(false)
@@ -268,6 +294,7 @@ export default function ChatScreen() {
 
       const updatedHistory = await chatsApi.getChatHistory(chatId)
       setActiveLeafId(updatedHistory.active_leaf_id)
+      setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
         author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
@@ -282,7 +309,12 @@ export default function ChatScreen() {
         created_at: m.created_at
       })))
     } catch (err: any) {
-      console.error('Send failed:', err)
+      console.error('Regeneration failed:', err)
+      if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
+        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
+      } else {
+        setChatError('Произошла ошибка при регенерации. Пожалуйста, попробуйте позже.')
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -291,9 +323,10 @@ export default function ChatScreen() {
   const handleEditMessage = async (msgId: string, newContent: string) => {
     if (isGenerating || !chatId) return
     try {
-      await messagesApi.editMessage(msgId, { new_content: newContent })
+      await messagesApi.editMessage(msgId, { content: newContent })
       const updatedHistory = await chatsApi.getChatHistory(chatId)
       setActiveLeafId(updatedHistory.active_leaf_id)
+      setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
         author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
@@ -348,8 +381,8 @@ export default function ChatScreen() {
               isLast={idx === messages.length - 1}
               isGenerating={isGenerating}
               showThoughtsGlobal={showThoughtsGlobal}
-              personaAvatar={persona?.avatar_url || undefined}
-              characterAvatar={character?.avatar_url}
+              personaAvatar={persona?.avatar_url || ''}
+              characterAvatar={character?.avatar_url || ''}
               onEdit={handleEditMessage}
               onRegenerate={handleRegenerate}
               onSiblingSwitch={handleSiblingSwitch}
@@ -357,6 +390,45 @@ export default function ChatScreen() {
             />
           ))}
         </MessageList>
+
+        {chatError && (
+          <div style={{
+            margin: '0 24px 16px',
+            padding: '12px 16px',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            borderLeft: '4px solid var(--accent-red)',
+            borderRadius: '0 8px 8px 0',
+            color: '#fca5a5',
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.05)',
+            backdropFilter: 'blur(8px)',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span style={{flex: 1}}>{chatError}</span>
+            <button 
+              onClick={() => {
+                setChatError(null);
+              }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '0.8rem',
+                textDecoration: 'underline'
+              }}
+            >
+              Закрыть
+            </button>
+          </div>
+        )}
 
         <ChatInput 
           value={inputValue}

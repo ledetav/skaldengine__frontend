@@ -14,9 +14,11 @@ export interface UserProfile {
   full_name: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  about: string | null;
   role: string;
   created_at: string;
   birth_date: string;
+  polza_api_key: string | null;
   statistics: UserStatistics;
 }
 

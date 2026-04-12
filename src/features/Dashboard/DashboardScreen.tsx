@@ -10,7 +10,11 @@ import { DashboardBackground } from '@/components/Dashboard/DashboardBackground'
 
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
-const DashboardScreen: React.FC = () => {
+interface DashboardScreenProps {
+  isDebug?: boolean
+}
+
+const DashboardScreen: React.FC<DashboardScreenProps> = ({ isDebug }) => {
   const {
     isLoading,
     error,

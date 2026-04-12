@@ -56,7 +56,7 @@
 
 .backBtn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  color: var(--white);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateX(-5px);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
@@ -110,7 +110,7 @@
 
 .startBtn {
   background: linear-gradient(135deg, var(--accent-orange), #ff4d00);
-  color: #fff;
+  color: var(--white);
   border: none;
   padding: 16px 40px;
   font-size: 1.1rem;

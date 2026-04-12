@@ -21,8 +21,9 @@ export interface UserPersonaCreate {
 }
 
 export const personasApi = {
-  getPersonas: async (skip: number = 0, limit: number = 10): Promise<UserPersona[]> => {
-    return ApiClient.get('core', `/personas/?skip=${skip}&limit=${limit}`)
+  getPersonas: async (skip: number = 0, limit: number = 10, userId?: string): Promise<UserPersona[]> => {
+    const userQuery = userId ? `&user_id=${userId}` : ''
+    return ApiClient.get('core', `/personas/?skip=${skip}&limit=${limit}${userQuery}`)
   },
   
   createPersona: async (persona: UserPersonaCreate): Promise<UserPersona> => {
@@ -34,14 +35,15 @@ export const personasApi = {
   },
   
   updatePersona: async (id: string, persona: Partial<UserPersonaCreate>): Promise<UserPersona> => {
-    return ApiClient.put('core', `/personas/${id}`, persona)
+    return ApiClient.patch('core', `/personas/${id}`, persona)
   },
   
   deletePersona: async (id: string): Promise<void> => {
     return ApiClient.delete('core', `/personas/${id}`)
   },
   
-  getStats: async (): Promise<any> => {
-    return ApiClient.get('core', '/personas/stats')
+  getStats: async (userId?: string): Promise<any> => {
+    const userQuery = userId ? `?user_id=${userId}` : ''
+    return ApiClient.get('core', `/personas/stats${userQuery}`)
   }
 }

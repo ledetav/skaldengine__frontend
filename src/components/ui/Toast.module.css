@@ -1,0 +1,83 @@
+/* ══════════════════════════════════════════════
+   Toast Notification — SkaldEngine DS
+══════════════════════════════════════════════ */
+.toastContainer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(18, 4, 29, 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: 360px;
+  animation: toastIn 0.3s var(--ease-bounce) forwards;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.toast.exiting {
+  animation: toastOut 0.25s var(--ease-smooth) forwards;
+}
+
+.toast--success {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.toast--error {
+  border-color: var(--border-red);
+}
+
+.toast--info {
+  border-color: var(--border-purple);
+}
+
+.toastIcon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.toast--success .toastIcon { color: #22c55e; }
+.toast--error .toastIcon { color: var(--accent-red); }
+.toast--info .toastIcon { color: var(--accent-purple); }
+
+.toastClose {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.toastClose:hover {
+  color: #fff;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(20px) scale(0.96); }
+}
