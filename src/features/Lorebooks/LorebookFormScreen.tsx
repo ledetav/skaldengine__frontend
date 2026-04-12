@@ -9,19 +9,23 @@ import type { UserPersona } from '@/core/types/chat'
 import type { Character } from '@/core/types/character'
 import { useToast, Button, Input, Textarea, Card } from '@/components/ui'
 
+import type { LorebookType } from '@/core/types/chat'
+
 interface FormData {
   name: string
+  type: LorebookType
   description: string
   fandom: string
   character_id: string
   user_persona_id: string
 }
 
-const EMPTY: FormData = { name: '', description: '', fandom: '', character_id: '', user_persona_id: '' }
+const EMPTY: FormData = { name: '', type: 'Fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
 
 function toForm(lb: Lorebook): FormData {
   return {
     name: lb.name,
+    type: lb.type || 'Fandom',
     description: lb.description || '',
     fandom: lb.fandom || '',
     character_id: lb.character_id || '',
@@ -84,10 +88,11 @@ export default function LorebookFormScreen() {
     try {
       const payload: Partial<Lorebook> = {
         name: form.name,
+        type: form.type,
         description: form.description || undefined,
-        fandom: form.fandom || undefined,
-        character_id: form.character_id || undefined,
-        user_persona_id: form.user_persona_id || undefined
+        fandom: form.type === 'Fandom' && form.fandom ? form.fandom : undefined,
+        character_id: form.type === 'Character' && form.character_id ? form.character_id : undefined,
+        user_persona_id: form.type === 'Persona' && form.user_persona_id ? form.user_persona_id : undefined
       }
       
       if (isEdit && id) {
@@ -143,18 +148,18 @@ export default function LorebookFormScreen() {
             
             <div className={styles.previewInfo}>
               <h3 className={styles.previewName}>{form.name || 'Название лорбука'}</h3>
-              <div className={styles.previewFandom}>{form.fandom || 'Оригинальная вселенная'}</div>
+              <div className={styles.previewFandom}>{form.fandom || 'Оригинальный / Независимый'}</div>
               <p className={styles.previewDesc}>{form.description || 'Описание пока не заполнено...'}</p>
             </div>
 
-            <div className={styles.previewStats}>
-              <div className={styles.previewStat}>
-                <span className={styles.previewStatLabel}>Тип</span>
-                <span className={styles.previewStatValue}>
-                  {form.character_id ? 'Персонаж' : 'Мир'}
-                </span>
-              </div>
-              <div className={styles.previewStat}>
+              <div className={styles.previewStats}>
+                <div className={styles.previewStat}>
+                  <span className={styles.previewStatLabel}>Тип</span>
+                  <span className={styles.previewStatValue}>
+                    {form.type === 'Fandom' ? 'Фандом' : form.type === 'Persona' ? 'Персона' : 'Персонаж'}
+                  </span>
+                </div>
+                <div className={styles.previewStat}>
                 <span className={styles.previewStatLabel}>Записей</span>
                 <span className={styles.previewStatValue}>0</span>
               </div>
@@ -166,6 +171,21 @@ export default function LorebookFormScreen() {
             <Card style={{ padding: '36px' }}>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div className={styles.sectionTitle}>Основная информация</div>
+
+                {form.type === 'Fandom' && (
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Фандом</label>
+                    <input 
+                      className={styles.formInput}
+                      value={form.fandom}
+                      onChange={set('fandom')}
+                      placeholder="Fantasy, Genshin Impact, и т.д."
+                    />
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '4px' }}>
+                      Оставьте пустым для независимого мира
+                    </div>
+                  </div>
+                )}
                 
                 <Input
                   label="Название лорбука"
@@ -184,46 +204,38 @@ export default function LorebookFormScreen() {
                   rows={4}
                 />
 
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Вселенная / Фандом</label>
-                  <input 
-                    className={styles.formInput}
-                    value={form.fandom}
-                    onChange={set('fandom')}
-                    placeholder="Fantasy, Genshin Impact, и т.д."
-                  />
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '4px' }}>
-                    Оставьте пустым для оригинальной вселенной
-                  </div>
-                </div>
-
                 <div className={styles.sectionTitle} style={{ marginTop: '12px' }}>Связи и контекст</div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Привязать к персоне</label>
-                    <select
-                      className={styles.formInput}
-                      value={form.user_persona_id}
-                      onChange={set('user_persona_id')}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <option value="">— Без привязки —</option>
-                      {personas.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                  {form.type === 'Persona' && (
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>Привязать к персоне</label>
+                      <select
+                        className={styles.formInput}
+                        value={form.user_persona_id}
+                        onChange={set('user_persona_id')}
+                        style={{ cursor: 'pointer' }}
+                        required
+                      >
+                        <option value="">— Выберите персону —</option>
+                        {personas.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>К персонажу</label>
-                    <select className={styles.formInput} value={form.character_id} onChange={set('character_id')}>
-                      <option value="">— Без привязки —</option>
-                      {characters.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                  {form.type === 'Character' && (
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>К персонажу</label>
+                      <select className={styles.formInput} value={form.character_id} onChange={set('character_id')} required>
+                        <option value="">— Выберите персонажа —</option>
+                        {characters.map(c => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ 

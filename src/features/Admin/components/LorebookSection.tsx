@@ -185,7 +185,7 @@ export function LorebookSection({
                           onChange={(e) => setSelectedCharId(e.target.value)}
                         >
                           <option value="">Выберите персонажа...</option>
-                          {characters.map(c => <option key={c.id} value={c.id}>{c.name} ({c.fandom || 'Оригинальный'})</option>)}
+                          {characters.map(c => <option key={c.id} value={c.id}>{c.name} ({c.fandom || 'Независимый'})</option>)}
                         </select>
                       )}
 
