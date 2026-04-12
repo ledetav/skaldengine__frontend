@@ -179,7 +179,7 @@ export function CharacterProfileView({
                 <>
                   <h1 className={styles.charProfileName}>{character.name}</h1>
                   <div style={{ marginBottom: '16px' }}>
-                    <Badge variant="orange">{character.fandom || 'Оригинальный'}</Badge>
+                    <Badge variant="orange">{character.fandom || 'Независимый'}</Badge>
                   </div>
                 </>
               )}

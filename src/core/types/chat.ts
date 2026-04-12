@@ -99,9 +99,12 @@ export interface LorebookEntry {
   created_at: string
 }
 
+export type LorebookType = 'Fandom' | 'Character' | 'Persona'
+
 export interface Lorebook {
   id: string
   name: string
+  type: LorebookType
   description?: string
   fandom?: string
   character_id?: string

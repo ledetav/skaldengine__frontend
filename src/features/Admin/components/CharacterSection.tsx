@@ -100,7 +100,7 @@ export function CharacterSection({
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
                   </td>
-                  <td><Badge variant="orange">{char.fandom || 'Оригинальный'}</Badge></td>
+                  <td><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></td>
                   <td>{char.total_chats_count.toLocaleString()}</td>
                   <td>{char.scenarios_count || 0}</td>
                 </tr>
@@ -118,7 +118,7 @@ export function CharacterSection({
                 </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
-                  <div className={styles.cardFandom}><Badge variant="orange">{char.fandom || 'Оригинальный'}</Badge></div>
+                  <div className={styles.cardFandom}><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></div>
                 </div>
               </div>
               <div className={styles.cardStats}>
