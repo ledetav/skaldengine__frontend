@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import styles from '../Admin.module.css'
 import { Button, Input } from '@/components/ui'
 import type { AdminTab } from './AdminSidebar'
@@ -53,11 +53,6 @@ export function AdminFilterModal({
     characters.forEach(c => { if (c.fandom) s.add(c.fandom) })
     return Array.from(s).sort()
   }, [lorebooks, characters])
-
-  const filteredFandoms = allFandoms.filter(f => 
-    f.toLowerCase().includes(fandomSearch.toLowerCase()) && 
-    !filters.fandoms?.includes(f)
-  )
 
   if (!isOpen) return null
 

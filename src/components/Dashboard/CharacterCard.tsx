@@ -61,7 +61,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
       {/* 2. Creator Bar (MIDDLE) */}
       <div className={styles.cardCreatorBar}>
         <div className={styles.creatorAvatarMini}>
-          {character.creator_id?.[1]?.toUpperCase() || 'S'}
+          {character.creator_id?.[0]?.toUpperCase() || 'S'}
         </div>
         <div className={styles.creatorInfoStack}>
           <span className={styles.creatorNameMini}>{character.creator_id || 'System'}</span>

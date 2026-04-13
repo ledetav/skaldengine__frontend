@@ -29,11 +29,7 @@ import { LorebookSection } from './components/sections/LorebookSection'
 // Common
 import { ApiKeyModal } from './components/common/ApiKeyModal'
 
-interface ChatScreenProps {
-  isDebug?: boolean
-}
-
-export default function ChatScreen({ isDebug }: ChatScreenProps) {
+export default function ChatScreen() {
   const { chatId } = useParams<{ chatId: string }>()
   
   const [chat, setChat] = useState<ChatType | null>(null)

@@ -78,8 +78,8 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
 
       <div className={styles.cardFooter}>
         <div className={styles.entryCount}>
-          <span>{lorebook.entries_count}</span>
-          {lorebook.entries_count === 1 ? 'запись' : lorebook.entries_count < 5 ? 'записи' : 'записей'}
+          <span>{lorebook.entries_count || 0}</span>
+          {(lorebook.entries_count || 0) === 1 ? 'запись' : ((lorebook.entries_count || 0) < 5 ? 'запси' : 'записей')}
         </div>
         <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.25)' }}>
           {new Date(lorebook.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}

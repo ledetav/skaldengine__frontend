@@ -36,11 +36,7 @@ const gameModes: { id: GameModeType, title: string, description: string }[] = [
   }
 ]
 
-interface CreateChatScreenProps {
-  isDebug?: boolean
-}
-
-const CreateChatScreen: React.FC<CreateChatScreenProps> = ({ isDebug }) => {
+const CreateChatScreen: React.FC = () => {
   const { characterId } = useParams<{ characterId: string }>()
   const navigate = useNavigate()
   

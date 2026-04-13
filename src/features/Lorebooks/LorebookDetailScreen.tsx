@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
 import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Lorebook, LorebookEntry } from '@/core/types/chat'
-import { useToast, Button, Card, Badge, Input, Textarea } from '@/components/ui'
+import { useToast, Button, Card, Input, Textarea } from '@/components/ui'
 
 /* ─── Add Single Entry Panel ───────────────────── */
 function AddSingleEntry({ onAdd, onCancel }: {
@@ -164,13 +164,13 @@ function EntriesTable({ entries, onDelete }: {
         <tbody>
           {entries.map(entry => (
             <tr key={entry.id}>
-              <td>
-                <div className={styles.keywords}>
-                  {entry.keywords.map(kw => (
-                    <span key={kw} className={styles.keyword}>{kw}</span>
-                  ))}
-                </div>
-              </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          {entry.keywords.map(kw => (
+                            <span key={kw} className={styles.keyword}>{kw}</span>
+                          ))}
+                        </div>
+                      </td>
               <td className={styles.contentCell}>{entry.content}</td>
               <td className={styles.priorityCell}>{entry.priority}</td>
               <td style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>

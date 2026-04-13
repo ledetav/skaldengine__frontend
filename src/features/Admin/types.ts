@@ -25,6 +25,7 @@ export interface Lorebook {
   user_persona_id?: string;
   user_persona_name?: string;
   fandom?: string;
+  type: 'Fandom' | 'Character' | 'Persona';
   name: string;
   description?: string;
   entries_count: number;

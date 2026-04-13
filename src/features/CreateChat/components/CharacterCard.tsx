@@ -34,7 +34,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, scenari
           </div>
           <div className={styles.characterMainInfo}>
             <h1>{character.name}</h1>
-            <span className={styles.fandomOverlay}>{character.fandom}</span>
+            <span className={styles.fandomOverlay}>{character.fandom || 'Оригинальный'}</span>
           </div>
 
           {canEdit && (

@@ -21,12 +21,6 @@ export default function AdminDashboard() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   
-  const navigateDebug = (route: string) => {
-    const isDebug = pathname.includes('/debug')
-    const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
-    navigate(finalRoute)
-  }
-  
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
   
   // Real implementation arrays
@@ -81,7 +75,6 @@ export default function AdminDashboard() {
   }, [pathname])
 
   const isDetailView = id && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
-  const isLorebookDetail = pathname.includes('/lorebooks/') && id && !pathname.includes('/fandom/') && !pathname.includes('/characters/') && !pathname.includes('/personas/')
   const isUserDetail = pathname.includes('/users/') && id
   const isPersonaDetail = pathname.includes('/personas/') && id
 

@@ -9,18 +9,10 @@ import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
 import { AuthPanel } from './components/AuthPanel'
 
-interface AuthScreenProps {
-  isDebug?: boolean
-}
-
-export default function AuthScreen({ isDebug }: AuthScreenProps) {
+export default function AuthScreen() {
   const location = useLocation()
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
-
-  const handleDebugLogin = (role: 'admin' | 'moderator' | 'user') => {
-    
-  }
 
   // Form State
   const [formData, setFormData] = useState({
@@ -45,7 +37,7 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
   }, [location.pathname])
 
   const toggleAuth = () => {
-    navigate(isLogin ? (isDebug ? '/register/debug' : '/register') : (isDebug ? '/login/debug' : '/login'))
+    navigate(isLogin ? '/register' : '/login')
   }
 
   // Validation Logic
@@ -68,10 +60,9 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldErrors.push('Некорректный формат email')
       }
       if (name === 'handle') {
-        const handleValue = value // No @ to remove
         if (!value) fieldErrors.push('Обязательное поле')
-        else if (handleValue.trim() !== handleValue) fieldErrors.push('Не должно быть пробелов')
-        else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-"  "_"')
+        else if (value.trim() !== value) fieldErrors.push('Не должно быть пробелов')
+        else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
       }
       if (name === 'fullName') {
         // Optional field
@@ -167,15 +158,6 @@ export default function AuthScreen({ isDebug }: AuthScreenProps) {
           <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
         </svg>
       </Link>
-
-      {isDebug && (
-        <div className={styles.debugLoginBar}>
-          <span className={styles.debugTitle}>DEBUGLOGIN:</span>
-          <button onClick={() => handleDebugLogin('admin')} className={styles.debugBtn}>Admin</button>
-          <button onClick={() => handleDebugLogin('moderator')} className={styles.debugBtn}>Mod</button>
-          <button onClick={() => handleDebugLogin('user')} className={styles.debugBtn}>User</button>
-        </div>
-      )}
 
       <motion.div 
         layout 

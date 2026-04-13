@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
-import { Badge } from '@/components/ui'
+import { Badge, Button } from '@/components/ui'
 
 interface CharacterProfileViewProps {
   characterId: string
@@ -21,7 +21,6 @@ export function CharacterProfileView({
   onBack, 
   onUpdateCharacter,
   onUpdateLorebooks,
-  onDeleteCharacter,
   onSave
 }: CharacterProfileViewProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)

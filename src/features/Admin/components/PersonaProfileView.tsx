@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styles from '../Admin.module.css'
 import type { UserPersona, User, Lorebook } from '../types'
 import { Button } from '@/components/ui'

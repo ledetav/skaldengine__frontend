@@ -79,7 +79,7 @@ export function UserProfileView({
 
             <div className={styles.charBasicInfo}>
               <h1 className={styles.charProfileName}>{user.full_name || user.username}</h1>
-              <p className={styles.charProfileFandom} style={{ color: 'var(--accent-pink)' }}>{user.username}</p>
+              <p className={styles.charProfileFandom} style={{ color: 'var(--accent-pink)' }}>@{user.username}</p>
               
               <div style={{ marginTop: '20px' }}>
                 <p style={{ 

@@ -43,7 +43,7 @@ export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderP
             <img src={user.avatar_url} alt={user.username} className={styles.avatar} />
           ) : (
             <div className={styles.avatar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 900 }}>
-              {user.username.charAt(1).toUpperCase()}
+              {user.username.charAt(0).toUpperCase()}
             </div>
           )}
           {!isPublic && (
@@ -56,7 +56,7 @@ export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderP
         <h1 className={`${styles.displayName} gradient-text`}>{user.full_name || user.login}</h1>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
           <div className={styles.username}>@{user.username}</div>
-          <div style={{ 
+          <div style={{
             fontSize: '0.65rem', 
             background: 'rgba(139, 92, 246, 0.1)', 
             color: 'var(--accent-purple)', 
