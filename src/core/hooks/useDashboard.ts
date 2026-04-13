@@ -7,6 +7,7 @@ export const useDashboard = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // ... rest of state
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
   const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')

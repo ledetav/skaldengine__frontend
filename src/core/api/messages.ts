@@ -91,6 +91,7 @@ export const messagesApi = {
   },
 
   editMessage: async (messageId: string, data: MessageEdit): Promise<Message> => {
+    // API uses PUT /messages/{id} with { content } field
     return ApiClient.put('core', `/messages/${messageId}`, data)
   },
 

@@ -4,18 +4,18 @@ export const authApi = {
   register: async (data: Record<string, string | null>) => {
     return ApiClient.post('auth', '/auth/register', {
       email: data.email,
-      username: data.login,
-      handle: data.handle,
+      login: data.login,
+      username: data.handle || data.login,
+      full_name: data.fullName || null,
       password: data.password,
       birth_date: data.birthDate,
-      full_name: data.fullName || null,
     })
   },
 
   login: async (data: Record<string, string>) => {
     // OAuth2 login expects form data
     const formData = new URLSearchParams()
-    formData.append('username', data.login) // OAuth2 uses 'username' for both login/email
+    formData.append('username', data.login) // OAuth2 uses 'username' for login field
     formData.append('password', data.password)
 
     return ApiClient.request('auth', '/auth/login', {
@@ -27,5 +27,24 @@ export const authApi = {
 
   getMe: async () => {
     return ApiClient.get<any>('auth', '/users/me')
+  },
+
+  updateMe: async (data: Record<string, string | null>) => {
+    return ApiClient.patch<any>('auth', '/users/me', data)
+  },
+
+  changePassword: async (oldPassword: string, newPassword: string) => {
+    return ApiClient.post<any>('auth', '/users/me/password', {
+      old_password: oldPassword,
+      new_password: newPassword,
+    })
+  },
+
+  deleteMe: async () => {
+    return ApiClient.delete<any>('auth', '/users/me')
+  },
+
+  getPublicProfile: async (username: string) => {
+    return ApiClient.get<any>('auth', `/users/profile/${username}`)
   }
 }

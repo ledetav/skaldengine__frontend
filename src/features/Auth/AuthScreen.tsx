@@ -12,7 +12,7 @@ import { AuthPanel } from './components/AuthPanel'
 export default function AuthScreen() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isLogin, setIsLogin] = useState(location.pathname === '/login')
+  const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
 
   // Form State
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ export default function AuthScreen() {
     confirmPassword: '',
     birthDate: '',
     fullName: '',
-    handle: '@',
+    handle: '',
   })
 
   // Errors State
@@ -31,7 +31,7 @@ export default function AuthScreen() {
   const [globalError, setGlobalError] = useState<string | null>(null)
 
   useEffect(() => {
-    setIsLogin(location.pathname === '/login')
+    setIsLogin(location.pathname.startsWith('/login'))
     setErrors({})
     setGlobalError(null)
   }, [location.pathname])
@@ -60,10 +60,9 @@ export default function AuthScreen() {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldErrors.push('Некорректный формат email')
       }
       if (name === 'handle') {
-        const handleValue = value.slice(1) // Remove @
-        if (!value || value === '@') fieldErrors.push('Обязательное поле')
-        else if (handleValue.trim() !== handleValue) fieldErrors.push('Не должно быть пробелов')
-        else if (!/^@[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
+        if (!value) fieldErrors.push('Обязательное поле')
+        else if (value.trim() !== value) fieldErrors.push('Не должно быть пробелов')
+        else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
       }
       if (name === 'fullName') {
         // Optional field
@@ -90,12 +89,6 @@ export default function AuthScreen() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value } = e.target
     
-    // Unerasable @ for handle
-    if (name === 'handle') {
-      if (!value.startsWith('@')) {
-        value = '@' + value.replace(/^@*/, '')
-      }
-    }
 
     setFormData(prev => ({ ...prev, [name]: value }))
     validateField(name, value)
@@ -116,7 +109,7 @@ export default function AuthScreen() {
       return !!(formData.login && formData.password && !errors.login?.length && !errors.password?.length)
     }
     return !!(
-      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && (formData.handle && formData.handle !== '@') &&
+      formData.login && formData.email && formData.password && formData.confirmPassword && formData.birthDate && formData.handle &&
       Object.values(errors).every(errs => errs.length === 0)
     )
   }
