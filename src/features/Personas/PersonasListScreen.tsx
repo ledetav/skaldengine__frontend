@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Personas.module.css'
@@ -109,7 +110,7 @@ export default function PersonasListScreen() {
         setPersonas(personasData || [])
         setStats(statsData || { total_personas: 0, total_chats: 0, total_lorebooks: 0 })
       } catch (err: any) {
-        console.error('Error fetching personas:', err)
+        logger.error('Error fetching personas:', err)
         error('Не удалось загрузить списк персон')
       } finally {
         setIsLoading(false)

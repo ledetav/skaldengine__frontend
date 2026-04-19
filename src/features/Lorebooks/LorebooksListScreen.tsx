@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
@@ -103,7 +104,7 @@ export default function LorebooksListScreen() {
         const data = await lorebooksApi.getLorebooks()
         setLorebooks(data || [])
       } catch (err: any) {
-        console.error('Error fetching lorebooks:', err)
+        logger.error('Error fetching lorebooks:', err)
         error('Не удалось загрузить списк лорбуков')
       } finally {
         setIsLoading(false)
