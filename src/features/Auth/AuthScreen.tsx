@@ -87,7 +87,7 @@ export default function AuthScreen() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target
+    const { name, value } = e.target
     
 
     setFormData(prev => ({ ...prev, [name]: value }))
