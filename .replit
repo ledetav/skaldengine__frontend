@@ -32,3 +32,9 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[userenv]
+
+[userenv.shared]
+VITE_AUTH_API_URL = "https://skaldenginebackend--northernwarmer.replit.app/api/v1"
+VITE_CORE_API_URL = "https://skaldenginebackend--northernwarmer.replit.app/api/v1"
