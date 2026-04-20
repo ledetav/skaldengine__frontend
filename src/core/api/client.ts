@@ -36,7 +36,19 @@ export class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        const errorMessage = errorData.detail || errorData.message || `Request failed: ${response.statusText}`
+        const detail = errorData.detail
+        let errorMessage: string
+        if (typeof detail === 'string') {
+          errorMessage = detail
+        } else if (detail && typeof detail === 'object' && typeof detail.message === 'string') {
+          errorMessage = detail.message
+        } else if (Array.isArray(detail)) {
+          errorMessage = detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ')
+        } else if (typeof errorData.message === 'string') {
+          errorMessage = errorData.message
+        } else {
+          errorMessage = `Request failed: ${response.statusText}`
+        }
         logger.error(`[API Error] ${options.method || 'GET'} ${url} - Status ${response.status}: ${errorMessage}`, { errorData });
         throw new Error(errorMessage)
       }
