@@ -88,14 +88,17 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           </>
         ) : (
           <div className={styles.dashboardActions}>
-            <Link to={getDebugHref("/chats")} className={styles.navLink}>Мои чаты</Link>
-            <Link to={getDebugHref("/lorebooks")} className={styles.navLink}>Лорбуки</Link>
-            
+            <Link to={getDebugHref("/dashboard")} className={styles.navLink}>Персонажи</Link>
+
             {(user?.role === 'admin' || user?.role === 'moderator') && (
               <Link to={getDebugHref("/admin")} className={`${styles.navLink} ${styles.adminLink}`}>
-                Панель администратора
+                Перейти в админ. панель
               </Link>
             )}
+
+            <Link to={getDebugHref("/chats")} className={styles.navLink}>Мои чаты</Link>
+            <Link to={getDebugHref("/user/personas")} className={styles.navLink}>Мои персоны</Link>
+            <Link to={getDebugHref("/user/lorebooks")} className={styles.navLink}>Мои лорбуки</Link>
 
             <div className={styles.userMenu}>
               <span className={styles.userName}>{user?.full_name || user?.username || 'Загрузка...'}</span>
@@ -140,14 +143,17 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
             </>
           ) : (
             <div className={styles.mobileActions}>
-              <Link to={getDebugHref("/chats")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
-              <Link to={getDebugHref("/lorebooks")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Лорбуки</Link>
-              
+              <Link to={getDebugHref("/dashboard")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Персонажи</Link>
+
               {(user?.role === 'admin' || user?.role === 'moderator') && (
                 <Link to={getDebugHref("/admin")} className={`${styles.mobileLink} ${styles.adminLink}`} onClick={() => setMenuOpen(false)}>
-                  Панель администратора
+                  Перейти в админ. панель
                 </Link>
               )}
+
+              <Link to={getDebugHref("/chats")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
+              <Link to={getDebugHref("/user/personas")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои персоны</Link>
+              <Link to={getDebugHref("/user/lorebooks")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои лорбуки</Link>
 
               <Link to={getDebugHref("/profile")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
                 Профиль ({user?.full_name || user?.username || '...'})

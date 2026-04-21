@@ -5,10 +5,13 @@ export type AdminTab = 'users' | 'personas' | 'characters' | 'lorebooks_fandom' 
 
 interface AdminSidebarProps {
   activeTab: AdminTab
+  role?: string | null
 }
 
-export function AdminSidebar({ activeTab }: AdminSidebarProps) {
-  const menuItems: { id: AdminTab; label: string; route: string; icon: React.ReactNode; color: string }[] = [
+const MODERATOR_HIDDEN: AdminTab[] = ['users', 'lorebooks_fandom', 'lorebooks_persona']
+
+export function AdminSidebar({ activeTab, role }: AdminSidebarProps) {
+  const allMenuItems: { id: AdminTab; label: string; route: string; icon: React.ReactNode; color: string }[] = [
     { 
       id: 'users', 
       label: 'Пользователи', 
@@ -76,6 +79,10 @@ export function AdminSidebar({ activeTab }: AdminSidebarProps) {
       color: 'var(--accent-green, #10b981)' 
     },
   ]
+
+  const menuItems = role === 'moderator'
+    ? allMenuItems.filter(item => !MODERATOR_HIDDEN.includes(item.id))
+    : allMenuItems
 
   const navigate = useNavigate()
   const { pathname } = useLocation()

@@ -148,6 +148,11 @@ export default function AdminDashboard() {
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
 
+  const moderatorBlocked: AdminTab[] = ['users', 'lorebooks_fandom', 'lorebooks_persona']
+  if (effectiveRole === 'moderator' && moderatorBlocked.includes(activeTab)) {
+    return <Navigate to="/admin/characters" replace />
+  }
+
   const isFilterActiveForTab = (filters: FilterState, tab: AdminTab) => {
     if (tab === 'users') {
       return !!(filters.roles?.length || filters.regDateStart || filters.regDateEnd)
@@ -174,7 +179,7 @@ export default function AdminDashboard() {
         <div className={`${styles.orb} ${styles.orbOrange}`} />
       </div>
 
-      <AdminSidebar activeTab={activeTab} />
+      <AdminSidebar activeTab={activeTab} role={effectiveRole} />
       
       <main className={styles.mainContainer}>
         <header className={styles.mainHeader}>
