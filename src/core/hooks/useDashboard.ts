@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useMemo, useEffect } from 'react'
 import { charactersApi } from '@/core/api/characters'
 import type { Character } from '@/core/types/character'
@@ -25,7 +26,7 @@ export const useDashboard = () => {
         setCharacters(data)
         setError(null)
       } catch (err: any) {
-        console.error('Error fetching characters:', err)
+        logger.error('Error fetching characters:', err)
         setError('Не удалось загрузить персонажей. Пожалуйста, попробуйте позже.')
       } finally {
         setIsLoading(false)
@@ -54,11 +55,11 @@ export const useDashboard = () => {
           setCharacters(prev => prev.filter(c => c.id !== id))
         }
       } catch (err) {
-        console.error('WS Message parsing error:', err)
+        logger.error('WS Message parsing error:', err)
       }
     }
 
-    socket.onerror = (err) => console.error('WS Error:', err)
+    socket.onerror = (err) => logger.error('WS Error:', err)
     
     return () => {
       socket.close()
