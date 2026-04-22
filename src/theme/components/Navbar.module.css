@@ -180,9 +180,17 @@
 }
 
 .mobileActions {
+  display: flex;
   gap: 12px;
   margin-top: 16px;
   flex-direction: column;
+  width: 100%;
+}
+
+.mobileActions > a,
+.mobileActions > button {
+  width: 100%;
+  justify-content: center;
 }
 
 .mobileDivider {

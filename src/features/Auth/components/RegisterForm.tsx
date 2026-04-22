@@ -33,28 +33,30 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <span className={styles.bulletMini}>•</span> — обязательное поле
         </div>
         
-        <AuthInput 
-          label="Твое имя"
-          description="Будет отображаться на твоей странице. Например, Скальдик."
-          name="fullName"
-          type="text"
-          placeholder="Иван Иванов"
-          value={formData.fullName}
-          onChange={onChange}
-          error={getErrorText('fullName')}
-        />
+        <div className={styles.formRow}>
+          <AuthInput 
+            label="Твое имя"
+            description="Будет отображаться на твоей странице. Например, Скальдик."
+            name="fullName"
+            type="text"
+            placeholder="Иван Иванов"
+            value={formData.fullName}
+            onChange={onChange}
+            error={getErrorText('fullName')}
+          />
 
-        <AuthInput 
-                  label="Юзернейм"
-                  description="По нему тебя смогут найти другие пользователи. Например, Skaldik"
-                  name="handle"
-                  type="text"
-                  placeholder="handle"
-                  value={formData.handle}
-          onChange={onChange}
-          error={getErrorText('handle')}
-          required
-        />
+          <AuthInput 
+            label="Юзернейм"
+            description="По нему тебя смогут найти другие пользователи."
+            name="handle"
+            type="text"
+            placeholder="handle"
+            value={formData.handle}
+            onChange={onChange}
+            error={getErrorText('handle')}
+            required
+          />
+        </div>
 
         <AuthInput 
           label="Дата рождения"
@@ -68,51 +70,55 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           required
         />
 
-        <AuthInput 
-          label="Логин"
-          description="По нему ты сможешь войти, он никому не виден."
-          name="login"
-          type="text"
-          placeholder="skald_engine"
-          value={formData.login}
-          onChange={onChange}
-          error={getErrorText('login')}
-          required
-        />
+        <div className={styles.formRow}>
+          <AuthInput 
+            label="Логин"
+            description="По нему ты сможешь войти, он никому не виден."
+            name="login"
+            type="text"
+            placeholder="skald_engine"
+            value={formData.login}
+            onChange={onChange}
+            error={getErrorText('login')}
+            required
+          />
 
-        <AuthInput 
-          label="Почта"
-          description="По ней ты сможешь тоже войти на сайт, а еще восстановить пароль."
-          name="email"
-          type="email"
-          placeholder="skaldengine@example.com"
-          value={formData.email}
-          onChange={onChange}
-          error={getErrorText('email')}
-          required
-        />
+          <AuthInput 
+            label="Почта"
+            description="По ней тоже можно войти, а ещё восстановить пароль."
+            name="email"
+            type="email"
+            placeholder="skaldengine@example.com"
+            value={formData.email}
+            onChange={onChange}
+            error={getErrorText('email')}
+            required
+          />
+        </div>
 
-        <AuthInput 
-          label="Пароль"
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          value={formData.password}
-          onChange={onChange}
-          error={getErrorText('password')}
-          required
-        />
+        <div className={styles.formRow}>
+          <AuthInput 
+            label="Пароль"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={onChange}
+            error={getErrorText('password')}
+            required
+          />
 
-        <AuthInput 
-          label="Повторите пароль"
-          name="confirmPassword"
-          type="password"
-          placeholder="••••••••"
-          value={formData.confirmPassword}
-          onChange={onChange}
-          error={getErrorText('confirmPassword')}
-          required
-        />
+          <AuthInput 
+            label="Повторите пароль"
+            name="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            value={formData.confirmPassword}
+            onChange={onChange}
+            error={getErrorText('confirmPassword')}
+            required
+          />
+        </div>
 
         <button type="submit" className={styles.submitBtn} disabled={!isFormValid || isLoading}>
           {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
