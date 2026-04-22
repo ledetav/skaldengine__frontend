@@ -80,7 +80,20 @@ export default function AuthScreen() {
         if (!value) fieldErrors.push('Обязательное поле')
         else if (value !== formData.password) fieldErrors.push('Пароли не совпадают')
       }
-      if (name === 'birthDate' && !value) fieldErrors.push('Укажите дату рождения')
+      if (name === 'birthDate') {
+        if (!value) fieldErrors.push('Укажите дату рождения')
+        else if (!/^\d{2}\.\d{2}\.\d{4}$/.test(value)) fieldErrors.push('Формат: ДД.ММ.ГГГГ')
+        else {
+          const [d, m, y] = value.split('.').map(Number)
+          const date = new Date(y, m - 1, d)
+          const now = new Date()
+          if (isNaN(date.getTime())) fieldErrors.push('Неверная дата')
+          else if (date > now) fieldErrors.push('Дата в будущем?')
+          else if (y < 1900) fieldErrors.push('Слишком старая дата')
+          else if (m < 1 || m > 12) fieldErrors.push('Неверный месяц')
+          else if (d < 1 || d > 31) fieldErrors.push('Неверный день')
+        }
+      }
     }
 
     setErrors(prev => ({ ...prev, [name]: fieldErrors }))
@@ -89,6 +102,21 @@ export default function AuthScreen() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     
+    if (name === 'birthDate') {
+      // Input mask: dd.mm.yyyy
+      const digits = value.replace(/\D/g, '')
+      let formatted = ''
+      if (digits.length > 0) {
+        formatted += digits.substring(0, 2)
+        if (digits.length > 2) {
+          formatted += '.' + digits.substring(2, 4)
+          if (digits.length > 4) {
+            formatted += '.' + digits.substring(4, 8)
+          }
+        }
+      }
+      value = formatted
+    }
 
     setFormData(prev => ({ ...prev, [name]: value }))
     validateField(name, value)
@@ -128,7 +156,11 @@ export default function AuthScreen() {
         window.dispatchEvent(new Event('auth-change'))
         navigate('/dashboard')
       } else {
-        await authApi.register(formData)
+        // Convert dd.mm.yyyy to yyyy-mm-dd for the API
+        const [d, m, y] = formData.birthDate.split('.')
+        const isoDate = `${y}-${m}-${d}`
+        
+        await authApi.register({ ...formData, birthDate: isoDate })
         const loginResult = await authApi.login(formData) as { access_token: string }
         localStorage.setItem('token', loginResult.access_token)
         window.dispatchEvent(new Event('auth-change'))

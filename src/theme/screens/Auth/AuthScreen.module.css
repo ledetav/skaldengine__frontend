@@ -242,6 +242,18 @@
   transition: all 0.3s;
 }
 
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.8);
+  margin-right: 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 .input:focus {
   border-color: var(--accent-fuchsia);
   background: rgba(255, 255, 255, 0.08);
