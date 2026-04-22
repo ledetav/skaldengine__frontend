@@ -100,7 +100,8 @@ export default function AuthScreen() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target
+    const name = e.target.name
+    let value = e.target.value
     
     if (name === 'birthDate') {
       // Input mask: dd.mm.yyyy
