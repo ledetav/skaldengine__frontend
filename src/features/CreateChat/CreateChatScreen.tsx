@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import type { GameModeType, UserPersona, Scenario, Lorebook, NarrativeVoiceType } from '@/core/types/chat'
@@ -83,7 +84,7 @@ const CreateChatScreen: React.FC = () => {
         if (personasData && personasData.length > 0) setSelectedPersonaId(personasData[0].id)
         if (scenariosData && scenariosData.length > 0) setSelectedScenarioId(scenariosData[0].id)
       } catch (err: unknown) {
-        console.error('Error fetching creation data:', err)
+        logger.error('Error fetching creation data:', err)
         setError(err instanceof Error ? err.message : 'Ошибка при загрузке данных')
       } finally {
         setIsLoading(false)

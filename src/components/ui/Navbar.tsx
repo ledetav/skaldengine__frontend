@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authApi } from '@/core/api/auth'
@@ -44,7 +45,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
       authApi.getMe()
         .then((data: any) => setUser(data))
         .catch((err: unknown) => {
-          console.error('Failed to fetch user:', err)
+          logger.error('Failed to fetch user:', err)
         })
     }
 

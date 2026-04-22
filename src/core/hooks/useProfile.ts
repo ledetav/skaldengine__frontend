@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { authApi } from '@/core/api/auth'
 import { personasApi } from '@/core/api/personas'
@@ -90,7 +91,7 @@ export const useProfile = (username?: string) => {
         }
 
       } catch (err: any) {
-        console.error('Error fetching profile data:', err)
+        logger.error('Error fetching profile data:', err)
         setError('Не удалось загрузить данные профиля. Пожалуйста, попробуйте позже.')
       } finally {
         setIsLoading(false)
