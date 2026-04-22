@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from './ChatScreen.module.css'
@@ -103,7 +104,7 @@ export default function ChatScreen() {
         ])
         
         if (chatData.scenario_id) {
-          scenariosApi.getScenario(chatData.scenario_id).then(setScenario).catch(console.error)
+          scenariosApi.getScenario(chatData.scenario_id).then(setScenario).catch(err => logger.error('Failed to get scenario', err))
         }
 
         setCharacter(charData)
@@ -130,7 +131,7 @@ export default function ChatScreen() {
         setUserRole(userMe.role)
 
       } catch (err: unknown) {
-        console.error('Failed to load chat data:', err)
+        logger.error('Failed to load chat data:', err)
       }
     }
 
@@ -180,7 +181,7 @@ export default function ChatScreen() {
         }))
       setMessages(mapped)
     } catch (err: any) {
-      console.error('Sibling switch failed:', err)
+      logger.error('Sibling switch failed:', err)
     }
   }
 
@@ -241,7 +242,7 @@ export default function ChatScreen() {
       ))
       setLastSaved(new Date())
     } catch (err: any) {
-      console.error('Send failed:', err)
+      logger.error('Send failed:', err)
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id))
       if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
         setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
@@ -305,7 +306,7 @@ export default function ChatScreen() {
         created_at: m.created_at
       })))
     } catch (err: any) {
-      console.error('Regeneration failed:', err)
+      logger.error('Regeneration failed:', err)
       if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
         setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
       } else {
@@ -337,7 +338,7 @@ export default function ChatScreen() {
         created_at: m.created_at
       })))
     } catch (err: any) {
-      console.error('Sibling switch failed:', err)
+      logger.error('Sibling switch failed:', err)
     }
   }
 
@@ -348,7 +349,7 @@ export default function ChatScreen() {
       setChat(prev => prev ? { ...prev, ...updates } : null)
       setLastSaved(new Date())
     } catch (err) {
-      console.error('Failed to sync settings:', err)
+      logger.error('Failed to sync settings:', err)
     }
   }
 

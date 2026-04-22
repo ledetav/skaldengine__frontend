@@ -1,3 +1,4 @@
+import { logger } from "@/core/utils/logger";
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
@@ -61,7 +62,7 @@ export default function LorebookFormScreen() {
           setForm(toForm(existing))
         }
       } catch (err: any) {
-        console.error('Ошибка загрузки данных', err)
+        logger.error('Ошибка загрузки данных', err)
       }
     }
     loadData()
