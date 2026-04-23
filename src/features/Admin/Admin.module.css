@@ -197,21 +197,45 @@
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.systemStatus {
+.backHomeBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.75rem; /* Reduced */
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.3);
+  gap: 8px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 9px 12px;
+  transition: all 0.25s ease;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  text-align: left;
+  letter-spacing: 0.02em;
 }
 
-.statusDot {
-  width: 8px;
-  height: 8px;
-  background: #00ff88;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #00ff88;
+.backHomeBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateX(-3px);
+}
+
+.backHomeBtnLabel {
+  /* visible on desktop, hidden on mobile */
+}
+
+@media (max-width: 768px) {
+  .backHomeBtnLabel {
+    display: none;
+  }
+
+  .backHomeBtn {
+    justify-content: center;
+    padding: 9px;
+    width: auto;
+  }
 }
 
 /* Main Container */

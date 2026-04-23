@@ -122,10 +122,16 @@ export function AdminSidebar({ activeTab, role }: AdminSidebarProps) {
       </nav>
 
       <div className={styles.sidebarFooter}>
-        <div className={styles.systemStatus}>
-          <div className={styles.statusDot} />
-          <span>Система активна</span>
-        </div>
+        <button
+          className={styles.backHomeBtn}
+          onClick={() => navigate('/dashboard')}
+          title="Назад на главную"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          <span className={styles.backHomeBtnLabel}>Назад на главную</span>
+        </button>
       </div>
     </aside>
   )
