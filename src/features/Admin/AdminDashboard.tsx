@@ -6,15 +6,13 @@ import { AdminSidebar, type AdminTab } from './components/AdminSidebar'
 import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'
 import { CharacterProfileView } from './components/CharacterProfileView'
-// Real API usage in Admin panel requires these endpoints
-// (Assuming these are implemented correctly, we'll keep the arrays updated from APIs if possible,
-// but for the sake of stripping the mock array, we'll initialize them empty or properly hook them)
 import type { Character, Lorebook, User, UserPersona } from './types'
 import { useProfile } from '@/core/hooks/useProfile'
 import { Badge } from '@/components/ui'
 import { UserProfileView } from './components/UserProfileView'
 import { PersonaProfileView } from './components/PersonaProfileView'
 import { AdminFilterModal, type FilterState } from './components/AdminFilterModal'
+import { ApiClient } from '@/core/api/client'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
@@ -22,16 +20,45 @@ export default function AdminDashboard() {
   const navigate = useNavigate()
   
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
-  
+
+  const isDebug = pathname.includes('/debug')
+  const { profile: currentUser, isLoading } = useProfile(undefined)
+  // Determine admin status: use real role from currentUser, or fallback to localStorage in debug mode
+  const roleFromStorage = localStorage.getItem('user_role')
+  const effectiveRole = currentUser?.role || (isDebug ? roleFromStorage : null)
+  const isAdmin = effectiveRole === 'admin' || effectiveRole === 'moderator'
+
   // Real implementation arrays
   const [characters, setCharacters] = useState<Character[]>([])
   const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [personas, setPersonas] = useState<UserPersona[]>([])
-  
-  // Note: since no real admin API was provided initially for fetching these in bulk for Admin panel, 
-  // they will remain empty in this scope because we deleted the mock data file.
-  // The actual connection would hook `ApiClient.get('core', '/admin/users')` for example.
+  const [isDataLoading, setIsDataLoading] = useState(false)
+
+  // Load data from API when admin is confirmed
+  useEffect(() => {
+    if (!isAdmin) return
+    const fetchAll = async () => {
+      setIsDataLoading(true)
+      try {
+        const [chars, lbs, usrs, pers] = await Promise.allSettled([
+          ApiClient.get<Character[]>('core', '/characters/?skip=0&limit=200'),
+          ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500'),
+          ApiClient.get<User[]>('auth', '/users/?skip=0&limit=200'),
+          ApiClient.get<UserPersona[]>('core', '/personas/admin/all?skip=0&limit=200'),
+        ])
+        if (chars.status === 'fulfilled') setCharacters(Array.isArray(chars.value) ? chars.value : [])
+        if (lbs.status === 'fulfilled') setLorebooks(Array.isArray(lbs.value) ? lbs.value : [])
+        if (usrs.status === 'fulfilled') setUsers(Array.isArray(usrs.value) ? usrs.value : [])
+        if (pers.status === 'fulfilled') setPersonas(Array.isArray(pers.value) ? pers.value : [])
+      } catch (e) {
+        console.error('[Admin] Failed to load data', e)
+      } finally {
+        setIsDataLoading(false)
+      }
+    }
+    fetchAll()
+  }, [isAdmin])
 
   // Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -57,13 +84,6 @@ export default function AdminDashboard() {
     if (sortField !== field) return <span style={{ opacity: 0.2, marginLeft: '4px' }}>⇅</span>
     return sortDir === 'asc' ? <span style={{ color: 'var(--accent-purple)', marginLeft: '4px' }}>↑</span> : <span style={{ color: 'var(--accent-purple)', marginLeft: '4px' }}>↓</span>
   }
-
-  const isDebug = pathname.includes('/debug')
-  const { profile: currentUser, isLoading } = useProfile(undefined)
-  // Determine admin status: use real role from currentUser, or fallback to localStorage in debug mode
-  const roleFromStorage = localStorage.getItem('user_role')
-  const effectiveRole = currentUser?.role || (isDebug ? roleFromStorage : null)
-  const isAdmin = effectiveRole === 'admin' || effectiveRole === 'moderator'
 
   useEffect(() => {
     if (pathname.includes('/admin/users')) setActiveTab('users')
@@ -147,6 +167,8 @@ export default function AdminDashboard() {
   if (isLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div></div>
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
+  if (isDataLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка данных...</div></div>
+
 
   const moderatorBlocked: AdminTab[] = ['users', 'lorebooks_fandom', 'lorebooks_persona']
   if (effectiveRole === 'moderator' && moderatorBlocked.includes(activeTab)) {
