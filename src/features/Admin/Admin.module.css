@@ -1225,7 +1225,7 @@
     width: 56px;
   }
 
-  .sidebarTitle, .navLabel, .logoTextWrapper, .sidebarFooter, .sidebarSubtitle, .navIcon span {
+  .sidebarTitle, .navLabel, .logoTextWrapper, .sidebarSubtitle, .navIcon span {
     display: none;
   }
 
