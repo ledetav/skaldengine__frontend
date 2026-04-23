@@ -223,6 +223,13 @@
 .userMenu {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.profileLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
   gap: 12px;
   cursor: pointer;
   padding: 4px 8px;
@@ -230,7 +237,7 @@
   transition: background 0.2s;
 }
 
-.userMenu:hover {
+ .profileLink:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
