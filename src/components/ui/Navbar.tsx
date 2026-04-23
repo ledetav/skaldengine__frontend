@@ -1,7 +1,6 @@
-import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { authApi } from '@/core/api/auth'
+import { useAuth } from '@/core/contexts/AuthContext'
 import styles from '@/theme/components/Navbar.module.css'
 
 const NAV_LINKS = [
@@ -17,6 +16,7 @@ interface NavbarProps {
 export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { user, logout } = useAuth()
   
   const isDebug = pathname.includes('/debug')
   // Helper to ensure links maintain debug mode if active
@@ -27,34 +27,19 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
     // Append /debug, considering trailing slash
     return baseHref.replace(/\/?$/, '/debug');
   }
+
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [user, setUser] = useState<{
-    full_name?: string
-    login?: string
-    username?: string
-    avatar_url?: string
-    role: string
-  } | null>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     
-    if (variant === 'dashboard') {
-      authApi.getMe()
-        .then((data: any) => setUser(data))
-        .catch((err: unknown) => {
-          logger.error('Failed to fetch user:', err)
-        })
-    }
-
     return () => window.removeEventListener('scroll', onScroll)
-  }, [variant])
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    window.dispatchEvent(new Event('auth-change'))
+    logout()
     navigate('/')
   }
 
@@ -101,8 +86,8 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
             <Link to={getDebugHref("/user/lorebooks")} className={styles.navLink}>Мои лорбуки</Link>
 
             <div className={styles.userMenu}>
-              <span className={styles.userName}>{user?.full_name || user?.username || 'Загрузка...'}</span>
-              <Link to={getDebugHref("/profile")} className={styles.avatarLink}>
+              <Link to={getDebugHref("/profile")} className={styles.profileLink}>
+                <span className={styles.userName}>{user?.full_name || user?.username || 'Профиль'}</span>
                 <div className={styles.avatarMini}>
                   {user?.avatar_url ? (
                     <img src={user.avatar_url} alt="Avatar" className={styles.avatarImg} />
