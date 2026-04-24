@@ -125,7 +125,7 @@ export default function LorebooksListScreen() {
     }
   }
 
-  const totalEntries = lorebooks.reduce((s, l) => s + ((l as any).entries?.length || 0), 0)
+  const totalEntries = lorebooks.reduce((s, l) => s + (l.entries_count || 0), 0)
 
   return (
     <div className={styles.page}>
