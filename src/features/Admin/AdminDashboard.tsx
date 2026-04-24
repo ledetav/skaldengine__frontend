@@ -451,7 +451,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {isDetailView && (
+          {isCharacterDetail && (
             <CharacterProfileView 
               characterId={detailId!} 
               characters={characters}
