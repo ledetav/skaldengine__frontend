@@ -21,12 +21,12 @@ interface FormData {
   user_persona_id: string
 }
 
-const EMPTY: FormData = { name: '', type: 'Fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
+const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
 
 function toForm(lb: Lorebook): FormData {
   return {
     name: lb.name,
-    type: lb.type || 'Fandom',
+    type: lb.type || 'fandom',
     description: lb.description || '',
     fandom: lb.fandom || '',
     character_id: lb.character_id || '',
@@ -91,9 +91,9 @@ export default function LorebookFormScreen() {
         name: form.name,
         type: form.type,
         description: form.description || undefined,
-        fandom: form.type === 'Fandom' && form.fandom ? form.fandom : undefined,
-        character_id: form.type === 'Character' && form.character_id ? form.character_id : undefined,
-        user_persona_id: form.type === 'Persona' && form.user_persona_id ? form.user_persona_id : undefined
+        fandom: form.type === 'fandom' && form.fandom ? form.fandom : undefined,
+        character_id: form.type === 'character' && form.character_id ? (form.character_id || null) : undefined,
+        user_persona_id: form.type === 'persona' && form.user_persona_id ? (form.user_persona_id || null) : undefined
       }
       
       if (isEdit && id) {
@@ -157,7 +157,7 @@ export default function LorebookFormScreen() {
                 <div className={styles.previewStat}>
                   <span className={styles.previewStatLabel}>Тип</span>
                   <span className={styles.previewStatValue}>
-                    {form.type === 'Fandom' ? 'Фандом' : form.type === 'Persona' ? 'Персона' : 'Персонаж'}
+                    {form.type === 'fandom' ? 'Фандом' : form.type === 'persona' ? 'Персона' : 'Персонаж'}
                   </span>
                 </div>
                 <div className={styles.previewStat}>
@@ -173,7 +173,7 @@ export default function LorebookFormScreen() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div className={styles.sectionTitle}>Основная информация</div>
 
-                {form.type === 'Fandom' && (
+                {form.type === 'fandom' && (
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Фандом</label>
                     <input 
@@ -208,7 +208,7 @@ export default function LorebookFormScreen() {
                 <div className={styles.sectionTitle} style={{ marginTop: '12px' }}>Связи и контекст</div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {form.type === 'Persona' && (
+                  {form.type === 'persona' && (
                     <div className={styles.formGroup}>
                       <label className={styles.label}>Привязать к персоне</label>
                       <select
@@ -226,7 +226,7 @@ export default function LorebookFormScreen() {
                     </div>
                   )}
 
-                  {form.type === 'Character' && (
+                  {form.type === 'character' && (
                     <div className={styles.formGroup}>
                       <label className={styles.label}>К персонажу</label>
                       <select className={styles.formInput} value={form.character_id} onChange={set('character_id')} required>

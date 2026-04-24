@@ -51,7 +51,7 @@ export function LorebookSection({
   const draftLb = useMemo(() => isCreateMode ? {
     id: 'create',
     name: 'Новый лорбук',
-    type: initialType === 'fandom' ? 'Fandom' : initialType === 'persona' ? 'Persona' : 'Character',
+    type: initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'persona' : 'character',
     fandom: '',
     description: '',
     entries_count: 0,
@@ -110,10 +110,10 @@ export function LorebookSection({
       const payload: Partial<Lorebook> = {
         name: editName,
         description: editDescription,
-        type: editType === 'fandom' ? 'Fandom' : editType === 'persona' ? 'Persona' : 'Character',
-        fandom: editType === 'fandom' ? (isNewFandom ? selectedFandom : selectedFandom) : undefined,
-        character_id: editType === 'character' ? selectedCharId : undefined,
-        user_persona_id: editType === 'persona' ? selectedPersonaId : undefined,
+        type: editType === 'fandom' ? 'fandom' : editType === 'persona' ? 'persona' : 'character',
+        fandom: editType === 'fandom' ? selectedFandom : undefined,
+        character_id: editType === 'character' ? (selectedCharId || null) : undefined,
+        user_persona_id: editType === 'persona' ? (selectedPersonaId || null) : undefined,
       }
 
       if (isCreateMode) {
