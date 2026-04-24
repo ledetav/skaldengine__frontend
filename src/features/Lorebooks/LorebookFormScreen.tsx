@@ -103,10 +103,10 @@ export default function LorebookFormScreen() {
       }
       
       if (isEdit && id) {
-        await lorebooksApi.updateLorebook(id, payload as any)
+        await lorebooksApi.updateAdminLorebook(id, payload as any)
         success('Лорбук успешно обновлён')
       } else {
-        await lorebooksApi.createLorebook(payload as any)
+        await lorebooksApi.createAdminLorebook(payload as any)
         success('Лорбук создан')
       }
       navigate('/lorebooks')

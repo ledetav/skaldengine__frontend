@@ -136,8 +136,8 @@ export default function LorebooksListScreen() {
     }
 
     try {
-      // Вызываем исправленный стандартный эндпоинт
-      await lorebooksApi.deleteLorebook(lb.id);
+      // Используем админский метод!
+      await lorebooksApi.deleteAdminLorebook(lb.id);
       console.log(`[Frontend] Успешный ответ от бэкенда. Удаляем из UI.`);
       
       // Динамически удаляем из списка
