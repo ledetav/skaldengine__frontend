@@ -26,6 +26,14 @@ export const lorebooksApi = {
     return ApiClient.patch('core', `/lorebooks/${id}`, data)
   },
 
+  createAdminLorebook: async (data: Partial<Lorebook>): Promise<Lorebook> => {
+    return ApiClient.post('core', '/admin/lorebooks/', data)
+  },
+
+  updateAdminLorebook: async (id: string, data: Partial<Lorebook>): Promise<Lorebook> => {
+    return ApiClient.patch('core', `/admin/lorebooks/${id}`, data)
+  },
+
   createLorebookEntry: async (lorebookId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {
     return ApiClient.post('core', `/lorebooks/${lorebookId}/entries/`, data)
   },

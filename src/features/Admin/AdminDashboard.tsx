@@ -94,9 +94,11 @@ export default function AdminDashboard() {
     else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
   }, [pathname])
 
-  const isDetailView = id && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
-  const isUserDetail = pathname.includes('/users/') && id
-  const isPersonaDetail = pathname.includes('/personas/') && id
+  const isCreateRoute = pathname.includes('/create')
+  const detailId = id || (isCreateRoute ? 'create' : undefined)
+  const isDetailView = detailId && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
+  const isUserDetail = pathname.includes('/users/') && detailId
+  const isPersonaDetail = pathname.includes('/personas/') && detailId
 
   // --- Filtering & Sorting Logic ---
   const applySort = (data: any[]) => {
@@ -393,22 +395,46 @@ export default function AdminDashboard() {
 
           {isDetailView && (
             <CharacterProfileView 
-              characterId={id!} 
+              characterId={detailId!} 
               characters={characters}
               allLorebooks={lorebooks}
               onBack={() => navigate('/admin/characters')}
               onUpdateCharacter={(updated) => {
-                if (id === 'create') {
-                  // Usually APIs do this, simulating here
-                  const newChar = { ...updated, id: Math.random().toString(36).substr(2, 9) }
-                  setCharacters(prev => [...prev, newChar])
-                } else {
-                  setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))
+                if (detailId !== 'create') {
+                  setCharacters((prev: Character[]) => prev.map((c: Character) => c.id === updated.id ? updated : c))
                 }
               }}
-              onSave={() => {
-                // To trigger a redirect or actual save, we can navigate back to list or the new item
-                navigate('/admin/characters')
+              onSave={async (char) => {
+                try {
+                  const { charactersApi } = await import('@/core/api/characters')
+                  const { lorebooksApi } = await import('@/core/api/lorebooks')
+                  
+                  let savedChar: Character
+                  if (detailId === 'create') {
+                    savedChar = await charactersApi.createAdminCharacter(char as any) as any
+                    setCharacters(prev => [...prev, savedChar])
+                  } else {
+                    savedChar = await charactersApi.updateAdminCharacter(char.id, char as any) as any
+                    setCharacters(prev => prev.map(c => c.id === savedChar.id ? savedChar : c))
+                  }
+
+                  // Find lorebooks that were marked for this character
+                  const attachedLbs = lorebooks.filter(lb => lb.character_id === char.id || (detailId === 'create' && lb.character_id === 'create'))
+                  
+                  // Persist lorebook attachments (Task 2)
+                  await Promise.all(attachedLbs.map(lb => 
+                    lorebooksApi.updateAdminLorebook(lb.id, { character_id: savedChar.id })
+                  ))
+
+                  // Refresh lorebooks to get updated state
+                  const refreshedLbs = await ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500')
+                  setLorebooks(refreshedLbs)
+
+                  navigate(`/admin/characters/${savedChar.id}`)
+                } catch (e: any) {
+                  console.error('Save failed', e)
+                  alert('Ошибка при сохранении персонажа')
+                }
               }}
               onUpdateLorebooks={(updated) => setLorebooks(updated)}
             />

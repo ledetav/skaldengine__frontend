@@ -66,12 +66,19 @@ export function LorebookSection({
   const [selectedCharId, setSelectedCharId] = useState(lb?.character_id || '')
   const [selectedUserId, setSelectedUserId] = useState(lb?.owner_id || personas.find(p => p.id === lb?.user_persona_id)?.owner_id || '')
   const [selectedPersonaId, setSelectedPersonaId] = useState(lb?.user_persona_id || '')
+  
+  const [editName, setEditName] = useState(lb?.name || '')
+  const [editDescription, setEditDescription] = useState(lb?.description || '')
+
+  const [isAddingEntry, setIsAddingEntry] = useState(false)
+  const [newEntryKeywords, setNewEntryKeywords] = useState('')
+  const [newEntryContent, setNewEntryContent] = useState('')
 
   const allFandoms = useMemo(() => {
     const s = new Set<string>()
     lorebooks.forEach(l => { if (l.fandom) s.add(l.fandom) })
     characters.forEach(c => { if (c.fandom) s.add(c.fandom) })
-    return Array.from(s).sort()
+    return Array.from(s).filter(Boolean).sort()
   }, [lorebooks, characters])
 
   const userPersonas = useMemo(() => {
@@ -95,13 +102,30 @@ export function LorebookSection({
     const tab = initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'personas' : 'characters'
     navigateDebug(`/admin/lorebooks/${tab}`)
   }
-  const handleSave = () => {
-    if (isCreateMode) {
-      handleBack()
-      success('Лорбук успешно создан')
-    } else {
-      navigateDebug(`/admin/lorebooks/${id}`)
-      success('Лорбук успешно обновлен')
+  const handleSave = async () => {
+    try {
+      const { lorebooksApi } = await import('@/core/api/lorebooks')
+      const payload: Partial<Lorebook> = {
+        name: editName,
+        description: editDescription,
+        type: editType === 'fandom' ? 'Fandom' : editType === 'persona' ? 'Persona' : 'Character',
+        fandom: editType === 'fandom' ? (isNewFandom ? selectedFandom : selectedFandom) : undefined,
+        character_id: editType === 'character' ? selectedCharId : undefined,
+        user_persona_id: editType === 'persona' ? selectedPersonaId : undefined,
+      }
+
+      if (isCreateMode) {
+        await lorebooksApi.createAdminLorebook(payload as any)
+        success('Лорбук успешно создан')
+        handleBack()
+      } else {
+        await lorebooksApi.updateAdminLorebook(id!, payload as any)
+        success('Лорбук успешно обновлен')
+        handleView(id!) // or navigateDebug to view mode
+      }
+    } catch (e) {
+      console.error('Failed to save lorebook', e)
+      success('Ошибка при сохранении лорбука')
     }
   }
 
@@ -131,7 +155,7 @@ export function LorebookSection({
                 <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Название</div>
                   {isEditMode ? (
-                    <Input defaultValue={lb.name} />
+                    <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
                   ) : (
                     <div style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--white)' }}>{lb.name}</div>
                   )}
@@ -251,7 +275,7 @@ export function LorebookSection({
                 <div className={styles.detailGroup} style={{ gridColumn: 'span 2' }}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Описание</div>
                   {isEditMode ? (
-                    <Input defaultValue={lb.description || ''} />
+                    <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
                   ) : (
                     <div style={{ opacity: 0.7, lineHeight: 1.6 }}>{lb.description || 'Описание отсутствует'}</div>
                   )}
@@ -282,8 +306,43 @@ export function LorebookSection({
           <div className={styles.detailGroup}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div className={styles.detailTitle}>Записи в лорбуке ({lb.entries?.length || 0})</div>
-              <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }}>+ Добавить записи</Button>
+              {!isCreateMode && (
+                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
+                  {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
+                </Button>
+              )}
             </header>
+
+            {isAddingEntry && (
+              <Card style={{ padding: '16px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={e => setNewEntryKeywords(e.target.value)} />
+                <textarea 
+                  className={styles.editTextarea} 
+                  placeholder="Содержание записи..." 
+                  value={newEntryContent} 
+                  onChange={e => setNewEntryContent(e.target.value)} 
+                  style={{ minHeight: '80px' }}
+                />
+                <Button variant="orange" onClick={async () => {
+                  try {
+                    const { lorebooksApi } = await import('@/core/api/lorebooks')
+                    await lorebooksApi.createLorebookEntry(lb!.id, {
+                      keywords: newEntryKeywords.split(',').map(k => k.trim()).filter(Boolean),
+                      content: newEntryContent,
+                      priority: 100
+                    })
+                    success('Запись добавлена')
+                    setIsAddingEntry(false)
+                    setNewEntryContent('')
+                    setNewEntryKeywords('')
+                    // Note: would need to refresh data from parent
+                  } catch (e) {
+                    console.error(e)
+                    success('Ошибка добавления записи')
+                  }
+                }}>Сохранить запись</Button>
+              </Card>
+            )}
             
             <div className={styles.tableWrapper}>
               <table className={styles.compactTable}>

@@ -8,5 +8,13 @@ export const charactersApi = {
   
   getCharacter: async (id: string): Promise<Character> => {
     return ApiClient.get('core', `/characters/${id}`)
+  },
+
+  createAdminCharacter: async (data: Partial<Character>): Promise<Character> => {
+    return ApiClient.post('core', '/admin/characters/', data)
+  },
+
+  updateAdminCharacter: async (id: string, data: Partial<Character>): Promise<Character> => {
+    return ApiClient.patch('core', `/admin/characters/${id}`, data)
   }
 }

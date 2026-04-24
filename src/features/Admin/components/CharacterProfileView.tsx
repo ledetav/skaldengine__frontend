@@ -11,7 +11,7 @@ interface CharacterProfileViewProps {
   onBack: () => void
   onUpdateCharacter: (char: Character) => void
   onUpdateLorebooks: (lorebooks: Lorebook[]) => void
-  onSave?: () => void
+  onSave?: (char: Character) => void | Promise<void>
 }
 
 export function CharacterProfileView({ 
@@ -33,8 +33,8 @@ export function CharacterProfileView({
     navigate(finalRoute)
   }
   
-  const isEditing = pathname.includes('/edit/') || pathname.includes('/create/')
-  const isCreate = pathname.includes('/create/') || characterId === 'create'
+  const isEditing = pathname.includes('/edit/') || pathname.includes('/create/') || characterId === 'create'
+  const isCreate = characterId === 'create' || pathname.includes('/create/')
   const [fandomSearch, setFandomSearch] = useState('')
   const [isFandomOpen, setIsFandomOpen] = useState(false)
   const [isAddingLorebook, setIsAddingLorebook] = useState(false)
@@ -53,11 +53,11 @@ export function CharacterProfileView({
 
   const character = isCreate ? draftCharacter : characters.find(c => c.id === characterId)
 
-  // Get unique fandoms for the dropdown
+  // Get unique fandoms from LOREBOOKS for the dropdown (Task 4)
   const availableFandoms = useMemo(() => {
-    const fandoms = new Set(characters.map(c => c.fandom).filter(Boolean))
+    const fandoms = new Set(allLorebooks.map(lb => lb.fandom).filter(Boolean))
     return Array.from(fandoms).sort()
-  }, [characters])
+  }, [allLorebooks])
 
   const filteredFandoms = availableFandoms.filter(f => 
     f?.toLowerCase().includes(fandomSearch.toLowerCase())
@@ -76,9 +76,35 @@ export function CharacterProfileView({
 
   const handleChange = (field: keyof Character, value: any) => {
     if (isCreate && draftCharacter) {
-      setDraftCharacter({ ...draftCharacter, [field]: value })
+      const updated = { ...draftCharacter, [field]: value }
+      setDraftCharacter(updated)
+      
+      // Auto-attach lorebooks when fandom changes (Task 5)
+      if (field === 'fandom') {
+        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value)
+        const updatedLorebooks = allLorebooks.map(lb => {
+          if (lb.fandom === value) {
+            return { ...lb, character_id: 'create' }
+          }
+          // If fandom changed, maybe detach old ones? 
+          // Requirements say "automatically attach", so we do that.
+          return lb
+        })
+        onUpdateLorebooks(updatedLorebooks)
+      }
     } else {
-      onUpdateCharacter({ ...character, [field]: value })
+      const updated = { ...character, [field]: value }
+      onUpdateCharacter(updated)
+
+      if (field === 'fandom') {
+        const updatedLorebooks = allLorebooks.map(lb => {
+          if (lb.fandom === value) {
+            return { ...lb, character_id: character.id }
+          }
+          return lb
+        })
+        onUpdateLorebooks(updatedLorebooks)
+      }
     }
   }
 
@@ -398,9 +424,9 @@ export function CharacterProfileView({
               ) : (
                 <button 
                   className={styles.createBtn} 
-                  onClick={() => onSave ? onSave() : navigateDebug(`/admin/characters/${characterId}`)}
+                  onClick={() => onSave ? onSave(character!) : navigateDebug(`/admin/characters/${characterId}`)}
                 >
-                  {onSave ? 'Создать персонажа' : 'Сохранить'}
+                  {isCreate ? 'Создать персонажа' : 'Сохранить'}
                 </button>
               )}
             </div>
