@@ -35,7 +35,7 @@ export const lorebooksApi = {
   },
 
   deleteAdminLorebook: async (id: string): Promise<void> => {
-    return ApiClient.delete('core', `/lorebooks/${id}/`)
+    return ApiClient.delete('core', `/admin/lorebooks/${id}/`)
   },
 
   createLorebookEntry: async (lorebookId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {

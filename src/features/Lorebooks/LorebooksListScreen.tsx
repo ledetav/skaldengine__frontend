@@ -18,16 +18,27 @@ function ConfirmDelete({ lorebook, onConfirm, onCancel }: {
   lorebook: Lorebook; onConfirm: () => void; onCancel: () => void
 }) {
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
+    // Добавляем onClick на оверлей для удобного закрытия
+    <div className={styles.modalOverlay} onClick={onCancel}>
+      {/* Останавливаем всплытие, чтобы клик по самому окну его не закрыл */}
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <h2 className={styles.modalTitle}>Удалить лорбук?</h2>
         <p className={styles.modalText}>
           «<strong style={{ color: '#fff' }}>{lorebook.name}</strong>» и все его{' '}
-          <strong style={{ color: 'var(--accent-red)' }}>{lorebook.entries_count}</strong> записей будут удалены безвозвратно.
+          <strong style={{ color: 'var(--accent-red)' }}>{lorebook.entries_count || 0}</strong> записей будут удалены безвозвратно.
         </p>
         <div className={styles.modalActions}>
-          <button className={styles.cancelBtn} onClick={onCancel}>Отмена</button>
-          <button className={styles.dangerBtn} onClick={onConfirm}>Удалить</button>
+          <button type="button" className={styles.cancelBtn} onClick={onCancel}>Отмена</button>
+          <button 
+            type="button" 
+            className={styles.dangerBtn} 
+            onClick={() => {
+              console.log("Нажата кнопка подтверждения удаления");
+              onConfirm();
+            }}
+          >
+            Удалить
+          </button>
         </div>
       </div>
     </div>
@@ -114,21 +125,19 @@ export default function LorebooksListScreen() {
   }, [error])
 
   const handleDelete = async (lb: Lorebook) => {
+    console.log(`[Frontend] Попытка удалить лорбук с ID: ${lb.id}`);
     try {
-      // Отправляем запрос на бэкенд
-      await lorebooksApi.deleteLorebook(lb.id)
+      // Используем админский эндпоинт вместо обычного
+      await lorebooksApi.deleteAdminLorebook(lb.id)
       
-      // Динамически удаляем из отображения, гарантируя обновление состояния
-      setLorebooks(prev => {
-        const filtered = prev.filter(l => String(l.id) !== String(lb.id));
-        return filtered;
-      });
-      
-      success(`Лорбук «${lb.name}» успешно удалён`);
+      setLorebooks(prev => prev.filter(l => String(l.id) !== String(lb.id)))
+      success(`Лорбук «${lb.name}» удалён`)
+      console.log(`[Frontend] Лорбук успешно удален из БД`);
     } catch (err: any) {
-      error(`Ошибка удаления: ${err.message}`);
+      console.error('[Frontend] Ошибка удаления:', err);
+      error(`Ошибка удаления: ${err.message}`)
     } finally {
-      setToDelete(null);
+      setToDelete(null)
     }
   }
 
