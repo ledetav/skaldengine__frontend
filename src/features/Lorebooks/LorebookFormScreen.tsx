@@ -24,9 +24,14 @@ interface FormData {
 const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
 
 function toForm(lb: Lorebook): FormData {
+  // Определяем тип на основе имеющихся связей, так как бэкенд не хранит 'type'
+  let type: LorebookType = 'fandom';
+  if (lb.character_id) type = 'character';
+  else if (lb.user_persona_id) type = 'persona';
+
   return {
     name: lb.name,
-    type: lb.type || 'fandom',
+    type: type,
     description: lb.description || '',
     fandom: lb.fandom || '',
     character_id: lb.character_id || '',
@@ -87,20 +92,21 @@ export default function LorebookFormScreen() {
     if (!validate()) return
     setSubmitting(true)
     try {
-      const payload: Partial<Lorebook> = {
+      // Формируем payload без поля 'type', так как Pydantic на бэкенде его не ждет!
+      // И явно передаем null для отключенных связей
+      const payload: Partial<Lorebook> & Record<string, any> = {
         name: form.name,
-        type: form.type,
         description: form.description || undefined,
-        fandom: form.type === 'fandom' && form.fandom ? form.fandom : undefined,
-        character_id: form.type === 'character' && form.character_id ? (form.character_id || null) : undefined,
-        user_persona_id: form.type === 'persona' && form.user_persona_id ? (form.user_persona_id || null) : undefined
+        fandom: form.type === 'fandom' && form.fandom ? form.fandom : null,
+        character_id: form.type === 'character' && form.character_id ? form.character_id : null,
+        user_persona_id: form.type === 'persona' && form.user_persona_id ? form.user_persona_id : null
       }
       
       if (isEdit && id) {
-        await lorebooksApi.updateLorebook(id, payload)
+        await lorebooksApi.updateLorebook(id, payload as any)
         success('Лорбук успешно обновлён')
       } else {
-        await lorebooksApi.createLorebook(payload)
+        await lorebooksApi.createLorebook(payload as any)
         success('Лорбук создан')
       }
       navigate('/lorebooks')
