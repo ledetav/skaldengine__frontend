@@ -107,9 +107,9 @@ export interface Lorebook {
   type: LorebookType
   description?: string
   fandom?: string
-  character_id?: string
+  character_id?: string | null
   character_name?: string
-  user_persona_id?: string
+  user_persona_id?: string | null
   user_persona_name?: string
   entries?: LorebookEntry[]
   entries_count?: number

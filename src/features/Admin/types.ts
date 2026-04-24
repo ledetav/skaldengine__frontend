@@ -20,9 +20,9 @@ export interface Character {
 
 export interface Lorebook {
   id: string;
-  character_id?: string;
+  character_id?: string | null;
   character_name?: string;
-  user_persona_id?: string;
+  user_persona_id?: string | null;
   user_persona_name?: string;
   fandom?: string;
   type: 'fandom' | 'character' | 'persona';
