@@ -44,10 +44,21 @@ export function LorebookSection({
   const { success } = useToast()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-  // Edit State
-  const isEditMode = pathname.includes('/edit/')
+  const isCreateMode = id === 'create'
+  const isEditMode = pathname.includes('/edit/') || isCreateMode
   const isDetailMode = !!id
-  const lb = useMemo(() => lorebooks.find(l => l.id === id), [lorebooks, id])
+
+  const draftLb = useMemo(() => isCreateMode ? {
+    id: 'create',
+    name: 'Новый лорбук',
+    type: initialType === 'fandom' ? 'Fandom' : initialType === 'persona' ? 'Persona' : 'Character',
+    fandom: '',
+    description: '',
+    entries_count: 0,
+    entries: []
+  } as Lorebook : undefined, [isCreateMode, initialType])
+
+  const lb = useMemo(() => isCreateMode ? draftLb : lorebooks.find(l => l.id === id), [lorebooks, id, isCreateMode, draftLb])
 
   const [editType, setEditType] = useState<'fandom' | 'character' | 'persona'>(initialType)
   const [selectedFandom, setSelectedFandom] = useState(lb?.fandom || '')
@@ -85,8 +96,13 @@ export function LorebookSection({
     navigateDebug(`/admin/lorebooks/${tab}`)
   }
   const handleSave = () => {
-    navigateDebug(`/admin/lorebooks/${id}`)
-    success('Лорбук успешно обновлен')
+    if (isCreateMode) {
+      handleBack()
+      success('Лорбук успешно создан')
+    } else {
+      navigateDebug(`/admin/lorebooks/${id}`)
+      success('Лорбук успешно обновлен')
+    }
   }
 
   if (isDetailMode) {
@@ -373,7 +389,7 @@ export function LorebookSection({
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             </button>
           </div>
-          {initialType !== 'persona' && <button className={styles.createBtn}>+ Создать</button>}
+          {initialType !== 'persona' && <button className={styles.createBtn} onClick={() => navigateDebug('/admin/lorebooks/create')}>+ Создать</button>}
         </div>
       </div>
 
