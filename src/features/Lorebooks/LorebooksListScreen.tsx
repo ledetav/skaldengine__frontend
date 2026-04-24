@@ -115,13 +115,20 @@ export default function LorebooksListScreen() {
 
   const handleDelete = async (lb: Lorebook) => {
     try {
+      // Отправляем запрос на бэкенд
       await lorebooksApi.deleteLorebook(lb.id)
-      setLorebooks(prev => prev.filter(l => l.id !== lb.id))
-      success(`Лорбук «${lb.name}» удалён`)
+      
+      // Динамически удаляем из отображения, гарантируя обновление состояния
+      setLorebooks(prev => {
+        const filtered = prev.filter(l => String(l.id) !== String(lb.id));
+        return filtered;
+      });
+      
+      success(`Лорбук «${lb.name}» успешно удалён`);
     } catch (err: any) {
-      error(`Ошибка удаления: ${err.message}`)
+      error(`Ошибка удаления: ${err.message}`);
     } finally {
-      setToDelete(null)
+      setToDelete(null);
     }
   }
 
