@@ -134,13 +134,29 @@ export default function AdminDashboard() {
     else if (pathname.includes('/admin/lorebooks/fandom')) setActiveTab('lorebooks_fandom')
     else if (pathname.includes('/admin/lorebooks/characters')) setActiveTab('lorebooks_character')
     else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
-  }, [pathname])
+    else if (pathname.includes('/admin/lorebooks/')) {
+      // If we're on a lorebook detail page but don't have a specific tab, 
+      // check the lorebooks data once it's loaded to set the correct tab
+      const lbId = pathname.split('/admin/lorebooks/')[1]?.split('/')[0]
+      if (lbId) {
+        const lb = lorebooks.find(l => l.id === lbId)
+        if (lb) {
+          if (lb.type === 'fandom') setActiveTab('lorebooks_fandom')
+          else if (lb.type === 'persona' || lb.user_persona_id) setActiveTab('lorebooks_persona')
+          else setActiveTab('lorebooks_character')
+        }
+      }
+    }
+  }, [pathname, lorebooks])
 
   const isCreateRoute = pathname.includes('/create')
   const detailId = id || (isCreateRoute ? 'create' : undefined)
-  const isDetailView = detailId && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
+  const isCharacterDetail = detailId && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
   const isUserDetail = pathname.includes('/users/') && detailId
   const isPersonaDetail = pathname.includes('/personas/') && detailId
+  const isLorebookDetail = pathname.includes('/admin/lorebooks/') && detailId
+  
+  const isDetailView = isCharacterDetail || isUserDetail || isPersonaDetail || isLorebookDetail
 
   // --- Filtering & Sorting Logic ---
   const applySort = (data: any[]) => {
@@ -304,7 +320,7 @@ export default function AdminDashboard() {
             />
           )}
 
-          {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character' || activeTab === 'lorebooks_persona') && (
+          {(activeTab.startsWith('lorebooks_') || isLorebookDetail) && (
             <LorebookSection 
               type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
               lorebooks={filteredLorebooks}
