@@ -45,7 +45,7 @@ export function LorebookSection({
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const isCreateMode = id === 'create'
-  const isEditMode = pathname.includes('/edit/') || isCreateMode
+  const isEditMode = pathname.includes('/edit') || isCreateMode
   const isDetailMode = !!id
 
   const draftLb = useMemo(() => isCreateMode ? {
@@ -71,8 +71,10 @@ export function LorebookSection({
   const [editDescription, setEditDescription] = useState(lb?.description || '')
 
   const [isAddingEntry, setIsAddingEntry] = useState(false)
+  const [entryAddType, setEntryAddType] = useState<'single' | 'batch' | 'json'>('single')
   const [newEntryKeywords, setNewEntryKeywords] = useState('')
   const [newEntryContent, setNewEntryContent] = useState('')
+  const [batchText, setBatchText] = useState('')
 
   const allFandoms = useMemo(() => {
     const s = new Set<string>()
@@ -306,41 +308,113 @@ export function LorebookSection({
           <div className={styles.detailGroup}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div className={styles.detailTitle}>Записи в лорбуке ({lb.entries?.length || 0})</div>
-              {!isCreateMode && (
-                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
-                  {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
-                </Button>
-              )}
+              <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
+                {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
+              </Button>
             </header>
 
             {isAddingEntry && (
-              <Card style={{ padding: '16px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={e => setNewEntryKeywords(e.target.value)} />
-                <textarea 
-                  className={styles.editTextarea} 
-                  placeholder="Содержание записи..." 
-                  value={newEntryContent} 
-                  onChange={e => setNewEntryContent(e.target.value)} 
-                  style={{ minHeight: '80px' }}
-                />
-                <Button variant="orange" onClick={async () => {
+              <Card style={{ padding: '24px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className={styles.roleBtnGroup} style={{ margin: 0, alignSelf: 'flex-start' }}>
+                  <button 
+                    className={`${styles.roleBtn} ${entryAddType === 'single' ? styles.roleBtnActive : ''}`}
+                    onClick={() => setEntryAddType('single')}
+                  >
+                    Одиночная
+                  </button>
+                  <button 
+                    className={`${styles.roleBtn} ${entryAddType === 'batch' ? styles.roleBtnActive : ''}`}
+                    onClick={() => setEntryAddType('batch')}
+                  >
+                    Массовая
+                  </button>
+                  <button 
+                    className={`${styles.roleBtn} ${entryAddType === 'json' ? styles.roleBtnActive : ''}`}
+                    onClick={() => setEntryAddType('json')}
+                  >
+                    JSON
+                  </button>
+                </div>
+
+                {entryAddType === 'single' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={e => setNewEntryKeywords(e.target.value)} />
+                    <textarea 
+                      className={styles.editTextarea} 
+                      placeholder="Содержание записи..." 
+                      value={newEntryContent} 
+                      onChange={e => setNewEntryContent(e.target.value)} 
+                      style={{ minHeight: '80px' }}
+                    />
+                  </div>
+                )}
+
+                {entryAddType === 'batch' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <textarea 
+                      className={styles.editTextarea} 
+                      placeholder="Формат: ключевое слово | описание (каждая запись с новой строки)" 
+                      value={batchText} 
+                      onChange={e => setBatchText(e.target.value)} 
+                      style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
+                    />
+                  </div>
+                )}
+
+                {entryAddType === 'json' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <textarea 
+                      className={styles.editTextarea} 
+                      placeholder='[{"keywords": ["слово"], "content": "описание"}, ...]' 
+                      value={batchText} 
+                      onChange={e => setBatchText(e.target.value)} 
+                      style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
+                    />
+                  </div>
+                )}
+
+                <Button variant="orange" style={{ alignSelf: 'flex-start' }} onClick={async () => {
                   try {
                     const { lorebooksApi } = await import('@/core/api/lorebooks')
-                    await lorebooksApi.createLorebookEntry(lb!.id, {
-                      keywords: newEntryKeywords.split(',').map(k => k.trim()).filter(Boolean),
-                      content: newEntryContent,
-                      priority: 100
-                    })
-                    success('Запись добавлена')
+                    
+                    if (entryAddType === 'single') {
+                      await lorebooksApi.createLorebookEntry(lb!.id, {
+                        keywords: newEntryKeywords.split(',').map(k => k.trim()).filter(Boolean),
+                        content: newEntryContent,
+                        priority: 100
+                      })
+                    } else if (entryAddType === 'batch') {
+                      const entries = batchText.split('\n')
+                        .map(line => {
+                          const [kw, ...contentParts] = line.split('|')
+                          return {
+                            keywords: kw ? [kw.trim()] : [],
+                            content: contentParts.join('|').trim(),
+                            priority: 100
+                          }
+                        })
+                        .filter(e => e.keywords.length > 0 && e.content)
+                      
+                      await lorebooksApi.createLorebookEntriesBulk(lb!.id, entries)
+                    } else if (entryAddType === 'json') {
+                      const entries = JSON.parse(batchText)
+                      await lorebooksApi.createLorebookEntriesBulk(lb!.id, entries.map((e: any) => ({
+                        keywords: e.keywords || [],
+                        content: e.content || '',
+                        priority: e.priority || 100
+                      })))
+                    }
+
+                    success('Записи добавлены')
                     setIsAddingEntry(false)
                     setNewEntryContent('')
                     setNewEntryKeywords('')
-                    // Note: would need to refresh data from parent
+                    setBatchText('')
                   } catch (e) {
                     console.error(e)
-                    success('Ошибка добавления записи')
+                    success('Ошибка добавления записей')
                   }
-                }}>Сохранить запись</Button>
+                }}>Сохранить записи</Button>
               </Card>
             )}
             

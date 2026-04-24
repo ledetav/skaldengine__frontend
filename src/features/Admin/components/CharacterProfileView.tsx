@@ -33,7 +33,7 @@ export function CharacterProfileView({
     navigate(finalRoute)
   }
   
-  const isEditing = pathname.includes('/edit/') || pathname.includes('/create/') || characterId === 'create'
+  const isEditing = pathname.includes('/edit') || pathname.includes('/create') || characterId === 'create'
   const isCreate = characterId === 'create' || pathname.includes('/create/')
   const [fandomSearch, setFandomSearch] = useState('')
   const [isFandomOpen, setIsFandomOpen] = useState(false)
