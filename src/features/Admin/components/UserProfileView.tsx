@@ -9,6 +9,7 @@ interface UserProfileViewProps {
   currentUser: User
   onBack: () => void
   onDelete: (id: string) => void
+  onChangeRole: (id: string, role: string) => void
 }
 
 export function UserProfileView({ 
@@ -16,12 +17,14 @@ export function UserProfileView({
   users, 
   currentUser,
   onBack,
-  onDelete
+  onDelete,
+  onChangeRole
 }: UserProfileViewProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRoleModal, setShowRoleModal] = useState(false)
   const [selectedRole, setSelectedRole] = useState('')
   const [errorVisible, setErrorVisible] = useState(false)
+  const [roleErrorVisible, setRoleErrorVisible] = useState(false)
 
   const user = users.find(u => u.id === userId)
   
@@ -149,7 +152,33 @@ export function UserProfileView({
                 Управление аккаунтом
               </div>
               <div className={styles.actionRow} style={{ justifyContent: 'flex-start', borderTop: 'none', paddingTop: 0, gap: '16px' }}>
-                <Button variant="ghost" onClick={() => { setSelectedRole(user.role); setShowRoleModal(true); }}>Изменить роль</Button>
+                <div style={{ position: 'relative' }}>
+                  <Button variant="ghost" onClick={() => { 
+                    if (user.id === currentUser.id) {
+                      setRoleErrorVisible(true)
+                      setTimeout(() => setRoleErrorVisible(false), 3000)
+                      return
+                    }
+                    setSelectedRole(user.role); 
+                    setShowRoleModal(true); 
+                  }}>Изменить роль</Button>
+                  {roleErrorVisible && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '-40px',
+                      left: '0',
+                      background: 'var(--accent-red)',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      whiteSpace: 'nowrap',
+                      zIndex: 10
+                    }}>
+                      Вы не можете изменить свою роль!
+                    </div>
+                  )}
+                </div>
                 <div style={{ position: 'relative' }}>
                   <Button variant="danger" onClick={handleDeleteClick}>Удалить пользователя</Button>
                   {errorVisible && (
@@ -213,7 +242,10 @@ export function UserProfileView({
 
             <div className={styles.modalActions}>
               <Button variant="ghost" onClick={() => setShowRoleModal(false)}>Отмена</Button>
-              <Button variant="orange" onClick={() => setShowRoleModal(false)}>Сохранить</Button>
+              <Button variant="orange" onClick={() => {
+                onChangeRole(user.id, selectedRole)
+                setShowRoleModal(false)
+              }}>Сохранить</Button>
             </div>
           </div>
         </div>

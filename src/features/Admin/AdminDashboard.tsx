@@ -408,9 +408,24 @@ export default function AdminDashboard() {
               users={users}
               currentUser={currentUser!}
               onBack={() => navigate('/admin/users')}
-              onDelete={(uid) => {
-                setUsers(prev => prev.filter(u => u.id !== uid))
-                navigate('/admin/users')
+              onDelete={async (uid) => {
+                try {
+                  await ApiClient.delete('auth', `/users/${uid}`)
+                  setUsers(prev => prev.filter(u => u.id !== uid))
+                  navigate('/admin/users')
+                } catch (e: any) {
+                  console.error('Failed to delete user:', e)
+                  alert(e.message || 'Ошибка удаления пользователя')
+                }
+              }}
+              onChangeRole={async (uid, role) => {
+                try {
+                  const res = await ApiClient.patch<User>('auth', `/users/${uid}/role`, { role })
+                  setUsers(prev => prev.map(u => u.id === uid ? res : u))
+                } catch (e: any) {
+                  console.error('Failed to update user role:', e)
+                  alert(e.message || 'Ошибка изменения роли')
+                }
               }}
             />
           )}
