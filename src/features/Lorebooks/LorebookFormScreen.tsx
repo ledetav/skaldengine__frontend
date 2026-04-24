@@ -37,7 +37,7 @@ function toForm(lb: Lorebook): FormData {
 export default function LorebookFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { success } = useToast()
+  const { success, error } = useToast()
 
   const isEdit = !!id
   const [form, setForm] = useState<FormData>(EMPTY)
@@ -105,7 +105,7 @@ export default function LorebookFormScreen() {
       }
       navigate('/lorebooks')
     } catch (err: any) {
-      success(`Ошибка сохранения: ${err.message}`)
+      error(`Ошибка сохранения: ${err.message}`)
     } finally {
       setSubmitting(false)
     }

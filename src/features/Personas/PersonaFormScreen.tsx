@@ -40,7 +40,7 @@ function toFormData(persona: UserPersona): PersonaFormData {
 export default function PersonaFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { success } = useToast()
+  const { success, error } = useToast()
 
   const isEdit = !!id
   const [form, setForm] = useState<PersonaFormData>(EMPTY_FORM)
@@ -102,7 +102,7 @@ export default function PersonaFormScreen() {
       }
       navigate('/personas')
     } catch (err: any) {
-      success(`Ошибка сохр��нения: ${err.message}`)
+      error(`Ошибка сохранения: ${err.message}`)
     } finally {
       setSubmitting(false)
     }
