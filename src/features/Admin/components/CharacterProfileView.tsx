@@ -32,13 +32,26 @@ export function CharacterProfileView({
     const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
     navigate(finalRoute)
   }
-  const character = characters.find(c => c.id === characterId)
   
   const isEditing = pathname.includes('/edit/') || pathname.includes('/create/')
-  const isCreate = pathname.includes('/create/')
+  const isCreate = pathname.includes('/create/') || characterId === 'create'
   const [fandomSearch, setFandomSearch] = useState('')
   const [isFandomOpen, setIsFandomOpen] = useState(false)
   const [isAddingLorebook, setIsAddingLorebook] = useState(false)
+
+  const [draftCharacter, setDraftCharacter] = useState<Character | undefined>(isCreate ? {
+    id: 'create',
+    name: 'Новый персонаж',
+    total_chats_count: 0,
+    monthly_chats_count: 0,
+    scenarios_count: 0,
+    scenario_chats_count: 0,
+    nsfw_allowed: false,
+    is_public: false,
+    is_deleted: false,
+  } as Character : undefined)
+
+  const character = isCreate ? draftCharacter : characters.find(c => c.id === characterId)
 
   // Get unique fandoms for the dropdown
   const availableFandoms = useMemo(() => {
@@ -62,7 +75,11 @@ export function CharacterProfileView({
   }
 
   const handleChange = (field: keyof Character, value: any) => {
-    onUpdateCharacter({ ...character, [field]: value })
+    if (isCreate && draftCharacter) {
+      setDraftCharacter({ ...draftCharacter, [field]: value })
+    } else {
+      onUpdateCharacter({ ...character, [field]: value })
+    }
   }
 
   const toggleLorebook = (lbId: string) => {

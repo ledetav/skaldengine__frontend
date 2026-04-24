@@ -397,7 +397,19 @@ export default function AdminDashboard() {
               characters={characters}
               allLorebooks={lorebooks}
               onBack={() => navigate('/admin/characters')}
-              onUpdateCharacter={(updated) => setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))}
+              onUpdateCharacter={(updated) => {
+                if (id === 'create') {
+                  // Usually APIs do this, simulating here
+                  const newChar = { ...updated, id: Math.random().toString(36).substr(2, 9) }
+                  setCharacters(prev => [...prev, newChar])
+                } else {
+                  setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))
+                }
+              }}
+              onSave={() => {
+                // To trigger a redirect or actual save, we can navigate back to list or the new item
+                navigate('/admin/characters')
+              }}
               onUpdateLorebooks={(updated) => setLorebooks(updated)}
             />
           )}
