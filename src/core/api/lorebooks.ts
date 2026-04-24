@@ -11,7 +11,8 @@ export const lorebooksApi = {
   },
   
   deleteLorebook: async (id: string): Promise<void> => {
-    return ApiClient.delete('core', `/lorebooks/${id}/`)
+    // Используем базовый роутер, так как он сам обрабатывает is_admin логику
+    return ApiClient.delete('core', `/lorebooks/${id}`)
   },
 
   getLorebook: async (id: string): Promise<Lorebook> => {
@@ -32,10 +33,6 @@ export const lorebooksApi = {
 
   updateAdminLorebook: async (id: string, data: Partial<Lorebook>): Promise<Lorebook> => {
     return ApiClient.patch('core', `/lorebooks/${id}`, data)
-  },
-
-  deleteAdminLorebook: async (id: string): Promise<void> => {
-    return ApiClient.delete('core', `/admin/lorebooks/${id}/`)
   },
 
   createLorebookEntry: async (lorebookId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {

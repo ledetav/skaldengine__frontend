@@ -125,19 +125,30 @@ export default function LorebooksListScreen() {
   }, [error])
 
   const handleDelete = async (lb: Lorebook) => {
-    console.log(`[Frontend] Попытка удалить лорбук с ID: ${lb.id}`);
+    console.log(`[Frontend] Попытка удалить лорбук с ID:`, lb.id);
+    
+    // Защита от пустого ID
+    if (!lb.id) {
+      console.error("[Frontend] Ошибка: ID лорбука отсутствует!");
+      error("Системная ошибка: ID лорбука не найден");
+      setToDelete(null);
+      return;
+    }
+
     try {
-      // Используем админский эндпоинт вместо обычного
-      await lorebooksApi.deleteAdminLorebook(lb.id)
+      // Вызываем исправленный стандартный эндпоинт
+      await lorebooksApi.deleteLorebook(lb.id);
+      console.log(`[Frontend] Успешный ответ от бэкенда. Удаляем из UI.`);
       
-      setLorebooks(prev => prev.filter(l => String(l.id) !== String(lb.id)))
-      success(`Лорбук «${lb.name}» удалён`)
-      console.log(`[Frontend] Лорбук успешно удален из БД`);
+      // Динамически удаляем из списка
+      setLorebooks(prev => prev.filter(l => String(l.id) !== String(lb.id)));
+      success(`Лорбук «${lb.name}» успешно удалён`);
+      
     } catch (err: any) {
-      console.error('[Frontend] Ошибка удаления:', err);
-      error(`Ошибка удаления: ${err.message}`)
+      console.error('[Frontend] Ошибка при удалении:', err);
+      error(`Ошибка удаления: ${err.message}`);
     } finally {
-      setToDelete(null)
+      setToDelete(null);
     }
   }
 
