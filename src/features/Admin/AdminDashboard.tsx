@@ -422,7 +422,7 @@ export default function AdminDashboard() {
                   const attachedLbs = lorebooks.filter(lb => lb.character_id === char.id || (detailId === 'create' && lb.character_id === 'create'))
                   
                   // Persist lorebook attachments (Task 2)
-                  await Promise.all(attachedLbs.map(lb => 
+                  await Promise.all(attachedLbs.map((lb: Lorebook) => 
                     lorebooksApi.updateAdminLorebook(lb.id, { character_id: savedChar.id })
                   ))
 

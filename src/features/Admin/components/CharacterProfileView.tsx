@@ -81,7 +81,6 @@ export function CharacterProfileView({
       
       // Auto-attach lorebooks when fandom changes (Task 5)
       if (field === 'fandom') {
-        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value)
         const updatedLorebooks = allLorebooks.map(lb => {
           if (lb.fandom === value) {
             return { ...lb, character_id: 'create' }
