@@ -58,6 +58,48 @@ export default function AdminDashboard() {
       }
     }
     fetchAll()
+
+    // WebSocket setup for real-time updates
+    const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
+    const socket = new WebSocket(`${wsUrl}/ws/updates`)
+
+    socket.onmessage = async (event) => {
+      try {
+        const payload = JSON.parse(event.data)
+        
+        // Handle Lorebook updates
+        if (payload.type === 'NEW_LOREBOOK') {
+          setLorebooks(prev => {
+            if (prev.some(l => l.id === payload.data.id)) return prev
+            return [payload.data, ...prev]
+          })
+        } else if (payload.type === 'UPDATE_LOREBOOK') {
+          setLorebooks(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+        } else if (payload.type === 'DELETE_LOREBOOK') {
+          setLorebooks(prev => prev.filter(l => l.id !== payload.data.id))
+        } else if (payload.type === 'REFRESH_LOREBOOK_ENTRIES') {
+          // Re-fetch the specific lorebook to get updated entries list
+          const { lorebook_id } = payload.data
+          const updatedLb = await ApiClient.get<Lorebook>('core', `/lorebooks/${lorebook_id}`)
+          setLorebooks(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+        }
+        
+        // Handle Character updates (optional, but good for consistency)
+        else if (payload.type === 'NEW_CHARACTER') {
+          setCharacters(prev => prev.some(c => c.id === payload.data.id) ? prev : [payload.data, ...prev])
+        } else if (payload.type === 'UPDATE_CHARACTER') {
+          setCharacters(prev => prev.map(c => c.id === payload.data.id ? { ...c, ...payload.data } : c))
+        } else if (payload.type === 'DELETE_CHARACTER') {
+          setCharacters(prev => prev.filter(c => c.id !== payload.data.id))
+        }
+      } catch (err) {
+        console.error('[Admin] WS parsing error:', err)
+      }
+    }
+
+    return () => {
+      socket.close()
+    }
   }, [isAdmin])
 
   // Filter State
