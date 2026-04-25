@@ -165,7 +165,7 @@ export default function LorebookFormScreen() {
             
             <div className={styles.previewInfo}>
               <h3 className={styles.previewName}>{form.name || 'Название лорбука'}</h3>
-              <div className={styles.previewFandom}>{form.fandom || 'Оригинальный / Независимый'}</div>
+              <div className={styles.previewFandom}>{form.fandom === 'Original' ? 'Оригинальный' : (form.fandom || 'Оригинальный / Независимый')}</div>
               <p className={styles.previewDesc}>{form.description || 'Описание пока не заполнено...'}</p>
             </div>
 

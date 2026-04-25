@@ -58,7 +58,7 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
         <div className={styles.cardMeta}>
           <div className={styles.cardName}>{lorebook.name}</div>
           <div className={styles.cardTags}>
-            {lorebook.fandom && <span className={styles.cardTag}>{lorebook.fandom}</span>}
+            {lorebook.fandom && <span className={styles.cardTag}>{lorebook.fandom === 'Original' ? 'Оригинальный' : lorebook.fandom}</span>}
             {lorebook.character_name && (
               <span className={`${styles.cardTag} ${styles['cardTag--char']}`}>
                 📖 {lorebook.character_name}
