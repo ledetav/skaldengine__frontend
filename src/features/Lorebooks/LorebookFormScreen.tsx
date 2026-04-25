@@ -95,10 +95,9 @@ export default function LorebookFormScreen() {
     if (!validate()) return
     setSubmitting(true)
     try {
-      // Формируем payload без поля 'type', так как Pydantic на бэкенде его не ждет!
-      // И явно передаем null для отключенных связей
       const payload: Partial<Lorebook> & Record<string, any> = {
         name: form.name,
+        type: form.type, // Back-end DOES expect this field!
         description: form.description || undefined,
         fandom: form.type === 'fandom' && form.fandom ? form.fandom : null,
         character_id: form.type === 'character' && form.character_id ? form.character_id : null,
