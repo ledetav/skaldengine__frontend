@@ -76,33 +76,38 @@ export function CharacterProfileView({
 
   const handleChange = (field: keyof Character, value: any) => {
     if (isCreate && draftCharacter) {
-      const updated = { ...draftCharacter, [field]: value }
-      setDraftCharacter(updated)
-      
       if (field === 'fandom') {
-        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value && value !== '')
-        const fandomLbIds = fandomLbs.map(lb => lb.id)
-        const currentIds = draftCharacter?.lorebook_ids || []
-        const newIds = Array.from(new Set([...currentIds, ...fandomLbIds]))
+        const oldFandom = draftCharacter.fandom;
+        const currentIds = draftCharacter.lorebook_ids || [];
         
-        const updated = { ...draftCharacter, [field]: value, lorebook_ids: newIds } as Character
-        setDraftCharacter(updated)
+        const filteredIds = currentIds.filter(id => {
+          const lb = allLorebooks.find(l => l.id === id);
+          return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
+        });
+
+        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
+        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
+        
+        setDraftCharacter({ ...draftCharacter, [field]: value, lorebook_ids: newIds });
       } else {
-        const updated = { ...draftCharacter, [field]: value }
-        setDraftCharacter(updated)
+        setDraftCharacter({ ...draftCharacter, [field]: value });
       }
     } else {
       if (field === 'fandom') {
-        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value && value !== '')
-        const fandomLbIds = fandomLbs.map(lb => lb.id)
-        const currentIds = character.lorebook_ids || []
-        const newIds = Array.from(new Set([...currentIds, ...fandomLbIds]))
+        const oldFandom = character.fandom;
+        const currentIds = character.lorebook_ids || [];
+        
+        const filteredIds = currentIds.filter(id => {
+          const lb = allLorebooks.find(l => l.id === id);
+          return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
+        });
 
-        const updated = { ...character, [field]: value, lorebook_ids: newIds }
-        onUpdateCharacter(updated)
+        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
+        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
+
+        onUpdateCharacter({ ...character, [field]: value, lorebook_ids: newIds });
       } else {
-        const updated = { ...character, [field]: value }
-        onUpdateCharacter(updated)
+        onUpdateCharacter({ ...character, [field]: value });
       }
     }
   }

@@ -469,22 +469,6 @@ export default function AdminDashboard() {
                   
                   let savedChar: Character
                   if (detailId === 'create') {
-                    // Task: Pre-create lorebook for original characters to ensure immediate availability
-                    if (char.fandom === 'Original') {
-                      try {
-                        const { lorebooksApi } = await import('@/core/api/lorebooks')
-                        const lb = await lorebooksApi.createAdminLorebook({
-                          name: `Основной ${char.name}`,
-                          fandom: 'Original',
-                          type: 'character',
-                          description: `Основной лорбук персонажа ${char.name}`
-                        })
-                        if (!char.lorebook_ids) char.lorebook_ids = []
-                        char.lorebook_ids.push(lb.id)
-                      } catch (lbErr) {
-                        console.error('[Admin] Pre-save lorebook creation failed:', lbErr)
-                      }
-                    }
                     savedChar = await charactersApi.createAdminCharacter(char)
                     setCharacters(prev => prev.some(c => c.id === savedChar.id) 
                       ? prev.map(c => c.id === savedChar.id ? savedChar : c) 
