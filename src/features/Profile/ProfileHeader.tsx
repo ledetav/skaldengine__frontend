@@ -13,7 +13,7 @@ const EditIcon = () => (
   </svg>
 );
 
-export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderProps) {
+export default function ProfileHeader({ user, isPublic = false, onEditClick }: ProfileHeaderProps) {
   const getRoleLabel = (role: string) => {
     switch(role) {
       case 'admin': return 'Администратор';
