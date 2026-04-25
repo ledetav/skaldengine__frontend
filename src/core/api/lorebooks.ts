@@ -46,7 +46,15 @@ export const lorebooksApi = {
     return ApiClient.post('core', `/admin/lorebooks/${lorebookId}/entries/bulk`, { entries })
   },
 
+  updateLorebookEntry: async (lorebookId: string, entryId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {
+    return ApiClient.patch('core', `/lorebooks/${lorebookId}/entries/${entryId}`, data)
+  },
+
   deleteLorebookEntry: async (lorebookId: string, entryId: string): Promise<void> => {
     return ApiClient.delete('core', `/lorebooks/${lorebookId}/entries/${entryId}`)
+  },
+
+  deleteAdminLorebookEntry: async (lorebookId: string, entryId: string): Promise<void> => {
+    return ApiClient.delete('core', `/admin/lorebooks/${lorebookId}/entries/${entryId}`)
   }
 }

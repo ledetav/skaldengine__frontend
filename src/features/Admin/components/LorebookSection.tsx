@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
 import { SearchableSelect } from './SearchableSelect'
-import type { Lorebook, Character, User, UserPersona } from '../types'
+import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
 
 interface LorebookSectionProps {
   type: 'fandom' | 'character' | 'persona'
@@ -104,6 +104,55 @@ export function LorebookSection({
   const [newEntryKeywords, setNewEntryKeywords] = useState('')
   const [newEntryContent, setNewEntryContent] = useState('')
   const [batchText, setBatchText] = useState('')
+
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
+  const [editEntryKeywords, setEditEntryKeywords] = useState('')
+  const [editEntryContent, setEditEntryContent] = useState('')
+  const [entrySearch, setEntrySearch] = useState('')
+
+  const filteredEntries = useMemo(() => {
+    if (!lb?.entries) return []
+    if (!entrySearch) return lb.entries
+    const s = entrySearch.toLowerCase()
+    return lb.entries.filter((e: LorebookEntry) => 
+      e.content.toLowerCase().includes(s) || 
+      e.keywords.some((k: string) => k.toLowerCase().includes(s))
+    )
+  }, [lb?.entries, entrySearch])
+
+  const handleEntrySave = async (entryId: string) => {
+    try {
+      const { lorebooksApi } = await import('@/core/api/lorebooks')
+      const keywords = editEntryKeywords
+        .replace(/,\s+/g, ',')
+        .split(',')
+        .map(k => k.trim())
+        .filter(Boolean)
+      
+      await lorebooksApi.updateLorebookEntry(lb!.id, entryId, {
+        keywords,
+        content: editEntryContent,
+        priority: 100
+      })
+      success('Запись обновлена')
+      setEditingEntryId(null)
+    } catch (e: any) {
+      console.error(e)
+      success('Ошибка обновления записи')
+    }
+  }
+
+  const handleEntryDelete = async (entryId: string) => {
+    if (!window.confirm('Удалить эту запись?')) return
+    try {
+      const { lorebooksApi } = await import('@/core/api/lorebooks')
+      await lorebooksApi.deleteAdminLorebookEntry(lb!.id, entryId)
+      success('Запись удалена')
+    } catch (e: any) {
+      console.error(e)
+      success('Ошибка удаления записи')
+    }
+  }
 
   const allFandoms = useMemo(() => {
     const s = new Set<string>()
@@ -420,9 +469,24 @@ export function LorebookSection({
           <div className={styles.detailGroup}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div className={styles.detailTitle}>Записи в лорбуке ({lb.entries?.length || 0})</div>
-              <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
-                {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
-              </Button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '200px' }}>
+                  <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input 
+                    type="text" 
+                    placeholder="Поиск по записям..." 
+                    className={styles.searchBox}
+                    style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem' }}
+                    value={entrySearch}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
+                  />
+                </div>
+                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
+                  {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
+                </Button>
+              </div>
             </header>
 
             {isAddingEntry && (
@@ -450,12 +514,12 @@ export function LorebookSection({
 
                 {entryAddType === 'single' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={e => setNewEntryKeywords(e.target.value)} />
+                    <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={(e: any) => setNewEntryKeywords(e.target.value)} />
                     <textarea 
                       className={styles.editTextarea} 
                       placeholder="Содержание записи..." 
                       value={newEntryContent} 
-                      onChange={e => setNewEntryContent(e.target.value)} 
+                      onChange={(e: any) => setNewEntryContent(e.target.value)} 
                       style={{ minHeight: '80px' }}
                     />
                   </div>
@@ -467,7 +531,7 @@ export function LorebookSection({
                       className={styles.editTextarea} 
                       placeholder="Формат: ключевое слово | описание (каждая запись с новой строки)" 
                       value={batchText} 
-                      onChange={e => setBatchText(e.target.value)} 
+                      onChange={(e: any) => setBatchText(e.target.value)} 
                       style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
                     />
                   </div>
@@ -479,7 +543,7 @@ export function LorebookSection({
                       className={styles.editTextarea} 
                       placeholder='[{"keywords": ["слово"], "content": "описание"}, ...]' 
                       value={batchText} 
-                      onChange={e => setBatchText(e.target.value)} 
+                      onChange={(e: any) => setBatchText(e.target.value)} 
                       style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
                     />
                   </div>
@@ -522,7 +586,7 @@ export function LorebookSection({
                     setNewEntryContent('')
                     setNewEntryKeywords('')
                     setBatchText('')
-                  } catch (e) {
+                  } catch (e: any) {
                     console.error(e)
                     success('Ошибка добавления записей')
                   }
@@ -534,43 +598,84 @@ export function LorebookSection({
               <table className={styles.compactTable}>
                 <thead>
                   <tr>
-                    <th style={{ width: '80px' }}>ID</th>
                     <th style={{ width: '250px' }}>Тэги</th>
                     <th>Содержание</th>
-                    <th style={{ width: '100px', textAlign: 'right' }}>Действия</th>
+                    <th style={{ width: '120px', textAlign: 'right' }}>Действия</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {lb.entries?.map((entry, i) => (
-                    <tr key={i}>
-                      <td><code style={{ fontSize: '0.7rem', opacity: 0.5 }}>{entry.id.split('-')[0]}</code></td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                          {entry.keywords?.map(kw => (
-                            <Badge key={kw} variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
-                          ))}
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ 
-                          fontSize: '0.85rem', 
-                          opacity: 0.7, 
-                          maxWidth: '500px',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis' 
-                        }}>
-                          {entry.content}
-                        </div>
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
-                          <button className={styles.iconBtn}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
-                          <button className={styles.iconBtn}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredEntries.map((entry: LorebookEntry, i: number) => {
+                    const isEditing = editingEntryId === entry.id
+                    return (
+                      <tr key={entry.id || i}>
+                        <td>
+                          {isEditing ? (
+                            <Input 
+                              value={editEntryKeywords} 
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditEntryKeywords(e.target.value)}
+                              placeholder="Тэги через запятую"
+                              style={{ fontSize: '0.8rem', height: '32px' }}
+                              autoFocus
+                            />
+                          ) : (
+                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                              {entry.keywords?.flatMap((k: string) => k.split(',').map((s: string) => s.trim())).filter(Boolean).map((kw: string, idx: number) => (
+                                <Badge key={`${kw}-${idx}`} variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          {isEditing ? (
+                            <textarea 
+                              className={styles.editTextarea}
+                              value={editEntryContent}
+                              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditEntryContent(e.target.value)}
+                              style={{ minHeight: '60px', fontSize: '0.85rem', width: '100%', background: 'rgba(0,0,0,0.2)' }}
+                            />
+                          ) : (
+                            <div style={{ 
+                              fontSize: '0.85rem', 
+                              opacity: 0.7, 
+                              maxWidth: '500px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis' 
+                            }}>
+                              {entry.content}
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                            {isEditing ? (
+                              <>
+                                <button className={styles.iconBtn} onClick={() => handleEntrySave(entry.id)} style={{ color: 'var(--accent-teal)' }}>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                                <button className={styles.iconBtn} onClick={() => setEditingEntryId(null)} style={{ color: 'var(--accent-red)' }}>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button className={styles.iconBtn} onClick={() => {
+                                  setEditingEntryId(entry.id)
+                                  setEditEntryKeywords(entry.keywords.join(', '))
+                                  setEditEntryContent(entry.content)
+                                }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                </button>
+                                <button className={styles.iconBtn} onClick={() => handleEntryDelete(entry.id)} style={{ opacity: 0.5 }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -607,7 +712,7 @@ export function LorebookSection({
             placeholder="Поиск по названию или привязке..." 
             className={styles.searchBox}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: any) => setSearch(e.target.value)}
           />
         </div>
         
