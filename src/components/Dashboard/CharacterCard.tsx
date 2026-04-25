@@ -100,7 +100,9 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
       <div className={styles.cardBody}>
         <div className={styles.cardHeader}>
           <h3 className={styles.cardName}>{character.name}</h3>
-          {character.fandom && <span className={styles.cardFandom}>{character.fandom}</span>}
+          <div className={styles.fandomBadge}>
+            {character.type === 'original' ? 'Оригинальный' : (character.fandom || 'Общий')}
+          </div>
         </div>
         <p className={styles.cardDesc}>{character.description}</p>
         
