@@ -113,6 +113,11 @@ export function CharacterProfileView({
     
     let newIds: string[]
     if (isAttached) {
+      // Check if it's a main lorebook for an Original character (Requirement 2)
+      const lb = allLorebooks.find(l => l.id === lbId)
+      if (isOriginal && lb?.tags?.includes('main')) {
+        return // Don't allow removal
+      }
       newIds = currentIds.filter(id => id !== lbId)
     } else {
       newIds = [...currentIds, lbId]
@@ -138,6 +143,10 @@ export function CharacterProfileView({
     }
   }
 
+  const isOriginal = useMemo(() => 
+    character.fandom === 'Original' || character.fandom === 'Оригинальный',
+  [character.fandom])
+
   // Lorebooks to display in the main list:
   // 1. Lorebooks belonging to this fandom (Requirement 1.3)
   // 2. Lorebooks specifically linked via character.lorebook_ids
@@ -145,15 +154,33 @@ export function CharacterProfileView({
     const linkedIds = character.lorebook_ids || []
     return allLorebooks.filter(lb => 
       linkedIds.includes(lb.id) || 
-      (character.fandom && lb.fandom === character.fandom && character.fandom !== '')
+      (character.fandom && lb.fandom === character.fandom && character.fandom !== '' && !isOriginal)
     )
-  }, [allLorebooks, character.lorebook_ids, character.fandom])
+  }, [allLorebooks, character.lorebook_ids, character.fandom, isOriginal])
   
-  // Available lorebooks to attach (not fandom-specific, and NOT already in the list)
-  const attachableLorebooks = allLorebooks.filter(lb => 
-    (!lb.fandom || lb.fandom === '') && 
-    !(character.lorebook_ids || []).includes(lb.id)
-  )
+  // Available lorebooks to attach (Requirement 1)
+  const attachableLorebooks = useMemo(() => {
+    return allLorebooks.filter(lb => {
+      // 1. Don't show if already linked to this character
+      if ((character.lorebook_ids || []).includes(lb.id)) return false;
+      
+      // 2. Include lorebooks belonging to this specific character (Requirement 1.2)
+      if (lb.character_id === character.id) return true;
+
+      // 3. Include fandom lorebooks, but EXCLUDE those belonging to other Original characters (Requirement 1.1)
+      if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
+        // If it's a character-specific lorebook (character_id exists) and it's for an Original character, exclude it.
+        // We know it's for an Original character because current lorebook.fandom is 'Original' or 'Оригинальный'.
+        const isOriginalFandom = lb.fandom === 'Original' || lb.fandom === 'Оригинальный';
+        if (lb.character_id && lb.character_id !== character.id && isOriginalFandom) {
+          return false;
+        }
+        return true;
+      }
+      
+      return false;
+    });
+  }, [allLorebooks, character.fandom, character.lorebook_ids, character.id]);
 
   return (
     <div className={styles.characterProfileOverlay}>
@@ -365,6 +392,12 @@ export function CharacterProfileView({
               </div>
               
               <div className={styles.lorebookList}>
+                {isOriginal && (
+                  <div className={styles.infoNote}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    Для оригинальных персонажей основной лорбук обязателен и не может быть удален.
+                  </div>
+                )}
                 {charLorebooks.length > 0 ? (
                   charLorebooks.map(lb => {
                     const isActive = (character.lorebook_ids || []).includes(lb.id)
@@ -373,19 +406,42 @@ export function CharacterProfileView({
                     return (
                       <div 
                         key={lb.id} 
-                        className={`${styles.lorebookMiniCard} ${isActive ? styles.lorebookMiniCardSelected : styles.lorebookMiniCardDeactivated}`} 
-                        onClick={() => isEditing && toggleLorebook(lb.id)}
-                        style={{ cursor: isEditing ? 'pointer' : 'default' }}
+                        className={`
+                          ${styles.lorebookMiniCard} 
+                          ${isActive ? styles.lorebookMiniCardSelected : styles.lorebookMiniCardDeactivated}
+                          ${isOriginal && lb.tags?.includes('main') ? styles.lorebookMainLocked : ''}
+                        `} 
+                        onClick={() => {
+                          if (isOriginal && lb.tags?.includes('main')) return;
+                          isEditing && toggleLorebook(lb.id);
+                        }}
+                        style={{ 
+                          cursor: isEditing ? (isOriginal && lb.tags?.includes('main') ? 'not-allowed' : 'pointer') : 'default' 
+                        }}
                       >
                         <div className={styles.lorebookMiniInfo}>
-                          <span className={styles.lorebookMiniName} style={{ opacity: isActive ? 1 : 0.6 }}>{lb.name}</span>
-                          <span className={styles.lorebookMiniDesc} style={{ opacity: isActive ? 1 : 0.4 }}>
-                            {lb.entries?.length || 0} записей {isFandomMatch ? '• Фандом' : '• Персональный'}
+                          <span className={styles.lorebookMiniName} style={{ opacity: isActive ? 1 : 0.6 }}>
+                            {lb.name}
+                            {isOriginal && lb.tags?.includes('main') && (
+                              <span className={styles.mainLabel} title="Основной лорбук оригинального персонажа нельзя удалить">
+                                (Основной)
+                              </span>
+                            )}
                           </span>
+                          <span className={styles.lorebookMiniDesc} style={{ opacity: isActive ? 1 : 0.4 }}>
+                            {lb.entries_count || lb.entries?.length || 0} записей {isFandomMatch ? '• Фандом' : '• Персональный'}
+                          </span>
+                          {isOriginal && lb.tags?.includes('main') && isEditing && (
+                            <span className={styles.lockHint}>Обязательный для оригинального персонажа</span>
+                          )}
                         </div>
                         {isActive && (
                           <div className={styles.checkMark}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            {isOriginal && lb.tags?.includes('main') ? (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            ) : (
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            )}
                           </div>
                         )}
                       </div>
@@ -417,9 +473,8 @@ export function CharacterProfileView({
 
                     {isAddingLorebook && (
                       <div className={styles.lorebookSelectionDropdown}>
-                        {attachableLorebooks.filter(lb => lb.character_id !== character.id).length > 0 ? (
+                        {attachableLorebooks.length > 0 ? (
                           attachableLorebooks
-                            .filter(lb => lb.character_id !== character.id)
                             .map(lb => (
                               <div 
                                 key={lb.id} 
@@ -430,8 +485,15 @@ export function CharacterProfileView({
                                 }}
                               >
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                  <span className={styles.lorebookOptionName}>{lb.name}</span>
-                                  <span className={styles.lorebookOptionMeta}>{lb.entries.length} записей</span>
+                                  <span className={styles.lorebookOptionName}>
+                                    {lb.name}
+                                    {lb.character_id === character.id && (
+                                      <span style={{ fontSize: '0.65rem', color: 'var(--accent-orange)', marginLeft: '8px', opacity: 0.8 }}>
+                                        (Ваш лорбук)
+                                      </span>
+                                    )}
+                                  </span>
+                                  <span className={styles.lorebookOptionMeta}>{lb.entries?.length || 0} записей</span>
                                 </div>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                               </div>

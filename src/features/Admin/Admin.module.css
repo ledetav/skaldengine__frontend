@@ -1492,3 +1492,28 @@
   background: rgba(255, 255, 255, 0.03);
   color: var(--white);
 }
+
+.lorebookMainLocked {
+  border-color: rgba(255, 140, 66, 0.3) !important;
+  background: rgba(255, 140, 66, 0.05) !important;
+}
+
+.mainLabel {
+  margin-left: 8px;
+  font-size: 0.7rem;
+  color: var(--accent-orange);
+  background: rgba(255, 140, 66, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lockHint {
+  font-size: 0.75rem;
+  color: rgba(255, 140, 66, 0.6);
+  font-style: italic;
+  margin-top: 4px;
+  display: block;
+}
