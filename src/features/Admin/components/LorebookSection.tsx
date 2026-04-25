@@ -109,6 +109,8 @@ export function LorebookSection({
   const [editEntryKeywords, setEditEntryKeywords] = useState('')
   const [editEntryContent, setEditEntryContent] = useState('')
   const [entrySearch, setEntrySearch] = useState('')
+  const [showEntryDeleteModal, setShowEntryDeleteModal] = useState(false)
+  const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
 
   const filteredEntries = useMemo(() => {
     if (!lb?.entries) return []
@@ -126,7 +128,7 @@ export function LorebookSection({
       const keywords = editEntryKeywords
         .replace(/,\s+/g, ',')
         .split(',')
-        .map(k => k.trim())
+        .map((k: string) => k.trim())
         .filter(Boolean)
       
       await lorebooksApi.updateLorebookEntry(lb!.id, entryId, {
@@ -142,12 +144,19 @@ export function LorebookSection({
     }
   }
 
-  const handleEntryDelete = async (entryId: string) => {
-    if (!window.confirm('Удалить эту запись?')) return
+  const handleEntryDelete = (entryId: string) => {
+    setEntryToDeleteId(entryId)
+    setShowEntryDeleteModal(true)
+  }
+
+  const confirmEntryDelete = async () => {
+    if (!entryToDeleteId) return
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      await lorebooksApi.deleteAdminLorebookEntry(lb!.id, entryId)
+      await lorebooksApi.deleteAdminLorebookEntry(lb!.id, entryToDeleteId)
       success('Запись удалена')
+      setShowEntryDeleteModal(false)
+      setEntryToDeleteId(null)
     } catch (e: any) {
       console.error(e)
       success('Ошибка удаления записи')
@@ -555,7 +564,7 @@ export function LorebookSection({
                     
                     if (entryAddType === 'single') {
                       await lorebooksApi.createLorebookEntry(lb!.id, {
-                        keywords: newEntryKeywords.split(',').map(k => k.trim()).filter(Boolean),
+                        keywords: newEntryKeywords.split(',').map((k: string) => k.trim()).filter(Boolean),
                         content: newEntryContent,
                         priority: 100
                       })
@@ -692,6 +701,21 @@ export function LorebookSection({
               <div className={styles.modalActions}>
                 <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
                 <Button variant="danger" onClick={handleDelete}>Да, удалить</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showEntryDeleteModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowEntryDeleteModal(false)}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+              <h3 className={styles.modalTitle}>Удалить запись?</h3>
+              <p className={styles.modalDescription}>
+                Это действие необратимо. Запись будет полностью удалена из лорбука.
+              </p>
+              <div className={styles.modalActions}>
+                <Button variant="ghost" onClick={() => setShowEntryDeleteModal(false)}>Отмена</Button>
+                <Button variant="danger" onClick={confirmEntryDelete}>Да, удалить</Button>
               </div>
             </div>
           </div>
