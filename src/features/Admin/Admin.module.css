@@ -5,7 +5,7 @@
 /* Uses global tokens from src/theme/global/index.css — no overrides */
 
 .adminPage {
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg-base);
   color: var(--text-primary);
   display: flex;
@@ -65,7 +65,7 @@
 
 /* Sidebar */
 .sidebar {
-  width: 240px; /* Reduced from 280px */
+  width: 240px; 
   background: var(--bg-secondary);
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -73,6 +73,8 @@
   flex-direction: column;
   z-index: 10;
   position: relative;
+  height: 100vh;
+  flex-shrink: 0;
 }
 
 .sidebarHeader {
@@ -241,6 +243,7 @@
   z-index: 5;
   position: relative;
   overflow-y: auto;
+  height: 100vh;
   padding: 0 16px; 
 }
 

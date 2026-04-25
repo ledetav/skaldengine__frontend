@@ -25,11 +25,13 @@ export function CharacterSection({
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
 
-  const filteredCharacters = characters.filter(char => 
-    char.name.toLowerCase().includes(search.toLowerCase()) ||
-    char.fandom?.toLowerCase().includes(search.toLowerCase()) ||
-    (char.type === 'original' && 'оригинальный'.includes(search.toLowerCase()))
-  )
+  const filteredCharacters = characters.filter(char => {
+    if (!char) return false
+    const n = (char.name || '').toLowerCase()
+    const f = (char.fandom || '').toLowerCase()
+    const s = search.toLowerCase()
+    return n.includes(s) || f.includes(s) || (char.type === 'original' && 'оригинальный'.includes(s))
+  })
 
   return (
     <div className={styles.sectionContainer}>
