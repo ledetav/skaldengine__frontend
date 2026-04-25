@@ -87,6 +87,7 @@ export function CharacterSection({
                 <th onClick={() => onSort?.('name')} style={{ cursor: 'pointer' }}>Имя персонажа {renderSortIcon?.('name')}</th>
                 <th onClick={() => onSort?.('fandom')} style={{ cursor: 'pointer' }}>Вселенная {renderSortIcon?.('fandom')}</th>
                 <th onClick={() => onSort?.('total_chats_count')} style={{ cursor: 'pointer' }}>Чатов/мес {renderSortIcon?.('total_chats_count')}</th>
+                <th onClick={() => onSort?.('scenarios_count')} style={{ cursor: 'pointer' }}>Сценарии {renderSortIcon?.('scenarios_count')}</th>
                 <th onClick={() => onSort?.('lorebook_count')} style={{ cursor: 'pointer' }}>Лорбуки {renderSortIcon?.('lorebook_count')}</th>
               </tr>
             </thead>
