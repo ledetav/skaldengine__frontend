@@ -7,17 +7,25 @@ import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'
 import { CharacterProfileView } from './components/CharacterProfileView'
 import type { Character, Lorebook, User, UserPersona } from './types'
+import type { Scenario } from '@/core/types/chat'
 import { useProfile } from '@/core/hooks/useProfile'
-import { Badge } from '@/components/ui'
+import { Badge, useToast } from '@/components/ui'
 import { UserProfileView } from './components/UserProfileView'
 import { PersonaProfileView } from './components/PersonaProfileView'
+import { ScenarioSection } from './components/ScenarioSection'
+import { ScenarioProfileView } from './components/ScenarioProfileView'
 import { AdminFilterModal, type FilterState } from './components/AdminFilterModal'
 import { ApiClient } from '@/core/api/client'
+import { scenariosApi } from '@/core/api/scenarios'
+import { Pagination } from './components/Pagination'
+
+const PAGE_SIZE = 20
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { success } = useToast()
   
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
 
@@ -30,35 +38,209 @@ export default function AdminDashboard() {
 
   // Real implementation arrays
   const [characters, setCharacters] = useState<Character[]>([])
-  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [lorebooksFandom, setLorebooksFandom] = useState<Lorebook[]>([])
+  const [lorebooksCharacter, setLorebooksCharacter] = useState<Lorebook[]>([])
+  const [lorebooksPersona, setLorebooksPersona] = useState<Lorebook[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [personas, setPersonas] = useState<UserPersona[]>([])
+  const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [allLorebooks, setAllLorebooks] = useState<Lorebook[]>([])
   const [isDataLoading, setIsDataLoading] = useState(false)
 
-  // Load data from API when admin is confirmed
+  const [currentPage, setCurrentPage] = useState<Record<string, number>>({
+    characters: 1,
+    lorebooks_fandom: 1,
+    lorebooks_character: 1,
+    lorebooks_persona: 1,
+    users: 1,
+    personas: 1,
+    scenarios: 1
+  })
+  const [totals, setTotals] = useState<Record<string, number>>({
+    characters: 0,
+    lorebooks_fandom: 0,
+    lorebooks_character: 0,
+    lorebooks_persona: 0,
+    users: 0,
+    personas: 0,
+    scenarios: 0
+  })
+
   useEffect(() => {
     if (!isAdmin) return
-    const fetchAll = async () => {
+
+    const fetchTab = async (tab: string, page: number) => {
       setIsDataLoading(true)
+      const skip = (page - 1) * PAGE_SIZE
       try {
-        const [chars, lbs, usrs, pers] = await Promise.allSettled([
-          ApiClient.get<Character[]>('core', '/characters/?skip=0&limit=200'),
-          ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500'),
-          ApiClient.get<User[]>('auth', '/users/?skip=0&limit=200'),
-          ApiClient.get<UserPersona[]>('core', '/personas/admin/all?skip=0&limit=200'),
-        ])
-        if (chars.status === 'fulfilled') setCharacters(Array.isArray(chars.value) ? chars.value : [])
-        if (lbs.status === 'fulfilled') setLorebooks(Array.isArray(lbs.value) ? lbs.value : [])
-        if (usrs.status === 'fulfilled') setUsers(Array.isArray(usrs.value) ? usrs.value : [])
-        if (pers.status === 'fulfilled') setPersonas(Array.isArray(pers.value) ? pers.value : [])
+        if (tab === 'characters') {
+          const res = await ApiClient.get<any>('core', `/characters/?skip=${skip}&limit=${PAGE_SIZE}`)
+          if (res && res.items) {
+            setCharacters(res.items)
+            setTotals(prev => ({ ...prev, characters: res.total || 0 }))
+          }
+        } else if (tab.startsWith('lorebooks_')) {
+          const type = tab.split('_')[1]
+          const res = await ApiClient.get<any>('core', `/lorebooks/?skip=${skip}&limit=${PAGE_SIZE}&type=${type}`)
+          const items = res.items || []
+          if (type === 'fandom') setLorebooksFandom(items)
+          else if (type === 'character') setLorebooksCharacter(items)
+          else if (type === 'persona') setLorebooksPersona(items)
+          setTotals(prev => ({ ...prev, [tab]: res.total || 0 }))
+        } else if (tab === 'users') {
+          const res = await ApiClient.get<any>('auth', `/users/?skip=${skip}&limit=${PAGE_SIZE}`)
+          if (res && res.items) {
+            setUsers(res.items)
+            setTotals(prev => ({ ...prev, users: res.total || 0 }))
+          }
+        } else if (tab === 'personas') {
+          const res = await ApiClient.get<any>('core', `/personas/admin/all?skip=${skip}&limit=${PAGE_SIZE}`)
+          if (res && res.items) {
+            setPersonas(res.items)
+            setTotals(prev => ({ ...prev, personas: res.total || 0 }))
+          }
+        } else if (tab === 'scenarios') {
+          const res = await ApiClient.get<any>('core', `/scenarios/?skip=${skip}&limit=${PAGE_SIZE}`)
+          if (res && res.items) {
+            setScenarios(res.items)
+            setTotals(prev => ({ ...prev, scenarios: res.total || 0 }))
+          }
+        }
       } catch (e) {
-        console.error('[Admin] Failed to load data', e)
+        console.error(`[Admin] Failed to load ${tab}`, e)
       } finally {
         setIsDataLoading(false)
       }
     }
-    fetchAll()
+
+    if (activeTab === 'characters') fetchTab('characters', currentPage.characters)
+    else if (activeTab === 'users') fetchTab('users', currentPage.users)
+    else if (activeTab === 'personas') fetchTab('personas', currentPage.personas)
+    else if (activeTab.startsWith('lorebooks_')) fetchTab(activeTab, currentPage[activeTab])
+    else if (activeTab === 'scenarios') fetchTab('scenarios', currentPage.scenarios)
+
+  }, [activeTab, isAdmin, currentPage])
+
+  // Initial load effect
+  useEffect(() => {
+    if (!isAdmin) return
+    // fetchAll removed in favor of fetchTab controlled by pagination
+
+    // WebSocket setup for real-time updates
+    const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
+    const socket = new WebSocket(`${wsUrl}/ws/updates`)
+
+    socket.onmessage = async (event) => {
+      try {
+        const payload = JSON.parse(event.data)
+        
+        // Handle Lorebook updates
+        if (payload.type === 'NEW_LOREBOOK') {
+          const type = payload.data.type || (payload.data.user_persona_id ? 'persona' : 'character')
+          const tabName = `lorebooks_${type}`
+          if (type === 'fandom') setLorebooksFandom(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          else if (type === 'character') setLorebooksCharacter(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          else if (type === 'persona') setLorebooksPersona(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          setTotals(prev => ({ ...prev, [tabName]: (prev[tabName] || 0) + 1 }))
+        } else if (payload.type === 'UPDATE_LOREBOOK') {
+          setLorebooksFandom(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+          setLorebooksCharacter(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+          setLorebooksPersona(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+        } else if (payload.type === 'DELETE_LOREBOOK') {
+          // Note: we don't know the type here easily, so we try to find which list it was in to decrement total
+          setLorebooksFandom(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_fandom: Math.max(0, t.lorebooks_fandom - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
+          setLorebooksCharacter(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_character: Math.max(0, t.lorebooks_character - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
+          setLorebooksPersona(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_persona: Math.max(0, t.lorebooks_persona - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
+        } else if (payload.type === 'REFRESH_LOREBOOK_ENTRIES') {
+          const { lorebook_id } = payload.data
+          ApiClient.get<Lorebook>('core', `/lorebooks/${lorebook_id}`).then(updatedLb => {
+             setLorebooksFandom(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+             setLorebooksCharacter(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+             setLorebooksPersona(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+          })
+        }
+        
+        // Handle Character updates (optional, but good for consistency)
+        else if (payload.type === 'NEW_CHARACTER') {
+          setCharacters((prev: Character[]) => {
+            if (prev.some(c => c.id === payload.data.id)) return prev
+            setTotals(t => ({ ...t, characters: (t.characters || 0) + 1 }))
+            return [payload.data, ...prev]
+          })
+        } else if (payload.type === 'UPDATE_CHARACTER') {
+          setCharacters((prev: Character[]) => prev.map(c => c.id === payload.data.id ? { ...c, ...payload.data } : c))
+        } else if (payload.type === 'DELETE_CHARACTER') {
+          setCharacters((prev: Character[]) => {
+            if (prev.some(c => c.id === payload.data.id)) {
+              setTotals(t => ({ ...t, characters: Math.max(0, t.characters - 1) }))
+              return prev.filter(c => c.id !== payload.data.id)
+            }
+            return prev
+          })
+        }
+
+        // Handle Scenario updates
+        else if (payload.type === 'NEW_SCENARIO') {
+          setScenarios((prev: Scenario[]) => {
+            if (prev.some(s => s.id === payload.data.id)) return prev
+            setTotals(t => ({ ...t, scenarios: (t.scenarios || 0) + 1 }))
+            return [payload.data, ...prev]
+          })
+        } else if (payload.type === 'UPDATE_SCENARIO') {
+          setScenarios((prev: Scenario[]) => prev.map(s => s.id === payload.data.id ? { ...s, ...payload.data } : s))
+        } else if (payload.type === 'DELETE_SCENARIO') {
+          setScenarios((prev: Scenario[]) => {
+            if (prev.some(s => s.id === payload.data.id)) {
+              setTotals(t => ({ ...t, scenarios: Math.max(0, t.scenarios - 1) }))
+              return prev.filter(s => s.id !== payload.data.id)
+            }
+            return prev
+          })
+        }
+      } catch (err) {
+        console.error('[Admin] WS parsing error:', err)
+      }
+    }
+
+    return () => {
+      socket.close()
+    }
   }, [isAdmin])
+
+  // Fetch all lorebooks for detail views (to populate dropdowns/filters)
+  useEffect(() => {
+    if (!isAdmin) return
+    const fetchAllLbs = async () => {
+      try {
+        const res = await ApiClient.get<any>('core', '/lorebooks/?skip=0&limit=500')
+        setAllLorebooks(res.items || [])
+      } catch (e) {
+        console.error('[Admin] Failed to fetch all lorebooks', e)
+      }
+    }
+    // Only fetch if a detail view is open or if we are on a tab that might need them
+    if (pathname.includes('/characters/') || pathname.includes('/personas/') || pathname.includes('/scenarios/')) {
+      fetchAllLbs()
+    }
+  }, [isAdmin, pathname])
 
   // Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -89,14 +271,33 @@ export default function AdminDashboard() {
     if (pathname.includes('/admin/users')) setActiveTab('users')
     else if (pathname.includes('/admin/personas')) setActiveTab('personas')
     else if (pathname.includes('/admin/characters')) setActiveTab('characters')
+    else if (pathname.includes('/admin/scenarios')) setActiveTab('scenarios')
     else if (pathname.includes('/admin/lorebooks/fandom')) setActiveTab('lorebooks_fandom')
     else if (pathname.includes('/admin/lorebooks/characters')) setActiveTab('lorebooks_character')
     else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
-  }, [pathname])
+    else if (pathname.includes('/admin/lorebooks/')) {
+      const lbId = pathname.split('/admin/lorebooks/')[1]?.split('/')[0]
+      if (lbId) {
+        const allLbs = [...lorebooksFandom, ...lorebooksCharacter, ...lorebooksPersona]
+        const lb = allLbs.find(l => l.id === lbId)
+        if (lb) {
+          if (lb.type === 'fandom') setActiveTab('lorebooks_fandom')
+          else if (lb.type === 'persona' || lb.user_persona_id) setActiveTab('lorebooks_persona')
+          else setActiveTab('lorebooks_character')
+        }
+      }
+    }
+  }, [pathname, lorebooksFandom, lorebooksCharacter, lorebooksPersona])
 
-  const isDetailView = id && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
-  const isUserDetail = pathname.includes('/users/') && id
-  const isPersonaDetail = pathname.includes('/personas/') && id
+  const isCreateRoute = pathname.includes('/create')
+  const detailId = id || (isCreateRoute ? 'create' : undefined)
+  const isCharacterDetail = detailId && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')
+  const isUserDetail = pathname.includes('/users/') && detailId
+  const isPersonaDetail = pathname.includes('/personas/') && detailId
+  const isLorebookDetail = pathname.includes('/admin/lorebooks/') && detailId
+  const isScenarioDetail = pathname.includes('/admin/scenarios/') && detailId
+  
+  const isDetailView = isCharacterDetail || isUserDetail || isPersonaDetail || isLorebookDetail || isScenarioDetail
 
   // --- Filtering & Sorting Logic ---
   const applySort = (data: any[]) => {
@@ -143,31 +344,28 @@ export default function AdminDashboard() {
       if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
       if (activeFilters.isPublic === 'public' && !c.is_public) return false
       if (activeFilters.isPublic === 'private' && c.is_public) return false
-      if (activeFilters.isNSFW === 'safe' && (c as any).is_nsfw) return false
-      if (activeFilters.isNSFW === 'nsfw' && !(c as any).is_nsfw) return false
+      if (activeFilters.isNSFW === 'safe' && c.nsfw_allowed) return false
+      if (activeFilters.isNSFW === 'nsfw' && !c.nsfw_allowed) return false
       return true
     })
     return applySort(list)
   }, [characters, activeFilters, sortField, sortDir])
 
   const filteredLorebooks = useMemo(() => {
-    const list = lorebooks.filter(lb => {
-      if (activeTab === 'lorebooks_fandom' && activeFilters.fandoms?.length && !activeFilters.fandoms.includes(lb.fandom || '')) return false
-      if (activeTab === 'lorebooks_character' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.character_id || '')) return false
-      if (activeTab === 'lorebooks_persona' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.user_persona_id || '')) return false
-      
+    const list = (activeTab === 'lorebooks_fandom' ? lorebooksFandom : 
+                  activeTab === 'lorebooks_character' ? lorebooksCharacter : 
+                  lorebooksPersona)
+    return applySort(list.filter(lb => {
       const count = lb.entries?.length || lb.entries_count || 0
       if (activeFilters.entriesCountMin !== undefined && count < activeFilters.entriesCountMin) return false
       if (activeFilters.entriesCountMax !== undefined && count > activeFilters.entriesCountMax) return false
       return true
-    })
-    return applySort(list)
-  }, [lorebooks, activeFilters, activeTab, sortField, sortDir])
+    }))
+  }, [lorebooksFandom, lorebooksCharacter, lorebooksPersona, activeFilters, activeTab, sortField, sortDir])
 
   if (isLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div></div>
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
-  if (isDataLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка данных...</div></div>
 
 
   const moderatorBlocked: AdminTab[] = ['users', 'lorebooks_fandom', 'lorebooks_persona']
@@ -213,6 +411,7 @@ export default function AdminDashboard() {
               {activeTab === 'lorebooks_fandom' && 'Лорбуки фандомов'}
               {activeTab === 'lorebooks_character' && 'Лорбуки персонажей'}
               {activeTab === 'lorebooks_persona' && 'Лорбуки персон'}
+              {activeTab === 'scenarios' && 'Сценарии'}
             </h1>
             <p className={styles.mainSubtitle}>Система мониторинга и редактирования контента</p>
           </div>
@@ -249,29 +448,53 @@ export default function AdminDashboard() {
         </header>
 
         <section className={styles.contentArea}>
+          {isDataLoading && (
+            <div className={styles.topProgress}>
+              <div className={styles.topProgressBar} />
+            </div>
+          )}
+          
           {activeTab === 'characters' && !isDetailView && (
-            <CharacterSection 
-              characters={filteredCharacters}
-              onSelectCharacter={(cid) => navigate(`/admin/characters/${cid}`)}
-              onToggleFilter={() => setIsFilterOpen(true)}
-              isFilterActive={isAnyFilterActive}
-              onSort={handleSort}
-              renderSortIcon={(f) => <SortIcon field={f} />}
-            />
+            <div className={styles.sectionWrapper}>
+              <CharacterSection 
+                characters={filteredCharacters.slice(0, PAGE_SIZE)}
+                onSelectCharacter={(cid) => navigate(`/admin/characters/${cid}`)}
+                onToggleFilter={() => setIsFilterOpen(true)}
+                isFilterActive={isAnyFilterActive}
+                onSort={handleSort}
+                renderSortIcon={(f) => <SortIcon field={f} />}
+              />
+              <Pagination 
+                currentPage={currentPage.characters}
+                totalItems={totals.characters}
+                pageSize={PAGE_SIZE}
+                onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, characters: p }))}
+              />
+            </div>
           )}
 
-          {(activeTab === 'lorebooks_fandom' || activeTab === 'lorebooks_character' || activeTab === 'lorebooks_persona') && (
-            <LorebookSection 
-              type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
-              lorebooks={filteredLorebooks}
-              characters={characters}
-              users={users}
-              personas={personas}
-              onToggleFilter={() => setIsFilterOpen(true)}
-              isFilterActive={isAnyFilterActive}
-              onSort={handleSort}
-              renderSortIcon={(f) => <SortIcon field={f} />}
-            />
+          {(activeTab.startsWith('lorebooks_') || isLorebookDetail) && (
+            <div className={styles.sectionWrapper}>
+              <LorebookSection 
+                type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
+                lorebooks={filteredLorebooks.slice(0, PAGE_SIZE)}
+                characters={characters}
+                users={users}
+                personas={personas}
+                onToggleFilter={() => setIsFilterOpen(true)}
+                isFilterActive={isAnyFilterActive}
+                onSort={handleSort}
+                renderSortIcon={(f) => <SortIcon field={f} />}
+              />
+              {!isLorebookDetail && (
+                <Pagination 
+                  currentPage={currentPage[activeTab]}
+                  totalItems={totals[activeTab]}
+                  pageSize={PAGE_SIZE}
+                  onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, [activeTab]: p }))}
+                />
+              )}
+            </div>
           )}
 
           {activeTab === 'users' && !isUserDetail && (
@@ -308,7 +531,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map(u => (
+                    {filteredUsers.slice(0, PAGE_SIZE).map(u => (
                       <tr key={u.id} onClick={() => navigate(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -326,6 +549,12 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              <Pagination 
+                currentPage={currentPage.users}
+                totalItems={totals.users}
+                pageSize={PAGE_SIZE}
+                onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, users: p }))}
+              />
             </div>
           )}
 
@@ -363,14 +592,14 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredPersonas.map(p => {
+                    {filteredPersonas.slice(0, PAGE_SIZE).map(p => {
                       const owner = users.find(u => u.id === p.owner_id)
                       return (
                         <tr key={p.id} onClick={() => navigate(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0 }}>
-                                <img src={p.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${p.name}`} className={styles.charAvatar} alt="" />
+                              <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0, borderRadius: '50%', clipPath: 'none' }}>
+                                <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} className={styles.charAvatar} style={{ borderRadius: '50%', clipPath: 'none' }} alt="" />
                               </div>
                               <span style={{ fontWeight: 700 }}>{p.name}</span>
                             </div>
@@ -388,18 +617,68 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              <Pagination 
+                currentPage={currentPage.personas}
+                totalItems={totals.personas}
+                pageSize={PAGE_SIZE}
+                onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, personas: p }))}
+              />
             </div>
           )}
 
-          {isDetailView && (
+          {isCharacterDetail && (
             <CharacterProfileView 
-              characterId={id!} 
+              characterId={detailId!} 
               characters={characters}
-              allLorebooks={lorebooks}
+              allLorebooks={allLorebooks}
               onBack={() => navigate('/admin/characters')}
-              onUpdateCharacter={(updated) => setCharacters(prev => prev.map(c => c.id === updated.id ? updated : c))}
-              onUpdateLorebooks={(updated) => setLorebooks(updated)}
+              onUpdateCharacter={(updated) => {
+                if (detailId !== 'create') {
+                  setCharacters((prev: Character[]) => prev.map((c: Character) => c.id === updated.id ? updated : c))
+                }
+              }}
+              onDelete={(deletedId) => {
+                setCharacters(prev => prev.filter(c => c.id !== deletedId))
+              }}
+              onSave={async (char) => {
+                // ... (rest of the save logic)
+                try {
+                  const { charactersApi } = await import('@/core/api/characters')
+                  
+                  let savedChar: Character
+                  if (detailId === 'create') {
+                    savedChar = await charactersApi.createAdminCharacter(char)
+                    setCharacters(prev => prev.some(c => c.id === savedChar.id) 
+                      ? prev.map(c => c.id === savedChar.id ? savedChar : c) 
+                      : [savedChar, ...prev]
+                    )
+                  } else {
+                    savedChar = await charactersApi.updateAdminCharacter(char.id, char)
+                    setCharacters(prev => prev.map(c => c.id === savedChar.id ? savedChar : c))
+                  }
+
+
+                  // Trigger re-fetch for current active lorebook tab to ensure proper pagination and state
+                  if (activeTab.startsWith('lorebooks_')) {
+                    const page = currentPage[activeTab] || 1
+                    const type = activeTab.split('_')[1]
+                    const skip = (page - 1) * PAGE_SIZE
+                    const res = await ApiClient.get<any>('core', `/lorebooks/?skip=${skip}&limit=${PAGE_SIZE}&type=${type}`)
+                    const items = res.items || []
+                    if (type === 'fandom') setLorebooksFandom(items)
+                    else if (type === 'character') setLorebooksCharacter(items)
+                    else if (type === 'persona') setLorebooksPersona(items)
+                    setTotals(prev => ({ ...prev, [activeTab]: res.total || 0 }))
+                  }
+
+                  navigate(`/admin/characters/${savedChar.id}`)
+                } catch (e: any) {
+                  console.error('Save failed', e)
+                  alert('Ошибка при сохранении персонажа')
+                }
+              }}
             />
+
           )}
 
           {isUserDetail && (
@@ -408,9 +687,24 @@ export default function AdminDashboard() {
               users={users}
               currentUser={currentUser!}
               onBack={() => navigate('/admin/users')}
-              onDelete={(uid) => {
-                setUsers(prev => prev.filter(u => u.id !== uid))
-                navigate('/admin/users')
+              onDelete={async (uid) => {
+                try {
+                  await ApiClient.delete('auth', `/users/${uid}`)
+                  setUsers(prev => prev.filter(u => u.id !== uid))
+                  navigate('/admin/users')
+                } catch (e: any) {
+                  console.error('Failed to delete user:', e)
+                  alert(e.message || 'Ошибка удаления пользователя')
+                }
+              }}
+              onChangeRole={async (uid, role) => {
+                try {
+                  const res = await ApiClient.patch<User>('auth', `/users/${uid}/role`, { role })
+                  setUsers(prev => prev.map(u => u.id === uid ? res : u))
+                } catch (e: any) {
+                  console.error('Failed to update user role:', e)
+                  alert(e.message || 'Ошибка изменения роли')
+                }
               }}
             />
           )}
@@ -420,11 +714,59 @@ export default function AdminDashboard() {
               personaId={id!}
               personas={personas}
               users={users}
-              allLorebooks={lorebooks}
+              allLorebooks={allLorebooks}
               onBack={() => navigate('/admin/personas')}
               onDeletePersona={(uid) => {
                 setPersonas(prev => prev.filter(p => p.id !== uid))
                 navigate('/admin/personas')
+              }}
+            />
+          )}
+
+          {activeTab === 'scenarios' && !isScenarioDetail && (
+            <div className={styles.sectionWrapper}>
+              <ScenarioSection 
+                scenarios={scenarios.slice(0, PAGE_SIZE)}
+                characters={characters}
+                onSelectScenario={(sid) => navigate(`/admin/scenarios/${sid}`)}
+                onToggleFilter={() => setIsFilterOpen(true)}
+                isFilterActive={isAnyFilterActive}
+                onSort={handleSort}
+                renderSortIcon={(f) => <SortIcon field={f} />}
+              />
+              <Pagination 
+                currentPage={currentPage.scenarios}
+                totalItems={totals.scenarios}
+                pageSize={PAGE_SIZE}
+                onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, scenarios: p }))}
+              />
+            </div>
+          )}
+
+          {isScenarioDetail && (
+            <ScenarioProfileView 
+              scenarioId={detailId!}
+              scenarios={scenarios}
+              characters={characters}
+              onBack={() => navigate('/admin/scenarios')}
+              onDelete={(id) => {
+                setScenarios(prev => prev.filter(s => s.id !== id))
+              }}
+              onSave={async (scenario) => {
+                try {
+                  if (detailId === 'create') {
+                    const saved = await scenariosApi.createScenario(scenario)
+                    setScenarios(prev => [saved, ...prev])
+                    navigate(`/admin/scenarios/${saved.id}`)
+                  } else {
+                    const saved = await scenariosApi.updateScenario(detailId!, scenario)
+                    setScenarios(prev => prev.map(s => s.id === saved.id ? saved : s))
+                  }
+                  success('Сценарий сохранен')
+                } catch (e) {
+                  console.error(e)
+                  alert('Ошибка сохранения')
+                }
               }}
             />
           )}
@@ -439,7 +781,7 @@ export default function AdminDashboard() {
           users={users}
           personas={personas}
           characters={characters}
-          lorebooks={lorebooks}
+          lorebooks={[...lorebooksFandom, ...lorebooksCharacter, ...lorebooksPersona]}
         />
       </main>
     </div>

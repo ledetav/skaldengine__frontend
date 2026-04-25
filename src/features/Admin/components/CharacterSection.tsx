@@ -27,7 +27,8 @@ export function CharacterSection({
 
   const filteredCharacters = characters.filter(char => 
     char.name.toLowerCase().includes(search.toLowerCase()) ||
-    char.fandom?.toLowerCase().includes(search.toLowerCase())
+    char.fandom?.toLowerCase().includes(search.toLowerCase()) ||
+    (char.type === 'original' && 'оригинальный'.includes(search.toLowerCase()))
   )
 
   return (
@@ -86,7 +87,8 @@ export function CharacterSection({
                 <th onClick={() => onSort?.('name')} style={{ cursor: 'pointer' }}>Имя персонажа {renderSortIcon?.('name')}</th>
                 <th onClick={() => onSort?.('fandom')} style={{ cursor: 'pointer' }}>Вселенная {renderSortIcon?.('fandom')}</th>
                 <th onClick={() => onSort?.('total_chats_count')} style={{ cursor: 'pointer' }}>Чатов/мес {renderSortIcon?.('total_chats_count')}</th>
-                <th onClick={() => onSort?.('scenario_count')} style={{ cursor: 'pointer' }}>Сценариев {renderSortIcon?.('scenario_count')}</th>
+                <th onClick={() => onSort?.('scenarios_count')} style={{ cursor: 'pointer' }}>Сценарии {renderSortIcon?.('scenarios_count')}</th>
+                <th onClick={() => onSort?.('lorebook_count')} style={{ cursor: 'pointer' }}>Лорбуки {renderSortIcon?.('lorebook_count')}</th>
               </tr>
             </thead>
             <tbody>
@@ -94,15 +96,16 @@ export function CharacterSection({
                 <tr key={char.id} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0 }}>
-                        <img src={char.avatar_url} className={styles.charAvatar} alt={char.name} />
+                      <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0, borderRadius: '50%', clipPath: 'none' }}>
+                        <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.charAvatar} style={{ borderRadius: '50%', clipPath: 'none' }} alt={char.name} />
                       </div>
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
                   </td>
-                  <td><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></td>
-                  <td>{char.total_chats_count.toLocaleString()}</td>
+                  <td><Badge variant={char.type === 'original' ? "orange" : "blue"}>{char.type === 'original' ? 'Оригинальный' : (char.fandom || 'Фандомный')}</Badge></td>
+                  <td>{(char.total_chats_count || 0).toLocaleString()}</td>
                   <td>{char.scenarios_count || 0}</td>
+                  <td>{char.lorebook_ids?.length || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -114,27 +117,28 @@ export function CharacterSection({
             <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardTop}>
                 <div className={styles.cardAvatarWrapper}>
-                  <img src={char.avatar_url} className={styles.cardAvatar} alt={char.name} />
+                  <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.cardAvatar} alt={char.name} />
                 </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
-                  <div className={styles.cardFandom}><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></div>
+                  <div className={styles.cardFandom}><Badge variant={char.type === 'original' ? "orange" : "blue"}>{char.type === 'original' ? 'Оригинальный' : (char.fandom || 'Фандомный')}</Badge></div>
                 </div>
               </div>
               <div className={styles.cardStats}>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Чатов</span>
-                  <span className={styles.statValue}>{char.total_chats_count.toLocaleString()}</span>
+                  <span className={styles.statValue}>{(char.total_chats_count || 0).toLocaleString()}</span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Сценариев</span>
                   <span className={styles.statValue}>{char.scenarios_count || 0}</span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>Лоры</span>
-                  <span className={styles.statValue}>0</span>
+                  <span className={styles.statLabel}>Лорбуков</span>
+                  <span className={styles.statValue}>{char.lorebook_ids?.length || 0}</span>
                 </div>
               </div>
+
             </div>
           ))}
         </div>

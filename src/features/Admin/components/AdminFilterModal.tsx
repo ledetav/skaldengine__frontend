@@ -112,7 +112,7 @@ export function AdminFilterModal({
         <div className={styles.chipsContainer}>
           {selected.map(id => (
             <div key={id} className={styles.chip}>
-              {options.find(o => o.id === id)?.name || id}
+              {options.find(o => o.id === id)?.name === 'Original' ? 'Оригинальный' : (options.find(o => o.id === id)?.name || id)}
               <span className={styles.chipRemove} onClick={() => {
                 setFilters({ ...filters, [field]: selected.filter(v => v !== id) })
               }}>
@@ -133,7 +133,7 @@ export function AdminFilterModal({
                 setFilters({ ...filters, [field]: [...selected, o.id] })
                 setSearch('')
               }}>
-                {o.name}
+                {o.name === 'Original' ? 'Оригинальный' : o.name}
               </div>
             ))}
           </div>

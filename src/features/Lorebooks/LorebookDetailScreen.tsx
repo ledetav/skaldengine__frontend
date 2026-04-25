@@ -200,6 +200,23 @@ function EntriesTable({ entries, onDelete }: {
 /* ─── Main Component ───────────────────────────── */
 type AddMode = 'none' | 'single' | 'batch'
 
+function ConfirmDeleteLorebook({ name, onConfirm, onCancel }: { name: string, onConfirm: () => void, onCancel: () => void }) {
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modal}>
+        <h2 className={styles.modalTitle}>Удалить лорбук?</h2>
+        <p className={styles.modalText}>
+          «<strong style={{ color: '#fff' }}>{name}</strong>» будет удалён безвозвратно.
+        </p>
+        <div className={styles.modalActions}>
+          <button className={styles.cancelBtn} onClick={onCancel}>Отмена</button>
+          <button className={styles.dangerBtn} onClick={onConfirm}>Удалить</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function LorebookDetailScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -208,6 +225,7 @@ export default function LorebookDetailScreen() {
   const [lorebook, setLorebook] = useState<Lorebook | null>(null)
   const [entries, setEntries] = useState<LorebookEntry[]>([])
   const [addMode, setAddMode] = useState<AddMode>('none')
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -302,6 +320,19 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  const handleDeleteLorebook = async () => {
+    try {
+      if (!id) return;
+      await lorebooksApi.deleteLorebook(id);
+      success('Лорбук удалён');
+      navigate('/lorebooks');
+    } catch (err) {
+      error('Ошибка при удалении лорбука');
+    } finally {
+      setShowDeleteConfirm(false);
+    }
+  }
+
   const handleExport = () => {
     const data = entries.map(({ keywords, content, priority }) => ({ keywords, content, priority }))
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -343,6 +374,12 @@ export default function LorebookDetailScreen() {
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
               Редактировать
+            </button>
+            <button className={`${styles.editBtn} ${styles.dangerBtnInline}`} onClick={() => setShowDeleteConfirm(true)}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+              Удалить
             </button>
           </div>
         </div>
@@ -396,6 +433,14 @@ export default function LorebookDetailScreen() {
           />
         )}
       </div>
+
+      {showDeleteConfirm && (
+        <ConfirmDeleteLorebook
+          name={lorebook.name}
+          onConfirm={handleDeleteLorebook}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
     </div>
   )
 }

@@ -5,6 +5,10 @@ export interface Scenario {
   id: string
   title: string
   description: string
+  location?: string | null
+  start_point?: string | null
+  end_point?: string | null
+  character_id?: string | null
   image_url?: string
 }
 
@@ -99,19 +103,20 @@ export interface LorebookEntry {
   created_at: string
 }
 
-export type LorebookType = 'Fandom' | 'Character' | 'Persona'
+export type LorebookType = 'fandom' | 'character' | 'persona'
 
 export interface Lorebook {
   id: string
   name: string
   type: LorebookType
   description?: string
-  fandom?: string
-  character_id?: string
+  fandom?: string | null
+  character_id?: string | null
   character_name?: string
-  user_persona_id?: string
+  user_persona_id?: string | null
   user_persona_name?: string
   entries?: LorebookEntry[]
   entries_count?: number
+  tags?: string[]
   created_at: string
 }

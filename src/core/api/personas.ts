@@ -42,6 +42,10 @@ export const personasApi = {
     return ApiClient.delete('core', `/personas/${id}`)
   },
   
+  deleteAdminPersona: async (id: string): Promise<void> => {
+    return ApiClient.delete('core', `/personas/admin/${id}`)
+  },
+  
   getStats: async (userId?: string): Promise<any> => {
     const userQuery = userId ? `?user_id=${userId}` : ''
     return ApiClient.get('core', `/personas/stats${userQuery}`)

@@ -39,7 +39,7 @@ export function CharacterSection({ character }: { character: Character | null })
                     <div className={styles.charCoverGradient} />
                     <div className={styles.charOverlayMini}>
                       <div className={styles.avatarCircleMini}>
-                        <img src={character.avatar_url} alt={character.name} />
+                        <img src={character.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${character.name}`} alt={character.name} />
                       </div>
                       <div className={styles.charMainInfoMini}>
                         <h4>{character.name}</h4>

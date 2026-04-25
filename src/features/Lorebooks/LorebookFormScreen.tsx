@@ -9,6 +9,7 @@ import { charactersApi } from '@/core/api/characters'
 import type { UserPersona } from '@/core/types/chat'
 import type { Character } from '@/core/types/character'
 import { useToast, Button, Input, Textarea, Card } from '@/components/ui'
+import { useProfile } from '@/core/hooks/useProfile'
 
 import type { LorebookType } from '@/core/types/chat'
 
@@ -19,25 +20,34 @@ interface FormData {
   fandom: string
   character_id: string
   user_persona_id: string
+  tags: string[]
 }
 
-const EMPTY: FormData = { name: '', type: 'Fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
+const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '', tags: [] }
 
 function toForm(lb: Lorebook): FormData {
+  // Определяем тип на основе имеющихся связей, так как бэкенд не хранит 'type'
+  let type: LorebookType = 'fandom';
+  if (lb.character_id) type = 'character';
+  else if (lb.user_persona_id) type = 'persona';
+
   return {
     name: lb.name,
-    type: lb.type || 'Fandom',
+    type: type,
     description: lb.description || '',
     fandom: lb.fandom || '',
     character_id: lb.character_id || '',
     user_persona_id: lb.user_persona_id || '',
+    tags: lb.tags || []
   }
 }
 
 export default function LorebookFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { success } = useToast()
+  const { success, error } = useToast()
+  const { profile } = useProfile()
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'moderator'
 
   const isEdit = !!id
   const [form, setForm] = useState<FormData>(EMPTY)
@@ -46,6 +56,12 @@ export default function LorebookFormScreen() {
 
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [characters, setCharacters] = useState<Character[]>([])
+
+  const selectedChar = characters.find((c: Character) => c.id === form.character_id);
+  const isOriginalChar = selectedChar?.type?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'оригинальный';
+  const isMain = form.tags?.includes('main');
+
+  const [charLorebooks, setCharLorebooks] = useState<Lorebook[]>([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -60,6 +76,12 @@ export default function LorebookFormScreen() {
         if (isEdit && id) {
           const existing = await lorebooksApi.getLorebook(id)
           setForm(toForm(existing))
+          
+          // Load other lorebooks for the character to check main status
+          if (existing.character_id) {
+            const lbs = await lorebooksApi.getLorebooks(0, 50, undefined, undefined, existing.character_id)
+            setCharLorebooks(lbs || [])
+          }
         }
       } catch (err: any) {
         logger.error('Ошибка загрузки данных', err)
@@ -68,11 +90,24 @@ export default function LorebookFormScreen() {
     loadData()
   }, [id, isEdit])
 
+  // Fetch lorebooks if character_id changes in the form
+  useEffect(() => {
+    if (form.character_id && form.type === 'character') {
+      lorebooksApi.getLorebooks(0, 50, undefined, undefined, form.character_id).then(setCharLorebooks)
+    } else {
+      setCharLorebooks([])
+    }
+  }, [form.character_id, form.type])
+
+  const mainLbsForChar = charLorebooks.filter((lb: Lorebook) => lb.tags?.includes('main'));
+  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id); // This specific lorebook is one of the main ones
+  const isToggleLocked = isEdit && holdsMainTag && isOriginalChar && mainLbsForChar.length === 1;
+
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }))
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
+    setForm((prev: FormData) => ({ ...prev, [field]: e.target.value }))
+    if (errors[field]) setErrors((prev: Partial<FormData>) => ({ ...prev, [field]: undefined }))
   }
 
   const validate = (): boolean => {
@@ -87,25 +122,34 @@ export default function LorebookFormScreen() {
     if (!validate()) return
     setSubmitting(true)
     try {
-      const payload: Partial<Lorebook> = {
+      const payload: Partial<Lorebook> & Record<string, any> = {
         name: form.name,
-        type: form.type,
+        type: form.type, // Back-end DOES expect this field!
         description: form.description || undefined,
-        fandom: form.type === 'Fandom' && form.fandom ? form.fandom : undefined,
-        character_id: form.type === 'Character' && form.character_id ? form.character_id : undefined,
-        user_persona_id: form.type === 'Persona' && form.user_persona_id ? form.user_persona_id : undefined
+        fandom: form.type === 'fandom' && form.fandom ? form.fandom : null,
+        character_id: form.type === 'character' && form.character_id ? form.character_id : null,
+        user_persona_id: form.type === 'persona' && form.user_persona_id ? form.user_persona_id : null,
+        tags: form.tags
       }
       
       if (isEdit && id) {
-        await lorebooksApi.updateLorebook(id, payload)
+        if (isAdmin) {
+          await lorebooksApi.updateAdminLorebook(id, payload as any)
+        } else {
+          await lorebooksApi.updateLorebook(id, payload as any)
+        }
         success('Лорбук успешно обновлён')
       } else {
-        await lorebooksApi.createLorebook(payload)
+        if (isAdmin) {
+          await lorebooksApi.createAdminLorebook(payload as any)
+        } else {
+          await lorebooksApi.createLorebook(payload as any)
+        }
         success('Лорбук создан')
       }
       navigate('/lorebooks')
     } catch (err: any) {
-      success(`Ошибка сохранения: ${err.message}`)
+      error(`Ошибка сохранения: ${err.message}`)
     } finally {
       setSubmitting(false)
     }
@@ -149,7 +193,7 @@ export default function LorebookFormScreen() {
             
             <div className={styles.previewInfo}>
               <h3 className={styles.previewName}>{form.name || 'Название лорбука'}</h3>
-              <div className={styles.previewFandom}>{form.fandom || 'Оригинальный / Независимый'}</div>
+              <div className={styles.previewFandom}>{form.fandom === 'Original' ? 'Оригинальный' : (form.fandom || 'Оригинальный / Независимый')}</div>
               <p className={styles.previewDesc}>{form.description || 'Описание пока не заполнено...'}</p>
             </div>
 
@@ -157,7 +201,7 @@ export default function LorebookFormScreen() {
                 <div className={styles.previewStat}>
                   <span className={styles.previewStatLabel}>Тип</span>
                   <span className={styles.previewStatValue}>
-                    {form.type === 'Fandom' ? 'Фандом' : form.type === 'Persona' ? 'Персона' : 'Персонаж'}
+                    {form.type === 'fandom' ? 'Фандом' : form.type === 'persona' ? 'Персона' : 'Персонаж'}
                   </span>
                 </div>
                 <div className={styles.previewStat}>
@@ -173,7 +217,7 @@ export default function LorebookFormScreen() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div className={styles.sectionTitle}>Основная информация</div>
 
-                {form.type === 'Fandom' && (
+                {form.type === 'fandom' && (
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Фандом</label>
                     <input 
@@ -208,7 +252,7 @@ export default function LorebookFormScreen() {
                 <div className={styles.sectionTitle} style={{ marginTop: '12px' }}>Связи и контекст</div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {form.type === 'Persona' && (
+                  {form.type === 'persona' && (
                     <div className={styles.formGroup}>
                       <label className={styles.label}>Привязать к персоне</label>
                       <select
@@ -219,22 +263,59 @@ export default function LorebookFormScreen() {
                         required
                       >
                         <option value="">— Выберите персону —</option>
-                        {personas.map(p => (
+                        {personas.map((p: UserPersona) => (
                           <option key={p.id} value={p.id}>{p.name}</option>
                         ))}
                       </select>
                     </div>
                   )}
 
-                  {form.type === 'Character' && (
+                  {form.type === 'character' && (
                     <div className={styles.formGroup}>
                       <label className={styles.label}>К персонажу</label>
                       <select className={styles.formInput} value={form.character_id} onChange={set('character_id')} required>
                         <option value="">— Выберите персонажа —</option>
-                        {characters.map(c => (
+                        {characters.map((c: Character) => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
+                    </div>
+                  )}
+
+                  {form.type === 'character' && isOriginalChar && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div className={styles.formGroup} style={{ 
+                        flexDirection: 'row', 
+                        alignItems: 'center', 
+                        gap: '12px',
+                        padding: '12px',
+                        background: isToggleLocked ? 'rgba(255,255,255,0.03)' : 'rgba(255,140,66,0.05)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255,140,66,0.1)',
+                        opacity: isToggleLocked ? 0.6 : 1
+                      }}>
+                        <input 
+                          type="checkbox" 
+                          id="isMain"
+                          checked={isMain}
+                          disabled={isToggleLocked}
+                          onChange={(e) => {
+                            const newTags = e.target.checked 
+                              ? [...(form.tags || []), 'main']
+                              : (form.tags || []).filter((t: string) => t !== 'main');
+                            setForm((prev: FormData) => ({ ...prev, tags: newTags }));
+                          }}
+                          style={{ width: '18px', height: '18px', cursor: isToggleLocked ? 'not-allowed' : 'pointer' }}
+                        />
+                        <label htmlFor="isMain" style={{ cursor: isToggleLocked ? 'not-allowed' : 'pointer', fontSize: '0.9rem', color: 'var(--accent-orange)' }}>
+                          Сделать основным лорбуком персонажа
+                        </label>
+                      </div>
+                      {isToggleLocked && (
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255, 140, 66, 0.7)', padding: '0 12px' }}>
+                          ℹ️ У оригинального персонажа должен быть хотя бы один основной лорбук.
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

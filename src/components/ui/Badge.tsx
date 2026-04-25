@@ -2,6 +2,7 @@ import React from 'react'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: 'purple' | 'orange' | 'fuchsia' | 'red' | 'blue' | 'teal' | 'green'
+  children?: React.ReactNode
 }
 
 export function Badge({ 

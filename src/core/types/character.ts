@@ -2,6 +2,7 @@ export interface Character {
   id: string
   name: string
   description?: string
+  type: 'fandom' | 'original'
   fandom?: string
   gender?: string
   avatar_url?: string
@@ -11,17 +12,19 @@ export interface Character {
   is_public: boolean
   nsfw_allowed: boolean
   creator_id?: string
-  monthly_chats_count?: number
-  total_chats_count?: number
+  monthly_chats_count: number
+  total_chats_count: number
   created_at?: string
-  scenarios_count?: number
-  scenario_chats_count?: number
+  scenarios_count: number
+  scenario_chats_count: number
   author?: {
     name: string
     username: string
     avatar_url?: string
     role?: 'Администратор' | 'Модератор' | 'Пользователь'
   }
+  lorebook_ids: string[]
+  is_deleted: boolean
 }
 
 export interface ExampleScenario {

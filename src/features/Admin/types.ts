@@ -3,6 +3,7 @@ export interface Character {
   creator_id?: string;
   name: string;
   description?: string;
+  type: 'fandom' | 'original';
   fandom?: string;
   avatar_url?: string;
   card_image_url?: string;
@@ -16,18 +17,20 @@ export interface Character {
   nsfw_allowed: boolean;
   is_public: boolean;
   is_deleted: boolean;
+  lorebook_ids: string[];
 }
 
 export interface Lorebook {
   id: string;
-  character_id?: string;
+  character_id?: string | null;
   character_name?: string;
-  user_persona_id?: string;
+  user_persona_id?: string | null;
   user_persona_name?: string;
   fandom?: string;
-  type: 'Fandom' | 'Character' | 'Persona';
+  type: 'fandom' | 'character' | 'persona';
   name: string;
   description?: string;
+  tags?: string[];
   entries_count: number;
   owner_id?: string;
   created_at?: string;
@@ -72,3 +75,4 @@ export interface UserPersona {
   chat_count: number;
   created_at: string;
 }
+

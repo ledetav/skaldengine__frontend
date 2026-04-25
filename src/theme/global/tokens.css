@@ -247,7 +247,7 @@
 .ds-form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .ds-error-msg {
