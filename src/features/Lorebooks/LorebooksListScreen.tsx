@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react'
 import { logger } from "@/core/utils/logger";
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
 import type { Lorebook } from '@/core/types/chat'
@@ -21,7 +21,7 @@ function ConfirmDelete({ lorebook, onConfirm, onCancel }: {
     // Добавляем onClick на оверлей для удобного закрытия
     <div className={styles.modalOverlay} onClick={onCancel}>
       {/* Останавливаем всплытие, чтобы клик по самому окну его не закрыл */}
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
         <h2 className={styles.modalTitle}>Удалить лорбук?</h2>
         <p className={styles.modalText}>
           «<strong style={{ color: '#fff' }}>{lorebook.name}</strong>» и все его{' '}
@@ -51,12 +51,26 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
   onEdit: () => void
   onDelete: () => void
 }) {
+  const isMain = lorebook.tags?.includes('main');
+  const isOriginal = lorebook.fandom?.toLowerCase() === 'original' || lorebook.fandom?.toLowerCase() === 'оригинальный';
+  // Protection applies to main lorebooks of Original type characters
+  const deleteDisabled = isMain && (isOriginal || lorebook.type === 'character');
+
   return (
     <div className={styles.lorebookCard} onClick={onOpen}>
+      {deleteDisabled && (
+        <div className={styles.mainNote}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Основной лорбук нельзя удалить
+        </div>
+      )}
       <div className={styles.cardHeader}>
         <div className={styles.cardIcon}><BookIcon /></div>
         <div className={styles.cardMeta}>
-          <div className={styles.cardName}>{lorebook.name}</div>
+          <div className={styles.cardName}>
+            {lorebook.name}
+            {isMain && <span style={{ color: 'var(--accent-orange)', fontSize: '0.7rem', marginLeft: '6px' }}>(Осн.)</span>}
+          </div>
           <div className={styles.cardTags}>
             {lorebook.fandom && <span className={styles.cardTag}>{lorebook.fandom === 'Original' ? 'Оригинальный' : lorebook.fandom}</span>}
             {lorebook.character_name && (
@@ -69,14 +83,20 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
             )}
           </div>
         </div>
-        <div className={styles.cardActions} onClick={e => e.stopPropagation()}>
+        <div className={styles.cardActions} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
           <button className={styles.iconBtn} onClick={onEdit} title="Редактировать">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
           </button>
-          <button className={`${styles.iconBtn} ${styles['iconBtn--danger']}`} onClick={onDelete} title="Удалить">
+          <button 
+            className={`${styles.iconBtn} ${styles['iconBtn--danger']}`} 
+            onClick={onDelete} 
+            title={deleteDisabled ? "Основной лорбук нельзя удалить" : "Удалить"}
+            disabled={deleteDisabled}
+            style={{ opacity: deleteDisabled ? 0.3 : 1, cursor: deleteDisabled ? 'not-allowed' : 'pointer' }}
+          >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
             </svg>
@@ -141,7 +161,7 @@ export default function LorebooksListScreen() {
       console.log(`[Frontend] Успешный ответ от бэкенда. Удаляем из UI.`);
       
       // Динамически удаляем из списка
-      setLorebooks(prev => prev.filter(l => String(l.id) !== String(lb.id)));
+      setLorebooks((prev: Lorebook[]) => prev.filter((l: Lorebook) => String(l.id) !== String(lb.id)));
       success(`Лорбук «${lb.name}» успешно удалён`);
       
     } catch (err: any) {
@@ -152,7 +172,7 @@ export default function LorebooksListScreen() {
     }
   }
 
-  const totalEntries = lorebooks.reduce((s, l) => s + (l.entries_count || 0), 0)
+  const totalEntries = lorebooks.reduce((s: number, l: Lorebook) => s + (l.entries_count || 0), 0)
 
   return (
     <div className={styles.page}>
@@ -198,7 +218,7 @@ export default function LorebooksListScreen() {
                 </button>
               </div>
             ) : (
-              lorebooks.map(lb => (
+              lorebooks.map((lb: Lorebook) => (
                 <LorebookCard
                   key={lb.id}
                   lorebook={lb}

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
@@ -54,15 +54,15 @@ export function CharacterProfileView({
     lorebook_ids: [],
   } as Character : undefined)
 
-  const character = isCreate ? draftCharacter : characters.find(c => c.id === characterId)
+  const character = isCreate ? draftCharacter : characters.find((c: Character) => c.id === characterId)
 
   // Get unique fandoms from LOREBOOKS for the dropdown (Task 4)
   const availableFandoms = useMemo(() => {
     const forbidden = ['original', 'оригинальный']
     const fandoms = new Set(
       allLorebooks
-        .map(lb => lb.fandom)
-        .filter(f => f && !forbidden.includes(f.toLowerCase()))
+        .map((lb: Lorebook) => lb.fandom)
+        .filter((f: string | undefined): f is string => !!f && !forbidden.includes(f.toLowerCase()))
     )
     return Array.from(fandoms as Set<string>).sort()
   }, [allLorebooks])
@@ -101,14 +101,14 @@ export function CharacterProfileView({
         const currentIds = prev.lorebook_ids || [];
         
         // Remove old fandom LBs
-        const filteredIds = currentIds.filter(id => {
-          const lb = allLorebooks.find(l => l.id === id);
+        const filteredIds = currentIds.filter((id: string) => {
+          const lb = allLorebooks.find((l: Lorebook) => l.id === id);
           return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
         });
 
         // Add new fandom LBs
-        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
-        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
+        const newFandomLbs = allLorebooks.filter((lb: Lorebook) => lb.fandom === value && lb.type === 'fandom' && value !== '');
+        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map((lb: Lorebook) => lb.id)]));
         
         return { ...prev, [field]: value, lorebook_ids: newIds };
       }
@@ -130,11 +130,11 @@ export function CharacterProfileView({
     let newIds: string[]
     if (isAttached) {
       // Check if it's a main lorebook for an Original character (Requirement 2)
-      const lb = allLorebooks.find(l => l.id === lbId)
+      const lb = allLorebooks.find((l: Lorebook) => l.id === lbId)
       if (isOriginal && lb?.tags?.includes('main')) {
         return // Don't allow removal
       }
-      newIds = currentIds.filter(id => id !== lbId)
+      newIds = currentIds.filter((id: string) => id !== lbId)
     } else {
       newIds = [...currentIds, lbId]
     }
@@ -170,7 +170,7 @@ export function CharacterProfileView({
   // 3. Lorebooks belonging to this fandom (if not original)
   const charLorebooks = useMemo(() => {
     const linkedIds = character.lorebook_ids || []
-    return allLorebooks.filter(lb => 
+    return allLorebooks.filter((lb: Lorebook) => 
       linkedIds.includes(lb.id) || 
       lb.character_id === character.id ||
       (character.fandom && lb.fandom === character.fandom && character.fandom !== '' && !isOriginal)
@@ -179,9 +179,9 @@ export function CharacterProfileView({
   
   // Available lorebooks to attach (Requirement 1)
   const attachableLorebooks = useMemo(() => {
-    return allLorebooks.filter(lb => {
+    return allLorebooks.filter((lb: Lorebook) => {
       // 1. Don't show if already in the character's list (managed on card)
-      if (charLorebooks.some(clb => clb.id === lb.id)) return false;
+      if (charLorebooks.some((clb: Lorebook) => clb.id === lb.id)) return false;
 
       // 2. Include fandom lorebooks, but EXCLUDE those belonging to other characters
       if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
@@ -266,7 +266,7 @@ export function CharacterProfileView({
                   
                   {character.type === 'fandom' && (
                     <SearchableSelect 
-                      options={availableFandoms.map(f => ({ id: f, name: f }))}
+                      options={availableFandoms.map((f: string) => ({ id: f, name: f }))}
                       value={character.fandom || ''}
                       onChange={(val: string) => handleChange('fandom', val)}
                       placeholder="Выберите фандом"
@@ -401,8 +401,8 @@ export function CharacterProfileView({
                   </div>
                 )}
                 {charLorebooks.length > 0 ? (
-                  charLorebooks.map(lb => {
-                    const isActive = (character.lorebook_ids || []).includes(lb.id)
+                  charLorebooks.map((lb: Lorebook) => {
+                    const isActive = (character.lorebook_ids || []).includes(lb.id) || (isOriginal && lb.tags?.includes('main'))
                     const isFandomMatch = character.fandom && lb.fandom === character.fandom && character.fandom !== ''
                     
                     return (
@@ -477,7 +477,7 @@ export function CharacterProfileView({
                       <div className={styles.lorebookSelectionDropdown}>
                         {attachableLorebooks.length > 0 ? (
                           attachableLorebooks
-                            .map(lb => (
+                            .map((lb: Lorebook) => (
                               <div 
                                 key={lb.id} 
                                 className={styles.lorebookOption} 
@@ -537,7 +537,7 @@ export function CharacterProfileView({
       </div>
       {showDeleteModal && (
         <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+          <div className={styles.modalContent} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>Удалить персонажа?</h3>
             <p className={styles.modalDescription}>
               Это действие необратимо. Персонаж <strong>{character.name}</strong> будет полностью удален из системы.

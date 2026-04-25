@@ -57,9 +57,11 @@ export default function LorebookFormScreen() {
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [characters, setCharacters] = useState<Character[]>([])
 
-  const selectedChar = characters.find(c => c.id === form.character_id);
+  const selectedChar = characters.find((c: Character) => c.id === form.character_id);
   const isOriginalChar = selectedChar?.fandom?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'оригинальный';
   const isMain = form.tags?.includes('main');
+
+  const [charLorebooks, setCharLorebooks] = useState<Lorebook[]>([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -74,6 +76,12 @@ export default function LorebookFormScreen() {
         if (isEdit && id) {
           const existing = await lorebooksApi.getLorebook(id)
           setForm(toForm(existing))
+          
+          // Load other lorebooks for the character to check main status
+          if (existing.character_id) {
+            const lbs = await lorebooksApi.getLorebooks(0, 50, undefined, undefined, existing.character_id)
+            setCharLorebooks(lbs || [])
+          }
         }
       } catch (err: any) {
         logger.error('Ошибка загрузки данных', err)
@@ -82,11 +90,24 @@ export default function LorebookFormScreen() {
     loadData()
   }, [id, isEdit])
 
+  // Fetch lorebooks if character_id changes in the form
+  useEffect(() => {
+    if (form.character_id && form.type === 'character') {
+      lorebooksApi.getLorebooks(0, 50, undefined, undefined, form.character_id).then(setCharLorebooks)
+    } else {
+      setCharLorebooks([])
+    }
+  }, [form.character_id, form.type])
+
+  const mainLbsForChar = charLorebooks.filter((lb: Lorebook) => lb.tags?.includes('main'));
+  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id); // This specific lorebook is one of the main ones
+  const isToggleLocked = isEdit && holdsMainTag && isOriginalChar && mainLbsForChar.length === 1;
+
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }))
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
+    setForm((prev: FormData) => ({ ...prev, [field]: e.target.value }))
+    if (errors[field]) setErrors((prev: Partial<FormData>) => ({ ...prev, [field]: undefined }))
   }
 
   const validate = (): boolean => {
@@ -242,7 +263,7 @@ export default function LorebookFormScreen() {
                         required
                       >
                         <option value="">— Выберите персону —</option>
-                        {personas.map(p => (
+                        {personas.map((p: UserPersona) => (
                           <option key={p.id} value={p.id}>{p.name}</option>
                         ))}
                       </select>
@@ -254,7 +275,7 @@ export default function LorebookFormScreen() {
                       <label className={styles.label}>К персонажу</label>
                       <select className={styles.formInput} value={form.character_id} onChange={set('character_id')} required>
                         <option value="">— Выберите персонажа —</option>
-                        {characters.map(c => (
+                        {characters.map((c: Character) => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
@@ -262,30 +283,39 @@ export default function LorebookFormScreen() {
                   )}
 
                   {form.type === 'character' && isOriginalChar && (
-                    <div className={styles.formGroup} style={{ 
-                      flexDirection: 'row', 
-                      alignItems: 'center', 
-                      gap: '12px',
-                      padding: '12px',
-                      background: 'rgba(255,140,66,0.05)',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(255,140,66,0.1)'
-                    }}>
-                      <input 
-                        type="checkbox" 
-                        id="isMain"
-                        checked={isMain}
-                        onChange={(e) => {
-                          const newTags = e.target.checked 
-                            ? [...(form.tags || []), 'main']
-                            : (form.tags || []).filter(t => t !== 'main');
-                          setForm(prev => ({ ...prev, tags: newTags }));
-                        }}
-                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                      />
-                      <label htmlFor="isMain" style={{ cursor: 'pointer', fontSize: '0.9rem', color: 'var(--accent-orange)' }}>
-                        Сделать основным лорбуком персонажа
-                      </label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div className={styles.formGroup} style={{ 
+                        flexDirection: 'row', 
+                        alignItems: 'center', 
+                        gap: '12px',
+                        padding: '12px',
+                        background: isToggleLocked ? 'rgba(255,255,255,0.03)' : 'rgba(255,140,66,0.05)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255,140,66,0.1)',
+                        opacity: isToggleLocked ? 0.6 : 1
+                      }}>
+                        <input 
+                          type="checkbox" 
+                          id="isMain"
+                          checked={isMain}
+                          disabled={isToggleLocked}
+                          onChange={(e) => {
+                            const newTags = e.target.checked 
+                              ? [...(form.tags || []), 'main']
+                              : (form.tags || []).filter((t: string) => t !== 'main');
+                            setForm((prev: FormData) => ({ ...prev, tags: newTags }));
+                          }}
+                          style={{ width: '18px', height: '18px', cursor: isToggleLocked ? 'not-allowed' : 'pointer' }}
+                        />
+                        <label htmlFor="isMain" style={{ cursor: isToggleLocked ? 'not-allowed' : 'pointer', fontSize: '0.9rem', color: 'var(--accent-orange)' }}>
+                          Сделать основным лорбуком персонажа
+                        </label>
+                      </div>
+                      {isToggleLocked && (
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255, 140, 66, 0.7)', padding: '0 12px' }}>
+                          ℹ️ У оригинального персонажа должен быть хотя бы один основной лорбук.
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
