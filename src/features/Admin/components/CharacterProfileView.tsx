@@ -161,8 +161,8 @@ export function CharacterProfileView({
   }
 
   const isOriginal = useMemo(() => 
-    character.type === 'original',
-  [character.type])
+    character.type?.toLowerCase() === 'original' || character.fandom?.toLowerCase() === 'original' || character.fandom?.toLowerCase() === 'оригинальный',
+  [character.type, character.fandom])
 
   // Lorebooks to display in the main list:
   // 1. Lorebooks specifically linked via character.lorebook_ids

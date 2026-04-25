@@ -58,7 +58,7 @@ export default function LorebookFormScreen() {
   const [characters, setCharacters] = useState<Character[]>([])
 
   const selectedChar = characters.find((c: Character) => c.id === form.character_id);
-  const isOriginalChar = selectedChar?.fandom?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'оригинальный';
+  const isOriginalChar = selectedChar?.type?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'оригинальный';
   const isMain = form.tags?.includes('main');
 
   const [charLorebooks, setCharLorebooks] = useState<Lorebook[]>([])
