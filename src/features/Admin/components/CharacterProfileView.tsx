@@ -319,9 +319,17 @@ export function CharacterProfileView({
                   <span className={styles.statLabel}>За месяц</span>
                   <span className={styles.statValue}>{character.monthly_chats_count.toLocaleString()}</span>
                 </div>
+                
+                <div className={styles.charStatBox} style={{ gridColumn: 'span 2' }}>
+                  <span className={styles.statLabel}>Количество сценариев</span>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+                    <span className={styles.statValue}>{character.scenarios_count || 0}</span>
+                  </div>
+                </div>
+
                 <div className={styles.charStatBox} style={{ gridColumn: 'span 2', paddingBottom: '20px' }}>
                   <span className={styles.statLabel}>Настройки доступа</span>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
                     <Badge variant={character.is_public ? 'green' : 'red'}>
                       {character.is_public ? 'Public' : 'Private'}
                     </Badge>

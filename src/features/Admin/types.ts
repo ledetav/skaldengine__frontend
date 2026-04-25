@@ -75,3 +75,4 @@ export interface UserPersona {
   chat_count: number;
   created_at: string;
 }
+

@@ -60,6 +60,8 @@ const AppRoutes = () => {
       <Route path="/admin/lorebooks/personas" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/lorebooks/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/lorebooks/:id/edit" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/scenarios" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/scenarios/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
 
       {/* ─── User (Persona & Lorebook) Routes (Protected) ─── */}
       <Route path="/user/personas" element={<ProtectedRoute><PersonasListScreen /></ProtectedRoute>} />
