@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button, Input, Card, Badge, useToast } from '@/components/ui'
+import { Button, Input, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
 import { SearchableSelect } from './SearchableSelect'
 import type { Scenario } from '@/core/types/chat'
@@ -78,136 +78,168 @@ export function ScenarioProfileView({
   }
 
   return (
-    <div className={styles.sectionContainer}>
-      <header className={styles.backHeader} style={{ marginBottom: '24px' }}>
+    <div className={`${styles.characterProfileOverlay} ${!isEdit ? styles.nonEditing : ''}`}>
+      <header className={styles.backHeader}>
         <button className={styles.backBtn} onClick={onBack}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
           </svg>
         </button>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span className={styles.mainSubtitle}>Управление сценарием</span>
+          <span className={styles.mainSubtitle}>Панель управления сценарием</span>
           <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900 }}>
             {isCreate ? 'Новый сценарий' : draft.title}
           </h2>
         </div>
       </header>
 
-      <div className={styles.detailGroup}>
-        <Card className={styles.detailsCard} style={{ padding: '32px', gap: '24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-            
+      <div className={styles.characterProfileContent}>
+        {/* LEFT CARD: Sidebar/Metadata */}
+        <aside className={styles.sidebarWrapper}>
+          <div className={styles.charSidebarCard}>
+            <div className={styles.charBasicInfo} style={{ paddingTop: '24px' }}>
+              {isEdit ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+                  <div className={styles.detailGroup}>
+                    <div className={styles.detailTitle}>Заголовок</div>
+                    <Input 
+                      value={draft.title || ''} 
+                      onChange={e => setDraft(prev => ({ ...prev, title: e.target.value }))} 
+                      placeholder="Название сценария..."
+                    />
+                  </div>
+
+                  <div className={styles.detailGroup}>
+                    <div className={styles.detailTitle}>Персонаж (привязка)</div>
+                    <SearchableSelect 
+                      options={[
+                        { id: '', name: 'Общий (нет привязки)' },
+                        ...characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))
+                      ]}
+                      value={draft.character_id || ''}
+                      onChange={val => setDraft(prev => ({ ...prev, character_id: val || null }))}
+                      placeholder="Выберите персонажа..."
+                    />
+                  </div>
+
+                  <div className={styles.detailGroup}>
+                    <div className={styles.detailTitle}>Локация</div>
+                    <Input 
+                      value={draft.location || ''} 
+                      onChange={e => setDraft(prev => ({ ...prev, location: e.target.value }))} 
+                      placeholder="Где происходит действие..."
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h1 className={styles.charProfileName}>{draft.title}</h1>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                    <Badge variant={draft.character_id ? 'orange' : 'blue'}>
+                      {draft.character_id ? (characters.find(c => c.id === draft.character_id)?.name || 'Персонаж') : 'Общий сценарий'}
+                    </Badge>
+                    {draft.location && <Badge variant="teal">{draft.location}</Badge>}
+                  </div>
+                </>
+              )}
+              
+              <div style={{ marginTop: '20px' }}>
+                <div className={styles.detailTitle}>Описание для карточки</div>
+                {isEdit ? (
+                  <textarea 
+                    className={styles.editTextarea}
+                    value={draft.description || ''}
+                    onChange={e => setDraft(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Краткое описание..."
+                    style={{ minHeight: '80px', fontSize: '0.85rem' }}
+                  />
+                ) : (
+                  <p style={{ 
+                    fontSize: '0.9rem', 
+                    color: 'rgba(255,255,255,0.45)', 
+                    lineHeight: '1.6',
+                    margin: 0,
+                    fontWeight: 500
+                  }}>
+                    {draft.description}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.charStatsGrid}>
+              <div className={styles.charStatBox}>
+                <span className={styles.statLabel}>Всего чатов</span>
+                <span className={styles.statValue}>0</span>
+              </div>
+              <div className={styles.charStatBox}>
+                <span className={styles.statLabel}>За месяц</span>
+                <span className={styles.statValue}>0</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT CARD: Points and Actions */}
+        <main className={styles.mainContentWrapper}>
+          <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>
-              <div className={styles.detailTitle}>Заголовок</div>
-              {isEdit ? (
-                <Input 
-                  value={draft.title || ''} 
-                  onChange={e => setDraft(prev => ({ ...prev, title: e.target.value }))} 
-                  placeholder="Название сценария..."
-                />
-              ) : (
-                <div style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--white)' }}>{draft.title}</div>
-              )}
-            </div>
-
-            <div className={styles.detailGroup}>
-              <div className={styles.detailTitle}>Персонаж (привязка)</div>
-              {isEdit ? (
-                <SearchableSelect 
-                  options={[
-                    { id: '', name: 'Общий (нет привязки)' },
-                    ...characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))
-                  ]}
-                  value={draft.character_id || ''}
-                  onChange={val => setDraft(prev => ({ ...prev, character_id: val || null }))}
-                  placeholder="Выберите персонажа..."
-                />
-              ) : (
-                <Badge variant={draft.character_id ? 'orange' : 'blue'}>
-                  {draft.character_id ? characters.find(c => c.id === draft.character_id)?.name : 'Общий'}
-                </Badge>
-              )}
-            </div>
-
-            <div className={styles.detailGroup}>
-              <div className={styles.detailTitle}>Локация</div>
-              {isEdit ? (
-                <Input 
-                  value={draft.location || ''} 
-                  onChange={e => setDraft(prev => ({ ...prev, location: e.target.value }))} 
-                  placeholder="Где происходит действие..."
-                />
-              ) : (
-                <div style={{ opacity: 0.8 }}>{draft.location || 'Не указана'}</div>
-              )}
-            </div>
-
-            <div className={styles.detailGroup} style={{ gridColumn: 'span 2' }}>
-              <div className={styles.detailTitle}>Публичное описание</div>
-              {isEdit ? (
-                <textarea 
-                  className={styles.editTextarea}
-                  value={draft.description || ''}
-                  onChange={e => setDraft(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Краткое описание для карточки..."
-                  style={{ minHeight: '80px' }}
-                />
-              ) : (
-                <div style={{ opacity: 0.7, lineHeight: 1.6 }}>{draft.description}</div>
-              )}
-            </div>
-
-            <div className={styles.detailGroup} style={{ gridColumn: 'span 2' }}>
-              <div className={styles.detailTitle}>Точка А (Старт)</div>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Точка А (Стартовая ситуация)
+              </div>
               {isEdit ? (
                 <textarea 
                   className={styles.editTextarea}
                   value={draft.start_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, start_point: e.target.value }))}
                   placeholder="Как начинается сцена..."
-                  style={{ minHeight: '120px' }}
+                  style={{ minHeight: '180px' }}
                 />
               ) : (
-                <div style={{ opacity: 0.9, lineHeight: 1.6, whiteSpace: 'pre-wrap', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                  {draft.start_point}
-                </div>
+                <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
+                  {draft.start_point || 'Начальная точка не задана.'}
+                </p>
               )}
             </div>
 
-            <div className={styles.detailGroup} style={{ gridColumn: 'span 2' }}>
-              <div className={styles.detailTitle}>Точка Б (Цель/Финал)</div>
+            <div className={styles.detailGroup}>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Точка Б (Финальная цель)
+              </div>
               {isEdit ? (
                 <textarea 
                   className={styles.editTextarea}
                   value={draft.end_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, end_point: e.target.value }))}
                   placeholder="К чему должен прийти сюжет..."
-                  style={{ minHeight: '120px' }}
+                  style={{ minHeight: '180px' }}
                 />
               ) : (
-                <div style={{ opacity: 0.9, lineHeight: 1.6, whiteSpace: 'pre-wrap', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                  {draft.end_point}
+                <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
+                  {draft.end_point || 'Конечная цель не задана.'}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.actionRow} style={{ marginTop: 'auto', paddingTop: '24px', justifyContent: 'space-between' }}>
+              {isEdit ? (
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  {!isCreate && <Button variant="ghost" onClick={() => setIsEdit(false)}>Отмена</Button>}
+                  <Button variant="orange" onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? 'Сохранение...' : isCreate ? 'Создать сценарий' : 'Сохранить изменения'}
+                  </Button>
                 </div>
+              ) : (
+                <>
+                  <Button variant="orange" onClick={() => setIsEdit(true)}>Редактировать</Button>
+                  <Button variant="danger" onClick={handleDelete} disabled={isDeleting}>Удалить</Button>
+                </>
               )}
             </div>
           </div>
-
-          <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: '16px' }}>
-            {isEdit ? (
-              <div style={{ display: 'flex', gap: '12px' }}>
-                {!isCreate && <Button variant="ghost" onClick={() => setIsEdit(false)}>Отмена</Button>}
-                <Button variant="orange" onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? 'Сохранение...' : isCreate ? 'Создать сценарий' : 'Сохранить изменения'}
-                </Button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', width: '100%' }}>
-                <Button variant="orange" onClick={() => setIsEdit(true)}>Редактировать</Button>
-                <Button variant="danger" onClick={handleDelete} disabled={isDeleting}>Удалить</Button>
-              </div>
-            )}
-          </div>
-        </Card>
+        </main>
       </div>
     </div>
   )
