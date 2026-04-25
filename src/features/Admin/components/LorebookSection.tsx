@@ -157,6 +157,29 @@ export function LorebookSection({
     }
   }, [lb?.id, isDetailMode, entriesPage])
 
+  // Reactive updates via websockets
+  useEffect(() => {
+    if (!lb?.id || lb.id === 'create') return
+    
+    const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
+    const socket = new WebSocket(`${wsUrl}/ws/updates`)
+    
+    socket.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data)
+        if (payload.type === 'REFRESH_LOREBOOK_ENTRIES' && payload.data.lorebook_id === lb.id) {
+          fetchEntries(entriesPage)
+        }
+      } catch (err) {
+        // ignore parsing errors
+      }
+    }
+
+    return () => {
+      socket.close()
+    }
+  }, [lb?.id, entriesPage])
+
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [editEntryKeywords, setEditEntryKeywords] = useState('')
   const [editEntryContent, setEditEntryContent] = useState('')
