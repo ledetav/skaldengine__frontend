@@ -7,17 +7,22 @@ import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'
 import { CharacterProfileView } from './components/CharacterProfileView'
 import type { Character, Lorebook, User, UserPersona } from './types'
+import type { Scenario } from '@/core/types/chat'
 import { useProfile } from '@/core/hooks/useProfile'
-import { Badge } from '@/components/ui'
+import { Badge, useToast } from '@/components/ui'
 import { UserProfileView } from './components/UserProfileView'
 import { PersonaProfileView } from './components/PersonaProfileView'
+import { ScenarioSection } from './components/ScenarioSection'
+import { ScenarioProfileView } from './components/ScenarioProfileView'
 import { AdminFilterModal, type FilterState } from './components/AdminFilterModal'
 import { ApiClient } from '@/core/api/client'
+import { scenariosApi } from '@/core/api/scenarios'
 
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { success } = useToast()
   
   const [activeTab, setActiveTab] = useState<AdminTab>('characters')
 
@@ -33,6 +38,7 @@ export default function AdminDashboard() {
   const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [personas, setPersonas] = useState<UserPersona[]>([])
+  const [scenarios, setScenarios] = useState<Scenario[]>([])
   const [isDataLoading, setIsDataLoading] = useState(false)
 
   // Load data from API when admin is confirmed
@@ -41,16 +47,18 @@ export default function AdminDashboard() {
     const fetchAll = async () => {
       setIsDataLoading(true)
       try {
-        const [chars, lbs, usrs, pers] = await Promise.allSettled([
+        const [chars, lbs, usrs, pers, scens] = await Promise.allSettled([
           ApiClient.get<Character[]>('core', '/characters/?skip=0&limit=200'),
           ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500'),
           ApiClient.get<User[]>('auth', '/users/?skip=0&limit=200'),
           ApiClient.get<UserPersona[]>('core', '/personas/admin/all?skip=0&limit=200'),
+          ApiClient.get<Scenario[]>('core', '/scenarios/?limit=500'),
         ])
         if (chars.status === 'fulfilled') setCharacters(Array.isArray(chars.value) ? chars.value : [])
         if (lbs.status === 'fulfilled') setLorebooks(Array.isArray(lbs.value) ? lbs.value : [])
         if (usrs.status === 'fulfilled') setUsers(Array.isArray(usrs.value) ? usrs.value : [])
         if (pers.status === 'fulfilled') setPersonas(Array.isArray(pers.value) ? pers.value : [])
+        if (scens.status === 'fulfilled') setScenarios(Array.isArray(scens.value) ? scens.value : [])
       } catch (e) {
         console.error('[Admin] Failed to load data', e)
       } finally {
@@ -92,6 +100,15 @@ export default function AdminDashboard() {
         } else if (payload.type === 'DELETE_CHARACTER') {
           setCharacters(prev => prev.filter(c => c.id !== payload.data.id))
         }
+
+        // Handle Scenario updates
+        else if (payload.type === 'NEW_SCENARIO') {
+          setScenarios(prev => prev.some(s => s.id === payload.data.id) ? prev : [payload.data, ...prev])
+        } else if (payload.type === 'UPDATE_SCENARIO') {
+          setScenarios(prev => prev.map(s => s.id === payload.data.id ? { ...s, ...payload.data } : s))
+        } else if (payload.type === 'DELETE_SCENARIO') {
+          setScenarios(prev => prev.filter(s => s.id !== payload.data.id))
+        }
       } catch (err) {
         console.error('[Admin] WS parsing error:', err)
       }
@@ -131,6 +148,7 @@ export default function AdminDashboard() {
     if (pathname.includes('/admin/users')) setActiveTab('users')
     else if (pathname.includes('/admin/personas')) setActiveTab('personas')
     else if (pathname.includes('/admin/characters')) setActiveTab('characters')
+    else if (pathname.includes('/admin/scenarios')) setActiveTab('scenarios')
     else if (pathname.includes('/admin/lorebooks/fandom')) setActiveTab('lorebooks_fandom')
     else if (pathname.includes('/admin/lorebooks/characters')) setActiveTab('lorebooks_character')
     else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
@@ -155,8 +173,9 @@ export default function AdminDashboard() {
   const isUserDetail = pathname.includes('/users/') && detailId
   const isPersonaDetail = pathname.includes('/personas/') && detailId
   const isLorebookDetail = pathname.includes('/admin/lorebooks/') && detailId
+  const isScenarioDetail = pathname.includes('/admin/scenarios/') && detailId
   
-  const isDetailView = isCharacterDetail || isUserDetail || isPersonaDetail || isLorebookDetail
+  const isDetailView = isCharacterDetail || isUserDetail || isPersonaDetail || isLorebookDetail || isScenarioDetail
 
   // --- Filtering & Sorting Logic ---
   const applySort = (data: any[]) => {
@@ -273,6 +292,7 @@ export default function AdminDashboard() {
               {activeTab === 'lorebooks_fandom' && 'Лорбуки фандомов'}
               {activeTab === 'lorebooks_character' && 'Лорбуки персонажей'}
               {activeTab === 'lorebooks_persona' && 'Лорбуки персон'}
+              {activeTab === 'scenarios' && 'Сценарии'}
             </h1>
             <p className={styles.mainSubtitle}>Система мониторинга и редактирования контента</p>
           </div>
@@ -534,6 +554,46 @@ export default function AdminDashboard() {
               onDeletePersona={(uid) => {
                 setPersonas(prev => prev.filter(p => p.id !== uid))
                 navigate('/admin/personas')
+              }}
+            />
+          )}
+
+          {activeTab === 'scenarios' && !isScenarioDetail && (
+            <ScenarioSection 
+              scenarios={scenarios}
+              characters={characters}
+              onSelectScenario={(sid) => navigate(`/admin/scenarios/${sid}`)}
+              onToggleFilter={() => setIsFilterOpen(true)}
+              isFilterActive={isAnyFilterActive}
+              onSort={handleSort}
+              renderSortIcon={(f) => <SortIcon field={f} />}
+            />
+          )}
+
+          {isScenarioDetail && (
+            <ScenarioProfileView 
+              scenarioId={detailId!}
+              scenarios={scenarios}
+              characters={characters}
+              onBack={() => navigate('/admin/scenarios')}
+              onDelete={(id) => {
+                setScenarios(prev => prev.filter(s => s.id !== id))
+              }}
+              onSave={async (scenario) => {
+                try {
+                  if (detailId === 'create') {
+                    const saved = await scenariosApi.createScenario(scenario)
+                    setScenarios(prev => [saved, ...prev])
+                    navigate(`/admin/scenarios/${saved.id}`)
+                  } else {
+                    const saved = await scenariosApi.updateScenario(detailId!, scenario)
+                    setScenarios(prev => prev.map(s => s.id === saved.id ? saved : s))
+                  }
+                  success('Сценарий сохранен')
+                } catch (e) {
+                  console.error(e)
+                  alert('Ошибка сохранения')
+                }
               }}
             />
           )}
