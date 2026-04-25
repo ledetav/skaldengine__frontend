@@ -20,9 +20,10 @@ interface FormData {
   fandom: string
   character_id: string
   user_persona_id: string
+  tags: string[]
 }
 
-const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '' }
+const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '', tags: [] }
 
 function toForm(lb: Lorebook): FormData {
   // Определяем тип на основе имеющихся связей, так как бэкенд не хранит 'type'
@@ -37,6 +38,7 @@ function toForm(lb: Lorebook): FormData {
     fandom: lb.fandom || '',
     character_id: lb.character_id || '',
     user_persona_id: lb.user_persona_id || '',
+    tags: lb.tags || []
   }
 }
 
@@ -54,6 +56,10 @@ export default function LorebookFormScreen() {
 
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [characters, setCharacters] = useState<Character[]>([])
+
+  const selectedChar = characters.find(c => c.id === form.character_id);
+  const isOriginalChar = selectedChar?.fandom?.toLowerCase() === 'original' || selectedChar?.fandom?.toLowerCase() === 'оригинальный';
+  const isMain = form.tags?.includes('main');
 
   useEffect(() => {
     const loadData = async () => {
@@ -101,7 +107,8 @@ export default function LorebookFormScreen() {
         description: form.description || undefined,
         fandom: form.type === 'fandom' && form.fandom ? form.fandom : null,
         character_id: form.type === 'character' && form.character_id ? form.character_id : null,
-        user_persona_id: form.type === 'persona' && form.user_persona_id ? form.user_persona_id : null
+        user_persona_id: form.type === 'persona' && form.user_persona_id ? form.user_persona_id : null,
+        tags: form.tags
       }
       
       if (isEdit && id) {
@@ -251,6 +258,34 @@ export default function LorebookFormScreen() {
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
+                    </div>
+                  )}
+
+                  {form.type === 'character' && isOriginalChar && (
+                    <div className={styles.formGroup} style={{ 
+                      flexDirection: 'row', 
+                      alignItems: 'center', 
+                      gap: '12px',
+                      padding: '12px',
+                      background: 'rgba(255,140,66,0.05)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,140,66,0.1)'
+                    }}>
+                      <input 
+                        type="checkbox" 
+                        id="isMain"
+                        checked={isMain}
+                        onChange={(e) => {
+                          const newTags = e.target.checked 
+                            ? [...(form.tags || []), 'main']
+                            : (form.tags || []).filter(t => t !== 'main');
+                          setForm(prev => ({ ...prev, tags: newTags }));
+                        }}
+                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                      />
+                      <label htmlFor="isMain" style={{ cursor: 'pointer', fontSize: '0.9rem', color: 'var(--accent-orange)' }}>
+                        Сделать основным лорбуком персонажа
+                      </label>
                     </div>
                   )}
                 </div>

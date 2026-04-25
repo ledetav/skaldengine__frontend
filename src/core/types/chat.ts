@@ -113,5 +113,6 @@ export interface Lorebook {
   user_persona_name?: string
   entries?: LorebookEntry[]
   entries_count?: number
+  tags?: string[]
   created_at: string
 }
