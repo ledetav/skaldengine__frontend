@@ -70,7 +70,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
           </div>
           <div className={styles.statItem}>
             <span className={styles.statLabel}>По сценариям</span>
-            <span className={styles.statValue}>{character.total_chats_count || 0}</span>
+            <span className={styles.statValue}>{character.scenario_chats_count || 0}</span>
           </div>
         </div>
 
