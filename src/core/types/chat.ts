@@ -61,6 +61,11 @@ export interface Chat {
   active_leaf_id?: string
   created_at: string
   updated_at?: string
+  
+  // Enriched fields
+  character_name?: string
+  user_persona_name?: string
+  last_message_preview?: string
 }
 
 export interface ChatUpdate {

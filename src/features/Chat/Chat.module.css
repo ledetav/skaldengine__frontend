@@ -113,3 +113,231 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
 }
+
+.filterSelect {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.filterSelect:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+}
+
+.filterActions {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.resetBtn {
+  background: none;
+  border: none;
+  color: var(--accent-purple);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: rgba(138, 43, 226, 0.1);
+  text-decoration: underline;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  align-items: center;
+}
+
+.searchWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  padding-left: 40px !important;
+}
+
+.filterBtn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chatCard {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  text-decoration: none;
+  transition: all 0.2s var(--ease-smooth);
+  cursor: pointer;
+}
+
+.chatCard:hover {
+  transform: translateX(8px);
+  border-color: var(--border-purple);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.chatInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.chatName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.chatMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.participants {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.participantItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.participantName {
+  font-weight: 600;
+  color: var(--accent-fuchsia);
+}
+
+.messagePreview {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrowIcon {
+  margin-left: 24px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.chatCard:hover .arrowIcon {
+  transform: translateX(4px);
+  color: var(--accent-orange);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+  color: var(--accent-purple);
+}
+
+.filterMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 240px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  padding: 16px;
+  z-index: 100;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.filterSection {
+  margin-bottom: 16px;
+}
+
+.filterSection:last-child {
+  margin-bottom: 0;
+}
+
+.filterTitle {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.filterOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterOption {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterOption:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.filterOptionActive {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--border-purple);
+  color: var(--accent-purple);
+}

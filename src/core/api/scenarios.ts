@@ -2,10 +2,9 @@ import type { Scenario } from '@/core/types/chat'
 import { ApiClient } from './client'
 
 export const scenariosApi = {
-  getScenarios: async (characterId?: string): Promise<Scenario[]> => {
-    const endpoint = characterId 
-      ? `/scenarios/?character_id=${characterId}`
-      : '/scenarios/'
+  getScenarios: async (characterId?: string, skip: number = 0, limit: number = 100): Promise<Scenario[]> => {
+    let endpoint = `/scenarios/?skip=${skip}&limit=${limit}`
+    if (characterId) endpoint += `&character_id=${characterId}`
     const res = await ApiClient.get<any>('core', endpoint)
     return res.items || res || []
   },
@@ -19,7 +18,7 @@ export const scenariosApi = {
   },
 
   updateScenario: async (id: string, data: Partial<Scenario>): Promise<Scenario> => {
-    return ApiClient.put('core', `/scenarios/${id}`, data)
+    return ApiClient.patch('core', `/scenarios/${id}`, data)
   },
 
   deleteScenario: async (id: string): Promise<void> => {

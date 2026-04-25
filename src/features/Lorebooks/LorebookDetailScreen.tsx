@@ -291,15 +291,7 @@ export default function LorebookDetailScreen() {
     try {
       if (!id) return;
       
-      // Call REST sequential inserts depending on performance requirements
-      // Or potentially bulk import. Let's do sequential for now if bulk endpoint is not yet defined
-      for (const entry of newEntries) {
-        await lorebooksApi.createLorebookEntry(id, {
-          keywords: entry.keywords,
-          content: entry.content,
-          priority: entry.priority
-        })
-      }
+      await lorebooksApi.createLorebookEntriesBulk(id, newEntries)
 
       setAddMode('none')
       success(`Импортировано ${newEntries.length} записей. Пожалуйста, обновите страницу для просмотра.`)
