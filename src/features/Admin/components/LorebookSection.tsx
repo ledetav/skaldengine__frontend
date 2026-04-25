@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
@@ -60,17 +60,41 @@ export function LorebookSection({
 
   const lb = useMemo(() => isCreateMode ? draftLb : lorebooks.find(l => l.id === id), [lorebooks, id, isCreateMode, draftLb])
 
+  const [editName, setEditName] = useState('')
+  const [editDescription, setEditDescription] = useState('')
+
   const [editType, setEditType] = useState<'fandom' | 'character' | 'persona'>(initialType)
-  const [selectedFandom, setSelectedFandom] = useState(lb?.fandom || '')
+  const [selectedFandom, setSelectedFandom] = useState('')
   const [isNewFandom, setIsNewFandom] = useState(false)
-  const [selectedCharId, setSelectedCharId] = useState(lb?.character_id || '')
-  const [selectedUserId, setSelectedUserId] = useState(lb?.owner_id || personas.find(p => p.id === lb?.user_persona_id)?.owner_id || '')
-  const [selectedPersonaId, setSelectedPersonaId] = useState(lb?.user_persona_id || '')
-  
-  const [editName, setEditName] = useState(lb?.name || '')
-  const [editDescription, setEditDescription] = useState(lb?.description || '')
+  const [selectedCharId, setSelectedCharId] = useState('')
+  const [selectedUserId, setSelectedUserId] = useState('')
+  const [selectedPersonaId, setSelectedPersonaId] = useState('')
+
+  // Sync state when lb changes or entering edit mode (Bug fix: fields not populating without reload)
+  useEffect(() => {
+    if (lb && isEditMode) {
+      setEditName(lb.name || '')
+      setEditDescription(lb.description || '')
+      setEditType(lb.type || initialType)
+      setSelectedFandom(lb.fandom || '')
+      setSelectedCharId(lb.character_id || '')
+      setSelectedUserId(lb.owner_id || personas.find(p => p.id === lb.user_persona_id)?.owner_id || '')
+      setSelectedPersonaId(lb.user_persona_id || '')
+      setIsNewFandom(false)
+    } else if (isCreateMode) {
+      setEditName('')
+      setEditDescription('')
+      setEditType(initialType)
+      setSelectedFandom('')
+      setSelectedCharId('')
+      setSelectedUserId('')
+      setSelectedPersonaId('')
+      setIsNewFandom(false)
+    }
+  }, [lb, isEditMode, isCreateMode, initialType, personas])
 
   const [isAddingEntry, setIsAddingEntry] = useState(false)
+
   const [entryAddType, setEntryAddType] = useState<'single' | 'batch' | 'json'>('single')
   const [newEntryKeywords, setNewEntryKeywords] = useState('')
   const [newEntryContent, setNewEntryContent] = useState('')

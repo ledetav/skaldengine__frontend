@@ -80,32 +80,21 @@ export function CharacterProfileView({
       const updated = { ...draftCharacter, [field]: value }
       setDraftCharacter(updated)
       
-      // Auto-attach lorebooks when fandom changes (Task 5)
+      // Auto-attach removed as it was destructive and converted fandom lorebooks to character lorebooks
       if (field === 'fandom') {
-        const updatedLorebooks = allLorebooks.map(lb => {
-          if (lb.fandom === value) {
-            return { ...lb, character_id: 'create' }
-          }
-          // If fandom changed, maybe detach old ones? 
-          // Requirements say "automatically attach", so we do that.
-          return lb
-        })
-        onUpdateLorebooks(updatedLorebooks)
+        // We only notify the user or log it, but don't modify global lorebooks state destructively
+        console.log(`Fandom changed to ${value}, character will automatically inherit fandom lorebooks in chat.`)
       }
     } else {
       const updated = { ...character, [field]: value }
       onUpdateCharacter(updated)
 
       if (field === 'fandom') {
-        const updatedLorebooks = allLorebooks.map(lb => {
-          if (lb.fandom === value) {
-            return { ...lb, character_id: character.id }
-          }
-          return lb
-        })
-        onUpdateLorebooks(updatedLorebooks)
+        // Removed destructive auto-attach
+        console.log(`Fandom updated to ${value}`)
       }
     }
+
   }
 
   const toggleLorebook = (lbId: string) => {
