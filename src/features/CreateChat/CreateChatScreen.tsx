@@ -142,6 +142,8 @@ const CreateChatScreen: React.FC = () => {
     )
   }
 
+    const hasFullLorebook = lorebooks.some(lb => (lb.entries_count || 0) > 10)
+
   return (
     <div className={styles.screen}>
       <div className={styles.background} />
@@ -162,6 +164,7 @@ const CreateChatScreen: React.FC = () => {
             character={character} 
             scenariosCount={scenarios.length} 
             currentUser={currentUser}
+            hasFullLorebook={hasFullLorebook}
           />
         </section>
 
@@ -204,6 +207,7 @@ const CreateChatScreen: React.FC = () => {
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}
+                onCreateLorebook={() => navigate('/lorebooks/create')}
                 currentUser={currentUser}
                 currentCharacter={character}
               />
@@ -217,6 +221,7 @@ const CreateChatScreen: React.FC = () => {
                 scenarios={scenarios}
                 selectedScenarioId={selectedScenarioId}
                 onSelect={setSelectedScenarioId}
+                onCreateClick={(currentUser?.role === 'admin' || currentUser?.role === 'moderator') ? () => navigate('/admin/scenarios/create') : undefined}
               />
               <DurationSelector 
                 selectedDuration={campaignDuration}
@@ -238,6 +243,7 @@ const CreateChatScreen: React.FC = () => {
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}
+                onCreateLorebook={() => navigate('/lorebooks/create')}
                 currentUser={currentUser}
                 currentCharacter={character}
               />
