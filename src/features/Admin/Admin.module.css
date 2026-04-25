@@ -86,7 +86,6 @@
   width: 36px;
   height: 36px;
   background: var(--btn-primary-bg);
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,7 +281,6 @@
   gap: 16px;
   background: rgba(255, 255, 255, 0.03);
   padding: 6px 6px 6px 20px;
-  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
@@ -398,12 +396,12 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
   padding: 10px 18px 10px 42px;
   color: var(--white);
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.3s ease;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
 .searchBox:focus {
@@ -437,8 +435,8 @@
   display: flex;
   background: rgba(255, 255, 255, 0.015);
   padding: 3px;
-  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.03);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .viewBtn {
@@ -562,14 +560,14 @@
 }
 
 .cardTag {
-  font-size: 0.7rem; /* Reduced from 0.8rem */
+  font-size: 0.7rem;
   background: rgba(255, 255, 255, 0.03);
   padding: 3px 10px;
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
   color: rgba(255, 255, 255, 0.35);
   font-weight: 700;
   text-transform: uppercase;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
 }
 
 .cardActions {
@@ -581,16 +579,15 @@
 }
 
 .iconBtn {
-  width: 30px; /* Reduced from 36px */
+  width: 30px;
   height: 30px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem; /* Reduced from 1.1rem */
+  font-size: 0.9rem;
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
 }
 
@@ -609,8 +606,7 @@
   gap: 4px;
   padding: 8px;
   background: rgba(255, 255, 255, 0.01);
-  border-radius: 6px;
-  clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
 }
 
 .statLabel {
@@ -657,8 +653,7 @@
 }
 
 .sidebarWrapper {
-  width: 320px;
-  flex-shrink: 0;
+  flex: 1.5;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -668,7 +663,7 @@
 }
 
 .mainContentWrapper {
-  flex: 1;
+  flex: 3;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -679,13 +674,12 @@
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-  padding-bottom: 24px; /* Ensure padding at bottom */
+  padding-bottom: 24px;
 }
 
 .charCover {
@@ -707,18 +701,18 @@
   left: 24px;
   width: 90px;
   height: 90px;
-  border-radius: 50%;
   padding: 3px;
   background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
 }
 
 .charAvatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
 }
 
 .charBasicInfo {
@@ -758,12 +752,21 @@
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 14px;
-  border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   transition: all 0.3s ease;
+}
+
+.nonEditing .charStatBox:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.charStatBox:not(.nonEditing .charStatBox):hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .charStatBox:hover {
@@ -782,7 +785,7 @@
   gap: 32px;
   clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-  min-height: min-content; /* Allow stretching */
+  min-height: min-content;
 }
 
 .detailGroup {
@@ -859,7 +862,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: rgba(255, 255, 255, 0.5);
@@ -885,13 +887,13 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
   color: var(--white);
   padding: 12px 16px;
   font-family: inherit;
   font-size: 0.95rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .editInput:focus, .editTextarea:focus {
@@ -917,9 +919,9 @@
   user-select: none;
   background: rgba(255, 255, 255, 0.02);
   padding: 8px 16px;
-  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
 .toggleRow:hover {
@@ -993,6 +995,14 @@
   z-index: 2;
 }
 
+.nonEditing .imageEditWrapper {
+  cursor: default;
+}
+
+.nonEditing .imageEditWrapper:hover .pencilOverlay {
+  opacity: 0;
+}
+
 /* Custom Dropdown */
 .customDropdown {
   position: relative;
@@ -1003,7 +1013,6 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 16px;
-  border-radius: 12px;
   color: var(--white);
   cursor: pointer;
   display: flex;
@@ -1012,6 +1021,7 @@
   font-size: 0.9rem;
   font-weight: 600;
   transition: all 0.3s ease;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .dropdownSelected:hover {
@@ -1027,7 +1037,6 @@
   background: #14141a;
   backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
   z-index: 1000;
   max-height: 250px;
   overflow: hidden;
@@ -1035,6 +1044,7 @@
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
   animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
 }
 
 @keyframes dropdownFadeIn {
@@ -1051,10 +1061,10 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
   padding: 8px 12px;
   color: var(--white);
   font-size: 0.85rem;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
 }
 
 .dropdownOptionsList {
@@ -1089,13 +1099,13 @@
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 16px;
-  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
   position: relative;
   cursor: pointer;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .lorebookMiniCard:hover {
@@ -1142,12 +1152,12 @@
 .emptyState {
   background: rgba(255, 255, 255, 0.02);
   padding: 24px;
-  border-radius: 16px;
   color: rgba(255,255,255,0.3);
   font-size: 0.9rem;
   font-style: italic;
   text-align: center;
   border: 1px solid rgba(255,255,255,0.03);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
 }
 
 .addLorebookBtn {
@@ -1156,7 +1166,6 @@
   background: rgba(255, 140, 66, 0.1);
   color: var(--accent-orange);
   border: 1px dashed var(--accent-orange);
-  border-radius: 12px;
   font-weight: 800;
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -1178,12 +1187,12 @@
   background: #1a1a24;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   animation: dropdownFadeIn 0.3s ease;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
 }
 
 .lorebookOption {
@@ -1389,12 +1398,12 @@
   padding: 10px 16px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .filterBtn:hover {
@@ -1432,11 +1441,11 @@
   flex: 1;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
   padding: 8px 12px;
   color: var(--white);
   font-size: 0.85rem;
   width: 100%;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
 }
 
 .chipsContainer {
@@ -1453,7 +1462,6 @@
   padding: 4px 10px;
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid var(--border-purple);
-  border-radius: 6px;
   color: var(--accent-purple);
   font-size: 0.75rem;
   font-weight: 700;
@@ -1476,8 +1484,8 @@
   overflow-y: auto;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
   margin-top: 8px;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
 }
 
 .filterOption {
@@ -1504,10 +1512,10 @@
   color: var(--accent-orange);
   background: rgba(255, 140, 66, 0.1);
   padding: 2px 6px;
-  border-radius: 4px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
 }
 
 .lockHint {
@@ -1521,7 +1529,6 @@
   background: rgba(255, 140, 66, 0.05);
   border: 1px solid rgba(255, 140, 66, 0.15);
   padding: 12px 16px;
-  border-radius: 12px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   display: flex;
@@ -1534,9 +1541,9 @@
   display: flex;
   background: rgba(255, 255, 255, 0.03);
   padding: 4px;
-  border-radius: 12px;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
 .typeTab {
@@ -1545,10 +1552,10 @@
   text-align: center;
   font-size: 0.8rem;
   font-weight: 700;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   color: rgba(255, 255, 255, 0.4);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
 }
 
 .typeTabActive {
@@ -1581,9 +1588,9 @@
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
   transition: all 0.3s ease;
   user-select: none;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .toggleRow:hover {
@@ -1594,7 +1601,7 @@
   width: 36px;
   height: 20px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
   position: relative;
   transition: all 0.3s ease;
 }

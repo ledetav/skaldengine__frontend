@@ -95,8 +95,8 @@ export function CharacterSection({
                 <tr key={char.id} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0 }}>
-                        <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.charAvatar} alt={char.name} />
+                      <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0, borderRadius: '50%', clipPath: 'none' }}>
+                        <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.charAvatar} style={{ borderRadius: '50%', clipPath: 'none' }} alt={char.name} />
                       </div>
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
@@ -11,6 +11,7 @@ interface CharacterProfileViewProps {
   onBack: () => void
   onUpdateCharacter: (char: Character) => void
   onSave?: (char: Character) => void | Promise<void>
+  onDelete?: (id: string) => void
 }
 
 export function CharacterProfileView({ 
@@ -19,7 +20,8 @@ export function CharacterProfileView({
   allLorebooks,
   onBack, 
   onUpdateCharacter,
-  onSave
+  onSave,
+  onDelete
 }: CharacterProfileViewProps) {
   const { success } = useToast()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -37,6 +39,17 @@ export function CharacterProfileView({
   const [fandomSearch, setFandomSearch] = useState('')
   const [isFandomOpen, setIsFandomOpen] = useState(false)
   const [isAddingLorebook, setIsAddingLorebook] = useState(false)
+  const fandomDropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (fandomDropdownRef.current && !fandomDropdownRef.current.contains(event.target as Node)) {
+        setIsFandomOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const [draftCharacter, setDraftCharacter] = useState<Character | undefined>(isCreate ? {
     id: 'create',
@@ -153,8 +166,9 @@ export function CharacterProfileView({
       const { charactersApi } = await import('@/core/api/characters')
       await charactersApi.deleteAdminCharacter(character.id)
       success('Персонаж успешно удален')
+      if (onDelete) onDelete(character.id)
       setShowDeleteModal(false)
-      onBack()
+      setTimeout(() => onBack(), 300)
     } catch (e) {
       console.error('Failed to delete character', e)
       success('Ошибка при удалении персонажа')
@@ -198,7 +212,7 @@ export function CharacterProfileView({
   }, [allLorebooks, character.fandom, charLorebooks, character.id]);
 
   return (
-    <div className={styles.characterProfileOverlay}>
+    <div className={`${styles.characterProfileOverlay} ${!isEditing ? styles.nonEditing : ''}`}>
       <header className={styles.backHeader}>
         <button className={styles.backBtn} onClick={onBack}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -266,17 +280,17 @@ export function CharacterProfileView({
                   </div>
                   
                   {character.type === 'fandom' && (
-                    <div className={styles.customDropdown} style={{ width: '100%' }}>
+                    <div className={styles.customDropdown} style={{ width: '100%' }} ref={fandomDropdownRef}>
                       <div className={styles.dropdownSelected} onClick={() => setIsFandomOpen(!isFandomOpen)}>
-                        {character.fandom || 'Выберите фандом'}
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <span>{character.fandom || 'Выберите фандом'}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.3s ease', transform: isFandomOpen ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
                       </div>
                       {isFandomOpen && (
                         <div className={styles.dropdownMenu}>
                           <div className={styles.dropdownSearchWrapper}>
                             <input 
                               className={styles.dropdownSearch}
-                              placeholder="Поиск..."
+                              placeholder="Поиск по фандомам..."
                               value={fandomSearch}
                               onChange={(e) => setFandomSearch(e.target.value)}
                               autoFocus
@@ -284,14 +298,16 @@ export function CharacterProfileView({
                             />
                           </div>
                           <div className={styles.dropdownOptionsList}>
-                            {filteredFandoms.map(f => (
+                            {filteredFandoms.length > 0 ? filteredFandoms.map(f => (
                               <div key={f} className={styles.dropdownOption} onClick={() => {
                                 handleChange('fandom', f)
                                 setIsFandomOpen(false)
                               }}>
                                 {f}
                               </div>
-                            ))}
+                            )) : (
+                              <div style={{ padding: '16px', color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', textAlign: 'center' }}>Ничего не найдено</div>
+                            )}
                           </div>
                         </div>
                       )}

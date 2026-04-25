@@ -429,8 +429,8 @@ export default function AdminDashboard() {
                         <tr key={p.id} onClick={() => navigate(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0 }}>
-                                <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} className={styles.charAvatar} alt="" />
+                              <div className={styles.charAvatarWrapper} style={{ width: '28px', height: '28px', position: 'static', flexShrink: 0, borderRadius: '50%', clipPath: 'none' }}>
+                                <img src={p.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} className={styles.charAvatar} style={{ borderRadius: '50%', clipPath: 'none' }} alt="" />
                               </div>
                               <span style={{ fontWeight: 700 }}>{p.name}</span>
                             </div>
@@ -461,6 +461,9 @@ export default function AdminDashboard() {
                 if (detailId !== 'create') {
                   setCharacters((prev: Character[]) => prev.map((c: Character) => c.id === updated.id ? updated : c))
                 }
+              }}
+              onDelete={(deletedId) => {
+                setCharacters(prev => prev.filter(c => c.id !== deletedId))
               }}
               onSave={async (char) => {
                 // ... (rest of the save logic)
