@@ -403,7 +403,7 @@ export default function AdminDashboard() {
           {activeTab === 'characters' && !isDetailView && (
             <div className={styles.sectionWrapper}>
               <CharacterSection 
-                characters={filteredCharacters}
+                characters={filteredCharacters.slice(0, PAGE_SIZE)}
                 onSelectCharacter={(cid) => navigate(`/admin/characters/${cid}`)}
                 onToggleFilter={() => setIsFilterOpen(true)}
                 isFilterActive={isAnyFilterActive}
@@ -423,7 +423,7 @@ export default function AdminDashboard() {
             <div className={styles.sectionWrapper}>
               <LorebookSection 
                 type={activeTab === 'lorebooks_fandom' ? 'fandom' : activeTab === 'lorebooks_persona' ? 'persona' : 'character'} 
-                lorebooks={filteredLorebooks}
+                lorebooks={filteredLorebooks.slice(0, PAGE_SIZE)}
                 characters={characters}
                 users={users}
                 personas={personas}
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map(u => (
+                    {filteredUsers.slice(0, PAGE_SIZE).map(u => (
                       <tr key={u.id} onClick={() => navigate(`/admin/users/${u.id}`)} style={{ cursor: 'pointer' }}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -538,7 +538,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredPersonas.map(p => {
+                    {filteredPersonas.slice(0, PAGE_SIZE).map(p => {
                       const owner = users.find(u => u.id === p.owner_id)
                       return (
                         <tr key={p.id} onClick={() => navigate(`/admin/personas/${p.id}`)} style={{ cursor: 'pointer' }}>
@@ -662,7 +662,7 @@ export default function AdminDashboard() {
           {activeTab === 'scenarios' && !isScenarioDetail && (
             <div className={styles.sectionWrapper}>
               <ScenarioSection 
-                scenarios={scenarios}
+                scenarios={scenarios.slice(0, PAGE_SIZE)}
                 characters={characters}
                 onSelectScenario={(sid) => navigate(`/admin/scenarios/${sid}`)}
                 onToggleFilter={() => setIsFilterOpen(true)}

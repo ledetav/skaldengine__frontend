@@ -665,7 +665,7 @@ export function LorebookSection({
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredEntries.map((entry: LorebookEntry, i: number) => {
+                  {filteredEntries.slice(0, 20).map((entry: LorebookEntry, i: number) => {
                     const isEditing = editingEntryId === entry.id
                     return (
                       <tr key={entry.id || i}>
