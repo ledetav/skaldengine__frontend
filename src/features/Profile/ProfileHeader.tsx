@@ -4,6 +4,7 @@ import styles from './Profile.module.css';
 interface ProfileHeaderProps {
   user: UserProfile;
   isPublic?: boolean;
+  onEditClick?: () => void;
 }
 
 const EditIcon = () => (
@@ -31,7 +32,7 @@ export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderP
         )}
         <div className={styles.coverBottomGradient} />
         {!isPublic && (
-          <div className={styles.coverOverlay} title="Изменить обложку">
+          <div className={styles.coverOverlay} title="Изменить обложку" onClick={onEditClick}>
             <EditIcon />
           </div>
         )}
@@ -47,7 +48,7 @@ export default function ProfileHeader({ user, isPublic = false }: ProfileHeaderP
             </div>
           )}
           {!isPublic && (
-            <div className={styles.avatarOverlay} title="Изменить аватар">
+            <div className={styles.avatarOverlay} title="Изменить аватар" onClick={onEditClick}>
               <EditIcon />
             </div>
           )}

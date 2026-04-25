@@ -3,6 +3,7 @@ import styles from '../Profile.module.css';
 import type { UserProfile } from '@/core/types/profile';
 import { authApi } from '@/core/api/auth';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/components/ui/useToast';
 
 interface SettingsTabProps {
   user: UserProfile;
@@ -10,16 +11,23 @@ interface SettingsTabProps {
 
 export default function SettingsTab({ user }: SettingsTabProps) {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [formData, setFormData] = useState({
     login: user.login || '',
     username: user.username || '',
     email: user.email || '',
+    full_name: user.full_name || '',
+    about: user.about || '',
+    avatar_url: user.avatar_url || '',
+    cover_url: user.cover_url || '',
+    polza_api_key: user.polza_api_key || '',
   });
+  
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
   });
-  const [apiKey, setApiKey] = useState(localStorage.getItem('skald_apiKey') || '');
+  
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -30,10 +38,15 @@ export default function SettingsTab({ user }: SettingsTabProps) {
         login: formData.login,
         username: formData.username,
         email: formData.email,
+        full_name: formData.full_name || null,
+        about: formData.about || null,
+        avatar_url: formData.avatar_url || null,
+        cover_url: formData.cover_url || null,
+        polza_api_key: formData.polza_api_key || null,
       });
-      alert('Профиль успешно обновлен!');
+      success('Профиль успешно обновлен!');
     } catch (err: any) {
-      alert(`Ошибка при обновлении: ${err.message || 'Сбой'}`);
+      showError(`Ошибка при обновлении: ${err.message || 'Сбой'}`);
     } finally {
       setIsUpdating(false);
     }
@@ -41,16 +54,16 @@ export default function SettingsTab({ user }: SettingsTabProps) {
 
   const handleChangePassword = async () => {
     if (!passwordData.oldPassword || !passwordData.newPassword) {
-      alert('Введите оба пароля');
+      showError('Введите оба пароля');
       return;
     }
     try {
       setIsUpdating(true);
       await authApi.changePassword(passwordData.oldPassword, passwordData.newPassword);
       setPasswordData({ oldPassword: '', newPassword: '' });
-      alert('Пароль успешно изменен!');
+      success('Пароль успешно изменен!');
     } catch (err: any) {
-      alert(`Ошибка при смене пароля: ${err.message || 'Сбой'}`);
+      showError(`Ошибка при смене пароля: ${err.message || 'Сбой'}`);
     } finally {
       setIsUpdating(false);
     }
@@ -63,7 +76,7 @@ export default function SettingsTab({ user }: SettingsTabProps) {
       localStorage.removeItem('user_role');
       navigate('/');
     } catch (err: any) {
-      alert(`Ошибка при удалении: ${err.message || 'Сбой'}`);
+      showError(`Ошибка при удалении: ${err.message || 'Сбой'}`);
       setShowDeleteModal(false);
     }
   };
@@ -89,22 +102,51 @@ export default function SettingsTab({ user }: SettingsTabProps) {
               <label>Email</label>
               <input type="email" className={styles.inputField} value={formData.email} onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))} />
             </div>
+            
+            <div className={styles.inputGroup}>
+              <label>Полное имя</label>
+              <input type="text" className={styles.inputField} value={formData.full_name} onChange={e => setFormData(prev => ({ ...prev, full_name: e.target.value }))} placeholder="Имя Фамилия" />
+            </div>
+          </div>
+
+          <div style={{ marginTop: '1.5rem' }}>
+            <div className={styles.inputGroup}>
+              <label>О себе</label>
+              <textarea 
+                className={styles.inputField} 
+                style={{ minHeight: '100px', resize: 'vertical' }}
+                value={formData.about} 
+                onChange={e => setFormData(prev => ({ ...prev, about: e.target.value }))} 
+                placeholder="Расскажите о себе..."
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+            <div className={styles.inputGroup}>
+              <label>Аватар (URL)</label>
+              <input type="text" className={styles.inputField} value={formData.avatar_url} onChange={e => setFormData(prev => ({ ...prev, avatar_url: e.target.value }))} placeholder="https://..." />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Обложка (URL)</label>
+              <input type="text" className={styles.inputField} value={formData.cover_url} onChange={e => setFormData(prev => ({ ...prev, cover_url: e.target.value }))} placeholder="https://..." />
+            </div>
           </div>
 
           <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-light)' }}>
             <h2 className={styles.sectionTitle} style={{ marginBottom: '1rem', color: 'var(--accent-purple)' }}>Настройки AI</h2>
             <div className={styles.inputGroup}>
-              <label>API Ключ AI (Skald)</label>
+              <label>Внешний API Ключ (Polza/Skald)</label>
               <input 
                 type="password" 
                 className={styles.inputField} 
-                value={apiKey} 
-                onChange={e => setApiKey(e.target.value)} 
+                value={formData.polza_api_key} 
+                onChange={e => setFormData(prev => ({ ...prev, polza_api_key: e.target.value }))} 
                 placeholder="sk-..." 
                 style={{ padding: '10px 14px' }} 
               />
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                Ключ необходим для генерации сообщений в чате. Он сохраняется только локально в вашем браузере.
+                Ключ необходим для работы некоторых моделей генерации.
               </p>
             </div>
           </div>
@@ -112,10 +154,7 @@ export default function SettingsTab({ user }: SettingsTabProps) {
           <button 
             className="btn-primary" 
             style={{ marginTop: '2rem', width: '100%', justifyContent: 'center', height: '48px', fontSize: '1rem' }}
-            onClick={() => {
-              handleUpdateProfile();
-              localStorage.setItem('skald_apiKey', apiKey);
-            }}
+            onClick={handleUpdateProfile}
             disabled={isUpdating}
           >
             {isUpdating ? 'Сохранение...' : 'Сохранить изменения'}
