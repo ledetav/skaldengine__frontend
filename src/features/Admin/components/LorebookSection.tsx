@@ -109,8 +109,28 @@ export function LorebookSection({
     const s = new Set<string>()
     lorebooks.forEach(l => { if (l.fandom) s.add(l.fandom) })
     characters.forEach(c => { if (c.fandom) s.add(c.fandom) })
-    return Array.from(s).filter(Boolean).sort()
+    return Array.from(s).filter(Boolean).filter(f => !['original', 'оригинальный'].includes(f.toLowerCase())).sort()
   }, [lorebooks, characters])
+
+  const currentCharacter = useMemo(() => 
+    characters.find(c => String(c.id) === String(selectedCharId || lb?.character_id)),
+    [characters, selectedCharId, lb?.character_id]
+  );
+  
+  const isOriginalChar = currentCharacter?.type === 'original';
+  
+  const mainLorebooksForChar = useMemo(() => 
+    lorebooks.filter(l => String(l.character_id) === String(selectedCharId || lb?.character_id) && l.tags?.includes('main')),
+    [lorebooks, selectedCharId, lb?.character_id]
+  );
+
+  const canToggleMain = useMemo(() => {
+    if (!isOriginalChar) return true;
+    if (!isMain) return true; // Can always make it main
+    // If it's already main, can only un-main if there's at least one OTHER main lorebook
+    // If we are in edit mode, it's already in the list.
+    return mainLorebooksForChar.length > 1;
+  }, [isOriginalChar, isMain, mainLorebooksForChar]);
 
   const userPersonas = useMemo(() => {
     return personas.filter(p => p.owner_id === selectedUserId)
@@ -303,14 +323,21 @@ export function LorebookSection({
                         </div>
                       )}
 
-                      {editType === 'character' && (characters.find(c => String(c.id) === String(selectedCharId))?.type === 'original') && (
-                        <div 
-                          className={`${styles.toggleRow} ${isMain ? styles.toggleActive : ''}`}
-                          onClick={() => setIsMain(!isMain)}
-                          style={{ marginTop: '4px' }}
-                        >
-                          <div className={styles.toggleSwitch} />
-                          <span className={styles.toggleLabel}>Основной лорбук персонажа</span>
+                      {editType === 'character' && isOriginalChar && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div 
+                            className={`${styles.toggleRow} ${isMain ? styles.toggleActive : ''} ${!canToggleMain ? styles.toggleLocked : ''}`}
+                            onClick={() => canToggleMain && setIsMain(!isMain)}
+                            style={{ marginTop: '4px', cursor: canToggleMain ? 'pointer' : 'not-allowed' }}
+                          >
+                            <div className={styles.toggleSwitch} />
+                            <span className={styles.toggleLabel}>Основной лорбук персонажа</span>
+                          </div>
+                          {!canToggleMain && (
+                            <span className={styles.lockHint} style={{ marginLeft: '12px' }}>
+                              У оригинального персонажа должен быть хотя бы один основной лорбук
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -355,14 +382,21 @@ export function LorebookSection({
                   <>
                     <Button variant="orange" onClick={() => handleEdit(lb.id)}>Редактировать</Button>
                     {initialType !== 'persona' && (
-                      <Button 
-                        variant="danger" 
-                        onClick={() => setShowDeleteModal(true)}
-                        disabled={lb.tags?.includes('main')}
-                        title={lb.tags?.includes('main') ? "Основной лорбук нельзя удалить" : ""}
-                      >
-                        Удалить лорбук
-                      </Button>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                        {lb.tags?.includes('main') && isOriginalChar && (
+                          <span className={styles.lockHint} style={{ fontSize: '0.7rem', color: 'rgba(255, 140, 66, 0.8)' }}>
+                            Основной лорбук оригинального персонажа нельзя удалить
+                          </span>
+                        )}
+                        <Button 
+                          variant="danger" 
+                          onClick={() => setShowDeleteModal(true)}
+                          disabled={lb.tags?.includes('main') && isOriginalChar}
+                          title={lb.tags?.includes('main') && isOriginalChar ? "Основной лорбук нельзя удалить" : ""}
+                        >
+                          Удалить лорбук
+                        </Button>
+                      </div>
                     )}
                   </>
                 )}
@@ -632,15 +666,22 @@ export function LorebookSection({
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
                 {initialType !== 'persona' && (
-                  <button 
-                    className={`${styles.iconBtn} ${styles.dangerBtn}`} 
-                    style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties}
-                    onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); }}
-                    disabled={lb.tags?.includes('main')}
-                    title={lb.tags?.includes('main') ? "Основной лорбук нельзя удалить" : "Удалить"}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  </button>
+                  <div style={{ position: 'relative', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') && (
+                      <span className={styles.lockHint} style={{ fontSize: '0.6rem', marginTop: 0, whiteSpace: 'nowrap' }}>
+                        Не удаляемый
+                      </span>
+                    )}
+                    <button 
+                      className={`${styles.iconBtn} ${styles.dangerBtn}`} 
+                      style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties}
+                      onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); }}
+                      disabled={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original')}
+                      title={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') ? "Основной лорбук нельзя удалить" : "Удалить"}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
                 )}
               </div>
 

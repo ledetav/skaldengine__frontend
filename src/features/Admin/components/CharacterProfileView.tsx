@@ -67,6 +67,44 @@ export function CharacterProfileView({
     return Array.from(fandoms as Set<string>).sort()
   }, [allLorebooks])
 
+  const isOriginal = useMemo(() => 
+    character?.type?.toLowerCase() === 'original' || character?.fandom?.toLowerCase() === 'original' || character?.fandom?.toLowerCase() === 'оригинальный',
+  [character?.type, character?.fandom])
+
+  // Lorebooks to display in the main list:
+  // 1. Lorebooks specifically linked via character.lorebook_ids
+  // 2. Lorebooks belonging to this specific character (Requirement: visible on card)
+  // 3. Lorebooks belonging to this fandom (if not original)
+  const charLorebooks = useMemo(() => {
+    if (!character) return []
+    const linkedIds = character.lorebook_ids || []
+    return allLorebooks.filter((lb: Lorebook) => 
+      linkedIds.includes(lb.id) || 
+      lb.character_id === character.id ||
+      (character.fandom && lb.fandom === character.fandom && character.fandom !== '' && !isOriginal)
+    )
+  }, [allLorebooks, character, isOriginal])
+  
+  // Available lorebooks to attach (Requirement 1)
+  const attachableLorebooks = useMemo(() => {
+    if (!character) return []
+    return allLorebooks.filter((lb: Lorebook) => {
+      // 1. Don't show if already in the character's list (managed on card)
+      if (charLorebooks.some((clb: Lorebook) => clb.id === lb.id)) return false;
+
+      // 2. Include fandom lorebooks, but EXCLUDE those belonging to other characters
+      if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
+        // If it's a character-specific lorebook and it's for another character, exclude it.
+        if (lb.type === 'character' && lb.character_id && lb.character_id !== character.id) {
+          return false;
+        }
+        return true;
+      }
+      
+      return false;
+    });
+  }, [allLorebooks, character, charLorebooks]);
+
 
   if (!character) {
     return (
@@ -160,41 +198,6 @@ export function CharacterProfileView({
     }
   }
 
-  const isOriginal = useMemo(() => 
-    character.type?.toLowerCase() === 'original' || character.fandom?.toLowerCase() === 'original' || character.fandom?.toLowerCase() === 'оригинальный',
-  [character.type, character.fandom])
-
-  // Lorebooks to display in the main list:
-  // 1. Lorebooks specifically linked via character.lorebook_ids
-  // 2. Lorebooks belonging to this specific character (Requirement: visible on card)
-  // 3. Lorebooks belonging to this fandom (if not original)
-  const charLorebooks = useMemo(() => {
-    const linkedIds = character.lorebook_ids || []
-    return allLorebooks.filter((lb: Lorebook) => 
-      linkedIds.includes(lb.id) || 
-      lb.character_id === character.id ||
-      (character.fandom && lb.fandom === character.fandom && character.fandom !== '' && !isOriginal)
-    )
-  }, [allLorebooks, character.lorebook_ids, character.fandom, isOriginal, character.id])
-  
-  // Available lorebooks to attach (Requirement 1)
-  const attachableLorebooks = useMemo(() => {
-    return allLorebooks.filter((lb: Lorebook) => {
-      // 1. Don't show if already in the character's list (managed on card)
-      if (charLorebooks.some((clb: Lorebook) => clb.id === lb.id)) return false;
-
-      // 2. Include fandom lorebooks, but EXCLUDE those belonging to other characters
-      if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
-        // If it's a character-specific lorebook and it's for another character, exclude it.
-        if (lb.type === 'character' && lb.character_id && lb.character_id !== character.id) {
-          return false;
-        }
-        return true;
-      }
-      
-      return false;
-    });
-  }, [allLorebooks, character.fandom, charLorebooks, character.id]);
 
   return (
     <div className={`${styles.characterProfileOverlay} ${!isEditing ? styles.nonEditing : ''}`}>
