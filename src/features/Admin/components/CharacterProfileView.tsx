@@ -10,7 +10,6 @@ interface CharacterProfileViewProps {
   allLorebooks: Lorebook[]
   onBack: () => void
   onUpdateCharacter: (char: Character) => void
-  onUpdateLorebooks: (lorebooks: Lorebook[]) => void
   onSave?: (char: Character) => void | Promise<void>
 }
 
@@ -20,7 +19,6 @@ export function CharacterProfileView({
   allLorebooks,
   onBack, 
   onUpdateCharacter,
-  onUpdateLorebooks,
   onSave
 }: CharacterProfileViewProps) {
   const { success } = useToast()
@@ -50,6 +48,7 @@ export function CharacterProfileView({
     nsfw_allowed: false,
     is_public: false,
     is_deleted: false,
+    lorebook_ids: [],
   } as Character : undefined)
 
   const character = isCreate ? draftCharacter : characters.find(c => c.id === characterId)
@@ -80,34 +79,50 @@ export function CharacterProfileView({
       const updated = { ...draftCharacter, [field]: value }
       setDraftCharacter(updated)
       
-      // Auto-attach removed as it was destructive and converted fandom lorebooks to character lorebooks
       if (field === 'fandom') {
-        // We only notify the user or log it, but don't modify global lorebooks state destructively
-        console.log(`Fandom changed to ${value}, character will automatically inherit fandom lorebooks in chat.`)
+        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value && value !== '')
+        const fandomLbIds = fandomLbs.map(lb => lb.id)
+        const currentIds = draftCharacter?.lorebook_ids || []
+        const newIds = Array.from(new Set([...currentIds, ...fandomLbIds]))
+        
+        const updated = { ...draftCharacter, [field]: value, lorebook_ids: newIds } as Character
+        setDraftCharacter(updated)
+      } else {
+        const updated = { ...draftCharacter, [field]: value }
+        setDraftCharacter(updated)
       }
     } else {
-      const updated = { ...character, [field]: value }
-      onUpdateCharacter(updated)
-
       if (field === 'fandom') {
-        // Removed destructive auto-attach
-        console.log(`Fandom updated to ${value}`)
+        const fandomLbs = allLorebooks.filter(lb => lb.fandom === value && value !== '')
+        const fandomLbIds = fandomLbs.map(lb => lb.id)
+        const currentIds = character.lorebook_ids || []
+        const newIds = Array.from(new Set([...currentIds, ...fandomLbIds]))
+
+        const updated = { ...character, [field]: value, lorebook_ids: newIds }
+        onUpdateCharacter(updated)
+      } else {
+        const updated = { ...character, [field]: value }
+        onUpdateCharacter(updated)
       }
     }
-
   }
 
   const toggleLorebook = (lbId: string) => {
-    const updated = allLorebooks.map(lb => {
-      if (lb.id === lbId) {
-        return {
-          ...lb,
-          character_id: lb.character_id === character.id ? undefined : character.id
-        }
-      }
-      return lb
-    })
-    onUpdateLorebooks(updated)
+    const currentIds = character.lorebook_ids || []
+    const isAttached = currentIds.includes(lbId)
+    
+    let newIds: string[]
+    if (isAttached) {
+      newIds = currentIds.filter(id => id !== lbId)
+    } else {
+      newIds = [...currentIds, lbId]
+    }
+
+    if (isCreate && draftCharacter) {
+      setDraftCharacter({ ...draftCharacter, lorebook_ids: newIds })
+    } else {
+      onUpdateCharacter({ ...character, lorebook_ids: newIds })
+    }
   }
 
   const handleDelete = async () => {
@@ -123,11 +138,22 @@ export function CharacterProfileView({
     }
   }
 
-  // Lorebooks attached to this character
-  const charLorebooks = allLorebooks.filter(lb => lb.character_id === character.id)
+  // Lorebooks to display in the main list:
+  // 1. Lorebooks belonging to this fandom (Requirement 1.3)
+  // 2. Lorebooks specifically linked via character.lorebook_ids
+  const charLorebooks = useMemo(() => {
+    const linkedIds = character.lorebook_ids || []
+    return allLorebooks.filter(lb => 
+      linkedIds.includes(lb.id) || 
+      (character.fandom && lb.fandom === character.fandom && character.fandom !== '')
+    )
+  }, [allLorebooks, character.lorebook_ids, character.fandom])
   
-  // Available lorebooks to attach (not fandom-specific, or those already attached)
-  const attachableLorebooks = allLorebooks.filter(lb => !lb.fandom || lb.character_id === character.id)
+  // Available lorebooks to attach (not fandom-specific, and NOT already in the list)
+  const attachableLorebooks = allLorebooks.filter(lb => 
+    (!lb.fandom || lb.fandom === '') && 
+    !(character.lorebook_ids || []).includes(lb.id)
+  )
 
   return (
     <div className={styles.characterProfileOverlay}>
@@ -340,21 +366,31 @@ export function CharacterProfileView({
               
               <div className={styles.lorebookList}>
                 {charLorebooks.length > 0 ? (
-                  charLorebooks.map(lb => (
-                    <div key={lb.id} className={`${styles.lorebookMiniCard} ${isEditing ? styles.lorebookMiniCardSelected : ''}`} onClick={() => isEditing && toggleLorebook(lb.id)}>
-                      <div className={styles.lorebookMiniInfo}>
-                        <span className={styles.lorebookMiniName}>{lb.name}</span>
-                        <span className={styles.lorebookMiniDesc}>
-                          {lb.entries.length} записей • {lb.id}
-                        </span>
-                      </div>
-                      {isEditing && (
-                        <div className={styles.checkMark}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  charLorebooks.map(lb => {
+                    const isActive = (character.lorebook_ids || []).includes(lb.id)
+                    const isFandomMatch = character.fandom && lb.fandom === character.fandom && character.fandom !== ''
+                    
+                    return (
+                      <div 
+                        key={lb.id} 
+                        className={`${styles.lorebookMiniCard} ${isActive ? styles.lorebookMiniCardSelected : styles.lorebookMiniCardDeactivated}`} 
+                        onClick={() => isEditing && toggleLorebook(lb.id)}
+                        style={{ cursor: isEditing ? 'pointer' : 'default' }}
+                      >
+                        <div className={styles.lorebookMiniInfo}>
+                          <span className={styles.lorebookMiniName} style={{ opacity: isActive ? 1 : 0.6 }}>{lb.name}</span>
+                          <span className={styles.lorebookMiniDesc} style={{ opacity: isActive ? 1 : 0.4 }}>
+                            {lb.entries?.length || 0} записей {isFandomMatch ? '• Фандом' : '• Персональный'}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  ))
+                        {isActive && (
+                          <div className={styles.checkMark}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })
                 ) : (
                   <div style={{ 
                     background: 'rgba(255, 255, 255, 0.02)', 

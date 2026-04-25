@@ -1105,7 +1105,15 @@
 .lorebookMiniCardSelected {
   border-color: var(--accent-orange);
   background: rgba(255, 140, 66, 0.05);
+  box-shadow: 0 0 15px rgba(255, 140, 66, 0.1);
 }
+
+.lorebookMiniCardDeactivated {
+  border-style: dashed;
+  opacity: 0.5;
+  filter: grayscale(0.5);
+}
+
 
 .lorebookMiniInfo {
   display: flex;

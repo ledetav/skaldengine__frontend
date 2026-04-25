@@ -463,28 +463,20 @@ export default function AdminDashboard() {
                 }
               }}
               onSave={async (char) => {
+                // ... (rest of the save logic)
                 try {
                   const { charactersApi } = await import('@/core/api/characters')
-                  const { lorebooksApi } = await import('@/core/api/lorebooks')
                   
                   let savedChar: Character
                   if (detailId === 'create') {
-                    savedChar = await charactersApi.createAdminCharacter(char as any) as any
+                    savedChar = await charactersApi.createAdminCharacter(char)
                     setCharacters(prev => [...prev, savedChar])
                   } else {
-                    savedChar = await charactersApi.updateAdminCharacter(char.id, char as any) as any
+                    savedChar = await charactersApi.updateAdminCharacter(char.id, char)
                     setCharacters(prev => prev.map(c => c.id === savedChar.id ? savedChar : c))
                   }
 
-                  // Find lorebooks that were marked for this character
-                  const attachedLbs = lorebooks.filter(lb => lb.character_id === char.id || (detailId === 'create' && lb.character_id === 'create'))
-                  
-                  // Persist lorebook attachments (Task 2)
-                  await Promise.all(attachedLbs.map((lb: Lorebook) => 
-                    lorebooksApi.updateAdminLorebook(lb.id, { character_id: savedChar.id })
-                  ))
-
-                  // Refresh lorebooks to get updated state
+                  // Refresh lorebooks to ensure consistency (optional as M2M is character-centric now)
                   const refreshedLbs = await ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500')
                   setLorebooks(refreshedLbs)
 
@@ -494,8 +486,8 @@ export default function AdminDashboard() {
                   alert('Ошибка при сохранении персонажа')
                 }
               }}
-              onUpdateLorebooks={(updated) => setLorebooks(updated)}
             />
+
           )}
 
           {isUserDetail && (

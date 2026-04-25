@@ -16,6 +16,7 @@ export interface Character {
   nsfw_allowed: boolean;
   is_public: boolean;
   is_deleted: boolean;
+  lorebook_ids: string[];
 }
 
 export interface Lorebook {

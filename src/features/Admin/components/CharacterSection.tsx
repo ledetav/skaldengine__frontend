@@ -86,7 +86,7 @@ export function CharacterSection({
                 <th onClick={() => onSort?.('name')} style={{ cursor: 'pointer' }}>Имя персонажа {renderSortIcon?.('name')}</th>
                 <th onClick={() => onSort?.('fandom')} style={{ cursor: 'pointer' }}>Вселенная {renderSortIcon?.('fandom')}</th>
                 <th onClick={() => onSort?.('total_chats_count')} style={{ cursor: 'pointer' }}>Чатов/мес {renderSortIcon?.('total_chats_count')}</th>
-                <th onClick={() => onSort?.('scenario_count')} style={{ cursor: 'pointer' }}>Сценариев {renderSortIcon?.('scenario_count')}</th>
+                <th onClick={() => onSort?.('lorebook_count')} style={{ cursor: 'pointer' }}>Лорбуки {renderSortIcon?.('lorebook_count')}</th>
               </tr>
             </thead>
             <tbody>
@@ -103,6 +103,7 @@ export function CharacterSection({
                   <td><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></td>
                   <td>{char.total_chats_count.toLocaleString()}</td>
                   <td>{char.scenarios_count || 0}</td>
+                  <td>{char.lorebook_ids?.length || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -131,10 +132,11 @@ export function CharacterSection({
                   <span className={styles.statValue}>{char.scenarios_count || 0}</span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>Лоры</span>
-                  <span className={styles.statValue}>0</span>
+                  <span className={styles.statLabel}>Лорбуков</span>
+                  <span className={styles.statValue}>{char.lorebook_ids?.length || 0}</span>
                 </div>
               </div>
+
             </div>
           ))}
         </div>
