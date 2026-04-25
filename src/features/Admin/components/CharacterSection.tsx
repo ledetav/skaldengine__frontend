@@ -95,13 +95,13 @@ export function CharacterSection({
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0 }}>
-                        <img src={char.avatar_url} className={styles.charAvatar} alt={char.name} />
+                        <img src={char.avatar_url || ''} className={styles.charAvatar} alt={char.name} />
                       </div>
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
                   </td>
                   <td><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></td>
-                  <td>{char.total_chats_count.toLocaleString()}</td>
+                  <td>{(char.total_chats_count || 0).toLocaleString()}</td>
                   <td>{char.scenarios_count || 0}</td>
                   <td>{char.lorebook_ids?.length || 0}</td>
                 </tr>
@@ -115,7 +115,7 @@ export function CharacterSection({
             <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardTop}>
                 <div className={styles.cardAvatarWrapper}>
-                  <img src={char.avatar_url} className={styles.cardAvatar} alt={char.name} />
+                  <img src={char.avatar_url || ''} className={styles.cardAvatar} alt={char.name} />
                 </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
@@ -125,7 +125,7 @@ export function CharacterSection({
               <div className={styles.cardStats}>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Чатов</span>
-                  <span className={styles.statValue}>{char.total_chats_count.toLocaleString()}</span>
+                  <span className={styles.statValue}>{(char.total_chats_count || 0).toLocaleString()}</span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Сценариев</span>

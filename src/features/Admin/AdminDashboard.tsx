@@ -203,8 +203,8 @@ export default function AdminDashboard() {
       if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
       if (activeFilters.isPublic === 'public' && !c.is_public) return false
       if (activeFilters.isPublic === 'private' && c.is_public) return false
-      if (activeFilters.isNSFW === 'safe' && (c as any).is_nsfw) return false
-      if (activeFilters.isNSFW === 'nsfw' && !(c as any).is_nsfw) return false
+      if (activeFilters.isNSFW === 'safe' && c.nsfw_allowed) return false
+      if (activeFilters.isNSFW === 'nsfw' && !c.nsfw_allowed) return false
       return true
     })
     return applySort(list)
@@ -486,7 +486,10 @@ export default function AdminDashboard() {
                       }
                     }
                     savedChar = await charactersApi.createAdminCharacter(char)
-                    setCharacters(prev => [...prev, savedChar])
+                    setCharacters(prev => prev.some(c => c.id === savedChar.id) 
+                      ? prev.map(c => c.id === savedChar.id ? savedChar : c) 
+                      : [savedChar, ...prev]
+                    )
                   } else {
                     savedChar = await charactersApi.updateAdminCharacter(char.id, char)
                     setCharacters(prev => prev.map(c => c.id === savedChar.id ? savedChar : c))
