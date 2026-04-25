@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
+import { SearchableSelect } from './SearchableSelect'
 import type { Lorebook, Character, User, UserPersona } from '../types'
 
 interface LorebookSectionProps {
@@ -232,71 +233,73 @@ export function LorebookSection({
 
                       {/* Binding Inputs */}
                       {editType === 'fandom' && (
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                          <select 
-                            className={styles.dropdownSelected} 
-                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <SearchableSelect 
+                            options={allFandoms.map(f => ({ id: f, name: f }))}
                             value={isNewFandom ? 'new' : selectedFandom}
-                            onChange={(e) => {
-                              if (e.target.value === 'new') {
+                            customValueLabel={isNewFandom ? '+ Создать свой' : undefined}
+                            onChange={(val) => {
+                              if (val === 'new') {
                                 setIsNewFandom(true)
                                 setSelectedFandom('')
                               } else {
                                 setIsNewFandom(false)
-                                setSelectedFandom(e.target.value)
+                                setSelectedFandom(val)
                               }
                             }}
-                          >
-                            <option value="">Выберите фандом...</option>
-                            <option value="new">+ Создать свой</option>
-                            {allFandoms.map(f => <option key={f} value={f}>{f}</option>)}
-                          </select>
+                            placeholder="Выберите фандом..."
+                            onCreateNew={() => {
+                              setIsNewFandom(true)
+                              setSelectedFandom('')
+                            }}
+                            onCreateLabel="+ Создать свой фандом"
+                          />
                           {isNewFandom && (
                             <Input 
                               placeholder="Название нового фандома" 
                               value={selectedFandom} 
-                              onChange={(e) => setSelectedFandom(e.target.value)} 
+                              onChange={(e: any) => setSelectedFandom(e.target.value)} 
+                              autoFocus
                             />
                           )}
                         </div>
                       )}
 
                       {editType === 'character' && (
-                        <select 
-                          className={styles.dropdownSelected} 
-                          style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
+                        <SearchableSelect 
+                          options={characters.map(c => ({ 
+                            id: c.id, 
+                            name: c.name, 
+                            subtext: c.fandom || 'Независимый' 
+                          }))}
                           value={selectedCharId}
-                          onChange={(e) => setSelectedCharId(e.target.value)}
-                        >
-                          <option value="">Выберите персонажа...</option>
-                          {characters.map(c => <option key={c.id} value={c.id}>{c.name} ({c.fandom || 'Независимый'})</option>)}
-                        </select>
+                          onChange={setSelectedCharId}
+                          placeholder="Выберите персонажа..."
+                        />
                       )}
 
                       {editType === 'persona' && (
                         <div style={{ display: 'flex', gap: '10px' }}>
-                          <select 
-                            className={styles.dropdownSelected} 
-                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
-                            value={selectedUserId}
-                            onChange={(e) => {
-                              setSelectedUserId(e.target.value)
-                              setSelectedPersonaId('')
-                            }}
-                          >
-                            <option value="">Выберите пользователя...</option>
-                            {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
-                          </select>
-                          <select 
-                            className={styles.dropdownSelected} 
-                            style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '0 12px' }}
-                            value={selectedPersonaId}
-                            onChange={(e) => setSelectedPersonaId(e.target.value)}
-                            disabled={!selectedUserId}
-                          >
-                            <option value="">Выберите персону...</option>
-                            {userPersonas.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                          </select>
+                          <div style={{ flex: 1 }}>
+                            <SearchableSelect 
+                              options={users.map(u => ({ id: u.id, name: u.username }))}
+                              value={selectedUserId}
+                              onChange={(val) => {
+                                setSelectedUserId(val)
+                                setSelectedPersonaId('')
+                              }}
+                              placeholder="Пользователь..."
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <SearchableSelect 
+                              options={userPersonas.map(p => ({ id: p.id, name: p.name }))}
+                              value={selectedPersonaId}
+                              onChange={setSelectedPersonaId}
+                              placeholder="Персона..."
+                              disabled={!selectedUserId}
+                            />
+                          </div>
                         </div>
                       )}
 

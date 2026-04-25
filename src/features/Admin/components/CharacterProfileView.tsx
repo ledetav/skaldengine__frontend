@@ -1,8 +1,9 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
 import { Badge, Button, useToast } from '@/components/ui'
+import { SearchableSelect } from './SearchableSelect'
 
 interface CharacterProfileViewProps {
   characterId: string
@@ -36,20 +37,7 @@ export function CharacterProfileView({
   
   const isEditing = pathname.includes('/edit') || pathname.includes('/create') || characterId === 'create'
   const isCreate = characterId === 'create' || pathname.includes('/create/')
-  const [fandomSearch, setFandomSearch] = useState('')
-  const [isFandomOpen, setIsFandomOpen] = useState(false)
   const [isAddingLorebook, setIsAddingLorebook] = useState(false)
-  const fandomDropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (fandomDropdownRef.current && !fandomDropdownRef.current.contains(event.target as Node)) {
-        setIsFandomOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   const [draftCharacter, setDraftCharacter] = useState<Character | undefined>(isCreate ? {
     id: 'create',
@@ -79,9 +67,6 @@ export function CharacterProfileView({
     return Array.from(fandoms as Set<string>).sort()
   }, [allLorebooks])
 
-  const filteredFandoms = availableFandoms.filter(f => 
-    f?.toLowerCase().includes(fandomSearch.toLowerCase())
-  )
 
   if (!character) {
     return (
@@ -280,38 +265,13 @@ export function CharacterProfileView({
                   </div>
                   
                   {character.type === 'fandom' && (
-                    <div className={styles.customDropdown} style={{ width: '100%' }} ref={fandomDropdownRef}>
-                      <div className={styles.dropdownSelected} onClick={() => setIsFandomOpen(!isFandomOpen)}>
-                        <span>{character.fandom || 'Выберите фандом'}</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.3s ease', transform: isFandomOpen ? 'rotate(180deg)' : 'none' }}><polyline points="6 9 12 15 18 9"/></svg>
-                      </div>
-                      {isFandomOpen && (
-                        <div className={styles.dropdownMenu}>
-                          <div className={styles.dropdownSearchWrapper}>
-                            <input 
-                              className={styles.dropdownSearch}
-                              placeholder="Поиск по фандомам..."
-                              value={fandomSearch}
-                              onChange={(e) => setFandomSearch(e.target.value)}
-                              autoFocus
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </div>
-                          <div className={styles.dropdownOptionsList}>
-                            {filteredFandoms.length > 0 ? filteredFandoms.map(f => (
-                              <div key={f} className={styles.dropdownOption} onClick={() => {
-                                handleChange('fandom', f)
-                                setIsFandomOpen(false)
-                              }}>
-                                {f}
-                              </div>
-                            )) : (
-                              <div style={{ padding: '16px', color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', textAlign: 'center' }}>Ничего не найдено</div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <SearchableSelect 
+                      options={availableFandoms.map(f => ({ id: f, name: f }))}
+                      value={character.fandom || ''}
+                      onChange={(val: string) => handleChange('fandom', val)}
+                      placeholder="Выберите фандом"
+                      className={styles.fandomSelect}
+                    />
                   )}
                 </div>
               ) : (
