@@ -1808,9 +1808,26 @@
 }
 
 .selectOptionsList {
-  max-height: 280px;
+  max-height: 180px; /* Limit to ~3 elements */
   overflow-y: auto;
-  padding: 8px 0;
+  padding: 4px 0;
+}
+
+.selectOptionsList::-webkit-scrollbar {
+  width: 5px;
+}
+
+.selectOptionsList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.selectOptionsList::-webkit-scrollbar-thumb {
+  background: rgba(255, 140, 66, 0.2);
+  border-radius: 10px;
+}
+
+.selectOptionsList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 140, 66, 0.4);
 }
 
 .selectOption {
