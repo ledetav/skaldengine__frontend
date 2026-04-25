@@ -166,26 +166,25 @@ export function CharacterProfileView({
   [character.type])
 
   // Lorebooks to display in the main list:
-  // 1. Lorebooks belonging to this fandom (Requirement 1.3)
-  // 2. Lorebooks specifically linked via character.lorebook_ids
+  // 1. Lorebooks specifically linked via character.lorebook_ids
+  // 2. Lorebooks belonging to this specific character (Requirement: visible on card)
+  // 3. Lorebooks belonging to this fandom (if not original)
   const charLorebooks = useMemo(() => {
     const linkedIds = character.lorebook_ids || []
     return allLorebooks.filter(lb => 
       linkedIds.includes(lb.id) || 
+      lb.character_id === character.id ||
       (character.fandom && lb.fandom === character.fandom && character.fandom !== '' && !isOriginal)
     )
-  }, [allLorebooks, character.lorebook_ids, character.fandom, isOriginal])
+  }, [allLorebooks, character.lorebook_ids, character.fandom, isOriginal, character.id])
   
   // Available lorebooks to attach (Requirement 1)
   const attachableLorebooks = useMemo(() => {
     return allLorebooks.filter(lb => {
-      // 1. Don't show if already linked to this character
-      if ((character.lorebook_ids || []).includes(lb.id)) return false;
-      
-      // 2. Include lorebooks belonging to this specific character (Requirement 1.2)
-      if (lb.character_id === character.id) return true;
+      // 1. Don't show if already in the character's list (managed on card)
+      if (charLorebooks.some(clb => clb.id === lb.id)) return false;
 
-      // 3. Include fandom lorebooks, but EXCLUDE those belonging to other characters (Requirement 1.1)
+      // 2. Include fandom lorebooks, but EXCLUDE those belonging to other characters
       if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
         // If it's a character-specific lorebook and it's for another character, exclude it.
         if (lb.type === 'character' && lb.character_id && lb.character_id !== character.id) {
@@ -196,7 +195,7 @@ export function CharacterProfileView({
       
       return false;
     });
-  }, [allLorebooks, character.fandom, character.lorebook_ids, character.id]);
+  }, [allLorebooks, character.fandom, charLorebooks, character.id]);
 
   return (
     <div className={styles.characterProfileOverlay}>
