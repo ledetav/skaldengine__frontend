@@ -126,11 +126,21 @@ export function LorebookSection({
 
   const canToggleMain = useMemo(() => {
     if (!isOriginalChar) return true;
-    if (!isMain) return true; // Can always make it main
-    // If it's already main, can only un-main if there's at least one OTHER main lorebook
-    // If we are in edit mode, it's already in the list.
-    return mainLorebooksForChar.length > 1;
-  }, [isOriginalChar, isMain, mainLorebooksForChar]);
+    if (!isMain) return true; // Can always turn ON
+    
+    // Check if the current lorebook is already main in the database
+    const currentLb = lorebooks.find(l => l.id === id);
+    const isStoredAsMain = currentLb?.tags?.includes('main');
+    
+    if (isStoredAsMain) {
+      // If it's already main, it's the last one if length is 1
+      return mainLorebooksForChar.length > 1;
+    } else {
+      // If it's NOT main yet (new or just toggled on), we can always turn it off 
+      // as long as there's at least one OTHER main lorebook for the character
+      return mainLorebooksForChar.length >= 1;
+    }
+  }, [isOriginalChar, isMain, mainLorebooksForChar, lorebooks, id]);
 
   const userPersonas = useMemo(() => {
     return personas.filter(p => p.owner_id === selectedUserId)
