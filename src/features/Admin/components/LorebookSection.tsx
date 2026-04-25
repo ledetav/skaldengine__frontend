@@ -1,8 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, type ChangeEvent, type ReactNode } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
 import { SearchableSelect } from './SearchableSelect'
+import { Pagination } from './Pagination'
+import { ApiClient } from '@/core/api/client'
 import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
 
 interface LorebookSectionProps {
@@ -14,7 +16,7 @@ interface LorebookSectionProps {
   onToggleFilter?: () => void
   isFilterActive?: boolean
   onSort?: (field: string) => void
-  renderSortIcon?: (field: string) => React.ReactNode
+  renderSortIcon?: (field: string) => ReactNode
 }
 
 type ViewMode = 'grid' | 'table'
@@ -59,7 +61,26 @@ export function LorebookSection({
     entries: []
   } as Lorebook : undefined, [isCreateMode, initialType])
 
-  const lb = useMemo(() => isCreateMode ? draftLb : lorebooks.find(l => l.id === id), [lorebooks, id, isCreateMode, draftLb])
+  const [fetchedLb, setFetchedLb] = useState<Lorebook | null>(null)
+  
+  const lb = useMemo(() => {
+    if (isCreateMode) return draftLb
+    return lorebooks.find(l => l.id === id) || fetchedLb
+  }, [lorebooks, id, isCreateMode, draftLb, fetchedLb])
+
+  useEffect(() => {
+    const loadLb = async () => {
+      if (id && id !== 'create' && !lorebooks.find(l => l.id === id)) {
+        try {
+          const res = await ApiClient.get<Lorebook>('core', `/lorebooks/${id}`)
+          setFetchedLb(res)
+        } catch (e) {
+          console.error('Failed to fetch specific lorebook', e)
+        }
+      }
+    }
+    loadLb()
+  }, [id, lorebooks])
 
   const [editName, setEditName] = useState('')
   const [editDescription, setEditDescription] = useState('')
@@ -105,6 +126,37 @@ export function LorebookSection({
   const [newEntryContent, setNewEntryContent] = useState('')
   const [batchText, setBatchText] = useState('')
 
+  const [entries, setEntries] = useState<LorebookEntry[]>([])
+  const [entriesTotal, setEntriesTotal] = useState(0)
+  const [entriesPage, setEntriesPage] = useState(1)
+  const [isEntriesLoading, setIsEntriesLoading] = useState(false)
+
+  const fetchEntries = async (page: number) => {
+    if (!lb?.id || lb.id === 'create') return
+    setIsEntriesLoading(true)
+    const skip = (page - 1) * 20
+    try {
+      const res = await ApiClient.get<any>('core', `/lorebooks/${lb.id}/entries?skip=${skip}&limit=20`)
+      if (res && res.items) {
+        setEntries(res.items)
+        setEntriesTotal(res.total)
+      } else if (Array.isArray(res)) {
+        setEntries(res)
+        setEntriesTotal(res.length)
+      }
+    } catch (e) {
+      console.error('Failed to fetch entries', e)
+    } finally {
+      setIsEntriesLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (isDetailMode && lb?.id && lb.id !== 'create') {
+      fetchEntries(entriesPage)
+    }
+  }, [lb?.id, isDetailMode, entriesPage])
+
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [editEntryKeywords, setEditEntryKeywords] = useState('')
   const [editEntryContent, setEditEntryContent] = useState('')
@@ -113,14 +165,14 @@ export function LorebookSection({
   const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
 
   const filteredEntries = useMemo(() => {
-    if (!lb?.entries) return []
-    if (!entrySearch) return lb.entries
+    if (!entries) return []
+    if (!entrySearch) return entries
     const s = entrySearch.toLowerCase()
-    return lb.entries.filter((e: LorebookEntry) => 
+    return entries.filter((e: LorebookEntry) => 
       e.content.toLowerCase().includes(s) || 
       e.keywords.some((k: string) => k.toLowerCase().includes(s))
     )
-  }, [lb?.entries, entrySearch])
+  }, [entries, entrySearch])
 
   const handleEntrySave = async (entryId: string) => {
     try {
@@ -283,7 +335,7 @@ export function LorebookSection({
           {/* 1. Main Info Card */}
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle}>Основная информация</div>
-            <Card className={styles.detailsCard} style={{ padding: '32px', gap: '24px' }}>
+            <Card className={styles.detailsCard} style={{ padding: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
                 <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Название</div>
@@ -346,7 +398,7 @@ export function LorebookSection({
                             <Input 
                               placeholder="Название нового фандома" 
                               value={selectedFandom} 
-                              onChange={(e: any) => setSelectedFandom(e.target.value)} 
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedFandom(e.target.value)} 
                               autoFocus
                             />
                           )}
@@ -477,8 +529,8 @@ export function LorebookSection({
           {/* 2. Entries Table Section */}
           <div className={styles.detailGroup}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className={styles.detailTitle}>Записи в лорбуке ({lb.entries?.length || 0})</div>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div className={styles.detailTitle}>Записи в лорбуке ({entriesTotal})</div>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '200px' }}>
                   <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -489,7 +541,7 @@ export function LorebookSection({
                     className={styles.searchBox}
                     style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem' }}
                     value={entrySearch}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
                   />
                 </div>
                 <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
@@ -528,7 +580,7 @@ export function LorebookSection({
                       className={styles.editTextarea} 
                       placeholder="Содержание записи..." 
                       value={newEntryContent} 
-                      onChange={(e: any) => setNewEntryContent(e.target.value)} 
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNewEntryContent(e.target.value)} 
                       style={{ minHeight: '80px' }}
                     />
                   </div>
@@ -621,7 +673,7 @@ export function LorebookSection({
                           {isEditing ? (
                             <Input 
                               value={editEntryKeywords} 
-                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditEntryKeywords(e.target.value)}
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => setEditEntryKeywords(e.target.value)}
                               placeholder="Тэги через запятую"
                               style={{ fontSize: '0.8rem', height: '32px' }}
                               autoFocus
@@ -639,7 +691,7 @@ export function LorebookSection({
                             <textarea 
                               className={styles.editTextarea}
                               value={editEntryContent}
-                              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditEntryContent(e.target.value)}
+                              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditEntryContent(e.target.value)}
                               style={{ minHeight: '60px', fontSize: '0.85rem', width: '100%', background: 'rgba(0,0,0,0.2)' }}
                             />
                           ) : (
@@ -687,7 +739,14 @@ export function LorebookSection({
                   })}
                 </tbody>
               </table>
+              {isEntriesLoading && <div style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>Загрузка записей...</div>}
             </div>
+            <Pagination 
+              currentPage={entriesPage}
+              totalItems={entriesTotal}
+              pageSize={20}
+              onPageChange={setEntriesPage}
+            />
           </div>
         </div>
 
@@ -736,7 +795,7 @@ export function LorebookSection({
             placeholder="Поиск по названию или привязке..." 
             className={styles.searchBox}
             value={search}
-            onChange={(e: any) => setSearch(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
           />
         </div>
         
