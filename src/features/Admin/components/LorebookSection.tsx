@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
@@ -334,9 +334,10 @@ export function LorebookSection({
                             <span className={styles.toggleLabel}>Основной лорбук персонажа</span>
                           </div>
                           {!canToggleMain && (
-                            <span className={styles.lockHint} style={{ marginLeft: '12px' }}>
-                              У оригинального персонажа должен быть хотя бы один основной лорбук
-                            </span>
+                            <div className={styles.infoNote} style={{ marginTop: '8px', marginBottom: 0 }}>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)', flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                              <span style={{ fontSize: '0.8rem' }}>У оригинального персонажа должен быть хотя бы один основной лорбук</span>
+                            </div>
                           )}
                         </div>
                       )}
@@ -370,7 +371,7 @@ export function LorebookSection({
                 </div>
               </div>
 
-              <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0, justifyContent: 'space-between' }}>
+              <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0, justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 {isEditMode ? (
                   <>
                     <div style={{ display: 'flex', gap: '12px' }}>
@@ -384,9 +385,10 @@ export function LorebookSection({
                     {initialType !== 'persona' && (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                         {lb.tags?.includes('main') && isOriginalChar && (
-                          <span className={styles.lockHint} style={{ fontSize: '0.7rem', color: 'rgba(255, 140, 66, 0.8)' }}>
-                            Основной лорбук оригинального персонажа нельзя удалить
-                          </span>
+                          <div className={styles.infoNote} style={{ marginBottom: '12px', width: '100%' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)', flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span style={{ fontSize: '0.8rem' }}>Основной лорбук оригинального персонажа нельзя удалить</span>
+                          </div>
                         )}
                         <Button 
                           variant="danger" 
@@ -668,9 +670,10 @@ export function LorebookSection({
                 {initialType !== 'persona' && (
                   <div style={{ position: 'relative', display: 'flex', gap: '8px', alignItems: 'center' }}>
                     {lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') && (
-                      <span className={styles.lockHint} style={{ fontSize: '0.6rem', marginTop: 0, whiteSpace: 'nowrap' }}>
-                        Не удаляемый
-                      </span>
+                      <div className={styles.infoNote} style={{ margin: '-20px -20px 16px -20px', padding: '10px 16px', fontSize: '0.75rem', borderLeft: 'none', borderRight: 'none', borderTop: 'none', width: 'auto' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)', flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Основной лорбук
+                      </div>
                     )}
                     <button 
                       className={`${styles.iconBtn} ${styles.dangerBtn}`} 

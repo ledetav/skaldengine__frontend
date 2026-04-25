@@ -367,6 +367,16 @@
   transform: translateY(-1px);
 }
 
+/* Global button disabled override for admin */
+.sectionContainer button:disabled,
+.characterProfileOverlay button:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(1) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* Sections */
 .sectionContainer {
   display: flex;
@@ -585,7 +595,14 @@
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
+  transition: all 0.2s ease;
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+
+.iconBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
 .cardStats {
@@ -1621,8 +1638,19 @@
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
-.toggleRow:hover {
+.toggleRow:hover:not(.toggleLocked) {
   background: rgba(255, 255, 255, 0.04);
+}
+
+.toggleLocked {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  filter: grayscale(0.8);
+}
+
+.toggleLocked .toggleSwitch {
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
 }
 
 .toggleSwitch {

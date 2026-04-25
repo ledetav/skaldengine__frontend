@@ -50,6 +50,7 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
   onOpen: () => void
   onEdit: () => void
   onDelete: () => void
+  key?: string | number
 }) {
   const isMain = lorebook.tags?.includes('main');
   const isOriginal = lorebook.fandom?.toLowerCase() === 'original' || lorebook.fandom?.toLowerCase() === 'оригинальный';
