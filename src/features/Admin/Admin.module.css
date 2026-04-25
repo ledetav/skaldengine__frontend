@@ -234,7 +234,6 @@
   }
 }
 
-/* Main Container */
 .mainContainer {
   flex: 1;
   display: flex;
@@ -242,7 +241,7 @@
   z-index: 5;
   position: relative;
   overflow-y: auto;
-  padding: 0 30px; /* Reduced from 60px */
+  padding: 0 16px; 
 }
 
 .mainHeader {
@@ -1925,4 +1924,36 @@
   color: rgba(255, 255, 255, 0.3);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+/* Loading Indicators */
+.contentArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--bg-main);
+  position: relative;
+}
+
+.topProgress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.topProgressBar {
+  height: 100%;
+  background: var(--accent-orange);
+  width: 30%;
+  animation: progressAnim 1.5s infinite ease-in-out;
+}
+
+@keyframes progressAnim {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
 }
