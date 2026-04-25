@@ -9,6 +9,7 @@ import AuthScreen from '@/features/Auth/AuthScreen'
 import DashboardScreen from '@/features/Dashboard/DashboardScreen'
 import CreateChatScreen from '@/features/CreateChat/CreateChatScreen'
 import ChatScreen from '@/features/Chat/ChatScreen'
+import ChatsListScreen from '@/features/Chat/ChatsListScreen'
 import ProfileScreen from '@/features/Profile/ProfileScreen'
 
 // Admin
@@ -41,6 +42,7 @@ const AppRoutes = () => {
       <Route path="/chat/create/:characterId" element={<ProtectedRoute><CreateChatScreen /></ProtectedRoute>} />
 
       <Route path="/chat/:chatId" element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} />
+      <Route path="/chats" element={<ProtectedRoute><ChatsListScreen /></ProtectedRoute>} />
 
       <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
       <Route path="/profile/:username" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
@@ -64,14 +66,14 @@ const AppRoutes = () => {
       <Route path="/admin/scenarios/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
 
       {/* ─── User (Persona & Lorebook) Routes (Protected) ─── */}
-      <Route path="/user/personas" element={<ProtectedRoute><PersonasListScreen /></ProtectedRoute>} />
-      <Route path="/user/personas/create" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
-      <Route path="/user/personas/:id/edit" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
+      <Route path="/personas" element={<ProtectedRoute><PersonasListScreen /></ProtectedRoute>} />
+      <Route path="/personas/create" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
+      <Route path="/personas/:id/edit" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
 
-      <Route path="/user/lorebooks" element={<ProtectedRoute><LorebooksListScreen /></ProtectedRoute>} />
-      <Route path="/user/lorebooks/create" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
-      <Route path="/user/lorebooks/:id" element={<ProtectedRoute><LorebookDetailScreen /></ProtectedRoute>} />
-      <Route path="/user/lorebooks/:id/edit" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
+      <Route path="/lorebooks" element={<ProtectedRoute><LorebooksListScreen /></ProtectedRoute>} />
+      <Route path="/lorebooks/create" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
+      <Route path="/lorebooks/:id" element={<ProtectedRoute><LorebookDetailScreen /></ProtectedRoute>} />
+      <Route path="/lorebooks/:id/edit" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
 
       {/* ─── Fallback ─── */}
       <Route path="*" element={<Navigate to="/" replace />} />
