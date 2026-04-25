@@ -38,22 +38,29 @@ export default function AdminDashboard() {
 
   // Real implementation arrays
   const [characters, setCharacters] = useState<Character[]>([])
-  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [lorebooksFandom, setLorebooksFandom] = useState<Lorebook[]>([])
+  const [lorebooksCharacter, setLorebooksCharacter] = useState<Lorebook[]>([])
+  const [lorebooksPersona, setLorebooksPersona] = useState<Lorebook[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [allLorebooks, setAllLorebooks] = useState<Lorebook[]>([])
   const [isDataLoading, setIsDataLoading] = useState(false)
 
-  const [currentPage, setCurrentPage] = useState({
+  const [currentPage, setCurrentPage] = useState<Record<string, number>>({
     characters: 1,
-    lorebooks: 1,
+    lorebooks_fandom: 1,
+    lorebooks_character: 1,
+    lorebooks_persona: 1,
     users: 1,
     personas: 1,
     scenarios: 1
   })
-  const [totals, setTotals] = useState({
+  const [totals, setTotals] = useState<Record<string, number>>({
     characters: 0,
-    lorebooks: 0,
+    lorebooks_fandom: 0,
+    lorebooks_character: 0,
+    lorebooks_persona: 0,
     users: 0,
     personas: 0,
     scenarios: 0
@@ -70,47 +77,33 @@ export default function AdminDashboard() {
           const res = await ApiClient.get<any>('core', `/characters/?skip=${skip}&limit=${PAGE_SIZE}`)
           if (res && res.items) {
             setCharacters(res.items)
-            setTotals((prev: any) => ({ ...prev, characters: res.total }))
-          } else if (Array.isArray(res)) {
-             setCharacters(res)
-             setTotals((prev: any) => ({ ...prev, characters: res.length }))
+            setTotals(prev => ({ ...prev, characters: res.total || 0 }))
           }
-        } else if (tab === 'lorebooks') {
-          const res = await ApiClient.get<any>('core', `/lorebooks/?skip=${skip}&limit=${PAGE_SIZE}`)
-          if (res && res.items) {
-            setLorebooks(res.items)
-            setTotals((prev: any) => ({ ...prev, lorebooks: res.total }))
-          } else if (Array.isArray(res)) {
-            setLorebooks(res)
-            setTotals((prev: any) => ({ ...prev, lorebooks: res.length }))
-          }
+        } else if (tab.startsWith('lorebooks_')) {
+          const type = tab.split('_')[1]
+          const res = await ApiClient.get<any>('core', `/lorebooks/?skip=${skip}&limit=${PAGE_SIZE}&type=${type}`)
+          const items = res.items || []
+          if (type === 'fandom') setLorebooksFandom(items)
+          else if (type === 'character') setLorebooksCharacter(items)
+          else if (type === 'persona') setLorebooksPersona(items)
+          setTotals(prev => ({ ...prev, [tab]: res.total || 0 }))
         } else if (tab === 'users') {
           const res = await ApiClient.get<any>('auth', `/users/?skip=${skip}&limit=${PAGE_SIZE}`)
           if (res && res.items) {
             setUsers(res.items)
-            setTotals((prev: any) => ({ ...prev, users: res.total }))
-          } else if (Array.isArray(res)) {
-            setUsers(res)
-            setTotals((prev: any) => ({ ...prev, users: res.length }))
+            setTotals(prev => ({ ...prev, users: res.total || 0 }))
           }
         } else if (tab === 'personas') {
           const res = await ApiClient.get<any>('core', `/personas/admin/all?skip=${skip}&limit=${PAGE_SIZE}`)
           if (res && res.items) {
             setPersonas(res.items)
-            setTotals((prev: any) => ({ ...prev, personas: res.total }))
-          } else if (Array.isArray(res)) {
-            setPersonas(res)
-            setTotals((prev: any) => ({ ...prev, personas: res.length }))
+            setTotals(prev => ({ ...prev, personas: res.total || 0 }))
           }
         } else if (tab === 'scenarios') {
           const res = await ApiClient.get<any>('core', `/scenarios/?skip=${skip}&limit=${PAGE_SIZE}`)
-          // For scenarios we might not have total yet if we didn't update backend, but we should handle it
           if (res && res.items) {
             setScenarios(res.items)
-            setTotals((prev: any) => ({ ...prev, scenarios: res.total }))
-          } else if (Array.isArray(res)) {
-            setScenarios(res)
-            setTotals((prev: any) => ({ ...prev, scenarios: res.length }))
+            setTotals(prev => ({ ...prev, scenarios: res.total || 0 }))
           }
         }
       } catch (e) {
@@ -123,7 +116,7 @@ export default function AdminDashboard() {
     if (activeTab === 'characters') fetchTab('characters', currentPage.characters)
     else if (activeTab === 'users') fetchTab('users', currentPage.users)
     else if (activeTab === 'personas') fetchTab('personas', currentPage.personas)
-    else if (activeTab.startsWith('lorebooks')) fetchTab('lorebooks', currentPage.lorebooks)
+    else if (activeTab.startsWith('lorebooks_')) fetchTab(activeTab, currentPage[activeTab])
     else if (activeTab === 'scenarios') fetchTab('scenarios', currentPage.scenarios)
 
   }, [activeTab, isAdmin, currentPage])
@@ -143,37 +136,84 @@ export default function AdminDashboard() {
         
         // Handle Lorebook updates
         if (payload.type === 'NEW_LOREBOOK') {
-          setLorebooks((prev: Lorebook[]) => {
-            if (prev.some(l => l.id === payload.data.id)) return prev
-            return [payload.data, ...prev]
-          })
+          const type = payload.data.type || (payload.data.user_persona_id ? 'persona' : 'character')
+          const tabName = `lorebooks_${type}`
+          if (type === 'fandom') setLorebooksFandom(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          else if (type === 'character') setLorebooksCharacter(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          else if (type === 'persona') setLorebooksPersona(prev => prev.some(l => l.id === payload.data.id) ? prev : [payload.data, ...prev])
+          setTotals(prev => ({ ...prev, [tabName]: (prev[tabName] || 0) + 1 }))
         } else if (payload.type === 'UPDATE_LOREBOOK') {
-          setLorebooks((prev: Lorebook[]) => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+          setLorebooksFandom(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+          setLorebooksCharacter(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
+          setLorebooksPersona(prev => prev.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l))
         } else if (payload.type === 'DELETE_LOREBOOK') {
-          setLorebooks((prev: Lorebook[]) => prev.filter(l => l.id !== payload.data.id))
+          // Note: we don't know the type here easily, so we try to find which list it was in to decrement total
+          setLorebooksFandom(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_fandom: Math.max(0, t.lorebooks_fandom - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
+          setLorebooksCharacter(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_character: Math.max(0, t.lorebooks_character - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
+          setLorebooksPersona(prev => {
+            if (prev.some(l => l.id === payload.data.id)) {
+              setTotals(t => ({ ...t, lorebooks_persona: Math.max(0, t.lorebooks_persona - 1) }))
+              return prev.filter(l => l.id !== payload.data.id)
+            }
+            return prev
+          })
         } else if (payload.type === 'REFRESH_LOREBOOK_ENTRIES') {
-          // Re-fetch the specific lorebook to get updated entries list
           const { lorebook_id } = payload.data
-          const updatedLb = await ApiClient.get<Lorebook>('core', `/lorebooks/${lorebook_id}`)
-          setLorebooks((prev: Lorebook[]) => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+          ApiClient.get<Lorebook>('core', `/lorebooks/${lorebook_id}`).then(updatedLb => {
+             setLorebooksFandom(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+             setLorebooksCharacter(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+             setLorebooksPersona(prev => prev.map(l => l.id === lorebook_id ? updatedLb : l))
+          })
         }
         
         // Handle Character updates (optional, but good for consistency)
         else if (payload.type === 'NEW_CHARACTER') {
-          setCharacters((prev: Character[]) => prev.some(c => c.id === payload.data.id) ? prev : [payload.data, ...prev])
+          setCharacters((prev: Character[]) => {
+            if (prev.some(c => c.id === payload.data.id)) return prev
+            setTotals(t => ({ ...t, characters: (t.characters || 0) + 1 }))
+            return [payload.data, ...prev]
+          })
         } else if (payload.type === 'UPDATE_CHARACTER') {
           setCharacters((prev: Character[]) => prev.map(c => c.id === payload.data.id ? { ...c, ...payload.data } : c))
         } else if (payload.type === 'DELETE_CHARACTER') {
-          setCharacters((prev: Character[]) => prev.filter(c => c.id !== payload.data.id))
+          setCharacters((prev: Character[]) => {
+            if (prev.some(c => c.id === payload.data.id)) {
+              setTotals(t => ({ ...t, characters: Math.max(0, t.characters - 1) }))
+              return prev.filter(c => c.id !== payload.data.id)
+            }
+            return prev
+          })
         }
 
         // Handle Scenario updates
         else if (payload.type === 'NEW_SCENARIO') {
-          setScenarios((prev: Scenario[]) => prev.some(s => s.id === payload.data.id) ? prev : [payload.data, ...prev])
+          setScenarios((prev: Scenario[]) => {
+            if (prev.some(s => s.id === payload.data.id)) return prev
+            setTotals(t => ({ ...t, scenarios: (t.scenarios || 0) + 1 }))
+            return [payload.data, ...prev]
+          })
         } else if (payload.type === 'UPDATE_SCENARIO') {
           setScenarios((prev: Scenario[]) => prev.map(s => s.id === payload.data.id ? { ...s, ...payload.data } : s))
         } else if (payload.type === 'DELETE_SCENARIO') {
-          setScenarios((prev: Scenario[]) => prev.filter(s => s.id !== payload.data.id))
+          setScenarios((prev: Scenario[]) => {
+            if (prev.some(s => s.id === payload.data.id)) {
+              setTotals(t => ({ ...t, scenarios: Math.max(0, t.scenarios - 1) }))
+              return prev.filter(s => s.id !== payload.data.id)
+            }
+            return prev
+          })
         }
       } catch (err) {
         console.error('[Admin] WS parsing error:', err)
@@ -184,6 +224,23 @@ export default function AdminDashboard() {
       socket.close()
     }
   }, [isAdmin])
+
+  // Fetch all lorebooks for detail views (to populate dropdowns/filters)
+  useEffect(() => {
+    if (!isAdmin) return
+    const fetchAllLbs = async () => {
+      try {
+        const res = await ApiClient.get<any>('core', '/lorebooks/?skip=0&limit=500')
+        setAllLorebooks(res.items || [])
+      } catch (e) {
+        console.error('[Admin] Failed to fetch all lorebooks', e)
+      }
+    }
+    // Only fetch if a detail view is open or if we are on a tab that might need them
+    if (pathname.includes('/characters/') || pathname.includes('/personas/') || pathname.includes('/scenarios/')) {
+      fetchAllLbs()
+    }
+  }, [isAdmin, pathname])
 
   // Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -219,11 +276,10 @@ export default function AdminDashboard() {
     else if (pathname.includes('/admin/lorebooks/characters')) setActiveTab('lorebooks_character')
     else if (pathname.includes('/admin/lorebooks/personas')) setActiveTab('lorebooks_persona')
     else if (pathname.includes('/admin/lorebooks/')) {
-      // If we're on a lorebook detail page but don't have a specific tab, 
-      // check the lorebooks data once it's loaded to set the correct tab
       const lbId = pathname.split('/admin/lorebooks/')[1]?.split('/')[0]
       if (lbId) {
-        const lb = lorebooks.find(l => l.id === lbId)
+        const allLbs = [...lorebooksFandom, ...lorebooksCharacter, ...lorebooksPersona]
+        const lb = allLbs.find(l => l.id === lbId)
         if (lb) {
           if (lb.type === 'fandom') setActiveTab('lorebooks_fandom')
           else if (lb.type === 'persona' || lb.user_persona_id) setActiveTab('lorebooks_persona')
@@ -231,7 +287,7 @@ export default function AdminDashboard() {
         }
       }
     }
-  }, [pathname, lorebooks])
+  }, [pathname, lorebooksFandom, lorebooksCharacter, lorebooksPersona])
 
   const isCreateRoute = pathname.includes('/create')
   const detailId = id || (isCreateRoute ? 'create' : undefined)
@@ -296,18 +352,16 @@ export default function AdminDashboard() {
   }, [characters, activeFilters, sortField, sortDir])
 
   const filteredLorebooks = useMemo(() => {
-    const list = lorebooks.filter(lb => {
-      if (activeTab === 'lorebooks_fandom' && activeFilters.fandoms?.length && !activeFilters.fandoms.includes(lb.fandom || '')) return false
-      if (activeTab === 'lorebooks_character' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.character_id || '')) return false
-      if (activeTab === 'lorebooks_persona' && activeFilters.characterIds?.length && !activeFilters.characterIds.includes(lb.user_persona_id || '')) return false
-      
+    const list = (activeTab === 'lorebooks_fandom' ? lorebooksFandom : 
+                  activeTab === 'lorebooks_character' ? lorebooksCharacter : 
+                  lorebooksPersona)
+    return applySort(list.filter(lb => {
       const count = lb.entries?.length || lb.entries_count || 0
       if (activeFilters.entriesCountMin !== undefined && count < activeFilters.entriesCountMin) return false
       if (activeFilters.entriesCountMax !== undefined && count > activeFilters.entriesCountMax) return false
       return true
-    })
-    return applySort(list)
-  }, [lorebooks, activeFilters, activeTab, sortField, sortDir])
+    }))
+  }, [lorebooksFandom, lorebooksCharacter, lorebooksPersona, activeFilters, activeTab, sortField, sortDir])
 
   if (isLoading) return <div className={styles.adminPage}><div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div></div>
   if (!isAdmin) return <Navigate to="/dashboard" replace />
@@ -434,10 +488,10 @@ export default function AdminDashboard() {
               />
               {!isLorebookDetail && (
                 <Pagination 
-                  currentPage={currentPage.lorebooks}
-                  totalItems={totals.lorebooks}
+                  currentPage={currentPage[activeTab]}
+                  totalItems={totals[activeTab]}
                   pageSize={PAGE_SIZE}
-                  onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, lorebooks: p }))}
+                  onPageChange={(p) => setCurrentPage((prev: any) => ({ ...prev, [activeTab]: p }))}
                 />
               )}
             </div>
@@ -576,7 +630,7 @@ export default function AdminDashboard() {
             <CharacterProfileView 
               characterId={detailId!} 
               characters={characters}
-              allLorebooks={lorebooks}
+              allLorebooks={allLorebooks}
               onBack={() => navigate('/admin/characters')}
               onUpdateCharacter={(updated) => {
                 if (detailId !== 'create') {
@@ -603,9 +657,19 @@ export default function AdminDashboard() {
                     setCharacters(prev => prev.map(c => c.id === savedChar.id ? savedChar : c))
                   }
 
-                  // Refresh lorebooks to ensure consistency (optional as M2M is character-centric now)
-                  const refreshedLbs = await ApiClient.get<Lorebook[]>('core', '/lorebooks/?skip=0&limit=500')
-                  setLorebooks(refreshedLbs)
+
+                  // Trigger re-fetch for current active lorebook tab to ensure proper pagination and state
+                  if (activeTab.startsWith('lorebooks_')) {
+                    const page = currentPage[activeTab] || 1
+                    const type = activeTab.split('_')[1]
+                    const skip = (page - 1) * PAGE_SIZE
+                    const res = await ApiClient.get<any>('core', `/lorebooks/?skip=${skip}&limit=${PAGE_SIZE}&type=${type}`)
+                    const items = res.items || []
+                    if (type === 'fandom') setLorebooksFandom(items)
+                    else if (type === 'character') setLorebooksCharacter(items)
+                    else if (type === 'persona') setLorebooksPersona(items)
+                    setTotals(prev => ({ ...prev, [activeTab]: res.total || 0 }))
+                  }
 
                   navigate(`/admin/characters/${savedChar.id}`)
                 } catch (e: any) {
@@ -650,7 +714,7 @@ export default function AdminDashboard() {
               personaId={id!}
               personas={personas}
               users={users}
-              allLorebooks={lorebooks}
+              allLorebooks={allLorebooks}
               onBack={() => navigate('/admin/personas')}
               onDeletePersona={(uid) => {
                 setPersonas(prev => prev.filter(p => p.id !== uid))
@@ -717,7 +781,7 @@ export default function AdminDashboard() {
           users={users}
           personas={personas}
           characters={characters}
-          lorebooks={lorebooks}
+          lorebooks={[...lorebooksFandom, ...lorebooksCharacter, ...lorebooksPersona]}
         />
       </main>
     </div>

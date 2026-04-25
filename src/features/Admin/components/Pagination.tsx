@@ -11,7 +11,7 @@ interface PaginationProps {
 export function Pagination({ currentPage, totalItems, pageSize, onPageChange }: PaginationProps): React.JSX.Element | null {
   const totalPages = Math.ceil(totalItems / pageSize)
   
-  if (totalPages <= 1) return null
+  if (!totalPages || totalPages <= 1 || isNaN(totalPages)) return null
 
   const start = Math.max(1, currentPage - 2)
   const end = Math.min(totalPages, start + 4)
