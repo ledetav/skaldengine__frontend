@@ -3,6 +3,7 @@ export interface Character {
   creator_id?: string;
   name: string;
   description?: string;
+  type: 'fandom' | 'original';
   fandom?: string;
   avatar_url?: string;
   card_image_url?: string;

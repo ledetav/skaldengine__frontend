@@ -2,6 +2,7 @@ export interface Character {
   id: string
   name: string
   description?: string
+  type: 'fandom' | 'original'
   fandom?: string
   gender?: string
   avatar_url?: string

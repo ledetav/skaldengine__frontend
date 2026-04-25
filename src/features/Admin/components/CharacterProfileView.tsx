@@ -41,6 +41,7 @@ export function CharacterProfileView({
   const [draftCharacter, setDraftCharacter] = useState<Character | undefined>(isCreate ? {
     id: 'create',
     name: 'Новый персонаж',
+    fandom: '',
     total_chats_count: 0,
     monthly_chats_count: 0,
     scenarios_count: 0,
@@ -48,6 +49,7 @@ export function CharacterProfileView({
     nsfw_allowed: false,
     is_public: false,
     is_deleted: false,
+    type: 'fandom',
     lorebook_ids: [],
   } as Character : undefined)
 
@@ -55,8 +57,13 @@ export function CharacterProfileView({
 
   // Get unique fandoms from LOREBOOKS for the dropdown (Task 4)
   const availableFandoms = useMemo(() => {
-    const fandoms = new Set(allLorebooks.map(lb => lb.fandom).filter(Boolean))
-    return Array.from(fandoms).sort()
+    const forbidden = ['original', 'оригинальный']
+    const fandoms = new Set(
+      allLorebooks
+        .map(lb => lb.fandom)
+        .filter(f => f && !forbidden.includes(f.toLowerCase()))
+    )
+    return Array.from(fandoms as Set<string>).sort()
   }, [allLorebooks])
 
   const filteredFandoms = availableFandoms.filter(f => 
@@ -75,40 +82,46 @@ export function CharacterProfileView({
   }
 
   const handleChange = (field: keyof Character, value: any) => {
+    const updateChar = (prev: Character, field: keyof Character, value: any): Character => {
+      if (field === 'type') {
+        const isFandom = value === 'fandom';
+        const currentIds = prev.lorebook_ids || [];
+        
+        // When switching to original, clear fandom string and unlink all fandom LBs
+        if (!isFandom) {
+          const filteredIds = currentIds.filter(id => {
+            const lb = allLorebooks.find(l => l.id === id);
+            return lb?.type !== 'fandom';
+          });
+          return { ...prev, type: 'original', fandom: '', lorebook_ids: filteredIds };
+        }
+        return { ...prev, type: 'fandom' };
+      }
+
+      if (field === 'fandom') {
+        const oldFandom = prev.fandom;
+        const currentIds = prev.lorebook_ids || [];
+        
+        // Remove old fandom LBs
+        const filteredIds = currentIds.filter(id => {
+          const lb = allLorebooks.find(l => l.id === id);
+          return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
+        });
+
+        // Add new fandom LBs
+        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
+        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
+        
+        return { ...prev, [field]: value, lorebook_ids: newIds };
+      }
+
+      return { ...prev, [field]: value };
+    }
+
     if (isCreate && draftCharacter) {
-      if (field === 'fandom') {
-        const oldFandom = draftCharacter.fandom;
-        const currentIds = draftCharacter.lorebook_ids || [];
-        
-        const filteredIds = currentIds.filter(id => {
-          const lb = allLorebooks.find(l => l.id === id);
-          return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
-        });
-
-        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
-        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
-        
-        setDraftCharacter({ ...draftCharacter, [field]: value, lorebook_ids: newIds });
-      } else {
-        setDraftCharacter({ ...draftCharacter, [field]: value });
-      }
+      setDraftCharacter(updateChar(draftCharacter, field, value));
     } else {
-      if (field === 'fandom') {
-        const oldFandom = character.fandom;
-        const currentIds = character.lorebook_ids || [];
-        
-        const filteredIds = currentIds.filter(id => {
-          const lb = allLorebooks.find(l => l.id === id);
-          return !(lb && lb.type === 'fandom' && lb.fandom === oldFandom);
-        });
-
-        const newFandomLbs = allLorebooks.filter(lb => lb.fandom === value && lb.type === 'fandom' && value !== '');
-        const newIds = Array.from(new Set([...filteredIds, ...newFandomLbs.map(lb => lb.id)]));
-
-        onUpdateCharacter({ ...character, [field]: value, lorebook_ids: newIds });
-      } else {
-        onUpdateCharacter({ ...character, [field]: value });
-      }
+      onUpdateCharacter(updateChar(character, field, value));
     }
   }
 
@@ -149,8 +162,8 @@ export function CharacterProfileView({
   }
 
   const isOriginal = useMemo(() => 
-    character.fandom === 'Original' || character.fandom === 'Оригинальный',
-  [character.fandom])
+    character.type === 'original',
+  [character.type])
 
   // Lorebooks to display in the main list:
   // 1. Lorebooks belonging to this fandom (Requirement 1.3)
@@ -172,12 +185,10 @@ export function CharacterProfileView({
       // 2. Include lorebooks belonging to this specific character (Requirement 1.2)
       if (lb.character_id === character.id) return true;
 
-      // 3. Include fandom lorebooks, but EXCLUDE those belonging to other Original characters (Requirement 1.1)
+      // 3. Include fandom lorebooks, but EXCLUDE those belonging to other characters (Requirement 1.1)
       if (character.fandom && lb.fandom === character.fandom && character.fandom !== '') {
-        // If it's a character-specific lorebook (character_id exists) and it's for an Original character, exclude it.
-        // We know it's for an Original character because current lorebook.fandom is 'Original' or 'Оригинальный'.
-        const isOriginalFandom = lb.fandom === 'Original' || lb.fandom === 'Оригинальный';
-        if (lb.character_id && lb.character_id !== character.id && isOriginalFandom) {
+        // If it's a character-specific lorebook and it's for another character, exclude it.
+        if (lb.type === 'character' && lb.character_id && lb.character_id !== character.id) {
           return false;
         }
         return true;
@@ -232,56 +243,67 @@ export function CharacterProfileView({
 
             <div className={styles.charBasicInfo}>
               {isEditing ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%' }}>
                   <input 
                     className={styles.editInput}
                     value={character.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     style={{ textAlign: 'center', fontSize: '1.2rem', fontWeight: 950 }}
                   />
-                  
-                  <div className={styles.customDropdown}>
-                    <div className={styles.dropdownSelected} onClick={() => setIsFandomOpen(!isFandomOpen)}>
-                      {character.fandom === 'Original' ? 'Оригинальный' : (character.fandom || 'Выберите фандом')}
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+
+                  <div className={styles.typeSelector}>
+                    <div 
+                      className={`${styles.typeTab} ${character.type === 'fandom' ? styles.typeTabActive : ''} ${styles.typeTabFandom}`}
+                      onClick={() => handleChange('type', 'fandom')}
+                    >
+                      Фандомный
                     </div>
-                    {isFandomOpen && (
-                      <div className={styles.dropdownMenu}>
-                        <div className={styles.dropdownSearchWrapper}>
-                          <input 
-                            className={styles.dropdownSearch}
-                            placeholder="Поиск..."
-                            value={fandomSearch}
-                            onChange={(e) => setFandomSearch(e.target.value)}
-                            autoFocus
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </div>
-                        <div className={styles.dropdownOptionsList}>
-                          <div className={styles.dropdownOption} onClick={() => {
-                            handleChange('fandom', 'Original')
-                            setIsFandomOpen(false)
-                          }}>
-                            — Оригинальный
-                          </div>
-                          {filteredFandoms.map(f => (
-                            <div key={f} className={styles.dropdownOption} onClick={() => {
-                              handleChange('fandom', f)
-                              setIsFandomOpen(false)
-                            }}>
-                              {f}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    <div 
+                      className={`${styles.typeTab} ${character.type === 'original' ? styles.typeTabActive : ''} ${styles.typeTabOriginal}`}
+                      onClick={() => handleChange('type', 'original')}
+                    >
+                      Оригинальный
+                    </div>
                   </div>
+                  
+                  {character.type === 'fandom' && (
+                    <div className={styles.customDropdown} style={{ width: '100%' }}>
+                      <div className={styles.dropdownSelected} onClick={() => setIsFandomOpen(!isFandomOpen)}>
+                        {character.fandom || 'Выберите фандом'}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                      {isFandomOpen && (
+                        <div className={styles.dropdownMenu}>
+                          <div className={styles.dropdownSearchWrapper}>
+                            <input 
+                              className={styles.dropdownSearch}
+                              placeholder="Поиск..."
+                              value={fandomSearch}
+                              onChange={(e) => setFandomSearch(e.target.value)}
+                              autoFocus
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                          <div className={styles.dropdownOptionsList}>
+                            {filteredFandoms.map(f => (
+                              <div key={f} className={styles.dropdownOption} onClick={() => {
+                                handleChange('fandom', f)
+                                setIsFandomOpen(false)
+                              }}>
+                                {f}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <>
                   <h1 className={styles.charProfileName}>{character.name}</h1>
                   <div style={{ marginBottom: '16px' }}>
-                    <Badge variant="orange">{character.fandom === 'Original' ? 'Оригинальный' : (character.fandom || 'Независимый')}</Badge>
+                    <Badge variant={isOriginal ? "orange" : "blue"}>{isOriginal ? 'Оригинальный' : (character.fandom || 'Фандомный')}</Badge>
                   </div>
                 </>
               )}

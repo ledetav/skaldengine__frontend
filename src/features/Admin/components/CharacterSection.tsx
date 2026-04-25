@@ -27,7 +27,8 @@ export function CharacterSection({
 
   const filteredCharacters = characters.filter(char => 
     char.name.toLowerCase().includes(search.toLowerCase()) ||
-    char.fandom?.toLowerCase().includes(search.toLowerCase())
+    char.fandom?.toLowerCase().includes(search.toLowerCase()) ||
+    (char.type === 'original' && 'оригинальный'.includes(search.toLowerCase()))
   )
 
   return (
@@ -100,7 +101,7 @@ export function CharacterSection({
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
                   </td>
-                  <td><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></td>
+                  <td><Badge variant={char.type === 'original' ? "orange" : "blue"}>{char.type === 'original' ? 'Оригинальный' : (char.fandom || 'Фандомный')}</Badge></td>
                   <td>{(char.total_chats_count || 0).toLocaleString()}</td>
                   <td>{char.scenarios_count || 0}</td>
                   <td>{char.lorebook_ids?.length || 0}</td>
@@ -119,7 +120,7 @@ export function CharacterSection({
                 </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>
-                  <div className={styles.cardFandom}><Badge variant="orange">{char.fandom || 'Независимый'}</Badge></div>
+                  <div className={styles.cardFandom}><Badge variant={char.type === 'original' ? "orange" : "blue"}>{char.type === 'original' ? 'Оригинальный' : (char.fandom || 'Фандомный')}</Badge></div>
                 </div>
               </div>
               <div className={styles.cardStats}>
