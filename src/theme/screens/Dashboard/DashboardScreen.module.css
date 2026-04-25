@@ -451,13 +451,25 @@
 
 /* 1. Image Area (TOP) */
 .cardImageArea {
-  height: 130px;
-  background: var(--white);
+  height: 110px; /* Reduced from 130px */
+  background: var(--bg-secondary);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 50px;
+  font-size: 40px;
+  overflow: hidden;
+}
+
+.cardAvatarLarge {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-smooth);
+}
+
+.characterCard:hover .cardAvatarLarge {
+  transform: scale(1.1);
 }
 
 .cardIconGlow {
@@ -558,7 +570,7 @@
 
 /* 2. Creator Bar (MIDDLE) */
 .cardCreatorBar {
-  padding: 10px 16px;
+  padding: 8px 14px; /* Reduced from 10px 16px */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -576,6 +588,14 @@
   font-size: 10px;
   font-weight: 800;
   color: var(--white);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.creatorAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .creatorInfoStack {
@@ -612,10 +632,10 @@
 
 /* 3. Info Section (BOTTOM) */
 .cardBody {
-  padding: 12px 14px;
+  padding: 10px 14px; /* Reduced from 12px 14px */
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .cardHeader {
@@ -640,15 +660,16 @@
 }
 
 .cardDesc {
-  font-size: 12px;
+  font-size: 11px; /* Reduced from 12px */
   color: var(--text-secondary);
-  line-height: 1.4;
-  height: 34px;
+  line-height: 1.3;
+  height: 30px; /* Reduced from 34px */
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
+  opacity: 0.8;
 }
 
 .mobileStartChatBtn {

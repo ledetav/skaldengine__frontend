@@ -41,8 +41,18 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
     <div className={cardClass}>
       {/* 1. Image Area (TOP) */}
       <div className={styles.cardImageArea}>
-        <div className={styles.cardIconGlow} />
-        <span className={styles.cardIcon}>{getIcon()}</span>
+        {character.avatar_url || character.card_image_url ? (
+          <img 
+            src={character.avatar_url || character.card_image_url} 
+            alt={character.name} 
+            className={styles.cardAvatarLarge} 
+          />
+        ) : (
+          <>
+            <div className={styles.cardIconGlow} />
+            <span className={styles.cardIcon}>{getIcon()}</span>
+          </>
+        )}
         
         {/* Top Badges */}
         <div className={styles.topBadgesRow}>
@@ -61,10 +71,16 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
       {/* 2. Creator Bar (MIDDLE) */}
       <div className={styles.cardCreatorBar}>
         <div className={styles.creatorAvatarMini}>
-          {character.creator_id?.[0]?.toUpperCase() || 'S'}
+          {character.author?.avatar_url ? (
+            <img src={character.author.avatar_url} alt={character.author.username} className={styles.creatorAvatarImg} />
+          ) : (
+            character.author?.username?.[0]?.toUpperCase() || character.creator_id?.[0]?.toUpperCase() || 'S'
+          )}
         </div>
         <div className={styles.creatorInfoStack}>
-          <span className={styles.creatorNameMini}>{character.creator_id || 'System'}</span>
+          <span className={styles.creatorNameMini}>
+            {character.author?.username ? `@${character.author.username}` : (character.creator_id || 'System')}
+          </span>
           <div className={styles.cardStats}>
             <span className={styles.statItem} title="Чатов за месяц">
               <span className={styles.statIcon}>
