@@ -91,7 +91,7 @@ export function PersonaProfileView({
             <div className={styles.charCover} style={{ height: '120px', background: 'linear-gradient(135deg, var(--accent-teal), #0f766e)' }}>
               <div className={styles.charAvatarWrapper} style={{ bottom: '-30px' }}>
                 <img 
-                  src={persona.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${persona.name}`} 
+                  src={persona.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${persona.name}`} 
                   className={styles.charAvatar} 
                   alt={persona.name} 
                 />

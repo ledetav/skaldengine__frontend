@@ -96,7 +96,7 @@ export function CharacterSection({
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <div className={styles.charAvatarWrapper} style={{ position: 'static', width: '28px', height: '28px', flexShrink: 0 }}>
-                        <img src={char.avatar_url || ''} className={styles.charAvatar} alt={char.name} />
+                        <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.charAvatar} alt={char.name} />
                       </div>
                       <span style={{ fontWeight: 700 }}>{char.name}</span>
                     </div>
@@ -116,7 +116,7 @@ export function CharacterSection({
             <div key={char.id} className={styles.adminCard} onClick={() => onSelectCharacter(char.id)} style={{ cursor: 'pointer' }}>
               <div className={styles.cardTop}>
                 <div className={styles.cardAvatarWrapper}>
-                  <img src={char.avatar_url || ''} className={styles.cardAvatar} alt={char.name} />
+                  <img src={char.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}`} className={styles.cardAvatar} alt={char.name} />
                 </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{char.name}</h3>

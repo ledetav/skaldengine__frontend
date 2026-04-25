@@ -149,6 +149,15 @@ export default function PersonaFormScreen() {
         {/* Form */}
         <form onSubmit={handleSubmit} noValidate>
           <div className={styles.formCard}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
+              <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.1)' }}>
+                <img 
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${form.name || 'new'}`} 
+                  alt="Avatar Preview" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
 
             {/* ─── Core Identity ─── */}
             <div className={styles.sectionTitle}>Основная информация</div>

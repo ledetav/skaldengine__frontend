@@ -36,7 +36,7 @@ export function PersonaSection({ persona }: { persona: UserPersona | null }) {
                 <>
                   <div className={styles.personaHeaderSidebar}>
                     <div className={styles.personaAvatarSidebar}>
-                      <img src={persona.avatar_url || undefined} alt="Avatar" />
+                      <img src={persona.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${persona.name}`} alt="Avatar" />
                     </div>
                     <div className={styles.personaMetaSidebar}>
                       <h4 className={styles.personaNameSidebar}>{persona.name}</h4>
