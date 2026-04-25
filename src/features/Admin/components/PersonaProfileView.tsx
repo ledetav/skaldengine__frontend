@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import styles from '../Admin.module.css'
 import type { UserPersona, User, Lorebook } from '../types'
-import { Button } from '@/components/ui'
+import { Button, useToast } from '@/components/ui'
 
 interface PersonaProfileViewProps {
   personaId: string
@@ -20,6 +20,7 @@ export function PersonaProfileView({
   onBack,
   onDeletePersona 
 }: PersonaProfileViewProps) {
+  const { success } = useToast()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const persona = personas.find(p => p.id === personaId)
   const owner = users.find(u => u.id === persona?.owner_id)
@@ -65,10 +66,18 @@ export function PersonaProfileView({
             </p>
             <div className={styles.modalActions}>
               <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
-              <Button variant="danger" onClick={() => { 
-                setShowDeleteModal(false); 
-                if (onDeletePersona) onDeletePersona(persona.id);
-                onBack(); 
+              <Button variant="danger" onClick={async () => { 
+                try {
+                  const { personasApi } = await import('@/core/api/personas')
+                  await personasApi.deleteAdminPersona(persona.id)
+                  success('Персона успешно удалена')
+                  setShowDeleteModal(false)
+                  if (onDeletePersona) onDeletePersona(persona.id)
+                  onBack()
+                } catch (e) {
+                  console.error('Failed to delete persona', e)
+                  success('Ошибка при удалении персоны')
+                }
               }}>Да, удалить</Button>
             </div>
           </div>

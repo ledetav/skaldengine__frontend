@@ -131,6 +131,19 @@ export function LorebookSection({
     }
   }
 
+  const handleDelete = async () => {
+    try {
+      const { lorebooksApi } = await import('@/core/api/lorebooks')
+      await lorebooksApi.deleteAdminLorebook(id!)
+      success('Лорбук успешно удален')
+      setShowDeleteModal(false)
+      handleBack()
+    } catch (e) {
+      console.error('Failed to delete lorebook', e)
+      success('Ошибка при удалении лорбука')
+    }
+  }
+
   if (isDetailMode) {
     if (!lb) return <div style={{ color: 'var(--accent-red)', padding: '40px' }}>Лорбук не найден</div>
 
@@ -474,7 +487,7 @@ export function LorebookSection({
               </p>
               <div className={styles.modalActions}>
                 <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
-                <Button variant="danger" onClick={() => { setShowDeleteModal(false); handleBack(); }}>Да, удалить</Button>
+                <Button variant="danger" onClick={handleDelete}>Да, удалить</Button>
               </div>
             </div>
           </div>

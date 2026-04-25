@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../Admin.module.css'
 import type { Character, Lorebook } from '../types'
-import { Badge, Button } from '@/components/ui'
+import { Badge, Button, useToast } from '@/components/ui'
 
 interface CharacterProfileViewProps {
   characterId: string
@@ -23,6 +23,7 @@ export function CharacterProfileView({
   onUpdateLorebooks,
   onSave
 }: CharacterProfileViewProps) {
+  const { success } = useToast()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -118,6 +119,19 @@ export function CharacterProfileView({
       return lb
     })
     onUpdateLorebooks(updated)
+  }
+
+  const handleDelete = async () => {
+    try {
+      const { charactersApi } = await import('@/core/api/characters')
+      await charactersApi.deleteAdminCharacter(character.id)
+      success('Персонаж успешно удален')
+      setShowDeleteModal(false)
+      onBack()
+    } catch (e) {
+      console.error('Failed to delete character', e)
+      success('Ошибка при удалении персонажа')
+    }
   }
 
   // Lorebooks attached to this character
@@ -439,10 +453,10 @@ export function CharacterProfileView({
             <p className={styles.modalDescription}>
               Это действие необратимо. Персонаж <strong>{character.name}</strong> будет полностью удален из системы.
             </p>
-            <div className={styles.modalActions}>
-              <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
-              <Button variant="danger" onClick={() => { setShowDeleteModal(false); onBack(); }}>Да, удалить</Button>
-            </div>
+              <div className={styles.modalActions}>
+                <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
+                <Button variant="danger" onClick={handleDelete}>Да, удалить</Button>
+              </div>
           </div>
         </div>
       )}

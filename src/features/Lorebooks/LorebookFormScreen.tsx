@@ -9,6 +9,7 @@ import { charactersApi } from '@/core/api/characters'
 import type { UserPersona } from '@/core/types/chat'
 import type { Character } from '@/core/types/character'
 import { useToast, Button, Input, Textarea, Card } from '@/components/ui'
+import { useProfile } from '@/core/hooks/useProfile'
 
 import type { LorebookType } from '@/core/types/chat'
 
@@ -43,6 +44,8 @@ export default function LorebookFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { success, error } = useToast()
+  const { profile } = useProfile()
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'moderator'
 
   const isEdit = !!id
   const [form, setForm] = useState<FormData>(EMPTY)
@@ -103,10 +106,18 @@ export default function LorebookFormScreen() {
       }
       
       if (isEdit && id) {
-        await lorebooksApi.updateAdminLorebook(id, payload as any)
+        if (isAdmin) {
+          await lorebooksApi.updateAdminLorebook(id, payload as any)
+        } else {
+          await lorebooksApi.updateLorebook(id, payload as any)
+        }
         success('Лорбук успешно обновлён')
       } else {
-        await lorebooksApi.createAdminLorebook(payload as any)
+        if (isAdmin) {
+          await lorebooksApi.createAdminLorebook(payload as any)
+        } else {
+          await lorebooksApi.createLorebook(payload as any)
+        }
         success('Лорбук создан')
       }
       navigate('/lorebooks')

@@ -16,5 +16,9 @@ export const charactersApi = {
 
   updateAdminCharacter: async (id: string, data: Partial<Character>): Promise<Character> => {
     return ApiClient.patch('core', `/admin/characters/${id}`, data)
+  },
+  
+  deleteAdminCharacter: async (id: string): Promise<void> => {
+    return ApiClient.delete('core', `/admin/characters/${id}`)
   }
 }
