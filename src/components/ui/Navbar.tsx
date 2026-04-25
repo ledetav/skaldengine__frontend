@@ -4,9 +4,9 @@ import { useAuth } from '@/core/contexts/AuthContext'
 import styles from '@/theme/components/Navbar.module.css'
 
 const NAV_LINKS = [
-  { label: 'О системе', href: '#about' },
-  { label: 'Возможности', href: '#features' },
-  { label: 'Контакты', href: '#footer' },
+  { label: 'О системе', href: '/#about' },
+  { label: 'Возможности', href: '/#features' },
+  { label: 'Контакты', href: '/#footer' },
 ]
 
 interface NavbarProps {
@@ -81,7 +81,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
               </Link>
             )}
 
-            <Link to={getDebugHref("/chats")} className={styles.navLink}>Мои чаты</Link>
+            <Link to={getDebugHref("/profile")} className={styles.navLink}>Мои чаты</Link>
             <Link to={getDebugHref("/user/personas")} className={styles.navLink}>Мои персоны</Link>
             <Link to={getDebugHref("/user/lorebooks")} className={styles.navLink}>Мои лорбуки</Link>
 
@@ -136,7 +136,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
                 </Link>
               )}
 
-              <Link to={getDebugHref("/chats")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
+              <Link to={getDebugHref("/profile")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои чаты</Link>
               <Link to={getDebugHref("/user/personas")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои персоны</Link>
               <Link to={getDebugHref("/user/lorebooks")} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Мои лорбуки</Link>
 
