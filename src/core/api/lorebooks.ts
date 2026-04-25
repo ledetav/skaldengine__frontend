@@ -7,7 +7,8 @@ export const lorebooksApi = {
     if (userId) query += `&user_id=${userId}`
     if (personaId) query += `&persona_id=${personaId}`
     if (characterId) query += `&character_id=${characterId}`
-    return ApiClient.get('core', `/lorebooks/${query}`)
+    const res = await ApiClient.get<any>('core', `/lorebooks/${query}`)
+    return res.items || res || []
   },
   
   deleteLorebook: async (id: string): Promise<void> => {

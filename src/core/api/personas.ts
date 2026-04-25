@@ -23,7 +23,8 @@ export interface UserPersonaCreate {
 export const personasApi = {
   getPersonas: async (skip: number = 0, limit: number = 10, userId?: string): Promise<UserPersona[]> => {
     const userQuery = userId ? `&user_id=${userId}` : ''
-    return ApiClient.get('core', `/personas/?skip=${skip}&limit=${limit}${userQuery}`)
+    const res = await ApiClient.get<any>('core', `/personas/?skip=${skip}&limit=${limit}${userQuery}`)
+    return res.items || res || []
   },
   
   createPersona: async (persona: UserPersonaCreate): Promise<UserPersona> => {

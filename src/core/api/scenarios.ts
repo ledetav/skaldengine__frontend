@@ -6,7 +6,8 @@ export const scenariosApi = {
     const endpoint = characterId 
       ? `/scenarios/?character_id=${characterId}`
       : '/scenarios/'
-    return ApiClient.get('core', endpoint)
+    const res = await ApiClient.get<any>('core', endpoint)
+    return res.items || res || []
   },
   
   getScenario: async (id: string): Promise<Scenario> => {
