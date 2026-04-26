@@ -45,7 +45,15 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
           </div>
           <div className={styles.characterMainInfo}>
             <h1>{character.name}</h1>
-            <span className={styles.fandomOverlay}>{character.fandom || 'Оригинальный'}</span>
+            <div className={styles.metaRow}>
+              <span className={styles.fandomOverlay}>{character.fandom || 'Оригинальный'}</span>
+              {(character.gender || character.age) && (
+                <div className={styles.physicalInfo}>
+                  {character.gender && <span className={styles.genderTag}>{character.gender}</span>}
+                  {character.age && <span className={styles.ageTag}>{character.age}</span>}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
