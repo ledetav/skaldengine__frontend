@@ -57,6 +57,7 @@ export function LorebookSection({
     type: initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'persona' : 'character',
     fandom: '',
     description: '',
+    category: 'general',
     entries_count: 0,
     entries: []
   } as Lorebook : undefined, [isCreateMode, initialType])
@@ -84,6 +85,7 @@ export function LorebookSection({
 
   const [editName, setEditName] = useState('')
   const [editDescription, setEditDescription] = useState('')
+  const [editLorebookCategory, setEditLorebookCategory] = useState('general')
 
   const [editType, setEditType] = useState<'fandom' | 'character' | 'persona'>(initialType)
   const [selectedFandom, setSelectedFandom] = useState('')
@@ -99,6 +101,7 @@ export function LorebookSection({
     if (lb && isEditMode) {
       setEditName(lb.name || '')
       setEditDescription(lb.description || '')
+      setEditLorebookCategory(lb.category || 'general')
       setEditType(lb.type || initialType)
       setSelectedFandom(lb.fandom || '')
       setSelectedCharId(lb.character_id || '')
@@ -109,6 +112,7 @@ export function LorebookSection({
     } else if (isCreateMode) {
       setEditName('')
       setEditDescription('')
+      setEditLorebookCategory('general')
       setEditType(initialType)
       setSelectedFandom('')
       setSelectedCharId('')
@@ -308,6 +312,7 @@ export function LorebookSection({
       const payload: Partial<Lorebook> = {
         name: editName,
         description: editDescription,
+        category: editLorebookCategory,
         type: editType === 'fandom' ? 'fandom' : editType === 'persona' ? 'persona' : 'character',
         fandom: editType === 'fandom' ? selectedFandom : undefined,
         character_id: editType === 'character' ? (selectedCharId || null) : undefined,
@@ -509,13 +514,35 @@ export function LorebookSection({
                     </div>
                   )}
                 </div>
-
-                <div className={styles.detailGroup} style={{ gridColumn: 'span 2' }}>
+                <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Описание</div>
                   {isEditMode ? (
                     <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
                   ) : (
                     <div style={{ opacity: 0.7, lineHeight: 1.6 }}>{lb.description || 'Описание отсутствует'}</div>
+                  )}
+                </div>
+
+                <div className={styles.detailGroup}>
+                  <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Категория лорбука</div>
+                  {isEditMode ? (
+                    <select 
+                      className={styles.select}
+                      value={editLorebookCategory}
+                      onChange={(e) => setEditLorebookCategory(e.target.value)}
+                      style={{ width: '100%', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', padding: '0 8px', fontSize: '0.8rem' }}
+                    >
+                      <option value="general">Общая</option>
+                      <option value="nature">Природа</option>
+                      <option value="geography">География</option>
+                      <option value="history">История</option>
+                      <option value="world">Мир / Законы</option>
+                      <option value="characters">Персонажи</option>
+                      <option value="items">Предметы</option>
+                      <option value="beings">Существа</option>
+                    </select>
+                  ) : (
+                    <Badge variant="purple">{lb.category || 'general'}</Badge>
                   )}
                 </div>
               </div>
@@ -692,6 +719,8 @@ export function LorebookSection({
                           return {
                             keywords: kw ? [kw.trim()] : [],
                             content: contentParts.join('|').trim(),
+                            category: newEntryCategory,
+                            is_always_included: newEntryAlwaysInc,
                             priority: 100
                           }
                         })
@@ -703,6 +732,8 @@ export function LorebookSection({
                       await lorebooksApi.createLorebookEntriesBulk(lb!.id, entries.map((e: any) => ({
                         keywords: e.keywords || [],
                         content: e.content || '',
+                        category: e.category || newEntryCategory,
+                        is_always_included: e.is_always_included !== undefined ? e.is_always_included : newEntryAlwaysInc,
                         priority: e.priority || 100
                       })))
                     }
@@ -1011,6 +1042,9 @@ export function LorebookSection({
                         : initialType === 'persona' 
                           ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
                           : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
+                    </Badge>
+                    <Badge variant="purple" style={{ marginLeft: '6px' }}>
+                      {lb.category || 'general'}
                     </Badge>
                   </div>
                 </div>

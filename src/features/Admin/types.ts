@@ -31,6 +31,7 @@ export interface Lorebook {
   type: 'fandom' | 'character' | 'persona';
   name: string;
   description?: string;
+  category: string;
   tags?: string[];
   entries_count: number;
   owner_id?: string;

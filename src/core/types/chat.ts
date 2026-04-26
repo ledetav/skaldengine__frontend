@@ -117,6 +117,7 @@ export interface Lorebook {
   name: string
   type: LorebookType
   description?: string
+  category: string
   fandom?: string | null
   character_id?: string | null
   character_name?: string
