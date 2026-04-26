@@ -14,6 +14,7 @@ export interface Character {
   scenarios_count: number;
   scenario_chats_count: number;
   gender?: string;
+  age?: string;
   nsfw_allowed: boolean;
   is_public: boolean;
   is_deleted: boolean;
@@ -42,6 +43,8 @@ export interface LorebookEntry {
   lorebook_id: string;
   keywords: string[];
   content: string;
+  category?: string;
+  is_always_included?: boolean;
   priority: number;
   created_at?: string;
 }
@@ -66,7 +69,7 @@ export interface UserPersona {
   name: string;
   description?: string;
   avatar_url?: string;
-  age?: number;
+  age?: string;
   appearance?: string;
   personality?: string;
   gender?: string;

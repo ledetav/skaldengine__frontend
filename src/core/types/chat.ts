@@ -33,7 +33,7 @@ export interface UserPersona {
   name: string
   description?: string | null
   avatar_url?: string | null
-  age?: number | null
+  age?: string | null
   appearance?: string | null
   personality?: string | null
   gender?: string | null
@@ -104,6 +104,8 @@ export interface LorebookEntry {
   lorebook_id: string
   keywords: string[]
   content: string
+  category?: string
+  is_always_included?: boolean
   priority: number
   created_at: string
 }

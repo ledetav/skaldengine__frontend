@@ -10,8 +10,9 @@ import { messagesApi } from '@/core/api/messages'
 import { charactersApi } from '@/core/api/characters'
 import { personasApi } from '@/core/api/personas'
 import { authApi } from '@/core/api/auth'
+import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Character } from '@/core/types/character'
-import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType } from '@/core/types/chat'
+import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType, Lorebook } from '@/core/types/chat'
 
 // Components
 import { ChatHeader } from './components/ChatHeader'
@@ -41,7 +42,7 @@ export default function ChatScreen() {
   const [inputValue, setInputValue] = useState('')
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null)
   const [messageTree, setMessageTree] = useState<Message[]>([])
-  const [userRole, setUserRole] = useState<string>('user')
+  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024)
@@ -127,8 +128,16 @@ export default function ChatScreen() {
         }))
         
         setMessages(mappedMessages)
-        const userMe = await authApi.getMe()
-        setUserRole(userMe.role)
+        await authApi.getMe()
+
+        // Load Lorebooks
+        const lb_ids = charData.lorebook_ids || []
+        const lb_promises = lb_ids.map((id: string) => lorebooksApi.getLorebook(id))
+        if (chatData.persona_lorebook_id) {
+          lb_promises.push(lorebooksApi.getLorebook(chatData.persona_lorebook_id))
+        }
+        const loadedLbs = await Promise.all(lb_promises)
+        setLorebooks(loadedLbs)
 
       } catch (err: unknown) {
         logger.error('Failed to load chat data:', err)
@@ -137,6 +146,21 @@ export default function ChatScreen() {
 
     loadData()
   }, [chatId])
+
+  const handleForkChat = useCallback(async (messageId: string) => {
+    try {
+      const newChat = await messagesApi.forkChat(messageId)
+      window.location.href = `/chat/${newChat.id}`
+    } catch (err) {
+      logger.error('Failed to fork chat:', err)
+      setChatError('Не удалось создать ветку чата. Пожалуйста, попробуйте позже.')
+    }
+  }, [])
+
+  useEffect(() => {
+    (window as any).forkChatFromMsg = handleForkChat
+    return () => { delete (window as any).forkChatFromMsg }
+  }, [handleForkChat])
 
   // Handlers
   const handleSiblingSwitch = async (msgId: string, direction: 'prev' | 'next') => {
@@ -467,7 +491,7 @@ export default function ChatScreen() {
           onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
         />
 
-        <LorebookSection userRole={userRole} />
+        <LorebookSection lorebooks={lorebooks} />
       </Sidebar>
 
       <ApiKeyModal 

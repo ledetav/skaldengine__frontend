@@ -5,6 +5,7 @@ export interface Character {
   type: 'fandom' | 'original'
   fandom?: string
   gender?: string
+  age?: string
   avatar_url?: string
   card_image_url?: string
   appearance?: string

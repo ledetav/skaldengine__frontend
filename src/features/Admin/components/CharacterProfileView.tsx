@@ -52,6 +52,8 @@ export function CharacterProfileView({
     is_deleted: false,
     type: 'fandom',
     lorebook_ids: [],
+    gender: '',
+    age: '',
   } as Character : undefined)
 
   const character = isCreate ? draftCharacter : characters.find((c: Character) => c.id === characterId)
@@ -276,12 +278,40 @@ export function CharacterProfileView({
                       className={styles.fandomSelect}
                     />
                   )}
+
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '8px' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginLeft: '4px', display: 'block', marginBottom: '2px' }}>Пол</label>
+                      <input 
+                        className={styles.editInput}
+                        value={character.gender || ''}
+                        onChange={(e) => handleChange('gender', e.target.value)}
+                        placeholder="Пол"
+                        style={{ fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginLeft: '4px', display: 'block', marginBottom: '2px' }}>Возраст</label>
+                      <input 
+                        className={styles.editInput}
+                        value={character.age || ''}
+                        onChange={(e) => handleChange('age', e.target.value)}
+                        placeholder="Возраст"
+                        style={{ fontSize: '0.85rem' }}
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <>
                   <h1 className={styles.charProfileName}>{character.name}</h1>
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <Badge variant={isOriginal ? "orange" : "blue"}>{isOriginal ? 'Оригинальный' : (character.fandom || 'Фандомный')}</Badge>
+                    {(character.gender || character.age) && (
+                      <Badge variant="ghost">
+                        {character.gender}{character.gender && character.age ? ', ' : ''}{character.age}
+                      </Badge>
+                    )}
                   </div>
                 </>
               )}

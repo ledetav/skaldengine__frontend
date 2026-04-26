@@ -87,7 +87,7 @@ export default function PersonaFormScreen() {
         name: form.name,
         description: form.description || undefined,
         gender: form.gender || undefined,
-        age: form.age ? parseInt(form.age, 10) : undefined,
+        age: form.age || undefined,
         appearance: form.appearance || undefined,
         personality: form.personality || undefined,
         facts: form.facts || undefined,
@@ -192,12 +192,9 @@ export default function PersonaFormScreen() {
                 <label className={styles.label}>Возраст</label>
                 <input
                   className={styles.input}
-                  type="number"
                   value={form.age}
                   onChange={set('age')}
-                  placeholder="—"
-                  min={0}
-                  max={999}
+                  placeholder="Любой формат (напр. 25 или 500+)"
                 />
               </div>
               <div className={styles.formGroup}>

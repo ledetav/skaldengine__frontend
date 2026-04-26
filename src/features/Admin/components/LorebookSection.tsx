@@ -124,6 +124,8 @@ export function LorebookSection({
   const [entryAddType, setEntryAddType] = useState<'single' | 'batch' | 'json'>('single')
   const [newEntryKeywords, setNewEntryKeywords] = useState('')
   const [newEntryContent, setNewEntryContent] = useState('')
+  const [newEntryCategory, setNewEntryCategory] = useState('fact')
+  const [newEntryAlwaysInc, setNewEntryAlwaysInc] = useState(false)
   const [batchText, setBatchText] = useState('')
 
   const [entries, setEntries] = useState<LorebookEntry[]>([])
@@ -183,6 +185,8 @@ export function LorebookSection({
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [editEntryKeywords, setEditEntryKeywords] = useState('')
   const [editEntryContent, setEditEntryContent] = useState('')
+  const [editEntryCategory, setEditEntryCategory] = useState('fact')
+  const [editEntryAlwaysInc, setEditEntryAlwaysInc] = useState(false)
   const [entrySearch, setEntrySearch] = useState('')
   const [showEntryDeleteModal, setShowEntryDeleteModal] = useState(false)
   const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
@@ -209,6 +213,8 @@ export function LorebookSection({
       await lorebooksApi.updateLorebookEntry(lb!.id, entryId, {
         keywords,
         content: editEntryContent,
+        category: editEntryCategory,
+        is_always_included: editEntryAlwaysInc,
         priority: 100
       })
       success('Запись обновлена')
@@ -606,6 +612,40 @@ export function LorebookSection({
                       onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNewEntryContent(e.target.value)} 
                       style={{ minHeight: '80px' }}
                     />
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                      <div style={{ flex: 1 }}>
+                        <select 
+                          className={styles.select}
+                          value={newEntryCategory}
+                          onChange={(e) => setNewEntryCategory(e.target.value)}
+                          style={{ width: '100%', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', padding: '0 8px', fontSize: '0.8rem' }}
+                        >
+                          <option value="fact">Fact / Common</option>
+                          <option value="appearance">Appearance</option>
+                          <option value="mindset">Mindset</option>
+                          <option value="speech">Speech Style</option>
+                          <option value="history">History / Biography</option>
+                          <option value="inventory">Inventory / Items</option>
+                          <option value="geography">Geography / Locations</option>
+                          <option value="nature">Nature / Flora & Fauna</option>
+                          <option value="world">World Laws / Magic</option>
+                          <option value="secret">Secret / Hidden Fact</option>
+                        </select>
+                      </div>
+                      <div 
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: newEntryAlwaysInc ? 1 : 0.5 }}
+                        onClick={() => setNewEntryAlwaysInc(!newEntryAlwaysInc)}
+                      >
+                        <div style={{ 
+                          width: '16px', height: '16px', border: '2px solid var(--accent-fuchsia)', borderRadius: '4px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: newEntryAlwaysInc ? 'var(--accent-fuchsia)' : 'transparent'
+                        }}>
+                          {newEntryAlwaysInc && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                        </div>
+                        <span style={{ fontSize: '0.75rem' }}>Всегда в памяти</span>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -641,6 +681,8 @@ export function LorebookSection({
                       await lorebooksApi.createLorebookEntry(lb!.id, {
                         keywords: newEntryKeywords.split(',').map((k: string) => k.trim()).filter(Boolean),
                         content: newEntryContent,
+                        category: newEntryCategory,
+                        is_always_included: newEntryAlwaysInc,
                         priority: 100
                       })
                     } else if (entryAddType === 'batch') {
@@ -682,9 +724,10 @@ export function LorebookSection({
               <table className={styles.compactTable}>
                 <thead>
                   <tr>
-                    <th style={{ width: '250px' }}>Тэги</th>
+                    <th style={{ width: '200px' }}>Тэги</th>
                     <th>Содержание</th>
-                    <th style={{ width: '120px', textAlign: 'right' }}>Действия</th>
+                    <th style={{ width: '120px' }}>Категория</th>
+                    <th style={{ width: '100px', textAlign: 'right' }}>Действия</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -730,6 +773,51 @@ export function LorebookSection({
                             </div>
                           )}
                         </td>
+                        <td>
+                          {isEditing ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              <select 
+                                className={styles.select}
+                                value={editEntryCategory}
+                                onChange={(e) => setEditEntryCategory(e.target.value)}
+                                style={{ width: '100%', height: '28px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff', padding: '0 4px', fontSize: '0.7rem' }}
+                              >
+                                <option value="fact">Fact</option>
+                                <option value="appearance">Appearance</option>
+                                <option value="mindset">Mindset</option>
+                                <option value="speech">Speech</option>
+                                <option value="history">History</option>
+                                <option value="inventory">Inventory</option>
+                                <option value="geography">Geography</option>
+                                <option value="nature">Nature</option>
+                                <option value="world">World</option>
+                                <option value="secret">Secret</option>
+                              </select>
+                              <div 
+                                style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', opacity: editEntryAlwaysInc ? 1 : 0.5 }}
+                                onClick={() => setEditEntryAlwaysInc(!editEntryAlwaysInc)}
+                              >
+                                <div style={{ 
+                                  width: '14px', height: '14px', border: '1.5px solid var(--accent-fuchsia)', borderRadius: '3px',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  background: editEntryAlwaysInc ? 'var(--accent-fuchsia)' : 'transparent'
+                                }}>
+                                  {editEntryAlwaysInc && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                                </div>
+                                <span style={{ fontSize: '0.7rem' }}>В памяти</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', opacity: 0.8 }}>
+                              <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-teal)' }}>{entry.category || 'fact'}</span>
+                              {entry.is_always_included && (
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" title="Всегда в памяти">
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                              )}
+                            </div>
+                          )}
+                        </td>
                         <td style={{ textAlign: 'right' }}>
                           <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
                             {isEditing ? (
@@ -747,6 +835,8 @@ export function LorebookSection({
                                   setEditingEntryId(entry.id)
                                   setEditEntryKeywords(entry.keywords.join(', '))
                                   setEditEntryContent(entry.content)
+                                  setEditEntryCategory(entry.category || 'fact')
+                                  setEditEntryAlwaysInc(!!entry.is_always_included)
                                 }}>
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                 </button>

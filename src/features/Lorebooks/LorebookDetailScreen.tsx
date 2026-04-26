@@ -13,6 +13,8 @@ function AddSingleEntry({ onAdd, onCancel }: {
   const [keywords, setKeywords] = useState('')
   const [content, setContent] = useState('')
   const [priority, setPriority] = useState('5')
+  const [category, setCategory] = useState('fact')
+  const [isAlwaysIncluded, setIsAlwaysIncluded] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const { error } = useToast()
 
@@ -27,6 +29,8 @@ function AddSingleEntry({ onAdd, onCancel }: {
     onAdd({
       keywords: keywords.split(',').map(k => k.trim()).filter(Boolean),
       content: content.trim(),
+      category,
+      is_always_included: isAlwaysIncluded,
       priority: parseInt(priority) || 5,
     })
     setSubmitting(false)
@@ -55,6 +59,44 @@ function AddSingleEntry({ onAdd, onCancel }: {
               />
             </div>
           </div>
+          
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', alignItems: 'flex-end' }}>
+             <div style={{ flex: 1 }}>
+               <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '8px', opacity: 0.8 }}>Категория</label>
+               <select 
+                 className={styles.select} 
+                 value={category} 
+                 onChange={e => setCategory(e.target.value)}
+                 style={{ width: '100%', height: '40px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', padding: '0 12px' }}
+               >
+                 <option value="fact">Fact / Common</option>
+                 <option value="appearance">Appearance</option>
+                 <option value="mindset">Mindset</option>
+                 <option value="speech">Speech Style</option>
+                 <option value="history">History / Biography</option>
+                 <option value="inventory">Inventory / Items</option>
+                 <option value="geography">Geography / Locations</option>
+                 <option value="nature">Nature / Flora & Fauna</option>
+                 <option value="world">World Laws / Magic</option>
+                 <option value="secret">Secret / Hidden Fact</option>
+               </select>
+             </div>
+             
+             <div 
+               style={{ display: 'flex', alignItems: 'center', gap: '10px', height: '40px', cursor: 'pointer', opacity: isAlwaysIncluded ? 1 : 0.6 }}
+               onClick={() => setIsAlwaysIncluded(!isAlwaysIncluded)}
+             >
+               <div style={{ 
+                 width: '18px', height: '18px', border: '2px solid var(--accent-fuchsia)', borderRadius: '4px',
+                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                 background: isAlwaysIncluded ? 'var(--accent-fuchsia)' : 'transparent'
+               }}>
+                 {isAlwaysIncluded && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+               </div>
+               <span style={{ fontSize: '0.85rem' }}>Всегда в памяти</span>
+             </div>
+          </div>
+
           <Textarea
             label="Содержание"
             value={content}
@@ -100,6 +142,8 @@ function BatchImportPanel({ onImport, onCancel }: {
         return {
           keywords: item.keywords as string[],
           content: item.content as string,
+          category: item.category as string || 'fact',
+          is_always_included: !!item.is_always_included,
           priority: typeof item.priority === 'number' ? item.priority : 5,
         }
       })
@@ -156,8 +200,8 @@ function EntriesTable({ entries, onDelete }: {
           <tr>
             <th style={{ width: 200 }}>Ключевые слова</th>
             <th>Содержание</th>
-            <th style={{ width: 80 }}>Приоритет</th>
-            <th style={{ width: 90 }}>Добавлено</th>
+            <th style={{ width: 120 }}>Категория</th>
+            <th style={{ width: 60 }}>Буст</th>
             <th style={{ width: 60 }}></th>
           </tr>
         </thead>
@@ -172,10 +216,15 @@ function EntriesTable({ entries, onDelete }: {
                         </div>
                       </td>
               <td className={styles.contentCell}>{entry.content}</td>
-              <td className={styles.priorityCell}>{entry.priority}</td>
-              <td style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>
-                {new Date(entry.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+              <td style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>{entry.category || 'fact'}</span>
+                {entry.is_always_included && (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '6px' }} title="Всегда в памяти">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                )}
               </td>
+              <td className={styles.priorityCell}>{entry.priority}</td>
               <td>
                 <div className={styles.rowActions}>
                   <button
@@ -270,6 +319,8 @@ export default function LorebookDetailScreen() {
       await lorebooksApi.createLorebookEntry(id, {
         keywords: entry.keywords,
         content: entry.content,
+        category: entry.category,
+        is_always_included: entry.is_always_included,
         priority: entry.priority
       });
       // We can refetch or just push to local state loosely for now:

@@ -130,7 +130,7 @@ export function MessageItem({
               </div>
             )}
 
-            {!isUser && isLast && !isGenerating && (
+            {!isEditing && !isUser && isLast && !isGenerating && (
               <button 
                 className={styles.miniActionBtn}
                 onClick={() => onRegenerate(msg.id)}
@@ -142,14 +142,32 @@ export function MessageItem({
               </button>
             )}
 
-            {isUser && !isGenerating && (
+            {!isEditing && (
               <button 
                 className={styles.miniActionBtn}
                 onClick={handleEditClick}
-                title="Редактировать"
+                title="Редактировать сообщение"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            )}
+
+            {!isEditing && !isGenerating && (
+              <button 
+                className={styles.miniActionBtn}
+                onClick={() => {
+                  if (window.confirm('Создать новый чат на основе этой ветки?')) {
+                    // This will be handled by the parent
+                    (window as any).forkChatFromMsg(msg.id);
+                  }
+                }}
+                title="Ветвление: создать новый чат из этой точки"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/>
+                  <path d="M9 12h6"/><path d="M12 9v6"/>
                 </svg>
               </button>
             )}
