@@ -90,14 +90,29 @@ export function MessageItem({
                 </div>
               </div>
             ) : (
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  p: ({node, ...props}) => <p style={{ whiteSpace: 'pre-wrap' }} {...props} />
-                }}
-              >
-                {msg.content}
-              </ReactMarkdown>
+              <>
+                {!msg.content && isGenerating && isLast && !isUser ? (
+                  <div className={styles.typingIndicator}>
+                    <div className={styles.typingDot} />
+                    <div className={styles.typingDot} />
+                    <div className={styles.typingDot} />
+                  </div>
+                ) : (
+                  <div style={{ position: 'relative' }}>
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({node, ...props}) => <p style={{ whiteSpace: 'pre-wrap' }} {...props} />
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                    {isGenerating && isLast && !isUser && msg.content && (
+                      <span className={styles.cursor} />
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
