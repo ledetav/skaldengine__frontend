@@ -982,6 +982,7 @@ export function LorebookSection({
                   {initialType === 'fandom' ? 'Вселенная' : initialType === 'persona' ? 'Владелец' : 'Персонаж'} {renderSortIcon?.(initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'user_persona_id' : 'character_id')}
                 </th>
                 <th onClick={() => onSort?.('entries_count')} style={{ cursor: 'pointer' }}>Записей {renderSortIcon?.('entries_count')}</th>
+                <th onClick={() => onSort?.('category')} style={{ cursor: 'pointer' }}>Категория {renderSortIcon?.('category')}</th>
               </tr>
             </thead>
             <tbody>
@@ -998,6 +999,11 @@ export function LorebookSection({
                     </Badge>
                   </td>
                   <td>{lb.entries?.length || lb.entries_count || 0}</td>
+                  <td>
+                    <Badge variant="purple">
+                      {lb.category || 'general'}
+                    </Badge>
+                  </td>
                 </tr>
               ))}
             </tbody>
