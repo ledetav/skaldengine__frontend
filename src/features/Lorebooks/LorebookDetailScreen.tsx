@@ -219,9 +219,11 @@ function EntriesTable({ entries, onDelete }: {
               <td style={{ fontSize: '0.75rem', opacity: 0.7 }}>
                 <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>{entry.category || 'fact'}</span>
                 {entry.is_always_included && (
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '6px' }} title="Всегда в памяти">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                  </svg>
+                  <span title="Всегда в памяти" style={{ marginLeft: '6px' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </span>
                 )}
               </td>
               <td className={styles.priorityCell}>{entry.priority}</td>

@@ -308,7 +308,7 @@ export function CharacterProfileView({
                   <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <Badge variant={isOriginal ? "orange" : "blue"}>{isOriginal ? 'Оригинальный' : (character.fandom || 'Фандомный')}</Badge>
                     {(character.gender || character.age) && (
-                      <Badge variant="ghost">
+                      <Badge variant="teal">
                         {character.gender}{character.gender && character.age ? ', ' : ''}{character.age}
                       </Badge>
                     )}
