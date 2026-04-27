@@ -526,23 +526,23 @@ export function LorebookSection({
                 <div className={styles.detailGroup}>
                   <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Категория лорбука</div>
                   {isEditMode ? (
-                    <select 
-                      className={styles.select}
+                    <SearchableSelect
+                      options={[
+                        { id: 'general', name: 'Общая' },
+                        { id: 'nature', name: 'Природа' },
+                        { id: 'geography', name: 'География' },
+                        { id: 'history', name: 'История' },
+                        { id: 'world', name: 'Мир / Законы' },
+                        { id: 'characters', name: 'Персонажи' },
+                        { id: 'items', name: 'Предметы' },
+                        { id: 'beings', name: 'Существа' },
+                      ]}
                       value={editLorebookCategory}
-                      onChange={(e) => setEditLorebookCategory(e.target.value)}
-                      style={{ width: '100%', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', padding: '0 8px', fontSize: '0.8rem' }}
-                    >
-                      <option value="general">Общая</option>
-                      <option value="nature">Природа</option>
-                      <option value="geography">География</option>
-                      <option value="history">История</option>
-                      <option value="world">Мир / Законы</option>
-                      <option value="characters">Персонажи</option>
-                      <option value="items">Предметы</option>
-                      <option value="beings">Существа</option>
-                    </select>
+                      onChange={setEditLorebookCategory}
+                      placeholder="Выберите категорию..."
+                    />
                   ) : (
-                    <Badge variant="purple">{lb.category || 'general'}</Badge>
+                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>{lb.category || 'general'}</Badge>
                   )}
                 </div>
               </div>
@@ -641,23 +641,23 @@ export function LorebookSection({
                     />
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                       <div style={{ flex: 1 }}>
-                        <select 
-                          className={styles.select}
+                        <SearchableSelect
+                          options={[
+                            { id: 'fact', name: 'Fact / Common' },
+                            { id: 'appearance', name: 'Appearance' },
+                            { id: 'mindset', name: 'Mindset' },
+                            { id: 'speech', name: 'Speech Style' },
+                            { id: 'history', name: 'History / Biography' },
+                            { id: 'inventory', name: 'Inventory / Items' },
+                            { id: 'geography', name: 'Geography / Locations' },
+                            { id: 'nature', name: 'Nature / Flora & Fauna' },
+                            { id: 'world', name: 'World Laws / Magic' },
+                            { id: 'secret', name: 'Secret / Hidden Fact' },
+                          ]}
                           value={newEntryCategory}
-                          onChange={(e) => setNewEntryCategory(e.target.value)}
-                          style={{ width: '100%', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#fff', padding: '0 8px', fontSize: '0.8rem' }}
-                        >
-                          <option value="fact">Fact / Common</option>
-                          <option value="appearance">Appearance</option>
-                          <option value="mindset">Mindset</option>
-                          <option value="speech">Speech Style</option>
-                          <option value="history">History / Biography</option>
-                          <option value="inventory">Inventory / Items</option>
-                          <option value="geography">Geography / Locations</option>
-                          <option value="nature">Nature / Flora & Fauna</option>
-                          <option value="world">World Laws / Magic</option>
-                          <option value="secret">Secret / Hidden Fact</option>
-                        </select>
+                          onChange={setNewEntryCategory}
+                          placeholder="Категория..."
+                        />
                       </div>
                       <div 
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: newEntryAlwaysInc ? 1 : 0.5 }}
@@ -807,23 +807,24 @@ export function LorebookSection({
                         <td>
                           {isEditing ? (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <select 
-                                className={styles.select}
+                              <SearchableSelect
+                                options={[
+                                  { id: 'fact', name: 'Fact' },
+                                  { id: 'appearance', name: 'Appearance' },
+                                  { id: 'mindset', name: 'Mindset' },
+                                  { id: 'speech', name: 'Speech' },
+                                  { id: 'history', name: 'History' },
+                                  { id: 'inventory', name: 'Inventory' },
+                                  { id: 'geography', name: 'Geography' },
+                                  { id: 'nature', name: 'Nature' },
+                                  { id: 'world', name: 'World' },
+                                  { id: 'secret', name: 'Secret' },
+                                ]}
                                 value={editEntryCategory}
-                                onChange={(e) => setEditEntryCategory(e.target.value)}
-                                style={{ width: '100%', height: '28px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff', padding: '0 4px', fontSize: '0.7rem' }}
-                              >
-                                <option value="fact">Fact</option>
-                                <option value="appearance">Appearance</option>
-                                <option value="mindset">Mindset</option>
-                                <option value="speech">Speech</option>
-                                <option value="history">History</option>
-                                <option value="inventory">Inventory</option>
-                                <option value="geography">Geography</option>
-                                <option value="nature">Nature</option>
-                                <option value="world">World</option>
-                                <option value="secret">Secret</option>
-                              </select>
+                                onChange={setEditEntryCategory}
+                                className={styles.compact}
+                                placeholder="Категория"
+                              />
                               <div 
                                 style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', opacity: editEntryAlwaysInc ? 1 : 0.5 }}
                                 onClick={() => setEditEntryAlwaysInc(!editEntryAlwaysInc)}
@@ -1000,7 +1001,7 @@ export function LorebookSection({
                   </td>
                   <td>{lb.entries?.length || lb.entries_count || 0}</td>
                   <td>
-                    <Badge variant="purple">
+                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>
                       {lb.category || 'general'}
                     </Badge>
                   </td>
@@ -1049,7 +1050,7 @@ export function LorebookSection({
                           ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
                           : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                     </Badge>
-                    <Badge variant="purple" style={{ marginLeft: '6px' }}>
+                    <Badge variant="purple" style={{ marginLeft: '6px', alignSelf: 'flex-start' }}>
                       {lb.category || 'general'}
                     </Badge>
                   </div>
