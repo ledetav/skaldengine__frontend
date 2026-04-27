@@ -534,7 +534,7 @@
   background: rgba(25, 25, 35, 0.4);
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 20px; /* Reduced from 28px */
+  padding: 12px 20px 20px 20px;
   position: relative;
   transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
@@ -550,7 +550,7 @@
   display: flex;
   align-items: center;
   gap: 14px; /* Reduced from 20px */
-  margin-bottom: 16px; /* Reduced from 24px */
+  margin-bottom: 10px;
 }
 
 .cardAvatar {

@@ -176,6 +176,9 @@ export function LorebookSection({
         if (payload.type === 'REFRESH_LOREBOOK_ENTRIES' && payload.data.lorebook_id === lb.id) {
           fetchEntries(entriesPage)
         }
+        if (payload.type === 'UPDATE_LOREBOOK' && payload.data.id === lb.id) {
+          setFetchedLb(prev => prev ? { ...prev, ...payload.data } : payload.data)
+        }
       } catch (err) {
         // ignore parsing errors
       }

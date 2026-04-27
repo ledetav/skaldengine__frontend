@@ -35,7 +35,7 @@ export function ScenarioSection({
   )
 
   const getCharName = (id?: string | null) => {
-    if (!id) return 'Общий'
+    if (!id) return 'Не привязан'
     return characters.find(c => c.id === id)?.name || 'Неизвестен'
   }
 
@@ -95,6 +95,7 @@ export function ScenarioSection({
                 <th onClick={() => onSort?.('title')} style={{ cursor: 'pointer' }}>Заголовок {renderSortIcon?.('title')}</th>
                 <th onClick={() => onSort?.('character_id')} style={{ cursor: 'pointer' }}>Персонаж {renderSortIcon?.('character_id')}</th>
                 <th onClick={() => onSort?.('location')} style={{ cursor: 'pointer' }}>Локация {renderSortIcon?.('location')}</th>
+                <th style={{ minWidth: '200px' }}>Внутр. описание</th>
                 <th onClick={() => onSort?.('chats_count')} style={{ cursor: 'pointer' }}>Чатов {renderSortIcon?.('chats_count')}</th>
               </tr>
             </thead>
@@ -108,6 +109,7 @@ export function ScenarioSection({
                     </Badge>
                   </td>
                   <td><span style={{ opacity: 0.6 }}>{s.location || '—'}</span></td>
+                  <td><span style={{ opacity: 0.5, fontSize: '0.8rem', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{s.internal_description || '—'}</span></td>
                   <td><span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>{s.chats_count || 0}</span></td>
                 </tr>
               ))}
@@ -128,9 +130,14 @@ export function ScenarioSection({
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop: '12px', fontSize: '0.85rem', opacity: 0.7, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <div style={{ marginTop: '12px', fontSize: '0.85rem', opacity: 0.7, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {s.description}
               </div>
+              {s.internal_description && (
+                <div style={{ marginTop: '8px', fontSize: '0.75rem', opacity: 0.4, fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  Скрыто: {s.internal_description}
+                </div>
+              )}
               <div className={styles.cardStats} style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className={styles.statItem} style={{ gridColumn: 'span 3' }}>
                   <span className={styles.statLabel}>Локация</span>
