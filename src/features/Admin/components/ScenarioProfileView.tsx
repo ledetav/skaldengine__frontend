@@ -59,6 +59,10 @@ export function ScenarioProfileView({
   }, [scenarioId, scenarios, isCreate])
 
   const handleSave = async () => {
+    if (!draft.character_id) {
+      alert('Пожалуйста, выберите персонажа для сценария.')
+      return
+    }
     setIsSaving(true)
     try {
       await onSave(draft)
