@@ -43,11 +43,17 @@ export function ScenarioProfileView({
   useEffect(() => {
     if (!isCreate) {
       const existing = scenarios.find(s => s.id === scenarioId)
+      console.log('[ScenarioProfileView] Existing in list:', existing)
       if (existing) {
         setDraft(existing)
       } else {
-        // Fetch if not in list
-        scenariosApi.getScenario(scenarioId).then(setDraft).catch(console.error)
+        console.log('[ScenarioProfileView] Not in list, fetching...', scenarioId)
+        scenariosApi.getScenario(scenarioId)
+          .then(res => {
+            console.log('[ScenarioProfileView] Fetched data:', res)
+            setDraft(res)
+          })
+          .catch(err => console.error('[ScenarioProfileView] Fetch error:', err))
       }
     }
   }, [scenarioId, scenarios, isCreate])

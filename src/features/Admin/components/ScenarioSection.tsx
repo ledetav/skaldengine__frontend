@@ -29,8 +29,8 @@ export function ScenarioSection({
   const [viewMode, setViewMode] = useState<ViewMode>('table')
 
   const filteredScenarios = scenarios.filter(s => 
-    s.title.toLowerCase().includes(search.toLowerCase()) ||
-    s.description.toLowerCase().includes(search.toLowerCase()) ||
+    s.title?.toLowerCase().includes(search.toLowerCase()) ||
+    s.description?.toLowerCase().includes(search.toLowerCase()) ||
     (s.location || '').toLowerCase().includes(search.toLowerCase())
   )
 
