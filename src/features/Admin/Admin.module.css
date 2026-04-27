@@ -1431,6 +1431,23 @@
 }
 
 .roleBtnActive {
+  background: var(--accent-orange) !important;
+  border-color: var(--accent-orange) !important;
+  color: var(--white) !important;
+  box-shadow: 0 0 15px rgba(255, 140, 66, 0.25);
+}
+
+.infoNote {
+  background: rgba(45, 186, 172, 0.05); /* Teal based */
+  border-left: 3px solid var(--accent-teal);
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  border-radius: 2px;
+}
+
+.roleBtnActive {
   background: rgba(139, 92, 246, 0.15);
   border-color: var(--accent-purple);
   color: var(--accent-purple);

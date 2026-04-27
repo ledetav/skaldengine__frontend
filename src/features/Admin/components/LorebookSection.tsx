@@ -167,11 +167,13 @@ export function LorebookSection({
   const [newEntryContent, setNewEntryContent] = useState('')
   const [newEntryCategory, setNewEntryCategory] = useState('fact')
   const [newEntryAlwaysInc, setNewEntryAlwaysInc] = useState(false)
+  const [newEntryPriority, setNewEntryPriority] = useState(3) // Default to normal
   const [batchText, setBatchText] = useState('')
 
   const [entries, setEntries] = useState<LorebookEntry[]>([])
   const [entriesTotal, setEntriesTotal] = useState(0)
   const [entriesPage, setEntriesPage] = useState(1)
+  const [entrySort, setEntrySort] = useState<'created_at' | 'priority'>('priority') // Default to priority as requested
   const [isEntriesLoading, setIsEntriesLoading] = useState(false)
 
   const fetchEntries = async (page: number) => {
@@ -179,7 +181,7 @@ export function LorebookSection({
     setIsEntriesLoading(true)
     const skip = (page - 1) * 20
     try {
-      const res = await ApiClient.get<any>('core', `/lorebooks/${lb.id}/entries?skip=${skip}&limit=20`)
+      const res = await ApiClient.get<any>('core', `/lorebooks/${lb.id}/entries?skip=${skip}&limit=20&sort_by=${entrySort}`)
       if (res && res.items) {
         setEntries(res.items)
         setEntriesTotal(res.total)
@@ -198,7 +200,7 @@ export function LorebookSection({
     if (isDetailMode && lb?.id && lb.id !== 'create') {
       fetchEntries(entriesPage)
     }
-  }, [lb?.id, isDetailMode, entriesPage])
+  }, [lb?.id, isDetailMode, entriesPage, entrySort])
 
   // Reactive updates via websockets
   useEffect(() => {
@@ -231,6 +233,7 @@ export function LorebookSection({
   const [editEntryContent, setEditEntryContent] = useState('')
   const [editEntryCategory, setEditEntryCategory] = useState('fact')
   const [editEntryAlwaysInc, setEditEntryAlwaysInc] = useState(false)
+  const [editEntryPriority, setEditEntryPriority] = useState(3)
   const [entrySearch, setEntrySearch] = useState('')
   const [showEntryDeleteModal, setShowEntryDeleteModal] = useState(false)
   const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
@@ -259,7 +262,7 @@ export function LorebookSection({
         content: editEntryContent,
         category: editEntryCategory,
         is_always_included: editEntryAlwaysInc,
-        priority: 100
+        priority: editEntryPriority
       })
       success('Запись обновлена')
       setEditingEntryId(null)
@@ -690,6 +693,21 @@ export function LorebookSection({
                           placeholder="Категория..."
                         />
                       </div>
+                      <div style={{ flex: 1, display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem', opacity: 0.6, whiteSpace: 'nowrap' }}>Приоритет:</span>
+                        <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
+                          {[1, 2, 3, 4, 5].map(p => (
+                            <button 
+                              key={p}
+                              className={`${styles.roleBtn} ${newEntryPriority === p ? styles.roleBtnActive : ''}`}
+                              onClick={() => setNewEntryPriority(p)}
+                              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                            >
+                              {p}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                       <div 
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: newEntryAlwaysInc ? 1 : 0.5 }}
                         onClick={() => setNewEntryAlwaysInc(!newEntryAlwaysInc)}
@@ -703,6 +721,10 @@ export function LorebookSection({
                         </div>
                         <span style={{ fontSize: '0.75rem' }}>Всегда в памяти</span>
                       </div>
+                    </div>
+                    <div className={styles.infoNote} style={{ marginTop: '4px', marginBottom: 0 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-teal)'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                      <span style={{ fontSize: '0.75rem' }}>Чем выше приоритет (1 → 5), тем больше шансов у факта попасть в контекст при нехватке места.</span>
                     </div>
                   </div>
                 )}
@@ -741,7 +763,7 @@ export function LorebookSection({
                         content: newEntryContent,
                         category: newEntryCategory,
                         is_always_included: newEntryAlwaysInc,
-                        priority: 100
+                        priority: newEntryPriority
                       })
                     } else if (entryAddType === 'batch') {
                       const entries = batchText.split('\n')
@@ -752,7 +774,7 @@ export function LorebookSection({
                             content: content || '',
                             category: cat || newEntryCategory,
                             is_always_included: newEntryAlwaysInc,
-                            priority: 100
+                            priority: newEntryPriority
                           }
                         })
                         .filter(e => e.keywords.length > 0 && e.content)
@@ -765,7 +787,7 @@ export function LorebookSection({
                         content: e.content || '',
                         category: e.category || newEntryCategory,
                         is_always_included: e.is_always_included !== undefined ? e.is_always_included : newEntryAlwaysInc,
-                        priority: e.priority || 100
+                        priority: e.priority || newEntryPriority
                       })))
                     }
 
@@ -782,6 +804,33 @@ export function LorebookSection({
               </Card>
             )}
             
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ flex: 1 }}>
+                <Input 
+                  placeholder="Поиск по фактам..." 
+                  value={entrySearch} 
+                  onChange={(e: any) => setEntrySearch(e.target.value)}
+                  style={{ height: '36px', fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
+                <button 
+                  className={`${styles.roleBtn} ${entrySort === 'created_at' ? styles.roleBtnActive : ''}`}
+                  onClick={() => setEntrySort('created_at')}
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  Новые
+                </button>
+                <button 
+                  className={`${styles.roleBtn} ${entrySort === 'priority' ? styles.roleBtnActive : ''}`}
+                  onClick={() => setEntrySort('priority')}
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  Приоритет
+                </button>
+              </div>
+            </div>
+
             <div className={styles.tableWrapper}>
               <table className={styles.compactTable}>
                 <thead>
@@ -789,6 +838,7 @@ export function LorebookSection({
                     <th style={{ width: '200px' }}>Тэги</th>
                     <th>Содержание</th>
                     <th style={{ width: '120px' }}>Категория</th>
+                    <th style={{ width: '80px' }}>Приор.</th>
                     <th style={{ width: '100px', textAlign: 'right' }}>Действия</th>
                   </tr>
                 </thead>
@@ -858,6 +908,18 @@ export function LorebookSection({
                                 </div>
                                 <span style={{ fontSize: '0.7rem' }}>В памяти</span>
                               </div>
+                              <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                {[1, 2, 3, 4, 5].map(p => (
+                                  <button 
+                                    key={p}
+                                    className={`${styles.roleBtn} ${editEntryPriority === p ? styles.roleBtnActive : ''}`}
+                                    onClick={() => setEditEntryPriority(p)}
+                                    style={{ padding: '2px 8px', fontSize: '0.7rem', flex: 1 }}
+                                  >
+                                    {p}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', opacity: 0.8 }}>
@@ -871,6 +933,11 @@ export function LorebookSection({
                               )}
                             </div>
                           )}
+                        </td>
+                        <td>
+                          <div style={{ fontSize: '0.8rem', fontWeight: '600', color: entry.priority >= 4 ? 'var(--accent-orange)' : 'inherit', opacity: entry.priority === 1 ? 0.4 : 0.9 }}>
+                            {entry.priority}
+                          </div>
                         </td>
                         <td style={{ textAlign: 'right' }}>
                           <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
@@ -891,6 +958,7 @@ export function LorebookSection({
                                   setEditEntryContent(entry.content)
                                   setEditEntryCategory(entry.category || 'fact')
                                   setEditEntryAlwaysInc(!!entry.is_always_included)
+                                  setEditEntryPriority(entry.priority || 3)
                                 }}>
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                 </button>
