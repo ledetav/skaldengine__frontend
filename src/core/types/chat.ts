@@ -8,6 +8,7 @@ export interface Scenario {
   location?: string | null
   start_point?: string | null
   end_point?: string | null
+  internal_description?: string | null
   character_id?: string | null
   image_url?: string
 }
