@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
 import { SearchableSelect } from './SearchableSelect'
+import { Pagination } from './Pagination'
 import { ApiClient } from '@/core/api/client'
 import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
 
@@ -666,7 +667,7 @@ export function LorebookSection({
                     type="text" 
                     placeholder="Поиск..." 
                     className={styles.searchBox}
-                    style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem' }}
+                    style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem', height: '36px' }}
                     value={entrySearch}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
                   />
@@ -691,7 +692,7 @@ export function LorebookSection({
                   </button>
                 </div>
 
-                <div style={{ width: '140px' }}>
+                <div style={{ width: '180px' }}>
                   <SearchableSelect 
                     options={[{id: 'all', name: 'Все категории'}, ...ENTRY_CATEGORIES]}
                     value={entryCategoryFilter}

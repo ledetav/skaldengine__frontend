@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/ui'
 import styles from '../Admin.module.css'
 
@@ -33,6 +35,7 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
   const selectedOption = useMemo(() => options.find(o => o.id === value), [options, value])
@@ -51,8 +54,30 @@ export function SearchableSelect({
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    
+    // Update coordinates when opening
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      setCoords({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width
+      })
+    }
+
+    const handleScroll = (event: Event) => {
+      // Don't close if scrolling inside the dropdown
+      const target = event.target as HTMLElement
+      if (target.closest(`.${styles.selectDropdown}`)) return
+      setIsOpen(false)
+    }
+    window.addEventListener('scroll', handleScroll, { capture: true })
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, { capture: true })
+    }
+  }, [isOpen])
 
   return (
     <div className={`${styles.searchableSelectContainer} ${className}`} ref={containerRef}>
@@ -76,57 +101,76 @@ export function SearchableSelect({
         </div>
       </div>
 
-      {isOpen && (
-        <div className={styles.selectDropdown}>
-          <div className={styles.selectSearchWrapper}>
-            <Input 
-              autoFocus
-              placeholder="Поиск..." 
-              value={search} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-              className={styles.selectSearchInput}
-            />
-          </div>
-          
-          <div className={styles.selectOptionsList}>
-            {onCreateNew && !search && (
-              <div 
-                className={styles.selectOptionCreate}
-                onClick={() => {
-                  onCreateNew()
-                  setIsOpen(false)
-                }}
-              >
-                {onCreateLabel}
+      {createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              className={styles.selectDropdown}
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              style={{ 
+                position: 'fixed',
+                top: coords.top,
+                left: coords.left,
+                width: coords.width,
+                zIndex: 9999, // Super high to be over everything
+                pointerEvents: 'auto'
+              }}
+            >
+              <div className={styles.selectSearchWrapper}>
+                <Input 
+                  autoFocus
+                  placeholder="Поиск..." 
+                  value={search} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                  className={styles.selectSearchInput}
+                />
               </div>
-            )}
-
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option: Option) => (
-                <div 
-                  key={option.id} 
-                  className={`${styles.selectOption} ${value === option.id ? styles.selectOptionSelected : ''}`}
-                  onClick={() => {
-                    onChange(option.id)
-                    setIsOpen(false)
-                  }}
-                >
-                  <div className={styles.optionContent}>
-                    <span className={styles.optionName}>{option.name}</span>
-                    {option.subtext && <span className={styles.optionSubtext}>{option.subtext}</span>}
+              
+              <div className={styles.selectOptionsList}>
+                {onCreateNew && !search && (
+                  <div 
+                    className={styles.selectOptionCreate}
+                    onClick={() => {
+                      onCreateNew()
+                      setIsOpen(false)
+                    }}
+                  >
+                    {onCreateLabel}
                   </div>
-                  {value === option.id && (
-                    <svg className={styles.checkIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className={styles.selectNoOptions}>Ничего не найдено</div>
-            )}
-          </div>
-        </div>
+                )}
+
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option: Option) => (
+                    <div 
+                      key={option.id} 
+                      className={`${styles.selectOption} ${value === option.id ? styles.selectOptionSelected : ''}`}
+                      onClick={() => {
+                        onChange(option.id)
+                        setIsOpen(false)
+                      }}
+                    >
+                      <div className={styles.optionContent}>
+                        <span className={styles.optionName}>{option.name}</span>
+                        {option.subtext && <span className={styles.optionSubtext}>{option.subtext}</span>}
+                      </div>
+                      {value === option.id && (
+                        <svg className={styles.checkIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.selectNoOptions}>Ничего не найдено</div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </div>
   )
