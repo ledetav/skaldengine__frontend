@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Button, Input, Card, Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
 import { SearchableSelect } from './SearchableSelect'
-import { Pagination } from './Pagination'
 import { ApiClient } from '@/core/api/client'
 import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
 
@@ -167,13 +166,14 @@ export function LorebookSection({
   const [newEntryContent, setNewEntryContent] = useState('')
   const [newEntryCategory, setNewEntryCategory] = useState('fact')
   const [newEntryAlwaysInc, setNewEntryAlwaysInc] = useState(false)
-  const [newEntryPriority, setNewEntryPriority] = useState(3) // Default to normal
+  const [newEntryPriority, setNewEntryPriority] = useState(3)
   const [batchText, setBatchText] = useState('')
 
   const [entries, setEntries] = useState<LorebookEntry[]>([])
   const [entriesTotal, setEntriesTotal] = useState(0)
   const [entriesPage, setEntriesPage] = useState(1)
-  const [entrySort, setEntrySort] = useState<'created_at' | 'priority'>('priority') // Default to priority as requested
+  const [entrySort, setEntrySort] = useState<'created_at' | 'priority'>('priority')
+  const [entryCategoryFilter, setEntryCategoryFilter] = useState('all')
   const [isEntriesLoading, setIsEntriesLoading] = useState(false)
 
   const fetchEntries = async (page: number) => {
@@ -240,22 +240,36 @@ export function LorebookSection({
 
   const filteredEntries = useMemo(() => {
     if (!entries) return []
-    if (!entrySearch) return entries
+    let result = entries
+    if (entryCategoryFilter !== 'all') {
+      result = result.filter((e: LorebookEntry) => e.category === entryCategoryFilter)
+    }
+    if (!entrySearch) return result
     const s = entrySearch.toLowerCase()
-    return entries.filter((e: LorebookEntry) => 
+    return result.filter((e: LorebookEntry) => 
       e.content.toLowerCase().includes(s) || 
       e.keywords.some((k: string) => k.toLowerCase().includes(s))
     )
-  }, [entries, entrySearch])
+  }, [entries, entrySearch, entryCategoryFilter])
 
   const handleEntrySave = async (entryId: string) => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      const keywords = editEntryKeywords
-        .replace(/,\s+/g, ',')
-        .split(',')
-        .map((k: string) => k.trim())
-        .filter(Boolean)
+      
+      const keywords = editEntryKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+
+      // Optimistic update
+      setEntries(prev => prev.map(e => e.id === entryId ? {
+        ...e,
+        keywords,
+        content: editEntryContent,
+        category: editEntryCategory,
+        is_always_included: editEntryAlwaysInc,
+        priority: editEntryPriority
+      } : e))
+
+      setEditingEntryId(null)
+      success('Запись обновлена')
       
       await lorebooksApi.updateLorebookEntry(lb!.id, entryId, {
         keywords,
@@ -264,11 +278,13 @@ export function LorebookSection({
         is_always_included: editEntryAlwaysInc,
         priority: editEntryPriority
       })
-      success('Запись обновлена')
-      setEditingEntryId(null)
+      
+      // Still fetch to be sure and sync everything
+      fetchEntries(entriesPage)
     } catch (e: any) {
       console.error(e)
       success('Ошибка обновления записи')
+      fetchEntries(entriesPage) // Revert on error
     }
   }
 
@@ -279,15 +295,25 @@ export function LorebookSection({
 
   const confirmEntryDelete = async () => {
     if (!entryToDeleteId) return
+    const idToDelete = entryToDeleteId // Capture it
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      await lorebooksApi.deleteAdminLorebookEntry(lb!.id, entryToDeleteId)
+      
+      // Optimistic delete
+      setEntries(prev => prev.filter(e => e.id !== idToDelete))
+      setEntriesTotal(prev => prev - 1)
+      
       success('Запись удалена')
       setShowEntryDeleteModal(false)
       setEntryToDeleteId(null)
+
+      await lorebooksApi.deleteAdminLorebookEntry(lb!.id, idToDelete)
+      // fetchEntries is not strictly needed if WS is working, but safety first
+      fetchEntries(entriesPage)
     } catch (e: any) {
       console.error(e)
       success('Ошибка удаления записи')
+      fetchEntries(entriesPage) // Revert
     }
   }
 
@@ -632,21 +658,51 @@ export function LorebookSection({
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div className={styles.detailTitle}>Записи в лорбуке ({entriesTotal})</div>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '200px' }}>
+                <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '180px' }}>
                   <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                   </svg>
                   <input 
                     type="text" 
-                    placeholder="Поиск по записям..." 
+                    placeholder="Поиск..." 
                     className={styles.searchBox}
                     style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem' }}
                     value={entrySearch}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
                   />
                 </div>
-                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
-                  {isAddingEntry ? 'Отмена' : '+ Добавить записи'}
+                
+                <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
+                  <button 
+                    className={`${styles.roleBtn} ${entrySort === 'created_at' ? styles.roleBtnActive : ''}`}
+                    onClick={() => setEntrySort('created_at')}
+                    style={{ padding: '6px 10px', fontSize: '0.7rem', height: '36px' }}
+                    title="Сортировать по дате"
+                  >
+                    Новые
+                  </button>
+                  <button 
+                    className={`${styles.roleBtn} ${entrySort === 'priority' ? styles.roleBtnActive : ''}`}
+                    onClick={() => setEntrySort('priority')}
+                    style={{ padding: '6px 10px', fontSize: '0.7rem', height: '36px' }}
+                    title="Сортировать по приоритету"
+                  >
+                    Приоритет
+                  </button>
+                </div>
+
+                <div style={{ width: '140px' }}>
+                  <SearchableSelect 
+                    options={[{id: 'all', name: 'Все категории'}, ...ENTRY_CATEGORIES]}
+                    value={entryCategoryFilter}
+                    onChange={setEntryCategoryFilter}
+                    placeholder="Фильтр..."
+                    className={styles.compact}
+                  />
+                </div>
+
+                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px', height: '36px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
+                  {isAddingEntry ? 'Отмена' : '+ Добавить'}
                 </Button>
               </div>
             </header>
@@ -796,6 +852,7 @@ export function LorebookSection({
                     setNewEntryContent('')
                     setNewEntryKeywords('')
                     setBatchText('')
+                    fetchEntries(entriesPage)
                   } catch (e: any) {
                     console.error(e)
                     success('Ошибка добавления записей')
@@ -804,33 +861,6 @@ export function LorebookSection({
               </Card>
             )}
             
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
-              <div style={{ flex: 1 }}>
-                <Input 
-                  placeholder="Поиск по фактам..." 
-                  value={entrySearch} 
-                  onChange={(e: any) => setEntrySearch(e.target.value)}
-                  style={{ height: '36px', fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
-                <button 
-                  className={`${styles.roleBtn} ${entrySort === 'created_at' ? styles.roleBtnActive : ''}`}
-                  onClick={() => setEntrySort('created_at')}
-                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                >
-                  Новые
-                </button>
-                <button 
-                  className={`${styles.roleBtn} ${entrySort === 'priority' ? styles.roleBtnActive : ''}`}
-                  onClick={() => setEntrySort('priority')}
-                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                >
-                  Приоритет
-                </button>
-              </div>
-            </div>
-
             <div className={styles.tableWrapper}>
               <table className={styles.compactTable}>
                 <thead>
@@ -846,7 +876,7 @@ export function LorebookSection({
                   {filteredEntries.slice(0, 20).map((entry: LorebookEntry, i: number) => {
                     const isEditing = editingEntryId === entry.id
                     return (
-                      <tr key={entry.id || i}>
+                      <tr key={entry.id || i} className={isEditing ? styles.tableEditingRow : ''}>
                         <td>
                           {isEditing ? (
                             <Input 

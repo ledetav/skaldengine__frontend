@@ -952,6 +952,19 @@
   line-height: 1.6;
 }
 
+.tableEditingRow td {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  vertical-align: top;
+}
+
+.tableEditingRow .editTextarea {
+  min-height: 180px;
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 140, 66, 0.3);
+}
+
 /* Toggle Switches */
 .toggleRow {
   display: flex;
@@ -1445,13 +1458,6 @@
   display: flex;
   align-items: center;
   border-radius: 2px;
-}
-
-.roleBtnActive {
-  background: rgba(139, 92, 246, 0.15);
-  border-color: var(--accent-purple);
-  color: var(--accent-purple);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
 }
 
 /* Filter Styles */
