@@ -19,6 +19,43 @@ interface LorebookSectionProps {
   renderSortIcon?: (field: string) => ReactNode
 }
 
+const ENTRY_CATEGORIES = [
+  { id: 'fact', name: 'Факт / Общее' },
+  { id: 'appearance', name: 'Внешность' },
+  { id: 'mindset', name: 'Мировоззрение / Мысли' },
+  { id: 'speech', name: 'Стиль речи' },
+  { id: 'history', name: 'История / Биография' },
+  { id: 'inventory', name: 'Инвентарь / Предметы' },
+  { id: 'geography', name: 'География / Места' },
+  { id: 'nature', name: 'Природа / Флора и Фауна' },
+  { id: 'world', name: 'Законы мира / Магия' },
+  { id: 'secret', name: 'Секрет / Скрытый факт' },
+]
+
+const CATEGORY_MAP: Record<string, string> = {
+  fact: 'Факт',
+  appearance: 'Внешность',
+  mindset: 'Мысли',
+  speech: 'Речь',
+  history: 'История',
+  inventory: 'Предметы',
+  geography: 'Места',
+  nature: 'Природа',
+  world: 'Мир',
+  secret: 'Секрет'
+}
+
+const LB_CATEGORY_MAP: Record<string, string> = {
+  general: 'Общая',
+  nature: 'Природа',
+  geography: 'География',
+  history: 'История',
+  world: 'Мир / Законы',
+  characters: 'Персонажи',
+  items: 'Предметы',
+  beings: 'Существа'
+}
+
 type ViewMode = 'grid' | 'table'
 
 export function LorebookSection({ 
@@ -545,7 +582,9 @@ export function LorebookSection({
                       placeholder="Выберите категорию..."
                     />
                   ) : (
-                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>{lb.category || 'general'}</Badge>
+                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>
+                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -645,18 +684,7 @@ export function LorebookSection({
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                       <div style={{ flex: 1 }}>
                         <SearchableSelect
-                          options={[
-                            { id: 'fact', name: 'Fact / Common' },
-                            { id: 'appearance', name: 'Appearance' },
-                            { id: 'mindset', name: 'Mindset' },
-                            { id: 'speech', name: 'Speech Style' },
-                            { id: 'history', name: 'History / Biography' },
-                            { id: 'inventory', name: 'Inventory / Items' },
-                            { id: 'geography', name: 'Geography / Locations' },
-                            { id: 'nature', name: 'Nature / Flora & Fauna' },
-                            { id: 'world', name: 'World Laws / Magic' },
-                            { id: 'secret', name: 'Secret / Hidden Fact' },
-                          ]}
+                          options={ENTRY_CATEGORIES}
                           value={newEntryCategory}
                           onChange={setNewEntryCategory}
                           placeholder="Категория..."
@@ -683,7 +711,7 @@ export function LorebookSection({
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <textarea 
                       className={styles.editTextarea} 
-                      placeholder="Формат: ключевое слово | описание (каждая запись с новой строки)" 
+                      placeholder="Формат: ключевое слово | описание | категория (опционально, н-р: appearance)" 
                       value={batchText} 
                       onChange={(e: any) => setBatchText(e.target.value)} 
                       style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
@@ -695,7 +723,7 @@ export function LorebookSection({
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <textarea 
                       className={styles.editTextarea} 
-                      placeholder='[{"keywords": ["слово"], "content": "описание"}, ...]' 
+                      placeholder='[{"keywords": ["слово"], "content": "описание", "category": "appearance"}, ...]' 
                       value={batchText} 
                       onChange={(e: any) => setBatchText(e.target.value)} 
                       style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
@@ -718,11 +746,11 @@ export function LorebookSection({
                     } else if (entryAddType === 'batch') {
                       const entries = batchText.split('\n')
                         .map(line => {
-                          const [kw, ...contentParts] = line.split('|')
+                          const [kw, content, cat] = line.split('|').map(s => s.trim())
                           return {
-                            keywords: kw ? [kw.trim()] : [],
-                            content: contentParts.join('|').trim(),
-                            category: newEntryCategory,
+                            keywords: kw ? [kw] : [],
+                            content: content || '',
+                            category: cat || newEntryCategory,
                             is_always_included: newEntryAlwaysInc,
                             priority: 100
                           }
@@ -811,18 +839,7 @@ export function LorebookSection({
                           {isEditing ? (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               <SearchableSelect
-                                options={[
-                                  { id: 'fact', name: 'Fact' },
-                                  { id: 'appearance', name: 'Appearance' },
-                                  { id: 'mindset', name: 'Mindset' },
-                                  { id: 'speech', name: 'Speech' },
-                                  { id: 'history', name: 'History' },
-                                  { id: 'inventory', name: 'Inventory' },
-                                  { id: 'geography', name: 'Geography' },
-                                  { id: 'nature', name: 'Nature' },
-                                  { id: 'world', name: 'World' },
-                                  { id: 'secret', name: 'Secret' },
-                                ]}
+                                options={ENTRY_CATEGORIES}
                                 value={editEntryCategory}
                                 onChange={setEditEntryCategory}
                                 className={styles.compact}
@@ -844,7 +861,7 @@ export function LorebookSection({
                             </div>
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', opacity: 0.8 }}>
-                              <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-teal)' }}>{entry.category || 'fact'}</span>
+                              <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-teal)' }}>{CATEGORY_MAP[entry.category || 'fact'] || entry.category}</span>
                               {entry.is_always_included && (
                                 <span title="Всегда в памяти">
                                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -1005,7 +1022,7 @@ export function LorebookSection({
                   <td>{lb.entries?.length || lb.entries_count || 0}</td>
                   <td>
                     <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>
-                      {lb.category || 'general'}
+                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
                     </Badge>
                   </td>
                 </tr>
@@ -1054,7 +1071,7 @@ export function LorebookSection({
                           : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                     </Badge>
                     <Badge variant="purple" style={{ marginLeft: '6px', alignSelf: 'flex-start' }}>
-                      {lb.category || 'general'}
+                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
                     </Badge>
                   </div>
                 </div>
