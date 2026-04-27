@@ -651,7 +651,7 @@
   display: flex;
   flex-direction: column;
   gap: 0px; /* Changed from 30px to handle header/content spacing separately */
-  padding: 30px 40px;
+  padding: 15px 40px 30px;
   animation: slideInFromRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-y: auto;
 }
@@ -745,7 +745,7 @@
 }
 
 .charBasicInfo {
-  margin-top: 50px;
+  margin-top: 24px;
   padding: 0 24px;
   text-align: left; /* Changed from center */
 }

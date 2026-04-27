@@ -95,6 +95,7 @@ export function ScenarioSection({
                 <th onClick={() => onSort?.('title')} style={{ cursor: 'pointer' }}>Заголовок {renderSortIcon?.('title')}</th>
                 <th onClick={() => onSort?.('character_id')} style={{ cursor: 'pointer' }}>Персонаж {renderSortIcon?.('character_id')}</th>
                 <th onClick={() => onSort?.('location')} style={{ cursor: 'pointer' }}>Локация {renderSortIcon?.('location')}</th>
+                <th onClick={() => onSort?.('chats_count')} style={{ cursor: 'pointer' }}>Чатов {renderSortIcon?.('chats_count')}</th>
               </tr>
             </thead>
             <tbody>
@@ -107,6 +108,7 @@ export function ScenarioSection({
                     </Badge>
                   </td>
                   <td><span style={{ opacity: 0.6 }}>{s.location || '—'}</span></td>
+                  <td><span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>{s.chats_count || 0}</span></td>
                 </tr>
               ))}
             </tbody>

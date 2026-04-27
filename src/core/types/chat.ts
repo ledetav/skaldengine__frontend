@@ -10,6 +10,7 @@ export interface Scenario {
   end_point?: string | null
   internal_description?: string | null
   character_id?: string | null
+  chats_count?: number
   image_url?: string
 }
 

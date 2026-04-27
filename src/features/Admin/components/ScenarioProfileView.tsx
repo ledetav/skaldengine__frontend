@@ -119,10 +119,7 @@ export function ScenarioProfileView({
                   <div className={styles.detailGroup}>
                     <div className={styles.detailTitle}>Персонаж (привязка)</div>
                     <SearchableSelect 
-                      options={[
-                        { id: '', name: 'Общий (нет привязки)' },
-                        ...characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))
-                      ]}
+                      options={characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))}
                       value={draft.character_id || ''}
                       onChange={val => setDraft(prev => ({ ...prev, character_id: val || null }))}
                       placeholder="Выберите персонажа..."
@@ -142,8 +139,8 @@ export function ScenarioProfileView({
                 <>
                   <h1 className={styles.charProfileName}>{draft.title}</h1>
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                    <Badge variant={draft.character_id ? 'orange' : 'blue'}>
-                      {draft.character_id ? (characters.find(c => c.id === draft.character_id)?.name || 'Персонаж') : 'Общий сценарий'}
+                    <Badge variant="orange">
+                      {characters.find(c => c.id === draft.character_id)?.name || 'Персонаж'}
                     </Badge>
                     {draft.location && <Badge variant="teal">{draft.location}</Badge>}
                   </div>
