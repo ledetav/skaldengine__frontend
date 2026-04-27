@@ -71,6 +71,7 @@ export function MessageItem({
           {msg.hidden_thought && showThoughtsGlobal && (
             <ThoughtBlock 
               thought={msg.hidden_thought} 
+              authorName={msg.author}
               onToggle={() => setTimeout(() => scrollToBottom('smooth'), 100)}
             />
           )}

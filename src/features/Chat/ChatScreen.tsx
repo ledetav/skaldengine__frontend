@@ -192,7 +192,7 @@ export default function ChatScreen() {
       
         const mapped: Message[] = historyData.active_branch.map(m => ({
           id: m.id,
-          author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+          author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
           content: m.content,
           role: m.role as 'user' | 'assistant',
           hidden_thought: m.hidden_thought,
@@ -235,7 +235,7 @@ export default function ChatScreen() {
       let aiContent = ''
       setMessages(prev => [...prev, {
         id: aiMsgId,
-        author: character?.name || 'Skald',
+        author: character?.name || 'скальд',
         content: '',
         role: 'assistant'
       }])
@@ -300,7 +300,7 @@ export default function ChatScreen() {
       let aiContent = ''
       setMessages(prev => [...prev, {
         id: aiMsgId,
-        author: character?.name || 'Skald',
+        author: character?.name || 'скальд',
         content: '',
         role: 'assistant',
         parent_id: targetMsg.parent_id
@@ -318,7 +318,7 @@ export default function ChatScreen() {
       setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
-        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
         content: m.content,
         role: m.role as any,
         hidden_thought: m.hidden_thought,
@@ -350,7 +350,7 @@ export default function ChatScreen() {
       setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
-        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
         content: m.content,
         role: m.role as any,
         hidden_thought: m.hidden_thought,
