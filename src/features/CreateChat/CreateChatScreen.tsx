@@ -62,6 +62,8 @@ const CreateChatScreen: React.FC = () => {
   // Sandbox specific
   const [areAcquainted, setAreAcquainted] = useState(false)
   const [relationshipDesc, setRelationshipDesc] = useState('')
+  const [customLocation, setCustomLocation] = useState('')
+  const [customPlotHook, setCustomPlotHook] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +116,8 @@ const CreateChatScreen: React.FC = () => {
         scenario_id: gameMode === 'scenario' ? selectedScenarioId : undefined,
         is_acquainted: areAcquainted,
         relationship_dynamic: areAcquainted ? relationshipDesc : undefined,
+        custom_location: gameMode === 'sandbox' ? customLocation : undefined,
+        custom_plot_hook: gameMode === 'sandbox' ? customPlotHook : undefined,
         language: 'ru', // Default for now
         narrative_voice: narrativeVoice,
         persona_lorebook_id: selectedLorebookId || undefined,
@@ -204,6 +208,10 @@ const CreateChatScreen: React.FC = () => {
                 gameMode={gameMode}
                 onToggle={setAreAcquainted}
                 onDescChange={setRelationshipDesc}
+                customLocation={customLocation}
+                customPlotHook={customPlotHook}
+                onLocationChange={setCustomLocation}
+                onPlotHookChange={setCustomPlotHook}
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}
@@ -240,6 +248,10 @@ const CreateChatScreen: React.FC = () => {
                 gameMode={gameMode}
                 onToggle={setAreAcquainted}
                 onDescChange={setRelationshipDesc}
+                customLocation={customLocation}
+                customPlotHook={customPlotHook}
+                onLocationChange={setCustomLocation}
+                onPlotHookChange={setCustomPlotHook}
                 lorebooks={lorebooks}
                 selectedLorebookId={selectedLorebookId}
                 onLorebookSelect={setSelectedLorebookId}

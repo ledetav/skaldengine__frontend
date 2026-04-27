@@ -1,9 +1,16 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Character } from '@/core/types/character'
+import type { Chat } from '@/core/types/chat'
 import styles from './Sections.module.css'
 
-export function CharacterSection({ character }: { character: Character | null }) {
+export function CharacterSection({ 
+  character,
+  chat
+}: { 
+  character: Character | null,
+  chat: Chat | null
+}) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -65,6 +72,21 @@ export function CharacterSection({ character }: { character: Character | null })
                         <span className={styles.statValueMini}>{character.scenarios_count || 0}</span>
                       </div>
                     </div>
+
+                    {chat && (
+                      <div className={styles.relationshipBox}>
+                        <div className={styles.relationshipHeader}>
+                          <span className={styles.relationshipStatus}>
+                            {chat.is_acquainted ? 'Знакомы' : 'Первая встреча'}
+                          </span>
+                        </div>
+                        {chat.relationship_dynamic && (
+                          <p className={styles.relationshipText}>
+                            {chat.relationship_dynamic}
+                          </p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Scerarios count check as proxy or just remove the warning */}
                     {(!character.scenarios_count) && (

@@ -12,7 +12,7 @@ import { personasApi } from '@/core/api/personas'
 import { authApi } from '@/core/api/auth'
 import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Character } from '@/core/types/character'
-import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType, Lorebook } from '@/core/types/chat'
+import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType, Lorebook, Checkpoint } from '@/core/types/chat'
 
 // Components
 import { ChatHeader } from './components/ChatHeader'
@@ -43,6 +43,7 @@ export default function ChatScreen() {
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null)
   const [messageTree, setMessageTree] = useState<Message[]>([])
   const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([])
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024)
@@ -112,6 +113,7 @@ export default function ChatScreen() {
         setPersona(personaData)
         setActiveLeafId(historyData.active_leaf_id)
         setMessageTree(historyData.tree)
+        setCheckpoints(historyData.checkpoints || [])
         
         const mappedMessages: Message[] = historyData.active_branch.map(m => ({
           id: m.id,
@@ -264,6 +266,7 @@ export default function ChatScreen() {
           current_sibling_index: lastAiMsg.current_sibling_index
         } : m
       ))
+      setCheckpoints(updatedHistory.checkpoints || [])
       setLastSaved(new Date())
     } catch (err: any) {
       logger.error('Send failed:', err)
@@ -464,10 +467,10 @@ export default function ChatScreen() {
         <ProfileSection />
         
         {chat?.mode === 'scenario' && scenario && (
-          <ScenarioSection scenario={scenario} />
+          <ScenarioSection scenario={scenario} checkpoints={checkpoints} />
         )}
 
-        <CharacterSection character={character} />
+        <CharacterSection character={character} chat={chat} />
         <PersonaSection persona={persona} />
         
         <SettingsSection 

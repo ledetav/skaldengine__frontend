@@ -56,6 +56,8 @@ export interface Chat {
   language: string
   narrative_voice: NarrativeVoiceType
   persona_lorebook_id?: string
+  custom_location?: string
+  custom_plot_hook?: string
   checkpoints_count: number
   mode: string
   active_leaf_id?: string
@@ -87,6 +89,8 @@ export interface ChatCreate {
   language: string
   narrative_voice: NarrativeVoiceType
   persona_lorebook_id?: string
+  custom_location?: string
+  custom_plot_hook?: string
   checkpoints_count: number
 }
 
@@ -127,4 +131,11 @@ export interface Lorebook {
   entries_count?: number
   tags?: string[]
   created_at: string
+}
+
+export interface Checkpoint {
+  id: string
+  order_num: number
+  goal_description: string
+  is_completed: boolean
 }
