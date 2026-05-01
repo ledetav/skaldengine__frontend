@@ -1,0 +1,1 @@
+export { AdminProfileLayout } from './AdminProfileLayout'
