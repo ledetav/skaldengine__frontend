@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect, type ChangeEvent, type ReactNode } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { Button, Input, Card, Badge, useToast } from '@/components/ui'
+import { Badge, useToast } from '@/components/ui'
 import styles from '../Admin.module.css'
-import { SearchableSelect } from './SearchableSelect'
-import { Pagination } from './Pagination'
 import { ApiClient } from '@/core/api/client'
 import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
+import { LorebookDetail, LorebookEntryList, LorebookEntryForm, LB_CATEGORY_MAP } from './lorebook'
+import { ConfirmModal } from '@/components/common'
 
 interface LorebookSectionProps {
   type: 'fandom' | 'character' | 'persona'
@@ -17,43 +17,6 @@ interface LorebookSectionProps {
   isFilterActive?: boolean
   onSort?: (field: string) => void
   renderSortIcon?: (field: string) => ReactNode
-}
-
-const ENTRY_CATEGORIES = [
-  { id: 'fact', name: 'Факт / Общее' },
-  { id: 'appearance', name: 'Внешность' },
-  { id: 'mindset', name: 'Мировоззрение / Мысли' },
-  { id: 'speech', name: 'Стиль речи' },
-  { id: 'history', name: 'История / Биография' },
-  { id: 'inventory', name: 'Инвентарь / Предметы' },
-  { id: 'geography', name: 'География / Места' },
-  { id: 'nature', name: 'Природа / Флора и Фауна' },
-  { id: 'world', name: 'Законы мира / Магия' },
-  { id: 'secret', name: 'Секрет / Скрытый факт' },
-]
-
-const CATEGORY_MAP: Record<string, string> = {
-  fact: 'Факт',
-  appearance: 'Внешность',
-  mindset: 'Мысли',
-  speech: 'Речь',
-  history: 'История',
-  inventory: 'Предметы',
-  geography: 'Места',
-  nature: 'Природа',
-  world: 'Мир',
-  secret: 'Секрет'
-}
-
-const LB_CATEGORY_MAP: Record<string, string> = {
-  general: 'Общая',
-  nature: 'Природа',
-  geography: 'География',
-  history: 'История',
-  world: 'Мир / Законы',
-  characters: 'Персонажи',
-  items: 'Предметы',
-  beings: 'Существа'
 }
 
 type ViewMode = 'grid' | 'table'
@@ -82,7 +45,9 @@ export function LorebookSection({
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const { success } = useToast()
+  
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [lbToDeleteId, setLbToDeleteId] = useState<string | null>(null)
 
   const isCreateMode = id === 'create'
   const isEditMode = pathname.includes('/edit') || isCreateMode
@@ -130,10 +95,8 @@ export function LorebookSection({
   const [selectedCharId, setSelectedCharId] = useState('')
   const [selectedUserId, setSelectedUserId] = useState('')
   const [selectedPersonaId, setSelectedPersonaId] = useState('')
-
   const [isMain, setIsMain] = useState(false)
 
-  // Sync state when lb changes or entering edit mode (Bug fix: fields not populating without reload)
   useEffect(() => {
     if (lb && isEditMode) {
       setEditName(lb.name || '')
@@ -161,15 +124,6 @@ export function LorebookSection({
   }, [lb, isEditMode, isCreateMode, initialType, personas])
 
   const [isAddingEntry, setIsAddingEntry] = useState(false)
-
-  const [entryAddType, setEntryAddType] = useState<'single' | 'batch' | 'json'>('single')
-  const [newEntryKeywords, setNewEntryKeywords] = useState('')
-  const [newEntryContent, setNewEntryContent] = useState('')
-  const [newEntryCategory, setNewEntryCategory] = useState('fact')
-  const [newEntryAlwaysInc, setNewEntryAlwaysInc] = useState(false)
-  const [newEntryPriority, setNewEntryPriority] = useState(3)
-  const [batchText, setBatchText] = useState('')
-
   const [entries, setEntries] = useState<LorebookEntry[]>([])
   const [entriesTotal, setEntriesTotal] = useState(0)
   const [entriesPage, setEntriesPage] = useState(1)
@@ -203,13 +157,10 @@ export function LorebookSection({
     }
   }, [lb?.id, isDetailMode, entriesPage, entrySort])
 
-  // Reactive updates via websockets
   useEffect(() => {
     if (!lb?.id || lb.id === 'create') return
-    
     const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
     const socket = new WebSocket(`${wsUrl}/ws/updates`)
-    
     socket.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data)
@@ -219,14 +170,9 @@ export function LorebookSection({
         if (payload.type === 'UPDATE_LOREBOOK' && payload.data.id === lb.id) {
           setFetchedLb(prev => prev ? { ...prev, ...payload.data } : payload.data)
         }
-      } catch (err) {
-        // ignore parsing errors
-      }
+      } catch (err) {}
     }
-
-    return () => {
-      socket.close()
-    }
+    return () => { socket.close() }
   }, [lb?.id, entriesPage])
 
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
@@ -239,53 +185,26 @@ export function LorebookSection({
   const [showEntryDeleteModal, setShowEntryDeleteModal] = useState(false)
   const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
 
-  const filteredEntries = useMemo(() => {
-    if (!entries) return []
-    let result = entries
-    if (entryCategoryFilter !== 'all') {
-      result = result.filter((e: LorebookEntry) => e.category === entryCategoryFilter)
-    }
-    if (!entrySearch) return result
-    const s = entrySearch.toLowerCase()
-    return result.filter((e: LorebookEntry) => 
-      e.content.toLowerCase().includes(s) || 
-      e.keywords.some((k: string) => k.toLowerCase().includes(s))
-    )
-  }, [entries, entrySearch, entryCategoryFilter])
-
   const handleEntrySave = async (entryId: string) => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      
       const keywords = editEntryKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-
-      // Optimistic update
       setEntries(prev => prev.map(e => e.id === entryId ? {
-        ...e,
-        keywords,
-        content: editEntryContent,
-        category: editEntryCategory,
-        is_always_included: editEntryAlwaysInc,
-        priority: editEntryPriority
+        ...e, keywords, content: editEntryContent, category: editEntryCategory,
+        is_always_included: editEntryAlwaysInc, priority: editEntryPriority
       } : e))
-
       setEditingEntryId(null)
       success('Запись обновлена')
       
       await lorebooksApi.updateLorebookEntry(lb!.id, entryId, {
-        keywords,
-        content: editEntryContent,
-        category: editEntryCategory,
-        is_always_included: editEntryAlwaysInc,
-        priority: editEntryPriority
+        keywords, content: editEntryContent, category: editEntryCategory,
+        is_always_included: editEntryAlwaysInc, priority: editEntryPriority
       })
-      
-      // Still fetch to be sure and sync everything
       fetchEntries(entriesPage)
     } catch (e: any) {
       console.error(e)
       success('Ошибка обновления записи')
-      fetchEntries(entriesPage) // Revert on error
+      fetchEntries(entriesPage)
     }
   }
 
@@ -296,25 +215,21 @@ export function LorebookSection({
 
   const confirmEntryDelete = async () => {
     if (!entryToDeleteId) return
-    const idToDelete = entryToDeleteId // Capture it
+    const idToDelete = entryToDeleteId
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      
-      // Optimistic delete
       setEntries(prev => prev.filter(e => e.id !== idToDelete))
       setEntriesTotal(prev => prev - 1)
-      
       success('Запись удалена')
       setShowEntryDeleteModal(false)
       setEntryToDeleteId(null)
 
       await lorebooksApi.deleteAdminLorebookEntry(lb!.id, idToDelete)
-      // fetchEntries is not strictly needed if WS is working, but safety first
       fetchEntries(entriesPage)
     } catch (e: any) {
       console.error(e)
       success('Ошибка удаления записи')
-      fetchEntries(entriesPage) // Revert
+      fetchEntries(entriesPage)
     }
   }
 
@@ -325,49 +240,16 @@ export function LorebookSection({
     return Array.from(s).filter(Boolean).filter(f => !['original', 'оригинальный'].includes(f.toLowerCase())).sort()
   }, [lorebooks, characters])
 
-  const currentCharacter = useMemo(() => 
-    characters.find(c => String(c.id) === String(selectedCharId || lb?.character_id)),
-    [characters, selectedCharId, lb?.character_id]
-  );
-  
-  const isOriginalChar = currentCharacter?.type === 'original';
-  
-  const mainLorebooksForChar = useMemo(() => 
-    lorebooks.filter(l => String(l.character_id) === String(selectedCharId || lb?.character_id) && l.tags?.includes('main')),
-    [lorebooks, selectedCharId, lb?.character_id]
-  );
-
-  const canToggleMain = useMemo(() => {
-    if (!isOriginalChar) return true;
-    if (!isMain) return true; // Can always turn ON
+  const filteredLorebooks = lorebooks.filter(l => {
+    const s = search.toLowerCase()
+    const matches = l.name.toLowerCase().includes(s) || 
+                    l.fandom?.toLowerCase().includes(s) ||
+                    l.user_persona_name?.toLowerCase().includes(s)
     
-    // Check if the current lorebook is already main in the database
-    const currentLb = lorebooks.find(l => l.id === id);
-    const isStoredAsMain = currentLb?.tags?.includes('main');
-    
-    if (isStoredAsMain) {
-      // If it's already main, it's the last one if length is 1
-      return mainLorebooksForChar.length > 1;
-    } else {
-      // If it's NOT main yet (new or just toggled on), we can always turn it off 
-      // as long as there's at least one OTHER main lorebook for the character
-      return mainLorebooksForChar.length >= 1;
-    }
-  }, [isOriginalChar, isMain, mainLorebooksForChar, lorebooks, id]);
-
-  const userPersonas = useMemo(() => {
-    return personas.filter(p => p.owner_id === selectedUserId)
-  }, [personas, selectedUserId])
-
-  const filteredLorebooks = lorebooks.filter(lb => {
-    const matchesSearch = lb.name.toLowerCase().includes(search.toLowerCase()) || 
-                         lb.fandom?.toLowerCase().includes(search.toLowerCase()) ||
-                         lb.user_persona_name?.toLowerCase().includes(search.toLowerCase())
-    
-    if (initialType === 'fandom') return matchesSearch && !!lb.fandom && !lb.character_id && !lb.user_persona_id
-    if (initialType === 'character') return matchesSearch && !!lb.character_id
-    if (initialType === 'persona') return matchesSearch && !!lb.user_persona_id
-    return matchesSearch
+    if (initialType === 'fandom') return matches && !!l.fandom && !l.character_id && !l.user_persona_id
+    if (initialType === 'character') return matches && !!l.character_id
+    if (initialType === 'persona') return matches && !!l.user_persona_id
+    return matches
   })
 
   const handleEdit = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}/edit`)
@@ -376,6 +258,7 @@ export function LorebookSection({
     const tab = initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'personas' : 'characters'
     navigateDebug(`/admin/lorebooks/${tab}`)
   }
+
   const handleSave = async () => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
@@ -397,7 +280,7 @@ export function LorebookSection({
       } else {
         await lorebooksApi.updateAdminLorebook(id!, payload as any)
         success('Лорбук успешно обновлен')
-        handleView(id!) // or navigateDebug to view mode
+        handleView(id!)
       }
     } catch (e) {
       console.error('Failed to save lorebook', e)
@@ -406,11 +289,15 @@ export function LorebookSection({
   }
 
   const handleDelete = async () => {
+    const targetId = lbToDeleteId || id
+    if (!targetId) return
+
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
-      await lorebooksApi.deleteAdminLorebook(id!)
+      await lorebooksApi.deleteAdminLorebook(targetId)
       success('Лорбук успешно удален')
       setShowDeleteModal(false)
+      setLbToDeleteId(null)
       handleBack()
     } catch (e) {
       console.error('Failed to delete lorebook', e)
@@ -436,615 +323,125 @@ export function LorebookSection({
         </header>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-          {/* 1. Main Info Card */}
-          <div className={styles.detailGroup}>
-            <div className={styles.detailTitle}>Основная информация</div>
-            <Card className={styles.detailsCard} style={{ padding: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-                <div className={styles.detailGroup}>
-                  <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Название</div>
-                  {isEditMode ? (
-                    <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
-                  ) : (
-                    <div style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--white)' }}>{lb.name}</div>
-                  )}
-                </div>
-
-                <div className={styles.detailGroup}>
-                  <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Тип / Привязка</div>
-                  {isEditMode ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
-                        <button 
-                          className={`${styles.roleBtn} ${editType === 'fandom' ? styles.roleBtnActive : ''}`}
-                          onClick={() => setEditType('fandom')}
-                        >
-                          Фандом
-                        </button>
-                        <button 
-                          className={`${styles.roleBtn} ${editType === 'character' ? styles.roleBtnActive : ''}`}
-                          onClick={() => setEditType('character')}
-                        >
-                          Персонаж
-                        </button>
-                        <button 
-                          className={`${styles.roleBtn} ${editType === 'persona' ? styles.roleBtnActive : ''}`}
-                          onClick={() => setEditType('persona')}
-                        >
-                          Персона
-                        </button>
-                      </div>
-
-                      {/* Binding Inputs */}
-                      {editType === 'fandom' && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          <SearchableSelect 
-                            options={allFandoms.map(f => ({ id: f, name: f }))}
-                            value={isNewFandom ? 'new' : selectedFandom}
-                            customValueLabel={isNewFandom ? '+ Создать свой' : undefined}
-                            onChange={(val) => {
-                              if (val === 'new') {
-                                setIsNewFandom(true)
-                                setSelectedFandom('')
-                              } else {
-                                setIsNewFandom(false)
-                                setSelectedFandom(val)
-                              }
-                            }}
-                            placeholder="Выберите фандом..."
-                            onCreateNew={() => {
-                              setIsNewFandom(true)
-                              setSelectedFandom('')
-                            }}
-                            onCreateLabel="+ Создать свой фандом"
-                          />
-                          {isNewFandom && (
-                            <Input 
-                              placeholder="Название нового фандома" 
-                              value={selectedFandom} 
-                              onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedFandom(e.target.value)} 
-                              autoFocus
-                            />
-                          )}
-                        </div>
-                      )}
-
-                      {editType === 'character' && (
-                        <SearchableSelect 
-                          options={characters.map(c => ({ 
-                            id: c.id, 
-                            name: c.name, 
-                            subtext: c.fandom || 'Независимый' 
-                          }))}
-                          value={selectedCharId}
-                          onChange={setSelectedCharId}
-                          placeholder="Выберите персонажа..."
-                        />
-                      )}
-
-                      {editType === 'persona' && (
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                          <div style={{ flex: 1 }}>
-                            <SearchableSelect 
-                              options={users.map(u => ({ id: u.id, name: u.username }))}
-                              value={selectedUserId}
-                              onChange={(val) => {
-                                setSelectedUserId(val)
-                                setSelectedPersonaId('')
-                              }}
-                              placeholder="Пользователь..."
-                            />
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <SearchableSelect 
-                              options={userPersonas.map(p => ({ id: p.id, name: p.name }))}
-                              value={selectedPersonaId}
-                              onChange={setSelectedPersonaId}
-                              placeholder="Персона..."
-                              disabled={!selectedUserId}
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {editType === 'character' && isOriginalChar && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <div 
-                            className={`${styles.toggleRow} ${isMain ? styles.toggleActive : ''} ${!canToggleMain ? styles.toggleLocked : ''}`}
-                            onClick={() => canToggleMain && setIsMain(!isMain)}
-                            style={{ marginTop: '4px', cursor: canToggleMain ? 'pointer' : 'not-allowed' }}
-                          >
-                            <div className={styles.toggleSwitch} />
-                            <span className={styles.toggleLabel}>Основной лорбук персонажа</span>
-                          </div>
-                          {!canToggleMain && (
-                            <div className={styles.infoNote} style={{ marginTop: '8px', marginBottom: 0 }}>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)', flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                              <span style={{ fontSize: '0.8rem' }}>У оригинального персонажа должен быть хотя бы один основной лорбук</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
-                      {initialType === 'fandom' ? 'Фандом' : initialType === 'persona' ? 'Персона' : 'Персонаж'}
-                    </Badge>
-                      <span style={{ fontWeight: 700, fontSize: '1rem', opacity: 0.8 }}>
-                        {initialType === 'fandom' 
-                          ? lb.fandom 
-                          : initialType === 'persona' 
-                            ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
-                            : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
-                      </span>
-                      {lb.tags?.includes('main') && initialType === 'character' && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') && (
-                        <Badge variant="orange">ОСНОВНОЙ</Badge>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className={styles.detailGroup}>
-                  <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Описание</div>
-                  {isEditMode ? (
-                    <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
-                  ) : (
-                    <div style={{ opacity: 0.7, lineHeight: 1.6 }}>{lb.description || 'Описание отсутствует'}</div>
-                  )}
-                </div>
-
-                <div className={styles.detailGroup}>
-                  <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Категория лорбука</div>
-                  {isEditMode ? (
-                    <SearchableSelect
-                      options={[
-                        { id: 'general', name: 'Общая' },
-                        { id: 'nature', name: 'Природа' },
-                        { id: 'geography', name: 'География' },
-                        { id: 'history', name: 'История' },
-                        { id: 'world', name: 'Мир / Законы' },
-                        { id: 'characters', name: 'Персонажи' },
-                        { id: 'items', name: 'Предметы' },
-                        { id: 'beings', name: 'Существа' },
-                      ]}
-                      value={editLorebookCategory}
-                      onChange={setEditLorebookCategory}
-                      placeholder="Выберите категорию..."
-                    />
-                  ) : (
-                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>
-                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0, justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                {isEditMode ? (
-                  <>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      <Button variant="ghost" onClick={() => handleView(lb.id)}>Отмена</Button>
-                      <Button variant="orange" onClick={handleSave}>Сохранить изменения</Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="orange" onClick={() => handleEdit(lb.id)}>Редактировать</Button>
-                    {initialType !== 'persona' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
-                        {lb.tags?.includes('main') && isOriginalChar && (
-                          <div className={styles.infoNote} style={{ marginBottom: '12px', width: '100%' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-orange)', flexShrink: 0}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                            <span style={{ fontSize: '0.8rem' }}>Основной лорбук оригинального персонажа нельзя удалить</span>
-                          </div>
-                        )}
-                        <Button 
-                          variant="danger" 
-                          onClick={() => setShowDeleteModal(true)}
-                          disabled={lb.tags?.includes('main') && isOriginalChar}
-                          title={lb.tags?.includes('main') && isOriginalChar ? "Основной лорбук нельзя удалить" : ""}
-                        >
-                          Удалить лорбук
-                        </Button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </Card>
-          </div>
-
-          {/* 2. Entries Table Section */}
-          <div className={styles.detailGroup}>
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div className={styles.detailTitle}>Записи в лорбуке ({entriesTotal})</div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '180px' }}>
-                  <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
-                  <input 
-                    type="text" 
-                    placeholder="Поиск..." 
-                    className={styles.searchBox}
-                    style={{ padding: '6px 10px 6px 32px', fontSize: '0.75rem', height: '36px' }}
-                    value={entrySearch}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setEntrySearch(e.target.value)}
-                  />
-                </div>
-                
-                <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
-                  <button 
-                    className={`${styles.roleBtn} ${entrySort === 'created_at' ? styles.roleBtnActive : ''}`}
-                    onClick={() => setEntrySort('created_at')}
-                    style={{ padding: '6px 10px', fontSize: '0.7rem', height: '36px' }}
-                    title="Сортировать по дате"
-                  >
-                    Новые
-                  </button>
-                  <button 
-                    className={`${styles.roleBtn} ${entrySort === 'priority' ? styles.roleBtnActive : ''}`}
-                    onClick={() => setEntrySort('priority')}
-                    style={{ padding: '6px 10px', fontSize: '0.7rem', height: '36px' }}
-                    title="Сортировать по приоритету"
-                  >
-                    Приоритет
-                  </button>
-                </div>
-
-                <div style={{ width: '180px' }}>
-                  <SearchableSelect 
-                    options={[{id: 'all', name: 'Все категории'}, ...ENTRY_CATEGORIES]}
-                    value={entryCategoryFilter}
-                    onChange={setEntryCategoryFilter}
-                    placeholder="Фильтр..."
-                    className={styles.compact}
-                  />
-                </div>
-
-                <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '8px 16px', height: '36px' }} onClick={() => setIsAddingEntry(!isAddingEntry)}>
-                  {isAddingEntry ? 'Отмена' : '+ Добавить'}
-                </Button>
-              </div>
-            </header>
-
-            {isAddingEntry && (
-              <Card style={{ padding: '24px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className={styles.roleBtnGroup} style={{ margin: 0, alignSelf: 'flex-start' }}>
-                  <button 
-                    className={`${styles.roleBtn} ${entryAddType === 'single' ? styles.roleBtnActive : ''}`}
-                    onClick={() => setEntryAddType('single')}
-                  >
-                    Одиночная
-                  </button>
-                  <button 
-                    className={`${styles.roleBtn} ${entryAddType === 'batch' ? styles.roleBtnActive : ''}`}
-                    onClick={() => setEntryAddType('batch')}
-                  >
-                    Массовая
-                  </button>
-                  <button 
-                    className={`${styles.roleBtn} ${entryAddType === 'json' ? styles.roleBtnActive : ''}`}
-                    onClick={() => setEntryAddType('json')}
-                  >
-                    JSON
-                  </button>
-                </div>
-
-                {entryAddType === 'single' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <Input placeholder="Ключевые слова (через запятую)" value={newEntryKeywords} onChange={(e: any) => setNewEntryKeywords(e.target.value)} />
-                    <textarea 
-                      className={styles.editTextarea} 
-                      placeholder="Содержание записи..." 
-                      value={newEntryContent} 
-                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNewEntryContent(e.target.value)} 
-                      style={{ minHeight: '80px' }}
-                    />
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ flex: 1 }}>
-                        <SearchableSelect
-                          options={ENTRY_CATEGORIES}
-                          value={newEntryCategory}
-                          onChange={setNewEntryCategory}
-                          placeholder="Категория..."
-                        />
-                      </div>
-                      <div style={{ flex: 1, display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.75rem', opacity: 0.6, whiteSpace: 'nowrap' }}>Приоритет:</span>
-                        <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
-                          {[1, 2, 3, 4, 5].map(p => (
-                            <button 
-                              key={p}
-                              className={`${styles.roleBtn} ${newEntryPriority === p ? styles.roleBtnActive : ''}`}
-                              onClick={() => setNewEntryPriority(p)}
-                              style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                            >
-                              {p}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div 
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: newEntryAlwaysInc ? 1 : 0.5 }}
-                        onClick={() => setNewEntryAlwaysInc(!newEntryAlwaysInc)}
-                      >
-                        <div style={{ 
-                          width: '16px', height: '16px', border: '2px solid var(--accent-fuchsia)', borderRadius: '4px',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          background: newEntryAlwaysInc ? 'var(--accent-fuchsia)' : 'transparent'
-                        }}>
-                          {newEntryAlwaysInc && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                        </div>
-                        <span style={{ fontSize: '0.75rem' }}>Всегда в памяти</span>
-                      </div>
-                    </div>
-                    <div className={styles.infoNote} style={{ marginTop: '4px', marginBottom: 0 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', color: 'var(--accent-teal)'}}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                      <span style={{ fontSize: '0.75rem' }}>Чем выше приоритет (1 → 5), тем больше шансов у факта попасть в контекст при нехватке места.</span>
-                    </div>
-                  </div>
-                )}
-
-                {entryAddType === 'batch' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <textarea 
-                      className={styles.editTextarea} 
-                      placeholder="Формат: ключевое слово | описание | категория (опционально, н-р: appearance)" 
-                      value={batchText} 
-                      onChange={(e: any) => setBatchText(e.target.value)} 
-                      style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
-                    />
-                  </div>
-                )}
-
-                {entryAddType === 'json' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <textarea 
-                      className={styles.editTextarea} 
-                      placeholder='[{"keywords": ["слово"], "content": "описание", "category": "appearance"}, ...]' 
-                      value={batchText} 
-                      onChange={(e: any) => setBatchText(e.target.value)} 
-                      style={{ minHeight: '150px', fontFamily: 'monospace', fontSize: '0.8rem' }}
-                    />
-                  </div>
-                )}
-
-                <Button variant="orange" style={{ alignSelf: 'flex-start' }} onClick={async () => {
-                  try {
-                    const { lorebooksApi } = await import('@/core/api/lorebooks')
-                    
-                    if (entryAddType === 'single') {
-                      await lorebooksApi.createLorebookEntry(lb!.id, {
-                        keywords: newEntryKeywords.split(',').map((k: string) => k.trim()).filter(Boolean),
-                        content: newEntryContent,
-                        category: newEntryCategory,
-                        is_always_included: newEntryAlwaysInc,
-                        priority: newEntryPriority
-                      })
-                    } else if (entryAddType === 'batch') {
-                      const entries = batchText.split('\n')
-                        .map(line => {
-                          const [kw, content, cat] = line.split('|').map(s => s.trim())
-                          return {
-                            keywords: kw ? [kw] : [],
-                            content: content || '',
-                            category: cat || newEntryCategory,
-                            is_always_included: newEntryAlwaysInc,
-                            priority: newEntryPriority
-                          }
-                        })
-                        .filter(e => e.keywords.length > 0 && e.content)
-                      
-                      await lorebooksApi.createLorebookEntriesBulk(lb!.id, entries)
-                    } else if (entryAddType === 'json') {
-                      const entries = JSON.parse(batchText)
-                      await lorebooksApi.createLorebookEntriesBulk(lb!.id, entries.map((e: any) => ({
-                        keywords: e.keywords || [],
-                        content: e.content || '',
-                        category: e.category || newEntryCategory,
-                        is_always_included: e.is_always_included !== undefined ? e.is_always_included : newEntryAlwaysInc,
-                        priority: e.priority || newEntryPriority
-                      })))
-                    }
-
-                    success('Записи добавлены')
-                    setIsAddingEntry(false)
-                    setNewEntryContent('')
-                    setNewEntryKeywords('')
-                    setBatchText('')
-                    fetchEntries(entriesPage)
-                  } catch (e: any) {
-                    console.error(e)
-                    success('Ошибка добавления записей')
-                  }
-                }}>Сохранить записи</Button>
-              </Card>
-            )}
+          <LorebookDetail 
+            lb={lb}
+            isEditMode={isEditMode}
+            isCreateMode={isCreateMode}
+            initialType={initialType}
+            characters={characters}
+            users={users}
+            personas={personas}
+            allFandoms={allFandoms}
             
-            <div className={styles.tableWrapper}>
-              <table className={styles.compactTable}>
-                <thead>
-                  <tr>
-                    <th style={{ width: '200px' }}>Тэги</th>
-                    <th>Содержание</th>
-                    <th style={{ width: '120px' }}>Категория</th>
-                    <th style={{ width: '80px' }}>Приор.</th>
-                    <th style={{ width: '100px', textAlign: 'right' }}>Действия</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEntries.slice(0, 20).map((entry: LorebookEntry, i: number) => {
-                    const isEditing = editingEntryId === entry.id
-                    return (
-                      <tr key={entry.id || i} className={isEditing ? styles.tableEditingRow : ''}>
-                        <td>
-                          {isEditing ? (
-                            <Input 
-                              value={editEntryKeywords} 
-                              onChange={(e: ChangeEvent<HTMLInputElement>) => setEditEntryKeywords(e.target.value)}
-                              placeholder="Тэги через запятую"
-                              style={{ fontSize: '0.8rem', height: '32px' }}
-                              autoFocus
-                            />
-                          ) : (
-                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                              {entry.keywords?.flatMap((k: string) => k.split(',').map((s: string) => s.trim())).filter(Boolean).map((kw: string, idx: number) => (
-                                <Badge key={`${kw}-${idx}`} variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'purple'} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{kw}</Badge>
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          {isEditing ? (
-                            <textarea 
-                              className={styles.editTextarea}
-                              value={editEntryContent}
-                              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditEntryContent(e.target.value)}
-                              style={{ minHeight: '60px', fontSize: '0.85rem', width: '100%', background: 'rgba(0,0,0,0.2)' }}
-                            />
-                          ) : (
-                            <div style={{ 
-                              fontSize: '0.85rem', 
-                              opacity: 0.7, 
-                              maxWidth: '500px',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis' 
-                            }}>
-                              {entry.content}
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          {isEditing ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <SearchableSelect
-                                options={ENTRY_CATEGORIES}
-                                value={editEntryCategory}
-                                onChange={setEditEntryCategory}
-                                className={styles.compact}
-                                placeholder="Категория"
-                              />
-                              <div 
-                                style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', opacity: editEntryAlwaysInc ? 1 : 0.5 }}
-                                onClick={() => setEditEntryAlwaysInc(!editEntryAlwaysInc)}
-                              >
-                                <div style={{ 
-                                  width: '14px', height: '14px', border: '1.5px solid var(--accent-fuchsia)', borderRadius: '3px',
-                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                  background: editEntryAlwaysInc ? 'var(--accent-fuchsia)' : 'transparent'
-                                }}>
-                                  {editEntryAlwaysInc && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                                </div>
-                                <span style={{ fontSize: '0.7rem' }}>В памяти</span>
-                              </div>
-                              <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
-                                {[1, 2, 3, 4, 5].map(p => (
-                                  <button 
-                                    key={p}
-                                    className={`${styles.roleBtn} ${editEntryPriority === p ? styles.roleBtnActive : ''}`}
-                                    onClick={() => setEditEntryPriority(p)}
-                                    style={{ padding: '2px 8px', fontSize: '0.7rem', flex: 1 }}
-                                  >
-                                    {p}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', opacity: 0.8 }}>
-                              <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-teal)' }}>{CATEGORY_MAP[entry.category || 'fact'] || entry.category}</span>
-                              {entry.is_always_included && (
-                                <span title="Всегда в памяти">
-                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent-fuchsia)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                  </svg>
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <div style={{ fontSize: '0.8rem', fontWeight: '600', color: entry.priority >= 4 ? 'var(--accent-orange)' : 'inherit', opacity: entry.priority === 1 ? 0.4 : 0.9 }}>
-                            {entry.priority}
-                          </div>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
-                            {isEditing ? (
-                              <>
-                                <button className={styles.iconBtn} onClick={() => handleEntrySave(entry.id)} style={{ color: 'var(--accent-teal)' }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                </button>
-                                <button className={styles.iconBtn} onClick={() => setEditingEntryId(null)} style={{ color: 'var(--accent-red)' }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button className={styles.iconBtn} onClick={() => {
-                                  setEditingEntryId(entry.id)
-                                  setEditEntryKeywords(entry.keywords.join(', '))
-                                  setEditEntryContent(entry.content)
-                                  setEditEntryCategory(entry.category || 'fact')
-                                  setEditEntryAlwaysInc(!!entry.is_always_included)
-                                  setEditEntryPriority(entry.priority || 3)
-                                }}>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                </button>
-                                <button className={styles.iconBtn} onClick={() => handleEntryDelete(entry.id)} style={{ opacity: 0.5 }}>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-              {isEntriesLoading && <div style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>Загрузка записей...</div>}
-            </div>
-            <Pagination 
-              currentPage={entriesPage}
-              totalItems={entriesTotal}
-              pageSize={20}
-              onPageChange={setEntriesPage}
-            />
+            editName={editName}
+            setEditName={setEditName}
+            editDescription={editDescription}
+            setEditDescription={setEditDescription}
+            editType={editType}
+            setEditType={setEditType}
+            editLorebookCategory={editLorebookCategory}
+            setEditLorebookCategory={setEditLorebookCategory}
+            
+            selectedFandom={selectedFandom}
+            setSelectedFandom={setSelectedFandom}
+            isNewFandom={isNewFandom}
+            setIsNewFandom={setIsNewFandom}
+            selectedCharId={selectedCharId}
+            setSelectedCharId={setSelectedCharId}
+            selectedUserId={selectedUserId}
+            setSelectedUserId={setSelectedUserId}
+            selectedPersonaId={selectedPersonaId}
+            setSelectedPersonaId={setSelectedPersonaId}
+            isMain={isMain}
+            setIsMain={setIsMain}
+            
+            onView={() => handleView(lb.id)}
+            onEdit={() => handleEdit(lb.id)}
+            onSave={handleSave}
+            
+            showDeleteModal={showDeleteModal}
+            setShowDeleteModal={setShowDeleteModal}
+            onDelete={handleDelete}
+          />
+
+          <div className={styles.detailGroup}>
+            {!isCreateMode && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                  <button className={styles.createBtn} onClick={() => setIsAddingEntry(!isAddingEntry)}>
+                    {isAddingEntry ? 'Отмена' : '+ Добавить запись'}
+                  </button>
+                </div>
+
+                {isAddingEntry && (
+                  <LorebookEntryForm 
+                    lorebookId={lb.id}
+                    onSaved={() => {
+                      setIsAddingEntry(false)
+                      fetchEntries(entriesPage)
+                    }}
+                    onCancel={() => setIsAddingEntry(false)}
+                  />
+                )}
+
+                <LorebookEntryList 
+                  lorebookType={initialType}
+                  entries={entries}
+                  entriesTotal={entriesTotal}
+                  entriesPage={entriesPage}
+                  entrySort={entrySort}
+                  entryCategoryFilter={entryCategoryFilter}
+                  entrySearch={entrySearch}
+                  isLoading={isEntriesLoading}
+                  
+                  editingEntryId={editingEntryId}
+                  editKeywords={editEntryKeywords}
+                  editContent={editEntryContent}
+                  editCategory={editEntryCategory}
+                  editAlwaysInc={editEntryAlwaysInc}
+                  editPriority={editEntryPriority}
+                  
+                  showDeleteModal={false}
+                  onDeleteRequest={handleEntryDelete}
+                  onDeleteConfirm={confirmEntryDelete}
+                  onDeleteCancel={() => setShowEntryDeleteModal(false)}
+                  
+                  onPageChange={setEntriesPage}
+                  onSortChange={setEntrySort}
+                  onCategoryFilterChange={setEntryCategoryFilter}
+                  onSearchChange={setEntrySearch}
+                  
+                  onEditStart={(entry) => {
+                    setEditingEntryId(entry.id)
+                    setEditEntryKeywords(entry.keywords.join(', '))
+                    setEditEntryContent(entry.content)
+                    setEditEntryCategory(entry.category || 'fact')
+                    setEditEntryAlwaysInc(!!entry.is_always_included)
+                    setEditEntryPriority(entry.priority || 3)
+                  }}
+                  onEditSave={handleEntrySave}
+                  onEditCancel={() => setEditingEntryId(null)}
+                  onEditKeywordsChange={setEditEntryKeywords}
+                  onEditContentChange={setEditEntryContent}
+                  onEditCategoryChange={setEditEntryCategory}
+                  onEditAlwaysIncChange={setEditEntryAlwaysInc}
+                  onEditPriorityChange={setEditEntryPriority}
+                />
+                
+                {showEntryDeleteModal && (
+                  <ConfirmModal 
+                    isOpen={showEntryDeleteModal}
+                    title="Удалить запись?"
+                    description="Это действие необратимо. Запись будет полностью удалена из лорбука."
+                    confirmLabel="Да, удалить"
+                    onConfirm={confirmEntryDelete}
+                    onCancel={() => setShowEntryDeleteModal(false)}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
-
-        {showDeleteModal && (
-          <div className={styles.modalOverlay} onClick={() => setShowDeleteModal(false)}>
-            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-              <h3 className={styles.modalTitle}>Удалить лорбук?</h3>
-              <p className={styles.modalDescription}>
-                Это действие необратимо. Лорбук <strong>{lb.name}</strong> будет полностью удален.
-              </p>
-              <div className={styles.modalActions}>
-                <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>Отмена</Button>
-                <Button variant="danger" onClick={handleDelete}>Да, удалить</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showEntryDeleteModal && (
-          <div className={styles.modalOverlay} onClick={() => setShowEntryDeleteModal(false)}>
-            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-              <h3 className={styles.modalTitle}>Удалить запись?</h3>
-              <p className={styles.modalDescription}>
-                Это действие необратимо. Запись будет полностью удалена из лорбука.
-              </p>
-              <div className={styles.modalActions}>
-                <Button variant="ghost" onClick={() => setShowEntryDeleteModal(false)}>Отмена</Button>
-                <Button variant="danger" onClick={confirmEntryDelete}>Да, удалить</Button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     )
   }
@@ -1067,24 +464,9 @@ export function LorebookSection({
         
         <div className={styles.sectionActions}>
           <div className={styles.viewControls}>
-            <button 
-              className={`${styles.viewBtn} ${viewMode === 'table' ? styles.activeViewBtn : ''}`}
-              onClick={() => setViewMode('table')}
-            >
-              Список
-            </button>
-            <button 
-              className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeViewBtn : ''}`}
-              onClick={() => setViewMode('grid')}
-            >
-              Карточки
-            </button>
-
-            <button 
-              className={`${styles.filterBtn} ${isFilterActive ? styles.filterBtnActive : ''}`}
-              onClick={onToggleFilter}
-              style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center', marginLeft: '8px' }}
-            >
+            <button className={`${styles.viewBtn} ${viewMode === 'table' ? styles.activeViewBtn : ''}`} onClick={() => setViewMode('table')}>Список</button>
+            <button className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeViewBtn : ''}`} onClick={() => setViewMode('grid')}>Карточки</button>
+            <button className={`${styles.filterBtn} ${isFilterActive ? styles.filterBtnActive : ''}`} onClick={onToggleFilter} style={{ padding: '8px', width: '38px', height: '38px', justifyContent: 'center', marginLeft: '8px' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             </button>
           </div>
@@ -1111,18 +493,12 @@ export function LorebookSection({
                   <td><span style={{ fontWeight: 700 }}>{lb.name}</span></td>
                   <td>
                     <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
-                      {initialType === 'fandom' 
-                        ? lb.fandom 
-                        : initialType === 'persona' 
-                          ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
-                          : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
+                      {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id) : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                     </Badge>
                   </td>
                   <td>{lb.entries?.length || lb.entries_count || 0}</td>
                   <td>
-                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>
-                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
-                    </Badge>
+                    <Badge variant="purple" style={{ alignSelf: 'flex-start' }}>{LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}</Badge>
                   </td>
                 </tr>
               ))}
@@ -1145,52 +521,48 @@ export function LorebookSection({
                         Основной лорбук
                       </div>
                     )}
-                    <button 
-                      className={`${styles.iconBtn} ${styles.dangerBtn}`} 
-                      style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties}
-                      onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); }}
-                      disabled={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original')}
-                      title={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') ? "Основной лорбук нельзя удалить" : "Удалить"}
-                    >
+                    <button className={`${styles.iconBtn} ${styles.dangerBtn}`} style={{ '--btn-accent': 'var(--accent-red)' } as React.CSSProperties} onClick={(e) => { e.stopPropagation(); setLbToDeleteId(lb.id); setShowDeleteModal(true); }} disabled={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original')} title={lb.tags?.includes('main') && (characters.find(c => String(c.id) === String(lb.character_id))?.type === 'original') ? "Основной лорбук нельзя удалить" : "Удалить"}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                   </div>
                 )}
               </div>
-
               <div className={styles.cardTop}>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.cardName}>{lb.name}</h3>
                   <div style={{ marginTop: '6px' }}>
                     <Badge variant={initialType === 'fandom' ? 'fuchsia' : initialType === 'persona' ? 'teal' : 'orange'}>
-                      {initialType === 'fandom' 
-                        ? lb.fandom 
-                        : initialType === 'persona' 
-                          ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id)
-                          : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
+                      {initialType === 'fandom' ? lb.fandom : initialType === 'persona' ? (lb.user_persona_name || personas.find(p => p.id === lb.user_persona_id)?.name || lb.user_persona_id) : (lb.character_name || characters.find(c => c.id === lb.character_id)?.name || lb.character_id)}
                     </Badge>
-                    <Badge variant="purple" style={{ marginLeft: '6px', alignSelf: 'flex-start' }}>
-                      {LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}
-                    </Badge>
+                    <Badge variant="purple" style={{ marginLeft: '6px', alignSelf: 'flex-start' }}>{LB_CATEGORY_MAP[lb.category || 'general'] || lb.category || 'Общая'}</Badge>
                   </div>
                 </div>
               </div>
-
               <div className={styles.cardStats} style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px' }}>
                 <div className={styles.statItem}>
-                  <span className={styles.statLabel}>Записей</span>
-                  <span className={styles.statValue}>{lb.entries?.length || lb.entries_count || 0}</span>
+                  <span className={styles.statLabel}>Записей</span><span className={styles.statValue}>{lb.entries?.length || lb.entries_count || 0}</span>
                 </div>
                 <div className={styles.statItem} style={{ gridColumn: 'span 2' }}>
-                  <span className={styles.statLabel}>Лорбук</span>
-                  <span className={styles.statValue} style={{ fontSize: '0.75rem', opacity: 0.4, fontFamily: 'monospace' }}>
-                    {initialType.toUpperCase()}
-                  </span>
+                  <span className={styles.statLabel}>Лорбук</span><span className={styles.statValue} style={{ fontSize: '0.75rem', opacity: 0.4, fontFamily: 'monospace' }}>{initialType.toUpperCase()}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {showDeleteModal && (
+        <ConfirmModal 
+          isOpen={showDeleteModal}
+          title="Удалить лорбук?"
+          description="Это действие необратимо. Лорбук будет полностью удален."
+          confirmLabel="Да, удалить"
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setShowDeleteModal(false)
+            setLbToDeleteId(null)
+          }}
+        />
       )}
     </div>
   )
