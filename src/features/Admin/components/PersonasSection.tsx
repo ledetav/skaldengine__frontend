@@ -1,7 +1,7 @@
 import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchInput, FilterButton } from '@/components/common'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { User, UserPersona } from '../types'
 
 interface PersonasSectionProps {

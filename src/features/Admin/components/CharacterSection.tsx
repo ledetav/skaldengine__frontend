@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Badge } from '@/components/ui'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { Character } from '../types'
 
 interface CharacterSectionProps {

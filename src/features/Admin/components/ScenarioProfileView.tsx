@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button, Input, Badge, useToast } from '@/components/ui'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import { SearchableSelect } from './SearchableSelect'
 import type { Scenario } from '@/core/types/chat'
 import type { Character } from '../types'

@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from 'react'
 import { Button, Card, Input } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import { ENTRY_CATEGORIES } from './lorebookConstants'
-import styles from '../../Admin.module.css'
+import styles from '../../styles'
 
 interface LorebookEntryFormProps {
   lorebookId: string

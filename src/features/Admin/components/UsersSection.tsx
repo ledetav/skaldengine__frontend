@@ -2,7 +2,7 @@ import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchInput } from '@/components/common'
 import { FilterButton } from '@/components/common'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { User } from '../types'
 
 interface UsersSectionProps {

@@ -4,7 +4,7 @@ import { SearchableSelect } from '../SearchableSelect'
 import { Pagination } from '../Pagination'
 import { ConfirmModal } from '@/components/common'
 import { ENTRY_CATEGORIES, CATEGORY_MAP } from './lorebookConstants'
-import styles from '../../Admin.module.css'
+import styles from '../../styles'
 import type { LorebookEntry } from '../../types'
 
 interface LorebookEntryListProps {

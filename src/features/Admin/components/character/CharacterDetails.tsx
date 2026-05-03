@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../Admin.module.css'
+import styles from '../../styles'
 import type { Character } from '../../types'
 
 interface CharacterDetailsProps {

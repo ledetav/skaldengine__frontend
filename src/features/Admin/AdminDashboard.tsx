@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useLocation, useNavigate, Navigate } from 'react-router-dom'
 
-import styles from './Admin.module.css'
+import styles from './styles'
 import { AdminSidebar, type AdminTab } from './components/AdminSidebar'
 import { CharacterSection } from './components/CharacterSection'
 import { LorebookSection } from './components/LorebookSection'

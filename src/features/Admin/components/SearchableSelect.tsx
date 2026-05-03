@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/ui'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 
 interface Option {
   id: string

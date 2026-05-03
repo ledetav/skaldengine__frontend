@@ -3,7 +3,7 @@ import { Badge, Button, Card, Input } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import { ConfirmModal } from '@/components/common'
 import { LB_CATEGORY_MAP, LB_CATEGORY_OPTIONS } from './lorebookConstants'
-import styles from '../../Admin.module.css'
+import styles from '../../styles'
 import type { Lorebook, Character, User, UserPersona } from '../../types'
 
 interface LorebookDetailProps {

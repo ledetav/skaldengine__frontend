@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { Character, Lorebook } from '../types'
 import { Button, useToast } from '@/components/ui'
 import { CharacterSidebar, CharacterDetails, CharacterLorebooks } from './character'

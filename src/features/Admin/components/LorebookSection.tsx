@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, type ChangeEvent, type ReactNode } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Badge, useToast } from '@/components/ui'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import { ApiClient } from '@/core/api/client'
 import type { Lorebook, LorebookEntry, Character, User, UserPersona } from '../types'
 import { LorebookDetail, LorebookEntryList, LorebookEntryForm, LB_CATEGORY_MAP } from './lorebook'

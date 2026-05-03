@@ -1,7 +1,7 @@
 import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
-import styles from '../../Admin.module.css'
+import styles from '../../styles'
 import type { Character } from '../../types'
 
 interface CharacterSidebarProps {

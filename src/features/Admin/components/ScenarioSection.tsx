@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Badge } from '@/components/ui'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { Scenario } from '@/core/types/chat'
 import type { Character } from '../types'
 
