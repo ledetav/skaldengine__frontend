@@ -326,8 +326,7 @@ export function LorebookSection({
           <LorebookDetail 
             lb={lb}
             isEditMode={isEditMode}
-            isCreateMode={isCreateMode}
-            initialType={initialType}
+                        initialType={initialType}
             characters={characters}
             users={users}
             personas={personas}

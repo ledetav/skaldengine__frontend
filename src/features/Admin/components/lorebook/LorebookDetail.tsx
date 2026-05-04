@@ -9,7 +9,6 @@ import type { Lorebook, Character, User, UserPersona } from '../../types'
 interface LorebookDetailProps {
   lb: Lorebook
   isEditMode: boolean
-  isCreateMode: boolean
   initialType: 'fandom' | 'character' | 'persona'
   characters: Character[]
   users: User[]
@@ -51,7 +50,7 @@ interface LorebookDetailProps {
 }
 
 export function LorebookDetail({
-  lb, isEditMode, isCreateMode, initialType, characters, users, personas, allFandoms,
+  lb, isEditMode, initialType, characters, users, personas, allFandoms,
   editName, setEditName, editDescription, setEditDescription,
   editType, setEditType, editLorebookCategory, setEditLorebookCategory,
   selectedFandom, setSelectedFandom, isNewFandom, setIsNewFandom,
@@ -79,9 +78,6 @@ export function LorebookDetail({
     
     // Check if the current lorebook is already main in the database
     const isStoredAsMain = lb.tags?.includes('main')
-    const mainLorebooksForChar = lb.character_id ? 
-      lb.tags?.includes('main') ? 1 : 0 // Simplified since we don't have full lorebooks list here
-      : 0
     
     if (isStoredAsMain) {
       // In real scenario we need all lorebooks to know if there's another main one.
@@ -89,7 +85,7 @@ export function LorebookDetail({
       return false 
     }
     return true
-  }, [isOriginalChar, isMain, lb.tags, lb.character_id])
+  }, [isOriginalChar, isMain, lb.tags])
 
   return (
     <div className={styles.detailGroup}>

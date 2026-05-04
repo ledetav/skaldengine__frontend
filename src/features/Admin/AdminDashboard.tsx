@@ -47,9 +47,8 @@ export default function AdminDashboard() {
   const {
     characters, lorebooksFandom, lorebooksCharacter, lorebooksPersona,
     users, personas, scenarios, allLorebooks, isDataLoading,
-    setCharacters, setLorebooksFandom, setLorebooksCharacter, setLorebooksPersona,
+    setCharacters,
     setUsers, setPersonas, setScenarios,
-    fetchTab,
   } = useAdminData(isAdmin, activeTab, pathname, currentPage)
 
   // Sorting state

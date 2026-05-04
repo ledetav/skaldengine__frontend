@@ -1,4 +1,3 @@
-import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import styles from '../../styles'
