@@ -98,7 +98,7 @@ export function PersonaProfileView({
               </div>
             </div>
 
-            <div className={styles.charBasicInfo} style={{ marginTop: '40px' }}>
+            <div className={styles.charBasicInfo} style={{ marginTop: '54px' }}>
               <h1 className={styles.charProfileName}>{persona.name}</h1>
               <p className={styles.charProfileFandom} style={{ color: 'var(--accent-teal)' }}>
                 Владелец: {owner ? owner.username : persona.owner_id}
