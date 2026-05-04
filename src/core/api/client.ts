@@ -35,6 +35,11 @@ export class ApiClient {
       })
 
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          window.dispatchEvent(new Event('auth-change'));
+        }
+
         const errorData = await response.json().catch(() => ({}))
         const detail = errorData.detail
         let errorMessage: string
