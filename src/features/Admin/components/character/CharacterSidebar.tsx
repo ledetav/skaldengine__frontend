@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui'
+import { Badge, Input, Textarea } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import styles from '../../styles'
 import type { Character } from '../../types'
@@ -53,11 +53,12 @@ export function CharacterSidebar({
         <div className={styles.charBasicInfo}>
           {isEditing ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%' }}>
-              <input 
+              <Input 
                 className={styles.editInput}
                 value={character.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 style={{ textAlign: 'center', fontSize: '1.2rem', fontWeight: 950 }}
+                maxLength={200}
               />
 
               <div className={styles.typeSelector}>
@@ -88,22 +89,24 @@ export function CharacterSidebar({
               <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '8px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginLeft: '4px', display: 'block', marginBottom: '2px' }}>Пол</label>
-                  <input 
+                  <Input 
                     className={styles.editInput}
                     value={character.gender || ''}
                     onChange={(e) => handleChange('gender', e.target.value)}
                     placeholder="Пол"
                     style={{ fontSize: '0.85rem' }}
+                    maxLength={100}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginLeft: '4px', display: 'block', marginBottom: '2px' }}>Возраст</label>
-                  <input 
+                  <Input 
                     className={styles.editInput}
                     value={character.age || ''}
                     onChange={(e) => handleChange('age', e.target.value)}
                     placeholder="Возраст"
                     style={{ fontSize: '0.85rem' }}
+                    maxLength={100}
                   />
                 </div>
               </div>
@@ -124,12 +127,13 @@ export function CharacterSidebar({
           
           <div style={{ marginTop: '20px' }}>
             {isEditing ? (
-              <textarea 
+              <Textarea 
                 className={styles.editTextarea}
                 value={character.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Краткое описание персонажа..."
                 style={{ fontSize: '0.85rem', minHeight: '80px' }}
+                maxLength={500}
               />
             ) : (
               <p style={{ 

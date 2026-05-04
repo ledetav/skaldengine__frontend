@@ -1,5 +1,5 @@
 import { useMemo, type ChangeEvent } from 'react'
-import { Badge, Input } from '@/components/ui'
+import { Badge, Input, Textarea } from '@/components/ui'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { SearchableSelect } from '../SearchableSelect'
 import { Pagination } from '../Pagination'
@@ -149,6 +149,7 @@ export function LorebookEntryList({
                         placeholder="Тэги через запятую"
                         style={{ fontSize: '0.8rem', height: '32px' }}
                         autoFocus
+                        maxLength={1500}
                       />
                     ) : (
                       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -162,11 +163,12 @@ export function LorebookEntryList({
                   {/* Content */}
                   <td>
                     {isEditing ? (
-                      <textarea
+                      <Textarea
                         className={styles.editTextarea}
                         value={editContent}
                         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onEditContentChange(e.target.value)}
                         style={{ minHeight: '60px', fontSize: '0.85rem', width: '100%', background: 'rgba(0,0,0,0.2)' }}
+                        maxLength={2000}
                       />
                     ) : (
                       <div style={{ fontSize: '0.85rem', opacity: 0.7, maxWidth: '500px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

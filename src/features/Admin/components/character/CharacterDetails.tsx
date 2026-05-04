@@ -1,3 +1,4 @@
+import { Textarea } from '@/components/ui'
 import styles from '../../styles'
 import type { Character } from '../../types'
 
@@ -16,11 +17,12 @@ export function CharacterDetails({ character, isEditing, handleChange }: Charact
           Описание
         </div>
         {isEditing ? (
-          <textarea 
+          <Textarea 
             className={styles.editTextarea}
             value={character.description || ''}
             onChange={(e) => handleChange('description', e.target.value)}
             placeholder="Общее описание персонажа..."
+            maxLength={500}
           />
         ) : (
           <p className={styles.detailText}>{character.description || 'Общее описание не задано.'}</p>
@@ -33,11 +35,12 @@ export function CharacterDetails({ character, isEditing, handleChange }: Charact
           Внешность
         </div>
         {isEditing ? (
-          <textarea 
+          <Textarea 
             className={styles.editTextarea}
             value={character.appearance || ''}
             onChange={(e) => handleChange('appearance', e.target.value)}
             placeholder="Опишите внешность..."
+            maxLength={2000}
           />
         ) : (
           <p className={styles.detailText}>{character.appearance || 'Описание внешности не задано.'}</p>
@@ -51,11 +54,12 @@ export function CharacterDetails({ character, isEditing, handleChange }: Charact
         </div>
         {isEditing ? (
           <>
-            <textarea 
+            <Textarea 
               className={styles.editTextarea}
               value={character.personality || ''}
               onChange={(e) => handleChange('personality', e.target.value)}
               placeholder="Опишите личность..."
+              maxLength={2000}
             />
             <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
               <div 

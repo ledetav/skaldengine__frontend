@@ -97,7 +97,7 @@ export function LorebookDetail({
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Название</div>
             {isEditMode ? (
-              <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={200} />
             ) : (
               <div style={{ fontWeight: 800, fontSize: '1.2rem', color: 'var(--white)' }}>{lb.name}</div>
             )}
@@ -144,6 +144,7 @@ export function LorebookDetail({
                         value={selectedFandom} 
                         onChange={(e) => setSelectedFandom(e.target.value)} 
                         autoFocus
+                        maxLength={200}
                       />
                     )}
                   </div>
@@ -219,7 +220,7 @@ export function LorebookDetail({
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Описание</div>
             {isEditMode ? (
-              <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
+              <Input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} maxLength={500} />
             ) : (
               <div style={{ opacity: 0.7, lineHeight: 1.6 }}>{lb.description || 'Описание отсутствует'}</div>
             )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button, Input, Badge, useToast } from '@/components/ui'
+import { Button, Input, Textarea, Badge, useToast } from '@/components/ui'
 import styles from '../styles'
 import { SearchableSelect } from './SearchableSelect'
 import type { Scenario } from '@/core/types/chat'
@@ -117,6 +117,7 @@ export function ScenarioProfileView({
                       value={draft.title || ''} 
                       onChange={e => setDraft(prev => ({ ...prev, title: e.target.value }))} 
                       placeholder="Название сценария..."
+                      maxLength={200}
                     />
                   </div>
 
@@ -136,6 +137,7 @@ export function ScenarioProfileView({
                       value={draft.location || ''} 
                       onChange={e => setDraft(prev => ({ ...prev, location: e.target.value }))} 
                       placeholder="Где происходит действие..."
+                      maxLength={200}
                     />
                   </div>
                 </div>
@@ -154,12 +156,13 @@ export function ScenarioProfileView({
               <div style={{ marginTop: '20px' }}>
                 <div className={styles.detailTitle}>Описание для карточки</div>
                 {isEdit ? (
-                  <textarea 
+                  <Textarea 
                     className={styles.editTextarea}
                     value={draft.description || ''}
                     onChange={e => setDraft(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Краткое описание..."
                     style={{ minHeight: '80px', fontSize: '0.85rem' }}
+                    maxLength={500}
                   />
                 ) : (
                   <p style={{ 
@@ -197,12 +200,13 @@ export function ScenarioProfileView({
                 Точка А (Стартовая ситуация)
               </div>
               {isEdit ? (
-                <textarea 
+                <Textarea 
                   className={styles.editTextarea}
                   value={draft.start_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, start_point: e.target.value }))}
                   placeholder="Как начинается сцена..."
                   style={{ minHeight: '180px' }}
+                  maxLength={500}
                 />
               ) : (
                 <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
@@ -217,12 +221,13 @@ export function ScenarioProfileView({
                 Точка Б (Финальная цель)
               </div>
               {isEdit ? (
-                <textarea 
+                <Textarea 
                   className={styles.editTextarea}
                   value={draft.end_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, end_point: e.target.value }))}
                   placeholder="К чему должен прийти сюжет..."
                   style={{ minHeight: '180px' }}
+                  maxLength={500}
                 />
               ) : (
                 <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
@@ -237,12 +242,13 @@ export function ScenarioProfileView({
                 Внутреннее описание (Скрыто от игрока)
               </div>
               {isEdit ? (
-                <textarea 
+                <Textarea 
                   className={styles.editTextarea}
                   value={draft.internal_description || ''}
                   onChange={e => setDraft(prev => ({ ...prev, internal_description: e.target.value }))}
                   placeholder="Пропишите здесь истинную суть сюжета, скрытые угрозы и нюансы для ИИ..."
                   style={{ minHeight: '180px' }}
+                  maxLength={1000}
                 />
               ) : (
                 <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap', color: 'rgba(255,255,255,0.4)' }}>
