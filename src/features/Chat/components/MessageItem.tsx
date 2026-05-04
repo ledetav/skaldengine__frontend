@@ -84,7 +84,11 @@ export function MessageItem({
                   onChange={(e) => setEditValue(e.target.value)}
                   className={styles.editTextarea}
                   autoFocus
+                  maxLength={4000}
                 />
+                <div style={{ textAlign: 'right', fontSize: '0.65rem', opacity: 0.5, marginBottom: '8px' }}>
+                  {editValue.length} / 4000
+                </div>
                 <div className={styles.editActions}>
                   <button onClick={handleSaveEdit}>Сохранить</button>
                   <button onClick={handleCancelEdit}>Отмена</button>
