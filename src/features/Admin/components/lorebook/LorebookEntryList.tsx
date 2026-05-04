@@ -1,5 +1,6 @@
 import { useMemo, type ChangeEvent } from 'react'
 import { Badge, Input } from '@/components/ui'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { SearchableSelect } from '../SearchableSelect'
 import { Pagination } from '../Pagination'
 import { ConfirmModal } from '@/components/common'
@@ -263,7 +264,7 @@ export function LorebookEntryList({
             })}
           </tbody>
         </table>
-        {isLoading && <div style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>Загрузка записей...</div>}
+        {isLoading && <LoadingScreen minimal />}
       </div>
 
       <Pagination

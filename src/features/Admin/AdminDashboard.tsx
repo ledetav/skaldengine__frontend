@@ -22,6 +22,7 @@ import { scenariosApi } from '@/core/api/scenarios'
 import { useAdminData } from './hooks/useAdminData'
 import { useAdminFilters, type FilterState } from './hooks/useAdminFilters'
 import { useAdminNavigation } from './hooks/useAdminNavigation'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
 import type { Character } from './types'
 
@@ -103,11 +104,7 @@ export default function AdminDashboard() {
     }
   }
 
-  if (isLoading) return (
-    <div className={styles.adminPage}>
-      <div style={{ padding: '40px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>Загрузка...</div>
-    </div>
-  )
+  if (isLoading) return <LoadingScreen fullScreen />
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   if (!currentUser && !pathname.includes('/debug')) return <Navigate to="/auth" replace />
 
@@ -177,11 +174,7 @@ export default function AdminDashboard() {
         </header>
 
         <section className={styles.contentArea}>
-          {isDataLoading && (
-            <div className={styles.topProgress}>
-              <div className={styles.topProgressBar} />
-            </div>
-          )}
+          {isDataLoading && <LoadingScreen minimal />}
 
           {activeTab === 'characters' && !isDetailView && (
             <div className={styles.sectionWrapper}>
