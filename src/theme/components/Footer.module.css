@@ -1,8 +1,15 @@
 .footer {
   position: relative;
   border-top: 1px solid var(--border-glass);
-  padding: 0 24px;
+  padding: 0 16px;
+  padding-bottom: env(safe-area-inset-bottom);
   overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 0 24px;
+  }
 }
 
 .topGlow {
@@ -19,10 +26,25 @@
 .inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 60px 0 40px;
+  padding: 40px 0 32px;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .inner {
+    padding: 60px 0 40px;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+  }
 }
 
 /* Brand */

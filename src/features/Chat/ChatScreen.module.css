@@ -30,12 +30,18 @@
 
 /* Header */
 .header {
-  height: 72px;
+  height: 60px;
   display: flex;
   align-items: center;
   z-index: 1000;
   flex-shrink: 0;
   position: relative; /* Container for children and pseudo-bg */
+}
+
+@media (min-width: 768px) {
+  .header {
+    height: 72px;
+  }
 }
 
 .header::before {
@@ -186,11 +192,18 @@
 .messageArea {
   flex: 1;
   overflow-y: auto;
-  padding: 40px 24px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: var(--border-glass) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  .messageArea {
+    padding: 40px 24px;
+  }
 }
 
 .messageArea::-webkit-scrollbar {
@@ -644,9 +657,16 @@
 
 /* Footer & Input */
 .footer {
-  padding: 24px;
+  padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
   background: linear-gradient(to top, var(--bg-main) 70%, transparent);
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 24px;
+  }
 }
 
 .inputWrapper {
@@ -655,13 +675,21 @@
   background: rgba(20, 15, 35, 0.6);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-glass);
-  padding: 8px 12px 8px 24px;
+  padding: 6px 8px 6px 14px;
   display: flex;
   align-items: flex-end;
-  gap: 16px;
+  gap: 10px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.4);
   transition: all 0.3s;
-  clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+@media (min-width: 768px) {
+  .inputWrapper {
+    padding: 8px 12px 8px 24px;
+    gap: 16px;
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  }
 }
 
 .editArea {
@@ -1507,25 +1535,100 @@
 
 @media (max-width: 768px) {
   .aiContent, .userContent {
-    max-width: 90%;
+    max-width: 92%;
   }
 
   .fontSizeSetting {
     display: none !important;
   }
+
+  .messageList {
+    gap: 20px;
+  }
+
+  .aiMessage, .userMessage {
+    gap: 8px;
+  }
   
   .avatar, .avatarUser {
-    width: 36px;
-    height: 36px;
-    font-size: 14px;
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
   }
   
   .headerContent {
-    padding: 0 16px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .chatTitle {
+    font-size: 13px;
+  }
+
+  .backBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
   }
 
   .sidebar {
-    width: 85%;
+    width: 90%;
+    max-width: 340px;
+    padding: 20px 16px;
+  }
+
+  .headerActions {
+    gap: 6px;
+  }
+
+  .actionBtn {
+    padding: 6px;
+  }
+
+  .sendBtn, .stopBtn {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Modal mobile */
+  .apiKeyModal {
+    clip-path: none;
+    border-radius: 16px;
+  }
+  .modalHeader, .modalBody, .modalFooter {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .aiContent, .userContent {
+    max-width: 96%;
+  }
+
+  .avatar, .avatarUser {
+    display: none;
+  }
+
+  .aiSide, .userSide {
+    display: none;
+  }
+
+  .bubbleAI, .bubbleUser {
+    clip-path: none;
+    border-radius: 12px;
+  }
+
+  .chatTitle {
+    font-size: 12px;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .saveTime {
+    display: none;
   }
 }
 

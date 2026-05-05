@@ -75,7 +75,13 @@
 
 @media (max-width: 768px) {
   .mainLayout {
-    padding-top: 160px;
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mainLayout {
+    padding-top: 80px;
   }
 }
 

@@ -6,7 +6,13 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 120px 24px 80px;
+  padding: 100px 16px 60px;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 120px 24px 80px;
+  }
 }
 
 /* Background */
@@ -323,10 +329,25 @@
 
 /* Responsive */
 @media (max-width: 640px) {
-  .hero { padding: 100px 16px 70px; }
-  .stats { flex-direction: column; }
+  .stats { gap: 16px; flex-direction: column; }
   .stat { border-right: none; border-bottom: 1px solid var(--border-glass); }
   .stat:last-child { border-bottom: none; }
   .ctas { flex-direction: column; align-items: stretch; }
   .ctaPrimary, .ctaSecondary { justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .ctaPrimary, .ctaSecondary {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .stats {
+    margin-top: 20px;
+    gap: 12px;
+  }
+
+  .scrollHint {
+    display: none;
+  }
 }

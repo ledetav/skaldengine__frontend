@@ -243,5 +243,14 @@
 
 @media (max-width: 768px) {
   .section { padding: 60px 16px; }
-  .ctaBanner { padding: 40px 24px; }
+  .ctaBanner { padding: 40px 24px; clip-path: none; border-radius: 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .cardImg { height: 160px; }
+  .cardBody { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .section { padding: 48px 12px; gap: 40px; }
+  .ctaBanner { padding: 32px 16px; }
+  .bannerCta { padding: 14px 28px; font-size: 15px; clip-path: none; border-radius: 8px; }
 }

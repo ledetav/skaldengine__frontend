@@ -166,6 +166,7 @@
   .container {
     flex-direction: column;
     padding: 20px;
+    gap: 24px;
   }
   
   .characterSection, .formSection {
@@ -178,5 +179,47 @@
   
   .formSection {
     order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .topActions {
+    padding: 20px 16px 0;
+  }
+
+  .startBtn {
+    padding: 14px 28px;
+    font-size: 1rem;
+  }
+
+  .footer {
+    justify-content: stretch;
+  }
+
+  .startBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .topActions {
+    padding: 16px 12px 0;
+  }
+
+  .startBtn {
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    padding: 12px 20px;
+    font-size: 0.95rem;
   }
 }

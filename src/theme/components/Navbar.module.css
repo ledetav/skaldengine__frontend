@@ -19,10 +19,17 @@
 .inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 20px 32px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .inner {
+    padding: 20px 32px;
+    gap: 40px;
+  }
 }
 
 /* Logo */
@@ -160,11 +167,15 @@
 .mobileMenu {
   display: none;
   flex-direction: column;
-  padding: 16px 24px 24px;
+  padding: 16px 20px 32px;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-glass);
-  background: rgba(5, 7, 10, 0.96);
+  background: rgba(5, 7, 10, 0.98);
   backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   gap: 4px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .mobileLink {

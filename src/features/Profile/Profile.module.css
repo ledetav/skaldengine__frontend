@@ -65,10 +65,16 @@
   position: relative;
   z-index: 2;
   min-height: 100vh;
-  padding: 110px 20px 40px;
-  max-width: 1140px; /* Reduced from 1200px */
+  padding: 80px 12px 40px;
+  max-width: 1140px;
   margin: 0 auto;
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .profileContainer {
+    padding: 110px 20px 40px;
+  }
 }
 
 .layoutWrapper {
@@ -127,6 +133,9 @@
 .mainContent {
   flex: 1;
   min-width: 0; /* Prevent flex overflow */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Header (now Sidebar Card) */
@@ -330,16 +339,31 @@
 .contentArea {
   background: var(--bg-glass);
   backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
-  border-radius: 20px;
-  padding: 1.25rem; /* Reduced from 1.5rem */
+  border-radius: 16px;
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .contentArea {
+    border-radius: 20px;
+    padding: 1.25rem;
+  }
 }
 
 /* Grid & Cards */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
 }
 
 .sectionTitle {
