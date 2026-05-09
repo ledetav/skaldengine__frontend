@@ -56,6 +56,17 @@
   /* ─── Transitions ─────────────────────────────── */
   --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ─── Layout ───────────────────────────────── */
+  /* Navbar height — used across screens for padding-top offsets */
+  --navbar-height:        64px;
+  --navbar-height-mobile: 56px; /* Compact on small screens */
+
+  /* Universal full-height viewport (handles iOS Safari address bar).
+     Usage: height: var(--full-vh);
+     Browsers supporting dvh get exact visual viewport,
+     older ones fall back to 100vh (slight overscroll risk on iOS). */
+  --full-vh: 100dvh;
 }
 
 /* ──────────────────────────────────────────────────
