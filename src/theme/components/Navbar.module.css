@@ -347,3 +347,10 @@
   }
   .inner { padding: 16px 20px; }
 }
+
+/* Landscape phones: shrink menu so it doesn't fill the whole screen */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 480px) {
+  .mobileMenu {
+    max-height: 70vh;
+  }
+}
