@@ -697,7 +697,7 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  min-width: 300px;
+  min-width: 0; /* Allow flexbox to shrink below content size on narrow screens */
 }
 
 .editTextarea {
@@ -1629,6 +1629,47 @@
 
   .saveTime {
     display: none;
+  }
+}
+
+/* Ultra-narrow: 360px and below (small Android phones) */
+@media (max-width: 360px) {
+  .headerContent {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .backBtn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .chatTitle {
+    max-width: 80px;
+    font-size: 11px;
+  }
+
+  .headerActions {
+    gap: 4px;
+  }
+
+  .actionBtn {
+    padding: 5px;
+  }
+
+  .sendBtn, .stopBtn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .inputWrapper {
+    padding: 4px 6px 4px 10px;
+    gap: 6px;
+  }
+
+  /* Tighter message bubbles */
+  .bubbleAI, .bubbleUser {
+    padding: 10px 12px;
   }
 }
 
