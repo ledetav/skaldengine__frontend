@@ -1,14 +1,16 @@
 .page {
-  min-height: 100vh;
+  min-height: 100vh;   /* fallback */
+  min-height: 100dvh;  /* dynamic viewport */
   position: relative;
   overflow: hidden;
   background: var(--bg-main, #0a0a0c);
-  padding: 20px 12px 40px;
+  /* Offset for fixed navbar */
+  padding: calc(var(--navbar-height, 64px) + 20px) 12px 40px;
 }
 
 @media (min-width: 768px) {
   .page {
-    padding: 40px 24px;
+    padding: calc(var(--navbar-height, 64px) + 32px) 24px 40px;
   }
 }
 
@@ -364,6 +366,7 @@
     padding: 14px 16px;
   }
 
+  /* Disable horizontal slide on touch — feels wrong on mobile */
   .chatCard:hover {
     transform: none;
   }
@@ -386,5 +389,26 @@
 
   .header {
     margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: calc(var(--navbar-height-mobile, 56px) + 12px) 10px 32px;
+  }
+
+  .chatCard {
+    padding: 12px 12px;
+  }
+
+  /* Hide arrow on very narrow screens to save space */
+  .arrowIcon {
+    display: none;
+  }
+
+  /* Participants wrap on small screens */
+  .participants {
+    flex-wrap: wrap;
+    gap: 6px;
   }
 }
