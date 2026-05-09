@@ -1,6 +1,7 @@
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100vh;        /* fallback: older browsers */
+  min-height: 100dvh;       /* dynamic viewport: handles iOS Safari address bar */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,6 +92,13 @@
   animation-duration: 12s;
 }
 
+/* Scale down orbs on mobile — prevents horizontal overflow */
+@media (max-width: 640px) {
+  .orbOrange  { width: 280px; height: 280px; }
+  .orbFuchsia { width: 360px; height: 360px; }
+  .orbPurple  { width: 260px; height: 260px; }
+}
+
 @keyframes float {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
   33%       { transform: translate3d(0, -30px, 0) scale(1.05); }
@@ -158,13 +166,19 @@
 }
 
 .headingTop {
-  font-size: clamp(56px, 9vw, 104px);
+  font-size: clamp(40px, 9vw, 104px);
   background: linear-gradient(135deg, var(--accent-fuchsia) 0%, var(--accent-purple) 50%, var(--accent-orange) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-transform: uppercase;
   letter-spacing: -2px;
+}
+
+/* Reduce aggressive letter-spacing at small widths */
+@media (max-width: 480px) {
+  .headingTop { letter-spacing: -0.5px; }
+  .heading    { letter-spacing: -0.5px; gap: 8px; }
 }
 
 .typewriterWrap {
@@ -334,12 +348,15 @@
   .stat:last-child { border-bottom: none; }
   .ctas { flex-direction: column; align-items: stretch; }
   .ctaPrimary, .ctaSecondary { justify-content: center; }
+  .content { gap: 20px; } /* Tighter vertical rhythm on phones */
 }
 
 @media (max-width: 480px) {
   .ctaPrimary, .ctaSecondary {
     padding: 14px 24px;
     font-size: 15px;
+    /* Smaller clip-path corners to fit narrow screens */
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   }
 
   .stats {
