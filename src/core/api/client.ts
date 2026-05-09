@@ -37,7 +37,7 @@ export class ApiClient {
       if (!response.ok) {
         if (response.status === 401) {
           localStorage.removeItem('token');
-          window.dispatchEvent(new Event('auth-change'));
+          window.dispatchEvent(new Event('auth:session-expired'));
         }
 
         const errorData = await response.json().catch(() => ({}))
