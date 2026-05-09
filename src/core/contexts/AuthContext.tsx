@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { authApi } from '@/core/api/auth';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { logger } from '@/core/utils/logger';
+import { useToast } from '@/components/ui/useToast';
 
 interface User {
   full_name?: string;
@@ -26,7 +27,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('token'));
+  const { error: showError } = useToast();
+  // Ref to avoid showing the toast multiple times during a single expiry event
+  const sessionExpiredShown = useRef(false);
 
+  // ── Handle token changes (storage sync across tabs + same-tab logout) ──
   useEffect(() => {
     const handleAuthChange = () => {
       const token = localStorage.getItem('token');
@@ -45,6 +50,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  // ── Handle session expiry (401 from any API call) ──────────────────────
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      if (!sessionExpiredShown.current) {
+        sessionExpiredShown.current = true;
+        showError('Сессия истекла. Пожалуйста, войдите снова.');
+      }
+      setIsAuthenticated(false);
+      setUser(null);
+    };
+
+    window.addEventListener('auth:session-expired', handleSessionExpired);
+    return () => {
+      window.removeEventListener('auth:session-expired', handleSessionExpired);
+    };
+  }, [showError]);
+
+  // Reset dedup flag when user logs in again
+  useEffect(() => {
+    if (isAuthenticated) {
+      sessionExpiredShown.current = false;
+    }
+  }, [isAuthenticated]);
+
+  // ── Fetch user profile when authenticated ─────────────────────────────
   useEffect(() => {
     let isMounted = true;
 
@@ -67,10 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (err: unknown) {
         logger.error('Failed to fetch user:', err);
         if (isMounted) {
-          // Fallback if token is invalid or request fails
           setUser(null);
-          // We could potentially remove the token here, but let's be careful
-          // in case it's just a network error.
         }
       } finally {
         if (isMounted) {
@@ -90,7 +117,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token');
     window.dispatchEvent(new Event('auth-change'));
-    // Do not navigate here, allow components using the context to handle navigation
   };
 
   if (isLoading) {
