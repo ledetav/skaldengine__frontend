@@ -4,7 +4,7 @@
   padding: 20px 24px 100px;
   display: flex;
   flex-direction: column;
-  gap: 80px;
+  gap: 64px;
 }
 
 /* Divider */
@@ -371,14 +371,23 @@
 .line-purple  { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
 .line-fuchsia { background: linear-gradient(90deg, transparent, var(--accent-fuchsia), transparent); }
 
+/* Tablet: 2-col steps, intro becomes single column */
 @media (max-width: 992px) {
+  .section { gap: 48px; }
   .intro { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
+
+  /* 2 columns for steps; last step spans full width if count is odd */
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .steps > .step:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 768px) {
   .section {
-    gap: 48px;
+    gap: 40px;
     padding: 20px 16px 60px;
   }
 
@@ -403,6 +412,10 @@
 
 @media (max-width: 640px) {
   .section { padding: 20px 16px 60px; }
+
+  /* Back to single column on phones */
+  .steps { grid-template-columns: 1fr; }
+  .steps > .step:last-child:nth-child(odd) { grid-column: auto; }
 
   .intro {
     gap: 32px;
