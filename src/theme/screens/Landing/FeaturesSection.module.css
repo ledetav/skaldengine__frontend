@@ -241,16 +241,21 @@
   opacity: 0.9;
 }
 
+/* Tablet: exactly 2 columns (avoids ugly 1.5-column auto-fit at ~750px) */
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 768px) {
   .section { padding: 60px 16px; }
   .ctaBanner { padding: 40px 24px; clip-path: none; border-radius: 16px; }
   .grid { grid-template-columns: 1fr; }
-  .cardImg { height: 160px; }
+  .cardImg { height: 130px; } /* Slightly shorter to save vertical space */
   .cardBody { padding: 20px; }
 }
 
 @media (max-width: 480px) {
   .section { padding: 48px 12px; gap: 40px; }
-  .ctaBanner { padding: 32px 16px; }
+  .ctaBanner { padding: 28px 16px; }
   .bannerCta { padding: 14px 28px; font-size: 15px; clip-path: none; border-radius: 8px; }
 }
