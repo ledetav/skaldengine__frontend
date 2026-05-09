@@ -81,7 +81,7 @@
 
 @media (max-width: 640px) {
   .mainLayout {
-    padding-top: 80px;
+    padding-top: 70px;
   }
 }
 
@@ -1001,7 +1001,7 @@
 }
 
 @media (max-width: 640px) {
-  .mainLayout { padding: 80px 10px 40px; }
+  .mainLayout { padding: 70px 10px 40px; }
   
   /* Header Fix */
   .resultsRow {
@@ -1088,4 +1088,12 @@
   }
   
   .cardHoverOverlay { display: none !important; }
+}
+
+/* Ultra-narrow devices (360px and below) */
+@media (max-width: 480px) {
+  .mainLayout { padding: 64px 8px 32px; }
+  .cardCreatorBar { padding: 4px 6px; }
+  .mobileStartChatBtn { padding: 6px 8px; font-size: 9px; }
+  .cardName { font-size: 12px; }
 }
