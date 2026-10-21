@@ -104,8 +104,12 @@ export const messagesApi = {
   },
 
   editMessage: async (messageId: string, data: MessageEdit): Promise<Message> => {
-    // API uses PUT /messages/{id} with { content } field
-    return ApiClient.put('core', `/messages/${messageId}`, data)
+    // API backend schema expects { new_content: string }, support both
+    const payload = {
+      content: data.content,
+      new_content: data.new_content || data.content
+    }
+    return ApiClient.put('core', `/messages/${messageId}`, payload)
   },
 
   forkChat: async (messageId: string): Promise<Chat> => {

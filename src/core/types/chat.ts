@@ -103,6 +103,7 @@ export interface MessageCreate {
 
 export interface MessageEdit {
   content: string
+  new_content?: string
 }
 
 export interface LorebookEntry {
