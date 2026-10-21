@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { UserPersona, User, Lorebook } from '../types'
 import { Button, useToast } from '@/components/ui'
 
@@ -98,7 +98,7 @@ export function PersonaProfileView({
               </div>
             </div>
 
-            <div className={styles.charBasicInfo} style={{ marginTop: '40px' }}>
+            <div className={styles.charBasicInfo} style={{ marginTop: '54px' }}>
               <h1 className={styles.charProfileName}>{persona.name}</h1>
               <p className={styles.charProfileFandom} style={{ color: 'var(--accent-teal)' }}>
                 Владелец: {owner ? owner.username : persona.owner_id}

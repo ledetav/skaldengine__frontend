@@ -56,9 +56,15 @@
 /* ─── Two-column layout ────────────────────────── */
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 1fr;
   gap: 24px;
   align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 280px 1fr;
+  }
 }
 
 /* ─── Preview card ─────────────────────────────── */
@@ -519,9 +525,15 @@
   background: rgba(18,4,29,0.65);
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-glass);
-  clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   overflow: hidden;
   margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .entriesPanel {
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  }
 }
 
 .entriesHeader {
@@ -563,6 +575,7 @@
 
 .tableWrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {

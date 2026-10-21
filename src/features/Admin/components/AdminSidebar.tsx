@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 
 export type AdminTab = 'users' | 'personas' | 'characters' | 'lorebooks_fandom' | 'lorebooks_character' | 'lorebooks_persona' | 'scenarios'
 

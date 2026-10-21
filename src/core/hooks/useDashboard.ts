@@ -35,8 +35,18 @@ export const useDashboard = () => {
 
     fetchCharacters()
 
-    const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
-    const socket = new WebSocket(`${wsUrl}/ws/updates`)
+    const rawApiUrl = import.meta.env.VITE_CORE_API_URL || '';
+    let wsBaseUrl: string;
+    
+    if (rawApiUrl.startsWith('http')) {
+      wsBaseUrl = rawApiUrl.replace(/^http/, 'ws');
+    } else {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      wsBaseUrl = `${protocol}//${host}${rawApiUrl || '/api/v1'}`;
+    }
+
+    const socket = new WebSocket(`${wsBaseUrl}/ws/updates`)
 
     socket.onmessage = (event) => {
       try {
@@ -68,6 +78,7 @@ export const useDashboard = () => {
 
   const availableFandoms = useMemo(() => {
     const counts: Record<string, number> = {}
+    if (!Array.isArray(characters)) return []
     characters.forEach(c => {
       if (c.fandom) {
         counts[c.fandom] = (counts[c.fandom] || 0) + 1
@@ -80,6 +91,7 @@ export const useDashboard = () => {
   }, [characters])
 
   const filteredCharacters = useMemo(() => {
+    if (!Array.isArray(characters)) return []
     let result = [...characters]
 
     if (nsfwEnabled) {
@@ -119,6 +131,7 @@ export const useDashboard = () => {
   }, [characters, nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy, sortOrder])
 
   const hotIds = useMemo(() => {
+    if (!Array.isArray(characters)) return []
     return [...characters]
       .sort((a, b) => (b.monthly_chats_count || 0) - (a.monthly_chats_count || 0))
       .slice(0, 5)

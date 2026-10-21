@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import { Button, Input } from '@/components/ui'
 import type { AdminTab } from './AdminSidebar'
 import type { User, UserPersona, Character, Lorebook } from '../types'

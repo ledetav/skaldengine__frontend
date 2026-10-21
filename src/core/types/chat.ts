@@ -8,7 +8,9 @@ export interface Scenario {
   location?: string | null
   start_point?: string | null
   end_point?: string | null
+  internal_description?: string | null
   character_id?: string | null
+  chats_count?: number
   image_url?: string
 }
 
@@ -33,7 +35,7 @@ export interface UserPersona {
   name: string
   description?: string | null
   avatar_url?: string | null
-  age?: number | null
+  age?: string | null
   appearance?: string | null
   personality?: string | null
   gender?: string | null
@@ -56,11 +58,18 @@ export interface Chat {
   language: string
   narrative_voice: NarrativeVoiceType
   persona_lorebook_id?: string
+  custom_location?: string
+  custom_plot_hook?: string
   checkpoints_count: number
   mode: string
   active_leaf_id?: string
   created_at: string
   updated_at?: string
+  
+  // Enriched fields
+  character_name?: string
+  user_persona_name?: string
+  last_message_preview?: string
 }
 
 export interface ChatUpdate {
@@ -82,6 +91,8 @@ export interface ChatCreate {
   language: string
   narrative_voice: NarrativeVoiceType
   persona_lorebook_id?: string
+  custom_location?: string
+  custom_plot_hook?: string
   checkpoints_count: number
 }
 
@@ -92,6 +103,7 @@ export interface MessageCreate {
 
 export interface MessageEdit {
   content: string
+  new_content?: string
 }
 
 export interface LorebookEntry {
@@ -99,6 +111,8 @@ export interface LorebookEntry {
   lorebook_id: string
   keywords: string[]
   content: string
+  category?: string
+  is_always_included?: boolean
   priority: number
   created_at: string
 }
@@ -110,6 +124,7 @@ export interface Lorebook {
   name: string
   type: LorebookType
   description?: string
+  category: string
   fandom?: string | null
   character_id?: string | null
   character_name?: string
@@ -119,4 +134,11 @@ export interface Lorebook {
   entries_count?: number
   tags?: string[]
   created_at: string
+}
+
+export interface Checkpoint {
+  id: string
+  order_num: number
+  goal_description: string
+  is_completed: boolean
 }

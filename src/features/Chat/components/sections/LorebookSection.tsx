@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Sections.module.css'
+import { type Lorebook } from '@/core/types/chat'
 
-export function LorebookSection({ userRole }: { userRole: string }) {
+export function LorebookSection({ lorebooks, onPersonaLorebookChange }: { lorebooks: Lorebook[], onPersonaLorebookChange?: () => void }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -31,29 +32,24 @@ export function LorebookSection({ userRole }: { userRole: string }) {
             className={styles.sectionContent}
           >
             <div className={styles.loreList}>
-              <div className={styles.loreItem}>
-                <div className={styles.loreMainInfo}>
-                  <span className={styles.loreType}>Персона</span>
-                  <span className={styles.loreName}>Дневник Скитальца</span>
+              {lorebooks.length > 0 ? (
+                lorebooks.map(lb => (
+                  <div key={lb.id} className={styles.loreItem}>
+                    <div className={styles.loreMainInfo}>
+                      <span className={styles.loreType}>
+                        {lb.type === 'persona' ? 'Персона' : lb.type === 'character' ? 'Персональный' : 'Фандомный'}
+                      </span>
+                      <span className={styles.loreName}>{lb.name}</span>
+                    </div>
+                    {lb.type === 'persona' && onPersonaLorebookChange && (
+                      <button className={styles.loreChangeBtn} onClick={onPersonaLorebookChange}>Сменить</button>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '10px 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  Нет активных лорбуков
                 </div>
-                <button className={styles.loreChangeBtn}>Сменить</button>
-              </div>
-
-              {(userRole === 'admin' || userRole === 'moderator') && (
-                <>
-                  <div className={styles.loreItem}>
-                    <div className={styles.loreMainInfo}>
-                      <span className={styles.loreType}>Мир</span>
-                      <span className={styles.loreName}>Хроники Пепла</span>
-                    </div>
-                  </div>
-                  <div className={styles.loreItem}>
-                    <div className={styles.loreMainInfo}>
-                      <span className={styles.loreType}>Лорбук персонажа</span>
-                      <span className={styles.loreName}>История Skald</span>
-                    </div>
-                  </div>
-                </>
               )}
             </div>
           </motion.div>

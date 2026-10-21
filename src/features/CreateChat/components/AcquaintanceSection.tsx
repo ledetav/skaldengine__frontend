@@ -11,6 +11,10 @@ interface AcquaintanceSectionProps {
   gameMode: GameModeType
   onToggle: (val: boolean) => void
   onDescChange: (val: string) => void
+  customLocation: string
+  customPlotHook: string
+  onLocationChange: (val: string) => void
+  onPlotHookChange: (val: string) => void
   lorebooks: Lorebook[]
   selectedLorebookId: string
   onLorebookSelect: (id: string) => void
@@ -25,6 +29,10 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
   gameMode,
   onToggle,
   onDescChange,
+  customLocation,
+  customPlotHook,
+  onLocationChange,
+  onPlotHookChange,
   lorebooks,
   selectedLorebookId,
   onLorebookSelect,
@@ -34,6 +42,7 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
 }) => {
   const isAdmin = currentUser?.role === 'admin'
   const isModerator = currentUser?.role === 'moderator'
+  const isSandbox = gameMode === 'sandbox'
 
   const filteredLorebooks = lorebooks.filter(lib => {
     // Admins see everything
@@ -67,6 +76,30 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
           <div className={styles.toggleThumb} />
         </div>
       </div>
+
+      {isSandbox && (
+        <div className={styles.sandboxAddons}>
+          <div className={styles.formGroup}>
+            <label className={styles.groupLabel}>Локация (где вы?)</label>
+            <input 
+              type="text"
+              className={styles.input}
+              placeholder="Например: Старая таверна, Заснеженный лес..."
+              value={customLocation}
+              onChange={(e) => onLocationChange(e.target.value)}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.groupLabel}>Стартовая завязка (опционально)</label>
+            <textarea 
+              className={styles.textarea}
+              placeholder="Опишите начало: 'Вы проснулись в кандалах...', 'Вас преследует стража...'"
+              value={customPlotHook}
+              onChange={(e) => onPlotHookChange(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
 
       {areAcquainted && (
         <div className={styles.acquaintedFields}>

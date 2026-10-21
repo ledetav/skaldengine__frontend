@@ -30,6 +30,7 @@ export function ChatInput({ value, onChange, onSend, onStop, isGenerating }: Cha
           disabled={isGenerating}
           onKeyDown={handleKeyDown}
           rows={1}
+          maxLength={4000}
         />
         {isGenerating ? (
           <button 
@@ -54,6 +55,18 @@ export function ChatInput({ value, onChange, onSend, onStop, isGenerating }: Cha
           </button>
         )}
       </div>
+      {value.length > 0 && (
+        <div style={{ 
+          maxWidth: '900px', 
+          margin: '4px auto 0', 
+          textAlign: 'right', 
+          fontSize: '0.7rem', 
+          color: value.length > 3800 ? 'var(--accent-orange)' : 'rgba(255,255,255,0.3)',
+          paddingRight: '12px'
+        }}>
+          {value.length} / 4000
+        </div>
+      )}
     </footer>
   )
 }

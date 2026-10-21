@@ -24,7 +24,15 @@ export function ProfileSection() {
   )
 }
 
-export function ScenarioSection({ scenario }: { scenario: { title: string, description: string } }) {
+import type { Scenario, Checkpoint } from '@/core/types/chat'
+
+export function ScenarioSection({ 
+  scenario, 
+  checkpoints 
+}: { 
+  scenario: Scenario, 
+  checkpoints: Checkpoint[] 
+}) {
   return (
     <div className={styles.sidebarSection}>
       <div className={styles.scenarioCardSidebar}>
@@ -35,7 +43,26 @@ export function ScenarioSection({ scenario }: { scenario: { title: string, descr
           <span className={styles.scenarioBadge}>Сценарий активен</span>
         </div>
         <h4 className={styles.scenarioTitleSidebar}>{scenario.title}</h4>
-        <p className={styles.scenarioDescSidebar}>{scenario.description}</p>
+        
+        <div className={styles.checkpointsList}>
+          {checkpoints.map((cp, idx) => (
+            <div 
+              key={cp.id} 
+              className={`${styles.checkpointItem} ${cp.is_completed ? styles.completed : ''}`}
+            >
+              <div className={styles.checkpointStatus}>
+                {cp.is_completed ? (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                ) : (
+                  <span className={styles.checkpointNumber}>{idx + 1}</span>
+                )}
+              </div>
+              <span className={styles.checkpointText}>{cp.goal_description}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
