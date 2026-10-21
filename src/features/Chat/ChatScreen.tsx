@@ -130,7 +130,11 @@ export default function ChatScreen() {
         }))
         
         setMessages(mappedMessages)
-        await authApi.getMe()
+        const userMe = await authApi.getMe().catch(() => null)
+        if (userMe?.polza_api_key) {
+          setApiKey(userMe.polza_api_key)
+          localStorage.setItem('skald_apiKey', userMe.polza_api_key)
+        }
 
         // Load Lorebooks
         const lb_ids = charData.lorebook_ids || []
@@ -218,11 +222,6 @@ export default function ChatScreen() {
     setIsGenerating(true)
     setChatError(null)
 
-    if (!apiKey) {
-      setChatError('Для работы ИИ необходи��о добавить API-ключ в настройках вашего профиля.')
-      setIsGenerating(false)
-      return
-    }
 
     const tempUserMsg: Message = {
       id: Date.now().toString(),
@@ -286,11 +285,7 @@ export default function ChatScreen() {
     setIsGenerating(true)
     setChatError(null)
 
-    if (!apiKey) {
-      setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
-      setIsGenerating(false)
-      return
-    }
+    // Attempt generation; if neither user nor server key exists, error handler prompts for key
 
     const targetMsg = messages.find(m => m.id === msgId)
     if (!targetMsg || !targetMsg.parent_id) {
