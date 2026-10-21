@@ -44,6 +44,11 @@ export default function SettingsTab({ user }: SettingsTabProps) {
         cover_url: formData.cover_url || null,
         polza_api_key: formData.polza_api_key || null,
       });
+      if (formData.polza_api_key) {
+        localStorage.setItem('skald_apiKey', formData.polza_api_key);
+      } else {
+        localStorage.removeItem('skald_apiKey');
+      }
       success('Профиль успешно обновлен!');
     } catch (err: any) {
       showError(`Ошибка при обновлении: ${err.message || 'Сбой'}`);
