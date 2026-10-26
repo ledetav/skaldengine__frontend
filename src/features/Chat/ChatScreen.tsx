@@ -91,6 +91,12 @@ export default function ChatScreen() {
     onCheckpointsUpdate: setCheckpoints,
   })
 
+  /**
+   * Выполняет плавную или мгновенную прокрутку ленты сообщений вниз к последней реплике,
+   * если включен режим автоматического скролла.
+   * 
+   * @param behavior - Тип прокрутки ('smooth' или 'auto')
+   */
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current && autoScrollEnabled) {
       scrollRef.current.scrollTo({
@@ -108,6 +114,9 @@ export default function ChatScreen() {
   useEffect(() => {
     if (!chatId) return
 
+    /**
+     * Загружает метаданные чата, сценарий, персонажа и дерево истории сообщений.
+     */
     const loadData = async () => {
       try {
         const chatData = await chatsApi.getChat(chatId)

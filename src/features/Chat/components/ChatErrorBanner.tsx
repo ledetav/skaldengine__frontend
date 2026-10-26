@@ -3,6 +3,12 @@ interface ChatErrorBannerProps {
   onClose: () => void
 }
 
+/**
+ * Плашка отображения критической ошибки чата (сбой генерации, потеря соединения) с кнопкой закрытия.
+ * 
+ * @param props.error - Текст ошибки или null, если ошибок нет
+ * @param props.onClose - Коллбэк закрытия баннера
+ */
 export function ChatErrorBanner({ error, onClose }: ChatErrorBannerProps) {
   if (!error) return null
 

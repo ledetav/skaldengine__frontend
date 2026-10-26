@@ -10,9 +10,21 @@ interface ThoughtBlockProps {
   onToggle?: () => void
 }
 
+/**
+ * Раскрывающийся блок "Мысли персонажа" (chain-of-thought / внутренние рассуждения модели).
+ * Извлекается из тегов <thought>...</thought> бэкендом и скрывается по умолчанию,
+ * чтобы не перегружать основной текст художественного диалога.
+ * 
+ * @param props.thought - Текст внутренних рассуждений модели (Markdown)
+ * @param props.authorName - Имя персонажа для подписи кнопки
+ * @param props.onToggle - Опциональный коллбэк при раскрытии/сворачивании (для подскролла)
+ */
 export function ThoughtBlock({ thought, authorName = 'скальд', onToggle }: ThoughtBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
+  /**
+   * Переключает видимость блока мыслей персонажа и уведомляет родительский компонент.
+   */
   const handleToggle = () => {
     setIsExpanded(!isExpanded)
     if (onToggle) onToggle()

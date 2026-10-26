@@ -71,6 +71,9 @@ const CreateChatScreen: React.FC = () => {
   const [customPlotHook, setCustomPlotHook] = useState('')
 
   useEffect(() => {
+    /**
+     * Загружает данные персонажа, список персон пользователя, сценарии, лорбуки и профиль пользователя.
+     */
     const fetchData = async () => {
       try {
         setIsLoading(true)
@@ -101,6 +104,11 @@ const CreateChatScreen: React.FC = () => {
     fetchData()
   }, [characterId])
 
+  /**
+   * Преобразует выбранную длительность кампании в целевое количество чекпоинтов (этапов сюжета).
+   * 
+   * @param duration - Длительность ('short' - 2, 'medium' - 4, 'long' - 6)
+   */
   const mapDurationToCheckpoints = (duration: string): number => {
     switch (duration) {
       case 'short': return 2
@@ -110,6 +118,10 @@ const CreateChatScreen: React.FC = () => {
     }
   }
 
+  /**
+   * Создает новую сессию чата с выбранными параметрами (режим, персона, сценарий, лорбуки)
+   * и выполняет переход на экран активного диалога.
+   */
   const handleStartChat = async () => {
     if (!character || !selectedPersonaId) return
 

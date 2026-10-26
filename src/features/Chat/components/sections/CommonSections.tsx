@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import styles from './Sections.module.css'
 
+/**
+ * Секция перехода в профиль текущего пользователя в сайдбаре чата.
+ */
 export function ProfileSection() {
   return (
     <div className={styles.sidebarSection}>
@@ -26,6 +29,12 @@ export function ProfileSection() {
 
 import type { Scenario, Checkpoint } from '@/core/types/chat'
 
+/**
+ * Секция активного сюжетного сценария с чекпоинтами (этапами прогресса) в сайдбаре чата.
+ * 
+ * @param props.scenario - Данные запущенного сценария
+ * @param props.checkpoints - Список ключевых этапов сюжета и их статусы достижения
+ */
 export function ScenarioSection({ 
   scenario, 
   checkpoints 

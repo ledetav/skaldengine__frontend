@@ -30,6 +30,11 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     localStorage.getItem('skald_showThoughts') !== 'false'
   )
 
+  /**
+   * Синхронизирует измененные параметры чата с бэкендом и обновляет метаданные сессии.
+   * 
+   * @param updates - Частичный объект обновлений чата
+   */
   const handleSettingsUpdate = async (updates: Partial<ChatType>) => {
     if (!chatId) return
     try {
@@ -45,17 +50,27 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     }
   }
 
+  /**
+   * Сохраняет локальную UI-настройку (размер шрифта, автоскролл) в localStorage и обновляет стейт.
+   */
   const handleLocalSettingChange = <T,>(key: string, value: T, setter: (val: T) => void) => {
     setter(value)
     localStorage.setItem(key, String(value))
   }
 
+  /**
+   * Переключает лицо повествования нейросети (первое, второе или третье лицо)
+   * с сохранением в чате на сервере.
+   */
   const handlePerspectiveChange = (val: string) => {
     const voice = val as NarrativeVoiceType
     setPerspective(voice)
     handleSettingsUpdate({ narrative_voice: voice })
   }
 
+  /**
+   * Переключает основной язык генерации (RU / EN) с сохранением на сервере.
+   */
   const handleLanguageChange = (val: string) => {
     const lang = val as 'RU' | 'EN'
     setLanguage(lang)

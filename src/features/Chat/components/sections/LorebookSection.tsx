@@ -3,6 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Sections.module.css'
 import { type Lorebook } from '@/core/types/chat'
 
+/**
+ * Раскрывающаяся секция подключенных к чату баз знаний (лорбуков: персональных, персоны или фандомных).
+ * 
+ * @param props.lorebooks - Список активных лорбуков диалога
+ * @param props.onPersonaLorebookChange - Опциональный обработчик быстрой смены лорбука персоны
+ */
 export function LorebookSection({ lorebooks, onPersonaLorebookChange }: { lorebooks: Lorebook[], onPersonaLorebookChange?: () => void }) {
   const [isExpanded, setIsExpanded] = useState(false)
 

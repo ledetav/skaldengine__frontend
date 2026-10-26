@@ -16,6 +16,9 @@ interface SettingsSectionProps {
   onShowThoughtsToggle: () => void
 }
 
+/**
+ * Секция локальных и сессионных настроек чата: лицо повествования, язык, размер шрифта, автоскролл и показ мыслей.
+ */
 export function SettingsSection({
   perspective,
   language,

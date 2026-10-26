@@ -8,6 +8,13 @@ interface CustomSelectProps {
   onChange: (val: string) => void
 }
 
+/**
+ * Стилизованный выпадающий селектор настроек чата с анимацией открытия/закрытия Framer Motion.
+ * 
+ * @param props.value - Текущее выбранное значение
+ * @param props.options - Набор пар { value, label }
+ * @param props.onChange - Коллбэк при выборе новой опции
+ */
 export function CustomSelect({ value, options, onChange }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectedOption = options.find(o => o.value === value)

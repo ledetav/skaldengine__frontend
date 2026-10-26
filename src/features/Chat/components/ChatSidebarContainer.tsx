@@ -30,6 +30,9 @@ interface ChatSidebarContainerProps {
   onShowThoughtsToggle: () => void
 }
 
+/**
+ * Контейнер боковой панели параметров чата (персонаж, персона пользователя, лорбуки, контрольные точки и настройки).
+ */
 export function ChatSidebarContainer({
   isOpen,
   onClose,
