@@ -50,13 +50,8 @@ export default function ChatScreen() {
     fontSize,
     autoScrollEnabled,
     showThoughtsGlobal,
-    apiKey,
-    setApiKey,
-    isApiKeyModalOpen,
-    setIsApiKeyModalOpen,
     handlePerspectiveChange,
     handleLanguageChange,
-    handleSaveApiKey,
     handleFontSizeChange,
     handleAutoScrollToggle,
     handleShowThoughtsToggle,
@@ -88,7 +83,6 @@ export default function ChatScreen() {
     chatId,
     persona,
     character,
-    apiKey,
     onLastSavedUpdate: () => setLastSaved(new Date()),
     onCheckpointsUpdate: setCheckpoints,
   })
@@ -134,12 +128,6 @@ export default function ChatScreen() {
         setCheckpoints(historyData.checkpoints || [])
         setMessages(mapHistoryMessages(historyData.active_branch, personaData, charData))
 
-        const userMe = await authApi.getMe().catch(() => null)
-        if (userMe?.polza_api_key) {
-          setApiKey(userMe.polza_api_key)
-          localStorage.setItem('skald_apiKey', userMe.polza_api_key)
-        }
-
         // Load Lorebooks
         const lb_ids = charData.lorebook_ids || []
         const lb_promises = lb_ids.map((id: string) => lorebooksApi.getLorebook(id))
@@ -154,7 +142,7 @@ export default function ChatScreen() {
     }
 
     loadData()
-  }, [chatId, mapHistoryMessages, setActiveLeafId, setMessageTree, setMessages, setPerspective, setLanguage, setApiKey])
+  }, [chatId, mapHistoryMessages, setActiveLeafId, setMessageTree, setMessages, setPerspective, setLanguage])
 
   return (
     <div className={`${styles.container} ${isSidebarOpen ? styles.sidebarActive : ''}`}>
@@ -214,16 +202,11 @@ export default function ChatScreen() {
         fontSize={fontSize}
         autoScrollEnabled={autoScrollEnabled}
         showThoughtsGlobal={showThoughtsGlobal}
-        apiKey={apiKey}
-        isApiKeyModalOpen={isApiKeyModalOpen}
         onPerspectiveChange={handlePerspectiveChange}
         onLanguageChange={handleLanguageChange}
         onFontSizeChange={handleFontSizeChange}
         onAutoScrollToggle={handleAutoScrollToggle}
         onShowThoughtsToggle={handleShowThoughtsToggle}
-        onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
-        onCloseApiKeyModal={() => setIsApiKeyModalOpen(false)}
-        onSaveApiKey={handleSaveApiKey}
       />
     </div>
   )
