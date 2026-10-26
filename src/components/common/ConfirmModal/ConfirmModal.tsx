@@ -13,6 +13,18 @@ interface ConfirmModalProps {
   danger?: boolean
 }
 
+/**
+ * Модальное окно подтверждения необратимых или опасных действий (удаление, сброс).
+ * 
+ * @param props.isOpen - Флаг видимости модального окна
+ * @param props.title - Заголовок действия
+ * @param props.description - Поясняющий текст или предупреждение
+ * @param props.confirmLabel - Текст на кнопке подтверждения (по умолчанию 'Подтвердить')
+ * @param props.cancelLabel - Текст на кнопке отмены (по умолчанию 'Отмена')
+ * @param props.onConfirm - Коллбэк при подтверждении
+ * @param props.onCancel - Коллбэк при отмене или закрытии окна
+ * @param props.danger - Флаг стилизации подтверждающей кнопки в красный цвет (опасное действие)
+ */
 export function ConfirmModal({
   isOpen,
   title,

@@ -9,6 +9,15 @@ interface EmptyStateProps {
   fullHeight?: boolean
 }
 
+/**
+ * Компонент-заглушка для пустого состояния списков, результатов поиска или корзины.
+ * 
+ * @param props.title - Заголовок пустого состояния
+ * @param props.description - Поясняющий текст
+ * @param props.icon - Графическая иконка или иллюстрация
+ * @param props.action - Кнопка действия (например, "Создать" или "Сбросить фильтры")
+ * @param props.fullHeight - Занимать ли всю высоту родительского контейнера
+ */
 export function EmptyState({ 
   title, 
   description, 

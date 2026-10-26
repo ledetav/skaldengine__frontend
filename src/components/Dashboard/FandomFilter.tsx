@@ -22,6 +22,11 @@ export const FandomFilter: React.FC<FandomFilterProps> = ({
 }) => {
   const [search, setSearch] = useState('')
 
+  /**
+   * Переключает состояние выбора фандома (добавляет или удаляет из активного списка).
+   * 
+   * @param name - Название фандома
+   */
   const toggleFandom = (name: string) => {
     if (selectedFandoms.includes(name)) {
       onChange(selectedFandoms.filter(f => f !== name))
@@ -30,6 +35,11 @@ export const FandomFilter: React.FC<FandomFilterProps> = ({
     }
   }
 
+  /**
+   * Удаляет фандом из списка активных фильтров (по клику на крестик в чипсе).
+   * 
+   * @param name - Название удаляемого фандома
+   */
   const removeFandom = (name: string) => {
     onChange(selectedFandoms.filter(f => f !== name))
   }

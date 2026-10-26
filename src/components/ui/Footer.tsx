@@ -64,6 +64,9 @@ export default function Footer() {
   )
 }
 
+/**
+ * SVG-иконка Telegram для ссылок в подвале сайта.
+ */
 function TelegramIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -72,6 +75,9 @@ function TelegramIcon() {
   )
 }
 
+/**
+ * SVG-иконка GitHub для ссылок на репозиторий проекта.
+ */
 function GitHubIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -80,6 +86,9 @@ function GitHubIcon() {
   )
 }
 
+/**
+ * SVG-иконка Discord для ссылок на сообщество.
+ */
 function DiscordIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

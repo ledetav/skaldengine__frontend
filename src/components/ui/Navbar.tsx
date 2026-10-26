@@ -44,6 +44,9 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  /**
+   * Сбрасывает текущую сессию пользователя и перенаправляет на главную страницу.
+   */
   const handleLogout = () => {
     logout()
     navigate('/')

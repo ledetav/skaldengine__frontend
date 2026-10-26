@@ -8,6 +8,14 @@ interface CustomDropdownProps {
   variant?: 'sidebar' | 'header'
 }
 
+/**
+ * Кастомный выпадающий список для фильтров дашборда с анимацией шеврона и закрытием по клику вне элемента.
+ * 
+ * @param props.options - Список доступных вариантов выбора
+ * @param props.value - Выбранное значение
+ * @param props.onChange - Обработчик изменения значения
+ * @param props.variant - Вариант расположения ('sidebar' в боковой панели или 'header' в шапке)
+ */
 export const CustomDropdown: React.FC<CustomDropdownProps> = ({ 
   options, 
   value, 
@@ -18,6 +26,9 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    /**
+     * Закрывает выпадающее меню при клике в любую область за пределами компонента.
+     */
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)

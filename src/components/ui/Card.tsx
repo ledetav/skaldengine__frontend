@@ -6,6 +6,12 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   gradient?: boolean
 }
 
+/**
+ * Универсальная карточка-контейнер с поддержкой скруглений, градиентной подсветки и размеров.
+ * 
+ * @param props.variant - Размер и геометрия карточки ('default', 'small', 'angular')
+ * @param props.gradient - Флаг включения фонового неонового градиента
+ */
 export function Card({ 
   children, 
   className = '', 

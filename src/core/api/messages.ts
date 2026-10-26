@@ -30,25 +30,32 @@ export const messagesApi = {
       throw new Error(errorData.detail || 'Не удалось отправить сообщение')
     }
 
+    // Чтение потока байт через ReadableStreamDefaultReader
     const reader = response.body?.getReader()
     if (!reader) return
 
     const decoder = new TextDecoder()
     let buffer = ''
     
+    // Цикл вычитывания фрагментов SSE (Server-Sent Events)
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
       
+      // Накопление байт в буфер для корректной склейки многобайтовых UTF-8 символов
       buffer += decoder.decode(value, { stream: true })
+      // SSE события отделяются друг от друга двойным переносом строки (\n\n)
       const parts = buffer.split('\n\n')
+      // Последняя часть может быть неполной, сохраняем её в буфер до следующего чанка
       buffer = parts.pop() || ''
       
       for (const part of parts) {
         const lines = part.split('\n')
         for (const line of lines) {
+          // Строки данных SSE всегда начинаются с префикса 'data: '
           if (line.startsWith('data: ')) {
             const data = line.slice(6)
+            // Маркер [DONE] сообщает о штатном окончании генерации языковой моделью
             if (data === '[DONE]') break
             try {
               const parsed = JSON.parse(data)
@@ -84,16 +91,19 @@ export const messagesApi = {
       throw new Error(errorData.detail || 'Не удалось перегенерировать сообщение')
     }
 
+    // Чтение потока байт через ReadableStreamDefaultReader
     const reader = response.body?.getReader()
     if (!reader) return
 
     const decoder = new TextDecoder()
     let buffer = ''
     
+    // Цикл вычитывания фрагментов SSE для повторной генерации
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
       
+      // Склейка порций байт и разделение событий по двойному переносу строки
       buffer += decoder.decode(value, { stream: true })
       const parts = buffer.split('\n\n')
       buffer = parts.pop() || ''

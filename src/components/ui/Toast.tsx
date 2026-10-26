@@ -29,6 +29,9 @@ export interface ToastContextValue {
 export const ToastContext = createContext<ToastContextValue | null>(null)
 
 /* ─── Векторные иконки ─────────────────────────────────── */
+/**
+ * SVG-иконка галочки для успешных всплывающих уведомлений.
+ */
 function SuccessIcon() {
   return (
     <svg className={styles.toastIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -37,6 +40,9 @@ function SuccessIcon() {
   )
 }
 
+/**
+ * SVG-иконка крестика для уведомлений об ошибках.
+ */
 function ErrorIcon() {
   return (
     <svg className={styles.toastIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -45,6 +51,9 @@ function ErrorIcon() {
   )
 }
 
+/**
+ * SVG-иконка восклицательного знака для информационных уведомлений.
+ */
 function InfoIcon() {
   return (
     <svg className={styles.toastIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
