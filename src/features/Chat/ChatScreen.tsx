@@ -163,11 +163,6 @@ export default function ChatScreen() {
     }
   }, [])
 
-  useEffect(() => {
-    (window as any).forkChatFromMsg = handleForkChat
-    return () => { delete (window as any).forkChatFromMsg }
-  }, [handleForkChat])
-
   // Handlers
   const handleSiblingSwitch = async (msgId: string, direction: 'prev' | 'next') => {
     if (isGenerating || !chatId) return
@@ -405,6 +400,7 @@ export default function ChatScreen() {
               onEdit={handleEditMessage}
               onRegenerate={handleRegenerate}
               onSiblingSwitch={handleSiblingSwitch}
+              onForkChat={handleForkChat}
               scrollToBottom={scrollToBottom}
             />
           ))}

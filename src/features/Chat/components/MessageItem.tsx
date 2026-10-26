@@ -16,6 +16,7 @@ interface MessageItemProps {
   onEdit: (id: string, content: string) => void
   onRegenerate: (id: string) => void
   onSiblingSwitch: (id: string, direction: 'prev' | 'next') => void
+  onForkChat?: (id: string) => void
   scrollToBottom: (behavior?: ScrollBehavior) => void
 }
 
@@ -29,6 +30,7 @@ export function MessageItem({
   onEdit,
   onRegenerate,
   onSiblingSwitch,
+  onForkChat,
   scrollToBottom
 }: MessageItemProps) {
   const [isEditing, setIsEditing] = useState(false)
@@ -107,7 +109,7 @@ export function MessageItem({
                     <ReactMarkdown 
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        p: ({node, ...props}) => <p style={{ whiteSpace: 'pre-wrap' }} {...props} />
+                        p: ({node: _node, ...props}) => <p style={{ whiteSpace: 'pre-wrap' }} {...props} />
                       }}
                     >
                       {msg.content}
@@ -174,13 +176,12 @@ export function MessageItem({
               </button>
             )}
 
-            {!isEditing && !isGenerating && (
+            {!isEditing && !isGenerating && onForkChat && (
               <button 
                 className={styles.miniActionBtn}
                 onClick={() => {
                   if (window.confirm('Создать новый чат на основе этой ветки?')) {
-                    // This will be handled by the parent
-                    (window as any).forkChatFromMsg(msg.id);
+                    onForkChat(msg.id);
                   }
                 }}
                 title="Ветвление: создать новый чат из этой точки"
