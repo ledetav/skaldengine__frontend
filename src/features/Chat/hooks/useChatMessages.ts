@@ -9,7 +9,6 @@ interface UseChatMessagesOptions {
   chatId?: string
   persona: UserPersona | null
   character: Character | null
-  apiKey: string
   onLastSavedUpdate?: () => void
   onCheckpointsUpdate?: (checkpoints: Checkpoint[]) => void
 }
@@ -18,7 +17,6 @@ export function useChatMessages({
   chatId,
   persona,
   character,
-  apiKey,
   onLastSavedUpdate,
   onCheckpointsUpdate,
 }: UseChatMessagesOptions) {
@@ -149,11 +147,7 @@ export function useChatMessages({
     } catch (err: any) {
       logger.error('Send failed:', err)
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id))
-      if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
-        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
-      } else {
-        setChatError('Произошла ошибка при генерации ответа. Пожалуйста, попробуйте позже.')
-      }
+      setChatError('Произошла ошибка при генерации ответа. Пожалуйста, попробуйте позже.')
     } finally {
       setIsGenerating(false)
     }
@@ -200,11 +194,7 @@ export function useChatMessages({
       }
     } catch (err: any) {
       logger.error('Regeneration failed:', err)
-      if (err?.message?.includes('401') || err?.message?.toLowerCase().includes('api key') || !apiKey) {
-        setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
-      } else {
-        setChatError('Произошла ошибка при регенерации. Пожалуйста, попробуйте позже.')
-      }
+      setChatError('Произошла ошибка при регенерации. Пожалуйста, попробуйте позже.')
     } finally {
       setIsGenerating(false)
     }

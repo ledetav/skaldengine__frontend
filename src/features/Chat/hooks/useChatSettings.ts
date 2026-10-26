@@ -25,10 +25,6 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
   const [showThoughtsGlobal, setShowThoughtsGlobal] = useState(() =>
     localStorage.getItem('skald_showThoughts') !== 'false'
   )
-  const [apiKey, setApiKey] = useState(() =>
-    localStorage.getItem('skald_apiKey') || ''
-  )
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false)
 
   const handleSettingsUpdate = async (updates: Partial<ChatType>) => {
     if (!chatId) return
@@ -62,11 +58,6 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     handleSettingsUpdate({ language: lang.toLowerCase() })
   }
 
-  const handleSaveApiKey = (val: string) => {
-    setApiKey(val)
-    localStorage.setItem('skald_apiKey', val)
-  }
-
   return {
     perspective,
     setPerspective,
@@ -78,14 +69,9 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     setAutoScrollEnabled,
     showThoughtsGlobal,
     setShowThoughtsGlobal,
-    apiKey,
-    setApiKey,
-    isApiKeyModalOpen,
-    setIsApiKeyModalOpen,
 
     handlePerspectiveChange,
     handleLanguageChange,
-    handleSaveApiKey,
     handleFontSizeChange: (val: 'small' | 'medium' | 'large') =>
       handleLocalSettingChange('skald_fontSize', val, setFontSize),
     handleAutoScrollToggle: () =>

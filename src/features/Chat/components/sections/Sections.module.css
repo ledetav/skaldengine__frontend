@@ -469,56 +469,6 @@
   background: var(--accent-purple);
 }
 
-.apiKeySection {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.apiKeyHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.editApiKeyBtn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  color: var(--accent-orange);
-  padding: 6px;
-  cursor: pointer;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-}
-
-.apiKeyReminder {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 12px;
-  background: rgba(255, 107, 0, 0.05);
-  border: 1px solid rgba(255, 107, 0, 0.15);
-  border-radius: 6px;
-}
-
-.apiKeyStatus {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-primary);
-  font-size: 11px;
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  background: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #10b981;
-}
-
 /* Lorebook Styles */
 .loreList {
   display: flex;
