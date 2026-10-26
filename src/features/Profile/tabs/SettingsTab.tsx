@@ -20,7 +20,6 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     about: user.about || '',
     avatar_url: user.avatar_url || '',
     cover_url: user.cover_url || '',
-    polza_api_key: user.polza_api_key || '',
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -42,13 +41,7 @@ export default function SettingsTab({ user }: SettingsTabProps) {
         about: formData.about || null,
         avatar_url: formData.avatar_url || null,
         cover_url: formData.cover_url || null,
-        polza_api_key: formData.polza_api_key || null,
       });
-      if (formData.polza_api_key) {
-        localStorage.setItem('skald_apiKey', formData.polza_api_key);
-      } else {
-        localStorage.removeItem('skald_apiKey');
-      }
       success('Профиль успешно обновлен!');
     } catch (err: any) {
       showError(`Ошибка при обновлении: ${err.message || 'Сбой'}`);
@@ -135,24 +128,6 @@ export default function SettingsTab({ user }: SettingsTabProps) {
             <div className={styles.inputGroup}>
               <label>Обложка (URL)</label>
               <input type="text" className={styles.inputField} value={formData.cover_url} onChange={e => setFormData(prev => ({ ...prev, cover_url: e.target.value }))} placeholder="https://..." />
-            </div>
-          </div>
-
-          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-light)' }}>
-            <h2 className={styles.sectionTitle} style={{ marginBottom: '1rem', color: 'var(--accent-purple)' }}>Настройки AI</h2>
-            <div className={styles.inputGroup}>
-              <label>Внешний API Ключ (Polza/Skald)</label>
-              <input 
-                type="password" 
-                className={styles.inputField} 
-                value={formData.polza_api_key} 
-                onChange={e => setFormData(prev => ({ ...prev, polza_api_key: e.target.value }))} 
-                placeholder="sk-..." 
-                style={{ padding: '10px 14px' }} 
-              />
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                Ключ необходим для работы некоторых моделей генерации.
-              </p>
             </div>
           </div>
 
