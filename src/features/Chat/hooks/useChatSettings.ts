@@ -9,6 +9,10 @@ interface UseChatSettingsOptions {
   onLastSavedUpdate?: () => void
 }
 
+/**
+ * Хук для локального и серверного управления настройками сессии чата
+ * (лицо повествования, язык генерации, размер шрифта, автоскролл, скрытие мыслей).
+ */
 export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: UseChatSettingsOptions) {
   const [perspective, setPerspective] = useState<ChatType['narrative_voice']>(() =>
     (localStorage.getItem('skald_perspective') as ChatType['narrative_voice']) || 'third'

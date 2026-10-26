@@ -13,7 +13,7 @@ import type { UserProfile } from '@/core/types/profile'
 import { ErrorScreen } from '@/components/ui/ErrorScreen'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
-// Subcomponents
+// Дочерние компоненты конструктора
 import { CharacterCard } from './components/CharacterCard'
 import { GameModeSelector } from './components/GameModeSelector'
 import { VoiceSelector } from './components/VoiceSelector'
@@ -37,11 +37,16 @@ const gameModes: { id: GameModeType, title: string, description: string }[] = [
   }
 ]
 
+/**
+ * Конструктор новой сессии чата с AI-персонажем.
+ * Позволяет настроить режим игры (песочница / сценарий), лицо повествования,
+ * выбрать персону игрока, динамику отношений и прикрепить базы знаний.
+ */
 const CreateChatScreen: React.FC = () => {
   const { characterId } = useParams<{ characterId: string }>()
   const navigate = useNavigate()
   
-  // Data State
+  // Данные сущностей (персонаж, персоны, сценарии, лорбуки)
   const [character, setCharacter] = useState<Character | null>(null)
   const [personas, setPersonas] = useState<UserPersona[]>([])
   const [scenarios, setScenarios] = useState<Scenario[]>([])
@@ -51,7 +56,7 @@ const CreateChatScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Form State
+  // Состояние формы параметров чата
   const [gameMode, setGameMode] = useState<GameModeType>('scenario')
   const [selectedPersonaId, setSelectedPersonaId] = useState<string>('')
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>('')
@@ -59,7 +64,7 @@ const CreateChatScreen: React.FC = () => {
   const [narrativeVoice, setNarrativeVoice] = useState<NarrativeVoiceType>('third')
   const [selectedLorebookId, setSelectedLorebookId] = useState<string>('')
   
-  // Sandbox specific
+  // Специфичные настройки режима песочницы
   const [areAcquainted, setAreAcquainted] = useState(false)
   const [relationshipDesc, setRelationshipDesc] = useState('')
   const [customLocation, setCustomLocation] = useState('')
@@ -118,7 +123,7 @@ const CreateChatScreen: React.FC = () => {
         relationship_dynamic: areAcquainted ? relationshipDesc : undefined,
         custom_location: gameMode === 'sandbox' ? customLocation : undefined,
         custom_plot_hook: gameMode === 'sandbox' ? customPlotHook : undefined,
-        language: 'ru', // Default for now
+        language: 'ru', // Язык по умолчанию
         narrative_voice: narrativeVoice,
         persona_lorebook_id: selectedLorebookId || undefined,
         checkpoints_count: mapDurationToCheckpoints(campaignDuration)
@@ -127,7 +132,7 @@ const CreateChatScreen: React.FC = () => {
       const newChat = await chatsApi.createChat(chatData)
       navigate(`/chat/${newChat.id}`)
     } catch (err: unknown) {
-      alert(`Ошибка при создании чата: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      alert(`Ошибка при создании чата: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -162,7 +167,7 @@ const CreateChatScreen: React.FC = () => {
       </div>
 
       <main className={styles.container}>
-        {/* LEFT: Character Info */}
+        {/* Левая колонка: Карточка персонажа */}
         <section className={styles.characterSection}>
           <CharacterCard 
             character={character} 
@@ -172,10 +177,10 @@ const CreateChatScreen: React.FC = () => {
           />
         </section>
 
-        {/* RIGHT: Creation Form */}
+        {/* Правая колонка: Форма параметров чата */}
         <section className={styles.formSection}>
           
-          {/* 0. Game Mode Selection */}
+          {/* 0. Выбор режима игры */}
           <GameModeSelector 
             modes={gameModes}
             selectedMode={gameMode}
@@ -184,7 +189,7 @@ const CreateChatScreen: React.FC = () => {
 
           <div className={styles.separator} />
 
-          {/* 1. Voice Selector */}
+          {/* 1. Выбор лица повествования */}
           <VoiceSelector 
             selectedVoice={narrativeVoice}
             onVoiceChange={setNarrativeVoice}
@@ -192,7 +197,7 @@ const CreateChatScreen: React.FC = () => {
 
           <div className={styles.separator} />
 
-          {/* 2. Persona Selection & Acquaintance (Sandbox mode) */}
+          {/* 2. Выбор персоны игрока и динамики отношений (режим песочницы) */}
           {gameMode === 'sandbox' && (
             <div className={`${styles.sandboxSection} ${styles.modeSandbox}`}>
               <PersonaSelector 
@@ -222,7 +227,7 @@ const CreateChatScreen: React.FC = () => {
             </div>
           )}
 
-          {/* 3. Scenario Section (if Scenario mode) */}
+          {/* 3. Выбор сценария и длительности (режим сценария) */}
           {gameMode === 'scenario' && (
             <div className={`${styles.scenarioSectionFull} ${styles.modeScenario}`}>
               <ScenarioSelector 
@@ -262,7 +267,7 @@ const CreateChatScreen: React.FC = () => {
             </div>
           )}
 
-          {/* Start Action */}
+          {/* Кнопка запуска игры */}
           <div className={styles.footer}>
             <button 
               className={styles.startBtn} 

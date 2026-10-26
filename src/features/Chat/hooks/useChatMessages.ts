@@ -13,6 +13,12 @@ interface UseChatMessagesOptions {
   onCheckpointsUpdate?: (checkpoints: Checkpoint[]) => void
 }
 
+/**
+ * Хук управления сообщениями чата.
+ * Реализует отправку сообщений с потоковым SSE-стримингом,
+ * регенерацию ответов, переключение альтернативных вариантов (свайпы),
+ * создание новых веток (форки) и редактирование реплик.
+ */
 export function useChatMessages({
   chatId,
   persona,

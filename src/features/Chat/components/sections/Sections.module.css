@@ -84,7 +84,7 @@
   font-weight: 600;
 }
 
-/* Char Card Mini */
+/* Мини-карточка персонажа */
 .charCardMini {
   background: rgba(30, 30, 45, 0.4);
   border: 1px solid var(--border-glass);
@@ -231,7 +231,7 @@
   margin: 0;
 }
 
-/* Persona Sidebar Card */
+/* Карточка персоны в боковой панели */
 .personaCardSidebar {
   padding: 16px;
   background: rgba(30, 30, 45, 0.4);
@@ -272,7 +272,7 @@
   font-style: italic;
 }
 
-/* Scenario Sidebar Card */
+/* Карточка сценария в боковой панели */
 .scenarioCardSidebar {
   padding: 16px;
   background: rgba(255, 107, 0, 0.03);
@@ -380,7 +380,7 @@
   border-style: dashed;
 }
 
-/* Settings Styles */
+/* Стили настроек */
 .settingsGrid {
   display: flex;
   flex-direction: column;
@@ -469,7 +469,7 @@
   background: var(--accent-purple);
 }
 
-/* Lorebook Styles */
+/* Стили лорбуков */
 .loreList {
   display: flex;
   flex-direction: column;

@@ -23,6 +23,9 @@ interface AcquaintanceSectionProps {
   currentCharacter?: Character | null
 }
 
+/**
+ * Секция настройки знакомства, динамики отношений, стартовой локации и выбора лорбука.
+ */
 export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
   areAcquainted,
   relationshipDesc,
@@ -45,18 +48,18 @@ export const AcquaintanceSection: React.FC<AcquaintanceSectionProps> = ({
   const isSandbox = gameMode === 'sandbox'
 
   const filteredLorebooks = lorebooks.filter(lib => {
-    // Admins see everything
+    // Администраторы имеют доступ ко всем лорбукам
     if (isAdmin) return true
     
-    // Moderators see character lorebooks only if they created the character
+    // Модераторы видят лорбуки персонажа, только если они являются его автором
     if (isModerator) {
       if (lib.character_id) {
          return currentCharacter?.creator_id === currentUser?.id
       }
-      return true // See others (fandom/etc)? User didn't specify, assuming yes or just character filter
+      return true
     }
 
-    // Ordinary users see ONLY their own persona lorebooks
+    // Обычные пользователи видят только лорбуки своих персон
     if (lib.user_persona_id) return true
     
     return false

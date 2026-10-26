@@ -9,12 +9,15 @@ interface ChatInputProps {
   isGenerating: boolean
 }
 
+/**
+ * Поле ввода сообщения в чате с поддержкой многострочности и остановки генерации.
+ */
 export function ChatInput({ value, onChange, onSend, onStop, isGenerating }: ChatInputProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSend()
-      // Reset height
+      // Сброс высоты поля ввода к базовому размеру
       e.currentTarget.style.height = 'auto'
     }
   }
@@ -36,7 +39,7 @@ export function ChatInput({ value, onChange, onSend, onStop, isGenerating }: Cha
           <button 
             className={styles.stopBtn}
             onClick={onStop}
-            title="Stop Generation"
+            title="Остановить генерацию"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <rect x="6" y="6" width="12" height="12" rx="2" />

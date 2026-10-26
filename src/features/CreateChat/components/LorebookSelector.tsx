@@ -10,6 +10,9 @@ interface LorebookSelectorProps {
   type?: 'all' | 'persona' | 'character' | 'fandom'
 }
 
+/**
+ * Компонент выбора прикрепляемой к чату базы знаний (лорбука).
+ */
 export const LorebookSelector: React.FC<LorebookSelectorProps> = ({ 
   lorebooks, 
   selectedLorebookId, 
@@ -36,7 +39,7 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
     <div className={styles.formGroup}>
       <label className={styles.groupLabel}>Локальная база знаний (Lorebook)</label>
       <div className={styles.lorebookGrid}>
-        {/* Create Button */}
+        {/* Кнопка создания новой базы знаний */}
         {onCreateClick && (
           <div className={styles.lorebookCardCreate} onClick={onCreateClick}>
             <div className={styles.lorebookCreateIcon}>
@@ -46,7 +49,7 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
           </div>
         )}
 
-        {/* Real Lorebooks */}
+        {/* Карточки существующих лорбуков */}
         {filteredLorebooks.map(lib => (
           <div 
             key={lib.id} 
