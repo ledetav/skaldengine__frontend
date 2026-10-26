@@ -3,12 +3,17 @@ import { useState, useMemo, useEffect } from 'react'
 import { charactersApi } from '@/core/api/characters'
 import type { Character } from '@/core/types/character'
 
+/**
+ * Хук управления витриной персонажей дашборда.
+ * Обеспечивает загрузку персонажей, фильтрацию по фандомам, полу, NSFW,
+ * живой поиск, сортировку и синхронизацию обновлений через WebSocket в реальном времени.
+ */
 export const useDashboard = () => {
   const [characters, setCharacters] = useState<Character[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // ... rest of state
+  // Параметры фильтрации, сортировки и отображения витрины
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
   const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')
@@ -26,7 +31,7 @@ export const useDashboard = () => {
         setCharacters(data)
         setError(null)
       } catch (err: any) {
-        logger.error('Error fetching characters:', err)
+        logger.error('Ошибка загрузки персонажей:', err)
         setError('Не удалось загрузить персонажей. Пожалуйста, попробуйте позже.')
       } finally {
         setIsLoading(false)
@@ -65,17 +70,18 @@ export const useDashboard = () => {
           setCharacters(prev => prev.filter(c => c.id !== id))
         }
       } catch (err) {
-        logger.error('WS Message parsing error:', err)
+        logger.error('Ошибка парсинга сообщения WebSocket:', err)
       }
     }
 
-    socket.onerror = (err) => logger.error('WS Error:', err)
+    socket.onerror = (err) => logger.error('Ошибка соединения WebSocket:', err)
     
     return () => {
       socket.close()
     }
   }, [])
 
+  // Вычисление доступных фандомов с подсчетом количества персонажей
   const availableFandoms = useMemo(() => {
     const counts: Record<string, number> = {}
     if (!Array.isArray(characters)) return []
@@ -90,6 +96,7 @@ export const useDashboard = () => {
       .sort((a, b) => b.count - a.count)
   }, [characters])
 
+  // Фильтрация и сортировка персонажей в соответствии с выбранными критериями
   const filteredCharacters = useMemo(() => {
     if (!Array.isArray(characters)) return []
     let result = [...characters]
@@ -130,6 +137,7 @@ export const useDashboard = () => {
     return result
   }, [characters, nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy, sortOrder])
 
+  // Определение топ-5 популярных персонажей за месяц
   const hotIds = useMemo(() => {
     if (!Array.isArray(characters)) return []
     return [...characters]
@@ -138,6 +146,7 @@ export const useDashboard = () => {
       .map(c => c.id)
   }, [characters])
 
+  // Склонение слова "персонаж" для русского языка
   const getPlural = (n: number) => {
     const l1 = n % 10;
     const l2 = n % 100;

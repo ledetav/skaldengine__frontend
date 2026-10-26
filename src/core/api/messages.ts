@@ -3,8 +3,17 @@ import { ApiClient } from './client'
 
 const BASE_URL = import.meta.env.VITE_CORE_API_URL || 'http://localhost:8002/api/v1'
 
+/**
+ * Сервис API для отправки сообщений, потокового SSE-стриминга и управления ветками диалога.
+ */
 export const messagesApi = {
-  // Stream message from chat endpoint
+  /**
+   * Отправка сообщения пользователя в чат с приемом потокового ответа ассистента по SSE.
+   *
+   * @param chatId - Идентификатор чата
+   * @param message - Данные создаваемого сообщения
+   * @param onChunk - Коллбэк для каждого входящего фрагмента текста
+   */
   sendMessageStream: async (chatId: string, message: MessageCreate, onChunk: (chunk: string) => void): Promise<void> => {
     const token = localStorage.getItem('token')
     const response = await fetch(`${BASE_URL}/chats/${chatId}/messages/stream`, {
@@ -18,7 +27,7 @@ export const messagesApi = {
 
     if (!response.ok) {
       const errorData = await response.json()
-      throw new Error(errorData.detail || 'Failed to send message')
+      throw new Error(errorData.detail || 'Не удалось отправить сообщение')
     }
 
     const reader = response.body?.getReader()
@@ -47,7 +56,7 @@ export const messagesApi = {
                 onChunk(parsed.content)
               }
             } catch (e) {
-              console.error('Failed to parse SSE data', data, e)
+              console.error('Ошибка парсинга данных SSE:', data, e)
             }
           }
         }
@@ -55,6 +64,12 @@ export const messagesApi = {
     }
   },
 
+  /**
+   * Потоковая повторная генерация ответа ассистента для указанного родительского сообщения.
+   *
+   * @param parentId - Идентификатор сообщения пользователя (родителя)
+   * @param onChunk - Коллбэк для каждого входящего фрагмента текста
+   */
   regenerateMessageStream: async (parentId: string, onChunk: (chunk: string) => void): Promise<void> => {
     const token = localStorage.getItem('token')
     const response = await fetch(`${BASE_URL}/messages/${parentId}/regenerate/stream`, {
@@ -66,7 +81,7 @@ export const messagesApi = {
 
     if (!response.ok) {
       const errorData = await response.json()
-      throw new Error(errorData.detail || 'Failed to regenerate message')
+      throw new Error(errorData.detail || 'Не удалось перегенерировать сообщение')
     }
 
     const reader = response.body?.getReader()
@@ -95,7 +110,7 @@ export const messagesApi = {
                 onChunk(parsed.content)
               }
             } catch (e) {
-              console.error('Failed to parse SSE data', data, e)
+              console.error('Ошибка парсинга данных SSE:', data, e)
             }
           }
         }
@@ -103,8 +118,14 @@ export const messagesApi = {
     }
   },
 
+  /**
+   * Редактирование текста сообщения. На бэкенде создается новая ветка диалога.
+   *
+   * @param messageId - Идентификатор редактируемого сообщения
+   * @param data - Данные редактирования с новым текстом
+   */
   editMessage: async (messageId: string, data: MessageEdit): Promise<Message> => {
-    // API backend schema expects { new_content: string }, support both
+    // Схема бэкенда ожидает поле new_content, поддерживаем оба формата
     const payload = {
       content: data.content,
       new_content: data.new_content || data.content
@@ -112,6 +133,11 @@ export const messagesApi = {
     return ApiClient.put('core', `/messages/${messageId}`, payload)
   },
 
+  /**
+   * Ответвление (форк) чата от выбранного сообщения в новый независимый чат.
+   *
+   * @param messageId - Идентификатор сообщения, от которого создается форк
+   */
   forkChat: async (messageId: string): Promise<Chat> => {
     return ApiClient.post('core', `/messages/${messageId}/fork`, {})
   }

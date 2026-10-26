@@ -5,11 +5,22 @@ const AUTH_API_URL = import.meta.env.VITE_AUTH_API_URL || 'http://localhost:8001
 
 type ApiType = 'core' | 'auth'
 
+/**
+ * Базовый HTTP-клиент для взаимодействия с микросервисами платформы SKALD Engine.
+ * Обеспечивает централизованную установку заголовков авторизации,
+ * логирование сетевых запросов и обработку ошибок (включая истечение срока сессии 401).
+ */
 export class ApiClient {
+  /**
+   * Возвращает базовый URL для указанного типа сервиса.
+   */
   private static getBaseUrl(type: ApiType) {
     return type === 'auth' ? AUTH_API_URL : CORE_API_URL
   }
 
+  /**
+   * Формирует заголовки HTTP-запроса, включая токен авторизации Bearer при наличии.
+   */
   private static getHeaders() {
     const token = localStorage.getItem('token')
     const headers: Record<string, string> = {
@@ -21,9 +32,17 @@ export class ApiClient {
     return headers
   }
 
+  /**
+   * Выполняет HTTP-запрос к API и возвращает распарсенные данные.
+   *
+   * @param type - Целевой сервис ('core' или 'auth')
+   * @param endpoint - Путь эндпоинта (например, '/users/me')
+   * @param options - Дополнительные параметры fetch
+   * @returns Распарсенное тело ответа
+   */
   static async request<T>(type: ApiType, endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.getBaseUrl(type)}${endpoint}`
-    logger.info(`[API Request] ${options.method || 'GET'} ${url}`, options.body ? { body: options.body } : {});
+    logger.info(`[API Request] ${options.method || 'GET'} ${url}`, options.body ? { body: options.body } : {})
 
     try {
       const response = await fetch(url, {
@@ -36,8 +55,8 @@ export class ApiClient {
 
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('token');
-          window.dispatchEvent(new Event('auth:session-expired'));
+          localStorage.removeItem('token')
+          window.dispatchEvent(new Event('auth:session-expired'))
         }
 
         const errorData = await response.json().catch(() => ({}))
@@ -52,36 +71,42 @@ export class ApiClient {
         } else if (typeof errorData.message === 'string') {
           errorMessage = errorData.message
         } else {
-          errorMessage = `Request failed: ${response.statusText}`
+          errorMessage = `Ошибка запроса: ${response.statusText}`
         }
-        logger.error(`[API Error] ${options.method || 'GET'} ${url} - Status ${response.status}: ${errorMessage}`, { errorData });
+        logger.error(`[API Error] ${options.method || 'GET'} ${url} - Status ${response.status}: ${errorMessage}`, { errorData })
         throw new Error(errorMessage)
       }
 
       if (response.status === 204) {
-        logger.debug(`[API Response] ${options.method || 'GET'} ${url} - Status 204 (No Content)`);
+        logger.debug(`[API Response] ${options.method || 'GET'} ${url} - Status 204 (No Content)`)
         return {} as T
       }
 
       const json = await response.json()
-      logger.debug(`[API Response] ${options.method || 'GET'} ${url} - Status ${response.status}`, { data: json });
+      logger.debug(`[API Response] ${options.method || 'GET'} ${url} - Status ${response.status}`, { data: json })
 
-      // Unwrap BaseResponse if it follows the pattern { success, data, ... }
+      // Извлечение полезной нагрузки, если бэкенд возвращает стандартную обертку BaseResponse { success, data, ... }
       if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
         return json.data as T
       }
 
       return json as T
     } catch (error: any) {
-      logger.error(`[API Fetch Error] ${options.method || 'GET'} ${url}`, { error: error.message });
-      throw error;
+      logger.error(`[API Fetch Error] ${options.method || 'GET'} ${url}`, { error: error.message })
+      throw error
     }
   }
 
+  /**
+   * Выполняет HTTP GET запрос.
+   */
   static get<T>(type: ApiType, endpoint: string, options?: RequestInit) {
     return this.request<T>(type, endpoint, { ...options, method: 'GET' })
   }
 
+  /**
+   * Выполняет HTTP POST запрос с сериализацией тела в JSON.
+   */
   static post<T>(type: ApiType, endpoint: string, body: any, options?: RequestInit) {
     return this.request<T>(type, endpoint, {
       ...options,
@@ -90,6 +115,9 @@ export class ApiClient {
     })
   }
 
+  /**
+   * Выполняет HTTP PATCH запрос с сериализацией тела в JSON.
+   */
   static patch<T>(type: ApiType, endpoint: string, body: any, options?: RequestInit) {
     return this.request<T>(type, endpoint, {
       ...options,
@@ -98,6 +126,9 @@ export class ApiClient {
     })
   }
 
+  /**
+   * Выполняет HTTP PUT запрос с сериализацией тела в JSON.
+   */
   static put<T>(type: ApiType, endpoint: string, body: any, options?: RequestInit) {
     return this.request<T>(type, endpoint, {
       ...options,
@@ -106,6 +137,9 @@ export class ApiClient {
     })
   }
 
+  /**
+   * Выполняет HTTP DELETE запрос.
+   */
   static delete<T>(type: ApiType, endpoint: string, options?: RequestInit) {
     return this.request<T>(type, endpoint, { ...options, method: 'DELETE' })
   }

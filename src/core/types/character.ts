@@ -1,3 +1,6 @@
+/**
+ * Интерфейс AI-персонажа платформы SKALD Engine.
+ */
 export interface Character {
   id: string
   name: string
@@ -28,6 +31,9 @@ export interface Character {
   is_deleted: boolean
 }
 
+/**
+ * Пример сценария или стартовой ситуации персонажа.
+ */
 export interface ExampleScenario {
   id: string
   character_id?: string

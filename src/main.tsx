@@ -4,14 +4,17 @@ import '@/theme/global/index.css'
 import App from './App.tsx'
 import { logger } from './core/utils/logger'
 
+// Глобальный перехват ошибок JavaScript в окне браузера
 window.addEventListener('error', (event) => {
-  logger.error('Global Error:', event.error || event.message);
-});
+  logger.error('Глобальная ошибка приложения:', event.error || event.message)
+})
 
+// Глобальный перехват необработанных отклонений Promise
 window.addEventListener('unhandledrejection', (event) => {
-  logger.error('Unhandled Promise Rejection:', event.reason);
-});
+  logger.error('Необработанное отклонение Promise:', event.reason)
+})
 
+// Инициализация и монтирование корневого React-компонента
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
