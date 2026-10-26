@@ -7,7 +7,8 @@ export const chatsApi = {
   },
   
   getChats: async (skip: number = 0, limit: number = 20): Promise<Chat[]> => {
-    return ApiClient.get('core', `/chats/?skip=${skip}&limit=${limit}`)
+    const res = await ApiClient.get<any>('core', `/chats/?skip=${skip}&limit=${limit}`)
+    return res.items || res || []
   },
   
   getChat: async (chatId: string): Promise<Chat> => {

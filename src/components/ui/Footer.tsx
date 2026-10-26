@@ -35,8 +35,8 @@ export default function Footer() {
         <div className={styles.linksGroup}>
           <h3 className={styles.groupTitle}>Платформа</h3>
           <ul className={styles.linkList}>
-            <li><a href="#about" className={styles.link}>О системе</a></li>
-            <li><a href="#features" className={styles.link}>Возможности</a></li>
+            <li><a href="/#about" className={styles.link}>О системе</a></li>
+            <li><a href="/#features" className={styles.link}>Возможности</a></li>
             <li><Link to="/register" className={styles.link}>Регистрация</Link></li>
             <li><Link to="/login" className={styles.link}>Войти</Link></li>
           </ul>

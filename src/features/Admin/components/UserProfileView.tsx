@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '../Admin.module.css'
+import styles from '../styles'
 import type { User } from '../types'
 import { Button } from '@/components/ui'
 

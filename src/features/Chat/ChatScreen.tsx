@@ -10,8 +10,9 @@ import { messagesApi } from '@/core/api/messages'
 import { charactersApi } from '@/core/api/characters'
 import { personasApi } from '@/core/api/personas'
 import { authApi } from '@/core/api/auth'
+import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Character } from '@/core/types/character'
-import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType } from '@/core/types/chat'
+import type { UserPersona, Message, NarrativeVoiceType, Scenario, Chat as ChatType, Lorebook, Checkpoint } from '@/core/types/chat'
 
 // Components
 import { ChatHeader } from './components/ChatHeader'
@@ -41,7 +42,8 @@ export default function ChatScreen() {
   const [inputValue, setInputValue] = useState('')
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null)
   const [messageTree, setMessageTree] = useState<Message[]>([])
-  const [userRole, setUserRole] = useState<string>('user')
+  const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
+  const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([])
   
   // UI States
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024)
@@ -111,6 +113,7 @@ export default function ChatScreen() {
         setPersona(personaData)
         setActiveLeafId(historyData.active_leaf_id)
         setMessageTree(historyData.tree)
+        setCheckpoints(historyData.checkpoints || [])
         
         const mappedMessages: Message[] = historyData.active_branch.map(m => ({
           id: m.id,
@@ -127,8 +130,20 @@ export default function ChatScreen() {
         }))
         
         setMessages(mappedMessages)
-        const userMe = await authApi.getMe()
-        setUserRole(userMe.role)
+        const userMe = await authApi.getMe().catch(() => null)
+        if (userMe?.polza_api_key) {
+          setApiKey(userMe.polza_api_key)
+          localStorage.setItem('skald_apiKey', userMe.polza_api_key)
+        }
+
+        // Load Lorebooks
+        const lb_ids = charData.lorebook_ids || []
+        const lb_promises = lb_ids.map((id: string) => lorebooksApi.getLorebook(id))
+        if (chatData.persona_lorebook_id) {
+          lb_promises.push(lorebooksApi.getLorebook(chatData.persona_lorebook_id))
+        }
+        const loadedLbs = await Promise.all(lb_promises)
+        setLorebooks(loadedLbs)
 
       } catch (err: unknown) {
         logger.error('Failed to load chat data:', err)
@@ -137,6 +152,21 @@ export default function ChatScreen() {
 
     loadData()
   }, [chatId])
+
+  const handleForkChat = useCallback(async (messageId: string) => {
+    try {
+      const newChat = await messagesApi.forkChat(messageId)
+      window.location.href = `/chat/${newChat.id}`
+    } catch (err) {
+      logger.error('Failed to fork chat:', err)
+      setChatError('Не удалось создать ветку чата. Пожалуйста, попробуйте позже.')
+    }
+  }, [])
+
+  useEffect(() => {
+    (window as any).forkChatFromMsg = handleForkChat
+    return () => { delete (window as any).forkChatFromMsg }
+  }, [handleForkChat])
 
   // Handlers
   const handleSiblingSwitch = async (msgId: string, direction: 'prev' | 'next') => {
@@ -168,7 +198,7 @@ export default function ChatScreen() {
       
         const mapped: Message[] = historyData.active_branch.map(m => ({
           id: m.id,
-          author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+          author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
           content: m.content,
           role: m.role as 'user' | 'assistant',
           hidden_thought: m.hidden_thought,
@@ -192,11 +222,6 @@ export default function ChatScreen() {
     setIsGenerating(true)
     setChatError(null)
 
-    if (!apiKey) {
-      setChatError('Для работы ИИ необходи��о добавить API-ключ в настройках вашего профиля.')
-      setIsGenerating(false)
-      return
-    }
 
     const tempUserMsg: Message = {
       id: Date.now().toString(),
@@ -211,7 +236,7 @@ export default function ChatScreen() {
       let aiContent = ''
       setMessages(prev => [...prev, {
         id: aiMsgId,
-        author: character?.name || 'Skald',
+        author: character?.name || 'скальд',
         content: '',
         role: 'assistant'
       }])
@@ -240,6 +265,7 @@ export default function ChatScreen() {
           current_sibling_index: lastAiMsg.current_sibling_index
         } : m
       ))
+      setCheckpoints(updatedHistory.checkpoints || [])
       setLastSaved(new Date())
     } catch (err: any) {
       logger.error('Send failed:', err)
@@ -259,11 +285,7 @@ export default function ChatScreen() {
     setIsGenerating(true)
     setChatError(null)
 
-    if (!apiKey) {
-      setChatError('Для работы ИИ необходимо добавить API-ключ в настройках вашего профиля.')
-      setIsGenerating(false)
-      return
-    }
+    // Attempt generation; if neither user nor server key exists, error handler prompts for key
 
     const targetMsg = messages.find(m => m.id === msgId)
     if (!targetMsg || !targetMsg.parent_id) {
@@ -276,7 +298,7 @@ export default function ChatScreen() {
       let aiContent = ''
       setMessages(prev => [...prev, {
         id: aiMsgId,
-        author: character?.name || 'Skald',
+        author: character?.name || 'скальд',
         content: '',
         role: 'assistant',
         parent_id: targetMsg.parent_id
@@ -294,7 +316,7 @@ export default function ChatScreen() {
       setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
-        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
         content: m.content,
         role: m.role as any,
         hidden_thought: m.hidden_thought,
@@ -326,7 +348,7 @@ export default function ChatScreen() {
       setMessageTree(updatedHistory.tree)
       setMessages(updatedHistory.active_branch.map(m => ({
         id: m.id,
-        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'Skald',
+        author: m.role === 'user' ? (persona?.name || 'Вы') : character?.name || 'скальд',
         content: m.content,
         role: m.role as any,
         hidden_thought: m.hidden_thought,
@@ -440,10 +462,10 @@ export default function ChatScreen() {
         <ProfileSection />
         
         {chat?.mode === 'scenario' && scenario && (
-          <ScenarioSection scenario={scenario} />
+          <ScenarioSection scenario={scenario} checkpoints={checkpoints} />
         )}
 
-        <CharacterSection character={character} />
+        <CharacterSection character={character} chat={chat} />
         <PersonaSection persona={persona} />
         
         <SettingsSection 
@@ -467,7 +489,7 @@ export default function ChatScreen() {
           onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
         />
 
-        <LorebookSection userRole={userRole} />
+        <LorebookSection lorebooks={lorebooks} />
       </Sidebar>
 
       <ApiKeyModal 

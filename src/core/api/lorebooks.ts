@@ -1,4 +1,4 @@
-import { type Lorebook } from '@/core/types/chat'
+import { type Lorebook, type LorebookEntry } from '@/core/types/chat'
 import { ApiClient } from './client'
 
 export const lorebooksApi = {
@@ -7,7 +7,8 @@ export const lorebooksApi = {
     if (userId) query += `&user_id=${userId}`
     if (personaId) query += `&persona_id=${personaId}`
     if (characterId) query += `&character_id=${characterId}`
-    return ApiClient.get('core', `/lorebooks/${query}`)
+    const res = await ApiClient.get<any>('core', `/lorebooks/${query}`)
+    return res.items || res || []
   },
   
   deleteLorebook: async (id: string): Promise<void> => {
@@ -38,15 +39,15 @@ export const lorebooksApi = {
     return ApiClient.patch('core', `/admin/lorebooks/${id}`, data)
   },
 
-  createLorebookEntry: async (lorebookId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {
-    return ApiClient.post('core', `/lorebooks/${lorebookId}/entries/`, data)
+  createLorebookEntry: async (lorebookId: string, entry: Partial<LorebookEntry>): Promise<LorebookEntry> => {
+    return ApiClient.post('core', `/lorebooks/${lorebookId}/entries`, entry)
   },
 
-  createLorebookEntriesBulk: async (lorebookId: string, entries: { keywords: string[], content: string, priority: number }[]): Promise<void> => {
-    return ApiClient.post('core', `/admin/lorebooks/${lorebookId}/entries/bulk`, { entries })
+  createLorebookEntriesBulk: async (lorebookId: string, entries: Partial<LorebookEntry>[]): Promise<LorebookEntry[]> => {
+    return ApiClient.post('core', `/lorebooks/${lorebookId}/entries/bulk`, { entries })
   },
 
-  updateLorebookEntry: async (lorebookId: string, entryId: string, data: { keywords: string[], content: string, priority: number }): Promise<void> => {
+  updateLorebookEntry: async (lorebookId: string, entryId: string, data: Partial<LorebookEntry>): Promise<LorebookEntry> => {
     return ApiClient.patch('core', `/lorebooks/${lorebookId}/entries/${entryId}`, data)
   },
 

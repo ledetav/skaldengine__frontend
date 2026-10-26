@@ -70,7 +70,11 @@ export default function ProfileScreen() {
       <main className={styles.profileContainer}>
         <div className={styles.layoutWrapper}>
           <aside className={styles.sidebar}>
-            <ProfileHeader user={user} isPublic={!!username} />
+            <ProfileHeader 
+              user={user} 
+              isPublic={!!username} 
+              onEditClick={() => setActiveTab('settings')}
+            />
           </aside>
 
           <div className={styles.mainContent}>

@@ -28,6 +28,19 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* Prevent layout shifts on mobile */
+  touch-action: manipulation;
+}
+
+/* Touch-friendly tap targets */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure images never overflow on mobile */
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 a {

@@ -19,4 +19,18 @@ export default defineConfig({
     port: 5000,
     allowedHosts: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/react-markdown') || id.includes('node_modules/remark-gfm')) {
+            return 'vendor-utils';
+          }
+        }
+      }
+    }
+  }
 })

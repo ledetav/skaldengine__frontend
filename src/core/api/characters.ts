@@ -3,7 +3,8 @@ import { ApiClient } from './client'
 
 export const charactersApi = {
   getCharacters: async (skip: number = 0, limit: number = 20): Promise<Character[]> => {
-    return ApiClient.get('core', `/characters/?skip=${skip}&limit=${limit}`)
+    const res = await ApiClient.get<any>('core', `/characters/?skip=${skip}&limit=${limit}`)
+    return res.items || res || []
   },
   
   getCharacter: async (id: string): Promise<Character> => {

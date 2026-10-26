@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Button, Input, Badge, useToast } from '@/components/ui'
-import styles from '../Admin.module.css'
+import { Button, Input, Textarea, Badge, useToast } from '@/components/ui'
+import styles from '../styles'
 import { SearchableSelect } from './SearchableSelect'
 import type { Scenario } from '@/core/types/chat'
 import type { Character } from '../types'
@@ -32,6 +32,7 @@ export function ScenarioProfileView({
     start_point: '',
     end_point: '',
     location: '',
+    internal_description: '',
     character_id: null
   })
 
@@ -42,16 +43,26 @@ export function ScenarioProfileView({
   useEffect(() => {
     if (!isCreate) {
       const existing = scenarios.find(s => s.id === scenarioId)
+      console.log('[ScenarioProfileView] Existing in list:', existing)
       if (existing) {
         setDraft(existing)
       } else {
-        // Fetch if not in list
-        scenariosApi.getScenario(scenarioId).then(setDraft).catch(console.error)
+        console.log('[ScenarioProfileView] Not in list, fetching...', scenarioId)
+        scenariosApi.getScenario(scenarioId)
+          .then(res => {
+            console.log('[ScenarioProfileView] Fetched data:', res)
+            setDraft(res)
+          })
+          .catch(err => console.error('[ScenarioProfileView] Fetch error:', err))
       }
     }
   }, [scenarioId, scenarios, isCreate])
 
   const handleSave = async () => {
+    if (!draft.character_id) {
+      alert('Пожалуйста, выберите персонажа для сценария.')
+      return
+    }
     setIsSaving(true)
     try {
       await onSave(draft)
@@ -106,16 +117,14 @@ export function ScenarioProfileView({
                       value={draft.title || ''} 
                       onChange={e => setDraft(prev => ({ ...prev, title: e.target.value }))} 
                       placeholder="Название сценария..."
+                      maxLength={200}
                     />
                   </div>
 
                   <div className={styles.detailGroup}>
                     <div className={styles.detailTitle}>Персонаж (привязка)</div>
                     <SearchableSelect 
-                      options={[
-                        { id: '', name: 'Общий (нет привязки)' },
-                        ...characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))
-                      ]}
+                      options={characters.map(c => ({ id: c.id, name: c.name, subtext: c.fandom }))}
                       value={draft.character_id || ''}
                       onChange={val => setDraft(prev => ({ ...prev, character_id: val || null }))}
                       placeholder="Выберите персонажа..."
@@ -128,6 +137,7 @@ export function ScenarioProfileView({
                       value={draft.location || ''} 
                       onChange={e => setDraft(prev => ({ ...prev, location: e.target.value }))} 
                       placeholder="Где происходит действие..."
+                      maxLength={200}
                     />
                   </div>
                 </div>
@@ -135,8 +145,8 @@ export function ScenarioProfileView({
                 <>
                   <h1 className={styles.charProfileName}>{draft.title}</h1>
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                    <Badge variant={draft.character_id ? 'orange' : 'blue'}>
-                      {draft.character_id ? (characters.find(c => c.id === draft.character_id)?.name || 'Персонаж') : 'Общий сценарий'}
+                    <Badge variant="orange">
+                      {characters.find(c => c.id === draft.character_id)?.name || 'Персонаж'}
                     </Badge>
                     {draft.location && <Badge variant="teal">{draft.location}</Badge>}
                   </div>
@@ -146,12 +156,13 @@ export function ScenarioProfileView({
               <div style={{ marginTop: '20px' }}>
                 <div className={styles.detailTitle}>Описание для карточки</div>
                 {isEdit ? (
-                  <textarea 
+                  <Textarea 
                     className={styles.editTextarea}
                     value={draft.description || ''}
                     onChange={e => setDraft(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Краткое описание..."
                     style={{ minHeight: '80px', fontSize: '0.85rem' }}
+                    maxLength={500}
                   />
                 ) : (
                   <p style={{ 
@@ -189,12 +200,13 @@ export function ScenarioProfileView({
                 Точка А (Стартовая ситуация)
               </div>
               {isEdit ? (
-                <textarea 
+                <Textarea 
                   className={styles.editTextarea}
                   value={draft.start_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, start_point: e.target.value }))}
                   placeholder="Как начинается сцена..."
                   style={{ minHeight: '180px' }}
+                  maxLength={500}
                 />
               ) : (
                 <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
@@ -209,16 +221,38 @@ export function ScenarioProfileView({
                 Точка Б (Финальная цель)
               </div>
               {isEdit ? (
-                <textarea 
+                <Textarea 
                   className={styles.editTextarea}
                   value={draft.end_point || ''}
                   onChange={e => setDraft(prev => ({ ...prev, end_point: e.target.value }))}
                   placeholder="К чему должен прийти сюжет..."
                   style={{ minHeight: '180px' }}
+                  maxLength={500}
                 />
               ) : (
                 <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap' }}>
                   {draft.end_point || 'Конечная цель не задана.'}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.detailGroup}>
+              <div className={styles.detailTitle}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Внутреннее описание (Скрыто от игрока)
+              </div>
+              {isEdit ? (
+                <Textarea 
+                  className={styles.editTextarea}
+                  value={draft.internal_description || ''}
+                  onChange={e => setDraft(prev => ({ ...prev, internal_description: e.target.value }))}
+                  placeholder="Пропишите здесь истинную суть сюжета, скрытые угрозы и нюансы для ИИ..."
+                  style={{ minHeight: '180px' }}
+                  maxLength={1000}
+                />
+              ) : (
+                <p className={styles.detailText} style={{ whiteSpace: 'pre-wrap', color: 'rgba(255,255,255,0.4)' }}>
+                  {draft.internal_description || 'Внутреннее описание не задано.'}
                 </p>
               )}
             </div>

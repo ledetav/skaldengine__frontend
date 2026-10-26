@@ -66,7 +66,7 @@ export const useProfile = (username?: string) => {
             }
           })
 
-          setPersonas(personasData.map((p: any) => ({
+          setPersonas((personasData || []).map((p: any) => ({
             id: p.id,
             name: p.name,
             description: p.description,
@@ -80,11 +80,11 @@ export const useProfile = (username?: string) => {
             facts: p.facts
           })))
 
-          setLorebooks(lorebooksData.map((lb: any) => ({
+          setLorebooks((lorebooksData || []).map((lb: any) => ({
             id: lb.id,
             name: lb.name,
             description: lb.description || null,
-            entries_count: lb.entries?.length || 0,
+            entries_count: lb.entries?.length || lb.entries_count || 0,
             fandom: lb.fandom || null
           })))
           setLastChats(chatsData)
