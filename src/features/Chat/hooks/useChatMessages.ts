@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react'
 import { logger } from '@/core/utils/logger'
 import { chatsApi } from '@/core/api/chats'
 import { messagesApi } from '@/core/api/messages'
-import type { Message, UserPersona, Character, Checkpoint } from '@/core/types/chat'
+import type { Character } from '@/core/types/character'
+import type { Message, UserPersona, Checkpoint } from '@/core/types/chat'
 
 interface UseChatMessagesOptions {
   chatId?: string

@@ -28,7 +28,7 @@ interface ChatSidebarContainerProps {
   isApiKeyModalOpen: boolean
   onPerspectiveChange: (val: string) => void
   onLanguageChange: (val: string) => void
-  onFontSizeChange: (val: 'small' | 'medium' | 'large') => void
+  onFontSizeChange: (val: any) => void
   onAutoScrollToggle: () => void
   onShowThoughtsToggle: () => void
   onOpenApiKeyModal: () => void
