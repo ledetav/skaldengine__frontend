@@ -287,7 +287,7 @@ export default function LorebookDetailScreen() {
         const data = await lorebooksApi.getLorebook(id)
         setLorebook(data)
         setEntries(data.entries || [])
-      } catch (err) {
+      } catch {
         error('Ошибка загрузки лорбука')
       } finally {
         setLoading(false)
@@ -335,7 +335,7 @@ export default function LorebookDetailScreen() {
       setEntries([...entries, newEntry])
       setAddMode('none')
       success('Запись добавлена')
-    } catch (err) {
+    } catch {
       error('Ошибка при добавлении записи')
     }
   }
@@ -348,7 +348,7 @@ export default function LorebookDetailScreen() {
 
       setAddMode('none')
       success(`Импортировано ${newEntries.length} записей. Пожалуйста, обновите страницу для просмотра.`)
-    } catch (err) {
+    } catch {
         error('Ошибка при импорте записей')
     }
   }
@@ -360,7 +360,7 @@ export default function LorebookDetailScreen() {
       await lorebooksApi.deleteLorebookEntry(id, entryId);
       setEntries(entries.filter(e => e.id !== entryId))
       success('Запись удалена')
-    } catch (err) {
+    } catch {
       error('Ошибка при удалении записи')
     }
   }
@@ -371,7 +371,7 @@ export default function LorebookDetailScreen() {
       await lorebooksApi.deleteLorebook(id);
       success('Лорбук удалён');
       navigate('/lorebooks');
-    } catch (err) {
+    } catch {
       error('Ошибка при удалении лорбука');
     } finally {
       setShowDeleteConfirm(false);
