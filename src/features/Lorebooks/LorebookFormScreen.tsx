@@ -70,6 +70,9 @@ export default function LorebookFormScreen() {
   const [charLorebooks, setCharLorebooks] = useState<Lorebook[]>([])
 
   useEffect(() => {
+    /**
+     * Загружает доступных персон и персонажей, а также существующий лорбук при режиме редактирования.
+     */
     const loadData = async () => {
       try {
         const [ps, cs] = await Promise.all([
@@ -105,10 +108,16 @@ export default function LorebookFormScreen() {
     }
   }, [form.character_id, form.type])
 
+  // Бизнес-правило: Оригинальный персонаж (Original) ОБЯЗАН иметь как минимум один основной лорбук (main).
+  // Если текущий лорбук является единственным с тегом 'main' для этого персонажа,
+  // снятие флага 'Основной лорбук' блокируется в интерфейсе во избежание потери контекста мира.
   const mainLbsForChar = charLorebooks.filter((lb: Lorebook) => lb.tags?.includes('main'));
-  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id); // Текущий лорбук является одним из основных
+  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id);
   const isToggleLocked = isEdit && holdsMainTag && isOriginalChar && mainLbsForChar.length === 1;
 
+  /**
+   * Каррированная функция-обработчик изменения текстовых и селекторных полей формы.
+   */
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -116,6 +125,9 @@ export default function LorebookFormScreen() {
     if (errors[field]) setErrors((prev: Partial<FormData>) => ({ ...prev, [field]: undefined }))
   }
 
+  /**
+   * Проверяет заполнение обязательных полей формы (название лорбука).
+   */
   const validate = (): boolean => {
     const e: Partial<FormData> = {}
     if (!form.name.trim()) e.name = 'Название обязательно'
@@ -123,6 +135,9 @@ export default function LorebookFormScreen() {
     return Object.keys(e).length === 0
   }
 
+  /**
+   * Отправляет созданный или обновленный лорбук на бэкенд и переходит к его карточке.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return

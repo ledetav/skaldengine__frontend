@@ -126,6 +126,11 @@ export default function PersonasListScreen() {
     fetchData()
   }, [error])
 
+  /**
+   * Удаляет выбранную персону пользователя на сервере и исключает её из карточек на экране.
+   * 
+   * @param persona - Удаляемая персона
+   */
   const handleDelete = async (persona: UserPersona) => {
     try {
       await personasApi.deletePersona(persona.id)

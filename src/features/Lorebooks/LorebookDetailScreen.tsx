@@ -19,6 +19,9 @@ function AddSingleEntry({ onAdd, onCancel }: {
   const [submitting, setSubmitting] = useState(false)
   const { error } = useToast()
 
+  /**
+   * Валидирует и отправляет новую запись лорбука с приоритетом (1-5) и ключевыми словами.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!keywords.trim() || !content.trim()) {
@@ -289,6 +292,9 @@ export default function LorebookDetailScreen() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /**
+     * Загружает детальные данные лорбука и все связанные с ним записи.
+     */
     async function load() {
       if (!id) return
       try {
@@ -324,6 +330,11 @@ export default function LorebookDetailScreen() {
     )
   }
 
+  /**
+   * Добавляет одиночную запись лорбука с временным ID для мгновенного обновления таблицы.
+   * 
+   * @param entry - Поля создаваемой записи (keywords, content, category, priority, is_always_included)
+   */
   const handleAddEntry = async (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => {
     try {
       if (!id) return;
@@ -349,6 +360,11 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Выполняет пакетный импорт массива записей в лорбук через Bulk API.
+   * 
+   * @param newEntries - Массив импортируемых записей
+   */
   const handleBatchImport = async (newEntries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => {
     try {
       if (!id) return;
@@ -362,6 +378,11 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Удаляет запись лорбука на сервере и исключает её из локального списка таблицы.
+   * 
+   * @param entryId - Идентификатор удаляемой записи
+   */
   const handleDeleteEntry = async (entryId: string) => {
     try {
       if (!id) return;
@@ -387,6 +408,9 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Экспортирует записи текущего лорбука в файл формата JSON для бэкапа или переноса в другие миры.
+   */
   const handleExport = () => {
     const data = entries.map(({ keywords, content, priority }) => ({ keywords, content, priority }))
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })

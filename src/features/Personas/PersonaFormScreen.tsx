@@ -56,6 +56,9 @@ export default function PersonaFormScreen() {
 
   useEffect(() => {
     if (isEdit && id) {
+      /**
+       * Загружает существующую персону пользователя для заполнения полей формы при редактировании.
+       */
       const fetchPersona = async () => {
         try {
           const existing = await personasApi.getPersona(id)
@@ -68,6 +71,9 @@ export default function PersonaFormScreen() {
     }
   }, [id, isEdit])
 
+  /**
+   * Каррированная функция-сеттер значений текстовых полей формы с очисткой сообщений об ошибках.
+   */
   const set = (field: keyof PersonaFormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -75,6 +81,9 @@ export default function PersonaFormScreen() {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
   }
 
+  /**
+   * Валидирует обязательные поля формы персоны (имя).
+   */
   const validate = (): boolean => {
     const newErrors: Partial<PersonaFormData> = {}
     if (!form.name.trim()) newErrors.name = 'Имя обязательно'
@@ -82,6 +91,9 @@ export default function PersonaFormScreen() {
     return Object.keys(newErrors).length === 0
   }
 
+  /**
+   * Отправляет созданную или отредактированную персону пользователя на бэкенд.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return

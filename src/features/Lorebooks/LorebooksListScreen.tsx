@@ -153,6 +153,11 @@ export default function LorebooksListScreen() {
     fetchLorebooks()
   }, [error])
 
+  /**
+   * Удаляет выбранный лорбук на сервере и исключает его из отображаемого списка.
+   * 
+   * @param lb - Объект удаляемого лорбука
+   */
   const handleDelete = async (lb: Lorebook) => {
     console.log(`[Frontend] Попытка удалить лорбук с ID:`, lb.id);
     

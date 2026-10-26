@@ -50,6 +50,9 @@ export default function ProfileScreen() {
     );
   }
 
+  /**
+   * Рендерит содержимое выбранной вкладки профиля (обзор, персоны, лорбуки, настройки).
+   */
   const renderTabContent = () => {
     switch (activeTab) {
       case 'main': return <MainTab user={user} lastChats={lastChats} />;

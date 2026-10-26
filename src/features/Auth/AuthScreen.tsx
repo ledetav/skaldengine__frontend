@@ -39,11 +39,19 @@ export default function AuthScreen() {
     setGlobalError(null)
   }, [location.pathname])
 
+  /**
+   * Переключает режим экрана между входом (/login) и регистрацией (/register).
+   */
   const toggleAuth = () => {
     navigate(isLogin ? '/register' : '/login')
   }
 
-  // Логика клиентской валидации
+  /**
+   * Выполняет клиентскую валидацию отдельного поля формы по регулярным выражениям и правилам безопасности.
+   * 
+   * @param name - Имя проверяемого поля
+   * @param value - Текущее строковое значение поля
+   */
   const validateField = (name: string, value: string) => {
     const fieldErrors: string[] = []
 
@@ -102,6 +110,10 @@ export default function AuthScreen() {
     setErrors(prev => ({ ...prev, [name]: fieldErrors }))
   }
 
+  /**
+   * Обработчик ввода в поля формы: форматирует дату по маске ДД.ММ.ГГГГ,
+   * обновляет стейт и запускает валидацию.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name
     let value = e.target.value
@@ -131,11 +143,17 @@ export default function AuthScreen() {
     }
   }
 
+  /**
+   * Возвращает объединенную строку ошибок для указанного поля или null.
+   */
   const getErrorText = (name: string) => {
     const fieldErrors = errors[name]
     return fieldErrors && fieldErrors.length > 0 ? fieldErrors.join(', ') : null
   }
 
+  /**
+   * Проверяет готовность формы к отправке (заполненность обязательных полей и отсутствие ошибок валидации).
+   */
   const isFormValid = () => {
     if (isLogin) {
       return !!(formData.login && formData.password && !errors.login?.length && !errors.password?.length)
@@ -146,6 +164,10 @@ export default function AuthScreen() {
     )
   }
 
+  /**
+   * Отправляет форму авторизации или регистрации на бэкенд, сохраняет полученный JWT
+   * и выполняет редирект в приложение.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isFormValid() || isLoading) return

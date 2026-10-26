@@ -35,6 +35,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  /**
+   * Отправляет обновленные персональные данные профиля (имя, логин, email, био, аватар) на сервер.
+   */
   const handleUpdateProfile = async () => {
     try {
       setIsUpdating(true);
@@ -55,6 +58,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     }
   };
 
+  /**
+   * Выполняет процедуру смены текущего пароля на новый.
+   */
   const handleChangePassword = async () => {
     if (!passwordData.oldPassword || !passwordData.newPassword) {
       showError('Введите оба пароля');
@@ -72,6 +78,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     }
   };
 
+  /**
+   * Удаляет аккаунт текущего пользователя, очищает токены авторизации в браузере и перенаправляет на лендинг.
+   */
   const handleDeleteAccount = async () => {
     try {
       await authApi.deleteMe();
