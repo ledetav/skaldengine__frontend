@@ -12,6 +12,9 @@ interface FandomFilterProps {
   onChange: (selected: string[]) => void
 }
 
+/**
+ * Компонент фильтрации по фандомам с поиском и возможностью множественного выбора.
+ */
 export const FandomFilter: React.FC<FandomFilterProps> = ({
   availableFandoms,
   selectedFandoms,
@@ -37,7 +40,7 @@ export const FandomFilter: React.FC<FandomFilterProps> = ({
 
   return (
     <div className={styles.fandomFilterContainer}>
-      {/* 1. Chips (Selected) */}
+      {/* 1. Выбранные теги (чипсы) */}
       {selectedFandoms.length > 0 && (
         <div className={styles.selectedChips}>
           {selectedFandoms.map(name => (
@@ -54,7 +57,7 @@ export const FandomFilter: React.FC<FandomFilterProps> = ({
         </div>
       )}
 
-      {/* 2. Search Box */}
+      {/* 2. Поле поиска фандома */}
       <input 
         type="text" 
         className={styles.fandomSearchInput}
@@ -63,7 +66,7 @@ export const FandomFilter: React.FC<FandomFilterProps> = ({
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* 3. Checklist */}
+      {/* 3. Список доступных фандомов с чекбоксами */}
       <div className={styles.fandomList}>
         {filteredFandoms.map(f => (
           <div 

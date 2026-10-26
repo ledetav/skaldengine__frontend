@@ -2,12 +2,12 @@
 @import './tokens.css';
 
 /* ──────────────────────────────────────────────
-   Design System Entry — SkaldEngine Violet Core
+   Точка входа дизайн-системы — Фиолетовое ядро SkaldEngine
 ──────────────────────────────────────────────── */
 
 
 /* ──────────────────────────────────────────────
-   Reset & Base
+   Сброс стилей и базовые параметры
 ──────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -28,16 +28,16 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  /* Prevent layout shifts on mobile */
+  /* Предотвращение сдвигов макета на мобильных устройствах */
   touch-action: manipulation;
 }
 
-/* Touch-friendly tap targets */
+/* Сенсорные области клика */
 button, a, [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Ensure images never overflow on mobile */
+/* Предотвращение переполнения изображений на мобильных устройствах */
 img {
   max-width: 100%;
   height: auto;

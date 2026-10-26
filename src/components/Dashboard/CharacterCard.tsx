@@ -9,6 +9,11 @@ interface CharacterCardProps {
   isHotOverride?: boolean
 }
 
+/**
+ * Карточка персонажа в каталоге витрины (Dashboard).
+ * Отображает аватар/карточку, бейджи новизны, популярности и NSFW, автора,
+ * счетчики диалогов и кнопку перехода к созданию чата.
+ */
 export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMode = 'grid', isHotOverride }) => {
   const { pathname } = useLocation()
   const isDebug = pathname.includes('/debug')
@@ -27,19 +32,19 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
     return '👤'
   }
 
-  // New: created within last 7 days
+  // Новинка: персонаж создан за последние 7 дней
   const isNew = character.created_at 
     ? (new Date().getTime() - new Date(character.created_at).getTime()) < 7 * 24 * 60 * 60 * 1000 
     : false
   
-  // Hot: if passed from parent (top 5 by monthly chats)
+  // Популярное: передан флаг от родителя (входит в топ-5 по чатам за месяц)
   const isHot = isHotOverride
 
   const cardClass = `${styles.characterCard} ${viewMode === 'list' ? styles.isListView : ''}`
 
   return (
     <div className={cardClass}>
-      {/* 1. Image Area (TOP) */}
+      {/* 1. Область изображения (верх) */}
       <div className={styles.cardImageArea}>
         {character.avatar_url || character.card_image_url ? (
           <img 
@@ -54,13 +59,13 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
           </>
         )}
         
-        {/* Top Badges */}
+        {/* Верхние бейджи новизны и популярности */}
         <div className={styles.topBadgesRow}>
           {isNew && <div className={styles.newBadge}>NEW</div>}
           {isHot && <div className={styles.hotBadge}>HOT</div>}
         </div>
 
-        {/* NSFW Badge */}
+        {/* Бейдж контента для взрослых (NSFW) */}
         {character.nsfw_allowed && (
           <div className={styles.nsfwBadge}>
             NSFW
@@ -68,7 +73,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         )}
       </div>
 
-      {/* 2. Creator Bar (MIDDLE) */}
+      {/* 2. Блок создателя персонажа (центр) */}
       <div className={styles.cardCreatorBar}>
         <div className={styles.creatorAvatarMini}>
           {character.author?.avatar_url ? (
@@ -96,7 +101,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         </div>
       </div>
 
-      {/* 3. Info Section (BOTTOM) */}
+      {/* 3. Описание и характеристики (низ) */}
       <div className={styles.cardBody}>
         <div className={styles.cardHeader}>
           <h3 className={styles.cardName}>{character.name}</h3>
@@ -106,13 +111,13 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
         </div>
         <p className={styles.cardDesc}>{character.description}</p>
         
-        {/* Mobile-only visible button */}
+        {/* Кнопка быстрого запуска для мобильных экранов */}
         <Link to={getDebugHref(`/chat/create/${character.id}`)} className={styles.mobileStartChatBtn}>
           Начать чат
         </Link>
       </div>
 
-      {/* Hover Action (Covers the whole card) */}
+      {/* Действие при наведении (на весь размер карточки) */}
       <div className={styles.cardHoverOverlay}>
         <Link to={getDebugHref(`/chat/create/${character.id}`)} className={styles.startChatBtn}>
           Начать чат

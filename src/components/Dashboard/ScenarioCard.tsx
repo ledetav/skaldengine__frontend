@@ -6,8 +6,11 @@ interface ScenarioCardProps {
   scenario: Scenario
 }
 
+/**
+ * Карточка сценария на главной витрине приложения.
+ */
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  // Use deterministic logic to avoid impure Math.random during render
+  // Детерминированное вычисление бейджа для избежания нечистых функций при рендеринге
   const isHot = (scenario.id.length + scenario.title.length) % 2 === 0
   
   return (

@@ -7,7 +7,7 @@
   gap: 64px;
 }
 
-/* Divider */
+/* Разделитель */
 .divider {
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@
   opacity: 0.6;
 }
 
-/* Eyebrow */
+/* Надзаголовок */
 .eyebrow {
   font-size: 13px;
   font-weight: 600;
@@ -35,7 +35,7 @@
   color: var(--accent-fuchsia);
 }
 
-/* Title */
+/* Заголовок */
 .title {
   font-family: var(--font-ui);
   font-size: clamp(26px, 4vw, 44px);
@@ -59,7 +59,7 @@
   line-height: 1.7;
 }
 
-/* Intro Layout */
+/* Вводный макет */
 .intro {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -73,7 +73,7 @@
   gap: 20px;
 }
 
-/* Chat Preview Container */
+/* Контейнер предпросмотра чата */
 .chatPreview {
   background: var(--bg-card);
   backdrop-filter: blur(20px);
@@ -95,7 +95,7 @@
   gap: 20px;
 }
 
-/* User Message */
+/* Сообщение пользователя */
 .userMessage {
   align-self: flex-end;
   display: flex;
@@ -141,7 +141,7 @@
   flex-shrink: 0;
 }
 
-/* AI Message */
+/* Сообщение ИИ */
 .aiMessage {
   display: flex;
   gap: 16px;
@@ -239,7 +239,7 @@
   letter-spacing: 2px;
 }
 
-/* Input Area */
+/* Поле ввода */
 .chatInput {
   margin-top: 10px;
   display: flex;
@@ -288,7 +288,7 @@
   50%       { opacity: 0; }
 }
 
-/* How it works */
+/* Как это работает */
 .how {
   display: flex;
   flex-direction: column;
@@ -371,12 +371,12 @@
 .line-purple  { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
 .line-fuchsia { background: linear-gradient(90deg, transparent, var(--accent-fuchsia), transparent); }
 
-/* Tablet: 2-col steps, intro becomes single column */
+/* Планшеты: шаги в 2 колонки, введение в одну колонку */
 @media (max-width: 992px) {
   .section { gap: 48px; }
   .intro { grid-template-columns: 1fr; }
 
-  /* 2 columns for steps; last step spans full width if count is odd */
+  /* 2 колонки для шагов; последний шаг на всю ширину при нечетном количестве */
   .steps {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -413,7 +413,7 @@
 @media (max-width: 640px) {
   .section { padding: 20px 16px 60px; }
 
-  /* Back to single column on phones */
+  /* Возврат к одной колонке на смартфонах */
   .steps { grid-template-columns: 1fr; }
   .steps > .step:last-child:nth-child(odd) { grid-column: auto; }
 

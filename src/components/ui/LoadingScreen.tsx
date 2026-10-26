@@ -17,6 +17,9 @@ const atmosphericMessages = [
   'Разогрев творческого ядра...'
 ];
 
+/**
+ * Атмосферный индикатор загрузки с кольцевой неоновой анимацией и сменяющимися сообщениями.
+ */
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   message,
   minimal = false,
@@ -35,7 +38,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
       setTimeout(() => {
         setRotatingIndex((prev) => (prev + 1) % atmosphericMessages.length);
         setFade(true);
-      }, 500); // Wait for fade out
+      }, 500); // Ожидание завершения анимации затухания
     }, 3000);
 
     return () => clearInterval(interval);

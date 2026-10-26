@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import styles from '@/theme/components/Footer.module.css'
 
+/**
+ * Подвал сайта (Footer) с ссылками на разделы платформы, социальные сети и правовую информацию.
+ */
 export default function Footer() {
   const year = new Date().getFullYear()
 
@@ -9,7 +12,7 @@ export default function Footer() {
       <div className={styles.topGlow} aria-hidden="true" />
 
       <div className={styles.inner}>
-        {/* Brand */}
+        {/* Логотип и описание платформы */}
         <div className={styles.brand}>
           <Link to="/" className={styles.logo} aria-label="SkaldEngine Home">
             <span className={styles.logoIcon}>⚙</span>
@@ -31,7 +34,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links */}
+        {/* Навигационные ссылки */}
         <div className={styles.linksGroup}>
           <h3 className={styles.groupTitle}>Платформа</h3>
           <ul className={styles.linkList}>
@@ -52,7 +55,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
+      {/* Нижняя полоса с копирайтом */}
       <div className={styles.bottom}>
         <span>© {year} SkaldEngine. Все права защищены.</span>
         <span className={styles.madeWith}>Сделано с ♥ на базе Polza.ai</span>

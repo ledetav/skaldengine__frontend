@@ -1,7 +1,11 @@
 import { createContext, useState, useCallback } from 'react'
 import styles from './Toast.module.css'
 
-/* ─── Types ─────────────────────────────────── */
+/* ─── Типы уведомлений ─────────────────────────────────── */
+
+/**
+ * Тип всплывающего уведомления.
+ */
 export type ToastType = 'success' | 'error' | 'info'
 
 interface ToastItem {
@@ -11,6 +15,9 @@ interface ToastItem {
   exiting?: boolean
 }
 
+/**
+ * Интерфейс управления всплывающими уведомлениями (Toast).
+ */
 export interface ToastContextValue {
   toast: (message: string, type?: ToastType) => void
   success: (message: string) => void
@@ -18,10 +25,10 @@ export interface ToastContextValue {
   info: (message: string) => void
 }
 
-/* ─── Context ───────────────────────────────── */
+/* ─── Контекст всплывающих уведомлений ─────────────────── */
 export const ToastContext = createContext<ToastContextValue | null>(null)
 
-/* ─── Icons ─────────────────────────────────── */
+/* ─── Векторные иконки ─────────────────────────────────── */
 function SuccessIcon() {
   return (
     <svg className={styles.toastIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -46,7 +53,11 @@ function InfoIcon() {
   )
 }
 
-/* ─── Provider ──────────────────────────────── */
+/* ─── Провайдер уведомлений ────────────────────────────── */
+
+/**
+ * Провайдер всплывающих уведомлений Toast для глобального отображения сообщений об успехе или ошибках.
+ */
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([])
 
@@ -88,5 +99,3 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     </ToastContext.Provider>
   )
 }
-
-

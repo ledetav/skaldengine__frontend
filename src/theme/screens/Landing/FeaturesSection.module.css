@@ -7,7 +7,7 @@
   gap: 64px;
 }
 
-/* Header */
+/* Шапка раздела */
 .header {
   text-align: center;
   display: flex;
@@ -49,14 +49,14 @@
   line-height: 1.6;
 }
 
-/* Grid */
+/* Сетка возможностей */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 24px;
 }
 
-/* Card */
+/* Карточка возможности */
 .card {
   background: var(--bg-card);
   backdrop-filter: blur(20px);
@@ -77,7 +77,7 @@
 .card-fuchsia:hover { box-shadow: 0 20px 60px rgba(217, 70, 239, 0.15); border-color: var(--accent-fuchsia); }
 .card-purple:hover  { box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15); border-color: var(--accent-purple); }
 
-/* Card Image */
+/* Изображение карточки */
 .cardImg {
   position: relative;
   height: 210px;
@@ -120,7 +120,7 @@
 .glow-fuchsia { background: radial-gradient(circle at 50% 100%, rgba(217, 70, 239, 0.4), transparent 60%); }
 .glow-purple  { background: radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.4), transparent 60%); }
 
-/* Card Body */
+/* Тело карточки */
 .cardBody {
   padding: 28px;
   display: flex;
@@ -160,7 +160,7 @@
   flex: 1;
 }
 
-/* Pills */
+/* Чипсы категорий */
 .pills {
   display: flex;
   flex-wrap: wrap;
@@ -180,7 +180,7 @@
 .pill-fuchsia { color: var(--accent-fuchsia); border-color: var(--border-fuchsia); background: rgba(217, 70, 239, 0.07); }
 .pill-purple  { color: var(--accent-purple);  border-color: var(--border-purple);  background: rgba(139, 92, 246, 0.07); }
 
-/* CTA Banner */
+/* Баннер целевого действия (CTA) */
 .ctaBanner {
   position: relative;
   border: 1px solid var(--accent-fuchsia);
@@ -241,7 +241,7 @@
   opacity: 0.9;
 }
 
-/* Tablet: exactly 2 columns (avoids ugly 1.5-column auto-fit at ~750px) */
+/* Планшеты: ровно 2 колонки (предотвращает неполные колонки при ~750px) */
 @media (max-width: 1024px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -250,7 +250,7 @@
   .section { padding: 60px 16px; }
   .ctaBanner { padding: 40px 24px; clip-path: none; border-radius: 16px; }
   .grid { grid-template-columns: 1fr; }
-  .cardImg { height: 130px; } /* Slightly shorter to save vertical space */
+  .cardImg { height: 130px; } /* Уменьшенная высота для экономии вертикального пространства */
   .cardBody { padding: 20px; }
 }
 

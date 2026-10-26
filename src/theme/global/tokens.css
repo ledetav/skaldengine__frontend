@@ -1,21 +1,21 @@
 /* ═══════════════════════════════════════════════════
-   SkaldEngine Design System — One Source of Truth
-   (Consolidated Design Tokens & Utility Classes)
-   Violet Core + Skald Flame Aesthetic
+   Дизайн-система SkaldEngine — Единый источник правды
+   (Консолидированные токены и вспомогательные классы)
+   Фиолетовое ядро и эстетика пламени Скальда
 ═══════════════════════════════════════════════════ */
 
 :root {
-  /* ─── Colors (Violet Core) ─────────────────────── */
-  --bg-base:        #07020d; /* Deep Void */
+  /* ─── Цвета (Фиолетовое ядро) ─────────────────────── */
+  --bg-base:        #07020d; /* Глубокая пустота */
   --bg-secondary:   #12041d;
   --bg-card:        rgba(18, 4, 29, 0.75);
   --bg-glass:       rgba(29, 9, 45, 0.4);
 
-  --accent-purple:  #8b5cf6; /* Main Soul */
-  --accent-fuchsia: #d946ef; /* Energy */
-  --accent-orange:  #ff6b00; /* Fire / Action (The Skald's Accent) */
-  --accent-red:     #ef4444; /* Alert / NSFW (Danger) */
-  --accent-pink:    #d946ef; /* Alias for fuchsia */
+  --accent-purple:  #8b5cf6; /* Основной акцент */
+  --accent-fuchsia: #d946ef; /* Энергия */
+  --accent-orange:  #ff6b00; /* Огонь / Действие (Акцент пламени Скальда) */
+  --accent-red:     #ef4444; /* Оповещение / NSFW (Предупреждение) */
+  --accent-pink:    #d946ef; /* Псевдоним для fuchsia */
   --accent-blue:    #3b82f6; 
   --accent-teal:    #14b8a6;
   --accent-green:   #10b981;
@@ -23,18 +23,18 @@
   --white:          #f0ece9;
   --black:          #111010;
 
-  /* ─── Glows & Effects ───────────────────────────── */
+  /* ─── Свечения и эффекты ───────────────────────────── */
   --purple-glow:    rgba(139, 92, 246, 0.3);
   --fuchsia-glow:   rgba(217, 70, 239, 0.3);
   --orange-glow:    rgba(255, 107, 0, 0.3);
   --red-glow:       rgba(239, 68, 68, 0.3);
 
-  /* ─── Text ─────────────────────────────────────── */
+  /* ─── Текст ─────────────────────────────────────── */
   --text-primary:   #f8fafc;
-  --text-secondary: #c084fc; /* Tinted secondary */
+  --text-secondary: #c084fc; /* Оттеночный вторичный текст */
   --text-muted:     #6b21a8;
 
-  /* ─── Borders ──────────────────────────────────── */
+  /* ─── Рамки и границы ──────────────────────────── */
   --border-glass:   rgba(217, 70, 239, 0.15);
   --border-purple:  rgba(139, 92, 246, 0.3);
   --border-orange:  rgba(255, 107, 0, 0.4);
@@ -43,37 +43,37 @@
   --border-teal:    rgba(20, 184, 166, 0.4);
   --border-green:   rgba(16, 185, 129, 0.4);
 
-  /* ─── Typography ───────────────────────────────── */
+  /* ─── Шрифты и типографика ──────────────────────── */
   --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
   --font-narrative: 'Lora', Georgia, serif;
   --font-thought:   'Playfair Display', Georgia, serif;
 
-  /* ─── Shapes (Angular/Technical) ───────────────── */
+  /* ─── Формы со срезанными углами (Технические срезы) ─── */
   --clip-cut: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
   --clip-cut-sm: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   --radius-angle: 4px;
 
-  /* ─── Transitions ─────────────────────────────── */
+  /* ─── Плавность анимаций и переходов ───────────── */
   --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ─── Layout ───────────────────────────────── */
-  /* Navbar height — used across screens for padding-top offsets */
+  /* ─── Макет и отступы ──────────────────────────── */
+  /* Высота навигационной панели — используется для отступов экранов */
   --navbar-height:        64px;
-  --navbar-height-mobile: 56px; /* Compact on small screens */
+  --navbar-height-mobile: 56px; /* Компактная высота для мобильных экранов */
 
-  /* Universal full-height viewport (handles iOS Safari address bar).
-     Usage: height: var(--full-vh);
-     Browsers supporting dvh get exact visual viewport,
-     older ones fall back to 100vh (slight overscroll risk on iOS). */
+  /* Универсальная высота окна просмотра (корректно обрабатывает адресную строку iOS Safari).
+     Использование: height: var(--full-vh);
+     Браузеры с поддержкой dvh получают точную видимую область,
+     устаревшие откатываются к 100vh. */
   --full-vh: 100dvh;
 }
 
 /* ──────────────────────────────────────────────────
-   Utility Classes (BEM-like)
+   Вспомогательные утилитные классы (в стиле BEM)
 ────────────────────────────────────────────────── */
 
-/* ─── Buttons ─────────────────────────────────── */
+/* ─── Кнопки ─────────────────────────────────── */
 .ds-btn--primary, .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -179,7 +179,7 @@
   box-shadow: 0 4px 16px var(--red-glow);
 }
 
-/* ─── Form Controls ───────────────────────────── */
+/* ─── Элементы форм (Поля ввода) ───────────────────── */
 .ds-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
@@ -227,7 +227,7 @@
   background: rgba(139, 92, 246, 0.06);
 }
 
-/* ─── Cards ───────────────────────────────────── */
+/* ─── Карточки ───────────────────────────────────── */
 .ds-card {
   background: var(--bg-card);
   backdrop-filter: blur(16px);
@@ -243,7 +243,7 @@
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 
-/* ─── Label ───────────────────────────────────── */
+/* ─── Метки полей ────────────────────────────────── */
 .ds-label {
   font-size: 0.65rem;
   font-weight: 800;
@@ -254,7 +254,7 @@
   display: block;
 }
 
-/* ─── Form Group ──────────────────────────────── */
+/* ─── Группы форм ────────────────────────────────── */
 .ds-form-group {
   display: flex;
   flex-direction: column;
@@ -268,7 +268,7 @@
   margin-top: 0.4rem;
 }
 
-/* ─── Badge ───────────────────────────────────── */
+/* ─── Бейджи ─────────────────────────────────────── */
 .ds-badge {
   display: inline-flex;
   align-items: center;
@@ -338,7 +338,7 @@
   color: var(--accent-green);
 }
 
-/* ─── Sidebar nav item ────────────────────────── */
+/* ─── Элементы бокового меню ──────────────────────── */
 .ds-sidebar-item, .ds-nav-item {
   width: 100%;
   padding: 10px 16px;
@@ -368,7 +368,7 @@
   color: #fff !important;
 }
 
-/* ─── Misc Utility ────────────────────────────── */
+/* ─── Прочие утилиты ──────────────────────────────── */
 .ds-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--border-glass), transparent);

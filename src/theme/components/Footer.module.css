@@ -47,7 +47,7 @@
   }
 }
 
-/* Brand */
+/* Блок бренда */
 .brand {
   display: flex;
   flex-direction: column;
@@ -86,7 +86,7 @@
   max-width: 300px;
 }
 
-/* Socials */
+/* Социальные сети */
 .socials {
   display: flex;
   gap: 12px;
@@ -112,7 +112,7 @@
   transform: translateY(-2px);
 }
 
-/* Link groups */
+/* Группы ссылок */
 .linksGroup {
   display: flex;
   flex-direction: column;
@@ -146,7 +146,7 @@
   color: var(--text-primary);
 }
 
-/* Bottom */
+/* Нижняя полоса */
 .bottom {
   max-width: 1280px;
   margin: 0 auto;
