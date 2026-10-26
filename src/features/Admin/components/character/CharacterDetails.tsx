@@ -8,6 +8,9 @@ interface CharacterDetailsProps {
   handleChange: (field: keyof Character, value: any) => void
 }
 
+/**
+ * Блок подробных текстовых полей персонажа (описание, личность, сценарий, первое сообщение).
+ */
 export function CharacterDetails({ character, isEditing, handleChange }: CharacterDetailsProps) {
   return (
     <>

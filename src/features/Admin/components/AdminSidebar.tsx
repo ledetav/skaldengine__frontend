@@ -10,6 +10,11 @@ interface AdminSidebarProps {
 
 const MODERATOR_HIDDEN: AdminTab[] = ['users', 'lorebooks_fandom', 'lorebooks_persona']
 
+/**
+ * Боковая панель навигации администратора.
+ * Фильтрует пункты меню в зависимости от роли (администратор / модератор)
+ * и поддерживает сохранение отладочного режима (/debug) при переходе.
+ */
 export function AdminSidebar({ activeTab, role }: AdminSidebarProps) {
   const allMenuItems: { id: AdminTab; label: string; route: string; icon: React.ReactNode; color: string }[] = [
     { 
@@ -99,7 +104,7 @@ export function AdminSidebar({ activeTab, role }: AdminSidebarProps) {
   const { pathname } = useLocation()
 
   const handleNavigate = (route: string) => {
-    // If we are currently in debug mode, and target route doesn't have it, append it
+    // Если находимся в режиме отладки (debug) и целевой маршрут не содержит его, добавляем суффикс
     const isDebug = pathname.includes('/debug')
     const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
     navigate(finalRoute)

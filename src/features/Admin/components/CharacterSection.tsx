@@ -14,6 +14,10 @@ interface CharacterSectionProps {
 
 type ViewMode = 'grid' | 'table'
 
+/**
+ * Секция каталога персонажей в панели администратора.
+ * Поддерживает переключение сетка/таблица, локальный поиск, фильтрацию и сортировку.
+ */
 export function CharacterSection({ 
   characters, 
   onSelectCharacter,

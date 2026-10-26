@@ -1,4 +1,4 @@
-/* Character Profile View (New Screen) */
+/* Экран детального профиля персонажа */
 .characterProfileOverlay {
   position: absolute;
   inset: 0;
@@ -6,7 +6,7 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 0px; /* Changed from 30px to handle header/content spacing separately */
+  gap: 0px; /* Изменено с 30px для раздельного контроля отступов шапки и контента */
   padding: 15px 40px 30px;
   animation: slideInFromRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-y: auto;
@@ -41,7 +41,7 @@
   gap: 24px;
 }
 
-/* Character Card (Left Column) */
+/* Карточка персонажа (левая колонка) */
 .charSidebarCard {
   position: relative;
   background: transparent;
@@ -103,7 +103,7 @@
 .charBasicInfo {
   margin-top: 54px;
   padding: 0 24px;
-  text-align: left; /* Changed from center */
+  text-align: left; /* Изменено выравнивание */
 }
 
 .charProfileName {
@@ -159,7 +159,7 @@
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Details Section (Right Column) */
+/* Секция деталей (правая колонка) */
 .detailsCard {
   position: relative;
   background: transparent;
@@ -306,7 +306,7 @@
   .navItem { padding: 15px; justify-content: center; }
 }
 
-/* Lorebook Cards in Profile */
+/* Карточки лорбуков в профиле */
 .lorebookList {
   display: flex;
   flex-direction: column;
@@ -511,4 +511,4 @@
   .createBtn { font-size: 0.72rem; padding: 8px 14px; }
   .userBadge { display: none; }
 }
-
+

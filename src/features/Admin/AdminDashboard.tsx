@@ -26,6 +26,11 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
 import type { Character } from './types'
 
+/**
+ * Главный экран панели администратора (Admin Dashboard).
+ * Обеспечивает полноценное управление персонажами, лорбуками (фандомными, персонажей, персон),
+ * пользователями, персонами и сценариями с сортировкой, фильтрацией и WebSocket-обновлениями.
+ */
 export default function AdminDashboard() {
   const { id } = useParams<{ id: string }>()
   const { pathname } = useLocation()
@@ -44,7 +49,7 @@ export default function AdminDashboard() {
   const effectiveRole = currentUser?.role || (isDebug ? roleFromStorage : null)
   const isAdmin = effectiveRole === 'admin' || effectiveRole === 'moderator'
 
-  // Data hook — загрузка, WS, пагинация
+  // Хук загрузки данных — пагинация, WebSocket обновления и списки сущностей
   const {
     characters, lorebooksFandom, lorebooksCharacter, lorebooksPersona,
     users, personas, scenarios, allLorebooks, isDataLoading,
@@ -52,7 +57,7 @@ export default function AdminDashboard() {
     setUsers, setPersonas, setScenarios,
   } = useAdminData(isAdmin, activeTab, pathname, currentPage)
 
-  // Sorting state
+  // Состояние сортировки таблиц
   const [sortField, setSortField] = useState('')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const handleSort = (field: string) => {
@@ -66,26 +71,26 @@ export default function AdminDashboard() {
       : <span style={{ color: 'var(--accent-purple)', marginLeft: '4px' }}>↓</span>
   }
 
-  // Filter state
+  // Состояние фильтрации
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState<FilterState>({})
   const [userSearch, setUserSearch] = useState('')
   const [personaSearch, setPersonaSearch] = useState('')
 
-  // Filters hook — filtered lists
+  // Хук фильтрации — отфильтрованные списки сущностей
   const { filteredUsers, filteredPersonas, filteredCharacters, filteredLorebooks, isFilterActiveForTab } = useAdminFilters({
     characters, users, personas, lorebooksFandom, lorebooksCharacter, lorebooksPersona,
     activeTab, activeFilters, sortField, sortDir, userSearch, personaSearch,
   })
 
-  // Navigation hook — sync tab with URL
+  // Хук навигации — синхронизация активной вкладки с URL
   useAdminNavigation({
     pathname, activeTab, lorebooksFandom, lorebooksCharacter, lorebooksPersona,
     onTabChange: (tab) => setActiveTab(tab),
     onPageReset: (tab) => setCurrentPage(prev => ({ ...prev, [tab]: 1 })),
   })
 
-  // Route detection
+  // Определение текущего маршрута и детального вида
   const isCreateRoute = pathname.includes('/create')
   const detailId = id || (isCreateRoute ? 'create' : undefined)
   const isCharacterDetail = detailId && pathname.includes('/characters/') && !pathname.includes('/lorebooks/')

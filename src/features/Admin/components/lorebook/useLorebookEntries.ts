@@ -9,6 +9,10 @@ interface UseLorebookEntriesOptions {
   onLorebookUpdate?: (updated: Partial<Lorebook>) => void
 }
 
+/**
+ * Хук для управления записями конкретного лорбука в админ-панели.
+ * Обеспечивает постраничную загрузку, редактирование, удаление и обработку WebSocket-обновлений.
+ */
 export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLorebookEntriesOptions) {
   const { success } = useToast()
 
@@ -71,7 +75,7 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
           onLorebookUpdate(payload.data)
         }
       } catch {
-        // ignore websocket json parse error
+        // Игнорируем ошибки парсинга некорректных сообщений WebSocket
       }
     }
     return () => { socket.close() }

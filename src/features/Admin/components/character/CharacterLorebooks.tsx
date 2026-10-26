@@ -12,6 +12,9 @@ interface CharacterLorebooksProps {
   toggleLorebook: (lbId: string) => void
 }
 
+/**
+ * Блок списка прикрепленных и доступных для прикрепления лорбуков персонажа.
+ */
 export function CharacterLorebooks({
   character,
   charLorebooks,

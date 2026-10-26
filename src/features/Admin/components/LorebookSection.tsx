@@ -17,6 +17,10 @@ interface LorebookSectionProps {
   renderSortIcon?: (field: string) => ReactNode
 }
 
+/**
+ * Секция управления лорбуками в панели администратора.
+ * Переключается между списком баз знаний и детальным экраном редактирования записей.
+ */
 export function LorebookSection({
   type: initialType,
   lorebooks,

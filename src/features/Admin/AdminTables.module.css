@@ -1,8 +1,8 @@
-/* Grid View */
+/* Сетка карточек */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Reduced from 320px */
-  gap: 20px; /* Reduced from 30px */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Уменьшено с 320px */
+  gap: 20px; /* Уменьшено с 30px */
 }
 
 .adminCard {
@@ -16,7 +16,7 @@
 }
 
 .adminCard:hover {
-  transform: translateY(-6px); /* Reduced from 10px */
+  transform: translateY(-6px); /* Уменьшено с 10px */
   background: rgba(30, 30, 45, 0.5);
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -24,7 +24,7 @@
 .cardTop {
   display: flex;
   align-items: center;
-  gap: 14px; /* Reduced from 20px */
+  gap: 14px; /* Уменьшено с 20px */
   margin-bottom: 10px;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .cardName {
-  font-size: 1rem; /* Reduced from 1.25rem */
+  font-size: 1rem; /* Уменьшено с 1.25rem */
   font-weight: 950;
   margin: 0 0 4px 0;
   letter-spacing: -0.01em;
@@ -101,13 +101,13 @@
 }
 
 .statLabel {
-  font-size: 0.6rem; /* Reduced from 0.65rem */
+  font-size: 0.6rem; /* Уменьшено с 0.65rem */
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.2);
 }
 
 .statValue {
-  font-size: 0.9rem; /* Reduced from 1.05rem */
+  font-size: 0.9rem; /* Уменьшено с 1.05rem */
   font-weight: 900;
   color: var(--white);
 }
@@ -117,7 +117,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Filter Styles */
+/* Стили фильтров */
 .filterBtn {
   display: flex;
   align-items: center;
@@ -305,4 +305,4 @@
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.6);
 }
-
+

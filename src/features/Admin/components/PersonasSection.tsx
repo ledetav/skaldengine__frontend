@@ -16,6 +16,10 @@ interface PersonasSectionProps {
   onSearchChange: (v: string) => void
 }
 
+/**
+ * Секция каталога игровых персон пользователей в панели администратора.
+ * Отображает таблицу персон с привязкой к владельцу, счетчиками чатов и лорбуков.
+ */
 export function PersonasSection({
   personas, users, onSelectPersona, onToggleFilter, isFilterActive,
   onSort, renderSortIcon, search, onSearchChange,

@@ -22,6 +22,11 @@ interface SearchableSelectProps {
   customValueLabel?: string
 }
 
+/**
+ * Компонент выпадающего списка с поиском (Searchable Select).
+ * Рендерит выпадающее меню через React Portal, автоматически вычисляет экранные
+ * координаты и фильтрует доступные элементы по введенному тексту.
+ */
 export function SearchableSelect({
   options,
   value,
@@ -55,7 +60,7 @@ export function SearchableSelect({
     }
     document.addEventListener('mousedown', handleClickOutside)
     
-    // Update coordinates when opening
+    // Обновление экранных координат выпадающего списка при открытии
     if (isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
       setCoords({
@@ -66,7 +71,7 @@ export function SearchableSelect({
     }
 
     const handleScroll = (event: Event) => {
-      // Don't close if scrolling inside the dropdown
+      // Не закрывать меню при прокрутке внутри самого выпадающего списка
       const target = event.target as HTMLElement
       if (target.closest(`.${styles.selectDropdown}`)) return
       setIsOpen(false)
@@ -115,7 +120,7 @@ export function SearchableSelect({
                 top: coords.top,
                 left: coords.left,
                 width: coords.width,
-                zIndex: 9999, // Super high to be over everything
+                zIndex: 9999, // Поверх всех элементов интерфейса
                 pointerEvents: 'auto'
               }}
             >

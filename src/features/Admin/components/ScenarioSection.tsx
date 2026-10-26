@@ -16,6 +16,10 @@ interface ScenarioSectionProps {
 
 type ViewMode = 'grid' | 'table'
 
+/**
+ * Секция каталога сценариев в панели администратора.
+ * Позволяет просматривать сценарии в виде таблицы или карточек, фильтровать и сортировать.
+ */
 export function ScenarioSection({ 
   scenarios, 
   characters,

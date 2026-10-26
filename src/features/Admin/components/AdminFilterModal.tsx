@@ -33,6 +33,10 @@ interface AdminFilterModalProps {
   lorebooks: Lorebook[]
 }
 
+/**
+ * Модальное окно расширенной фильтрации сущностей панели администратора.
+ * Динамически подстраивает поля фильтрации под активную вкладку (роли, даты, фандомы, NSFW и т.д.).
+ */
 export function AdminFilterModal({
   tab,
   isOpen,

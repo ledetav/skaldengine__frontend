@@ -15,6 +15,11 @@ interface ScenarioProfileViewProps {
   onSave: (scenario: Partial<Scenario>) => Promise<void>
 }
 
+/**
+ * Экран создания и редактирования сценария в админ-панели.
+ * Позволяет настроить стартовую ситуацию (Точку А), целевую кульминацию (Точку Б),
+ * привязку к персонажу и базовые метаданные.
+ */
 export function ScenarioProfileView({ 
   scenarioId, 
   scenarios, 
@@ -105,7 +110,7 @@ export function ScenarioProfileView({
       </header>
 
       <div className={styles.characterProfileContent}>
-        {/* LEFT CARD: Sidebar/Metadata */}
+        {/* ЛЕВАЯ КОЛОНКА: Метаданные и привязка к персонажу */}
         <aside className={styles.sidebarWrapper}>
           <div className={styles.charSidebarCard}>
             <div className={styles.charBasicInfo} style={{ paddingTop: '24px' }}>
@@ -191,7 +196,7 @@ export function ScenarioProfileView({
           </div>
         </aside>
 
-        {/* RIGHT CARD: Points and Actions */}
+        {/* ПРАВАЯ КОЛОНКА: Сюжетные точки и действия */}
         <main className={styles.mainContentWrapper}>
           <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>

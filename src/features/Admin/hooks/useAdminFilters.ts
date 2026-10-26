@@ -34,6 +34,7 @@ interface UseAdminFiltersParams {
   personaSearch: string
 }
 
+/** Вспомогательная функция универсальной сортировки массива объектов */
 function applySort<T extends Record<string, any>>(data: T[], field: string, dir: 'asc' | 'desc'): T[] {
   if (!field) return data
   return [...data].sort((a, b) => {
@@ -49,6 +50,10 @@ function applySort<T extends Record<string, any>>(data: T[], field: string, dir:
   })
 }
 
+/**
+ * Хук фильтрации и клиентской сортировки списков сущностей административной панели
+ * (пользователи, персоны, персонажи, лорбуки).
+ */
 export function useAdminFilters({
   characters, users, personas,
   lorebooksFandom, lorebooksCharacter, lorebooksPersona,

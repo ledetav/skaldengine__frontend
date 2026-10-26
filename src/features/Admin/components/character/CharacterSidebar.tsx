@@ -13,6 +13,10 @@ interface CharacterSidebarProps {
   onEditClick: () => void
 }
 
+/**
+ * Боковая карточка персонажа в панели администратора.
+ * Отображает обложку, аватар, фандом, имя, тип (оригинальный / каноничный) и статистику.
+ */
 export function CharacterSidebar({
   character,
   isEditing,

@@ -29,6 +29,11 @@ interface AdminDataActions {
   fetchTab: (tab: string, page: number, isInitial?: boolean) => Promise<void>
 }
 
+/**
+ * Хук загрузки и синхронизации данных администратора.
+ * Загружает списки персонажей, лорбуков, пользователей, персон и сценариев с сервера,
+ * а также подписывается на WebSocket-события для обновления состояния на лету.
+ */
 export function useAdminData(
   isAdmin: boolean,
   activeTab: AdminTab,
@@ -94,13 +99,13 @@ export function useAdminData(
     }
   }
 
-  // Fetch data when tab/page changes
+  // Загрузка данных при смене вкладки или текущей страницы пагинации
   useEffect(() => {
     if (!isAdmin) return
     fetchTab(activeTab, currentPage[activeTab] || 1, (currentPage[activeTab] || 1) === 1)
   }, [activeTab, isAdmin, currentPage[activeTab]])
 
-  // Fetch all lorebooks for detail views (dropdowns)
+  // Загрузка полного списка лорбуков для детальных страниц (выпадающие списки выбора)
   useEffect(() => {
     if (!isAdmin) return
     const needsAllLorebooks = pathname.includes('/characters/') || pathname.includes('/personas/') || pathname.includes('/scenarios/')
@@ -110,7 +115,7 @@ export function useAdminData(
       .catch(e => console.error('[Admin] Failed to fetch all lorebooks', e))
   }, [isAdmin, pathname])
 
-  // WebSocket real-time updates
+  // Обновление сущностей в реальном времени через WebSocket
   useEffect(() => {
     if (!isAdmin) return
     const rawApiUrl = import.meta.env.VITE_CORE_API_URL || ''
@@ -127,7 +132,7 @@ export function useAdminData(
     socket.onmessage = async (event) => {
       try {
         const payload = JSON.parse(event.data)
-        // Lorebook events
+        // События обновления лорбуков
         if (payload.type === 'NEW_LOREBOOK') {
           const t = payload.data.type || (payload.data.user_persona_id ? 'persona' : 'character')
           if (t === 'fandom') setLorebooksFandom(p => p.some(l => l.id === payload.data.id) ? p : [payload.data, ...p])
@@ -146,7 +151,7 @@ export function useAdminData(
             setLorebooksFandom(upd); setLorebooksCharacter(upd); setLorebooksPersona(upd)
           })
         }
-        // Character events
+        // События обновления персонажей
         else if (payload.type === 'NEW_CHARACTER') {
           setCharacters(p => p.some(c => c.id === payload.data.id) ? p : [payload.data, ...p])
         } else if (payload.type === 'UPDATE_CHARACTER') {
@@ -154,7 +159,7 @@ export function useAdminData(
         } else if (payload.type === 'DELETE_CHARACTER') {
           setCharacters(p => p.some(c => c.id === payload.data.id) ? p.filter(c => c.id !== payload.data.id) : p)
         }
-        // Scenario events
+        // События обновления сценариев
         else if (payload.type === 'NEW_SCENARIO') {
           setScenarios(p => p.some(s => s.id === payload.data.id) ? p : [payload.data, ...p])
         } else if (payload.type === 'UPDATE_SCENARIO') {

@@ -16,6 +16,10 @@ interface UsersSectionProps {
   onSearchChange: (v: string) => void
 }
 
+/**
+ * Секция каталога пользователей в панели администратора.
+ * Отображает таблицу учетных записей с ролями, датой регистрации и поиском.
+ */
 export function UsersSection({
   users, onSelectUser, onToggleFilter, isFilterActive,
   onSort, renderSortIcon, search, onSearchChange,

@@ -10,6 +10,9 @@ interface LorebookEntryFormProps {
   onCancel: () => void
 }
 
+/**
+ * Форма добавления записей в лорбук (одиночная, массовая через разделители или сырой JSON).
+ */
 export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEntryFormProps) {
   const [addType, setAddType] = useState<'single' | 'batch' | 'json'>('single')
 
@@ -63,7 +66,7 @@ export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEnt
         )
       }
 
-      // Reset form
+      // Сброс формы после успешного сохранения
       setKeywords('')
       setContent('')
       setBatchText('')
@@ -77,7 +80,7 @@ export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEnt
 
   return (
     <Card style={{ padding: '24px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Mode switcher */}
+      {/* Переключатель режима добавления */}
       <div className={styles.roleBtnGroup} style={{ margin: 0, alignSelf: 'flex-start' }}>
         {(['single', 'batch', 'json'] as const).map(t => (
           <button
@@ -90,7 +93,7 @@ export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEnt
         ))}
       </div>
 
-      {/* Single entry */}
+      {/* Одиночная запись */}
       {addType === 'single' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <Input
@@ -156,7 +159,7 @@ export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEnt
         </div>
       )}
 
-      {/* Batch / JSON */}
+      {/* Массовый ввод / JSON */}
       {(addType === 'batch' || addType === 'json') && (
         <textarea
           className={styles.editTextarea}

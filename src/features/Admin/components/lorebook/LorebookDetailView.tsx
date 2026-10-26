@@ -26,6 +26,9 @@ export interface LorebookDetailViewProps {
   onLorebookUpdate?: (updated: Partial<Lorebook>) => void
 }
 
+/**
+ * Экран детального управления лорбуком и его записями в админ-панели.
+ */
 export function LorebookDetailView({
   id,
   lb,

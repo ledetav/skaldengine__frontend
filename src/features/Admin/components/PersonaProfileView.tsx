@@ -12,6 +12,10 @@ interface PersonaProfileViewProps {
   onDeletePersona?: (id: string) => void
 }
 
+/**
+ * Экран детального просмотра персоны пользователя в админ-панели.
+ * Отображает карточку персоны, характеристики, манеру речи, личность и список привязанных лорбуков.
+ */
 export function PersonaProfileView({ 
   personaId, 
   personas, 
@@ -85,7 +89,7 @@ export function PersonaProfileView({
       )}
 
       <div className={styles.characterProfileContent}>
-        {/* LEFT: Sidebar style card */}
+        {/* ЛЕВАЯ КОЛОНКА: Карточка персоны */}
         <aside className={styles.sidebarWrapper}>
           <div className={styles.charSidebarCard}>
             <div className={styles.charCover} style={{ height: '120px', background: 'linear-gradient(135deg, var(--accent-teal), #0f766e)' }}>
@@ -134,7 +138,7 @@ export function PersonaProfileView({
           </div>
         </aside>
 
-        {/* RIGHT: Detailed content */}
+        {/* ПРАВАЯ КОЛОНКА: Детальная информация */}
         <main className={styles.mainContentWrapper}>
           <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>

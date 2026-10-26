@@ -8,6 +8,9 @@ interface PaginationProps {
   onPageChange: (page: number) => void
 }
 
+/**
+ * Компонент пагинации для таблиц панели администратора.
+ */
 export function Pagination({ currentPage, totalItems, pageSize, onPageChange }: PaginationProps): React.JSX.Element | null {
   const totalPages = Math.ceil(totalItems / pageSize)
   

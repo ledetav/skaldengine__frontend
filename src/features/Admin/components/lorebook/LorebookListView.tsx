@@ -22,6 +22,9 @@ export interface LorebookListViewProps {
 
 type ViewMode = 'grid' | 'table'
 
+/**
+ * Компонент представления списка лорбуков (таблица / карточки) в админ-панели.
+ */
 export function LorebookListView({
   initialType,
   lorebooks,

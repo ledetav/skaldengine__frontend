@@ -12,6 +12,10 @@ interface UserProfileViewProps {
   onChangeRole: (id: string, role: string) => void
 }
 
+/**
+ * Экран детального профиля пользователя в панели администратора.
+ * Позволяет просматривать профиль, менять роль (пользователь, модератор, администратор) и удалять аккаунт.
+ */
 export function UserProfileView({ 
   userId, 
   users, 

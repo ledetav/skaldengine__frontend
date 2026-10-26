@@ -16,6 +16,11 @@ interface CharacterProfileViewProps {
   onDelete?: (id: string) => void
 }
 
+/**
+ * Экран подробного профиля персонажа в панели администратора.
+ * Включает боковую карточку с аватаром, блок детальной конфигурации
+ * личности и список связанных лорбуков.
+ */
 export function CharacterProfileView({ 
   characterId, 
   characters, 

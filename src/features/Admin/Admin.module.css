@@ -1,8 +1,8 @@
 /* ──────────────────────────────────────────────
-   Admin Panel Module — SkaldEngine Violet Core
-   Local CSS vars (non-global) for this module ONLY
+   Модуль панели администратора — SkaldEngine Violet Core
+   Локальные переменные CSS исключительно для данного модуля
 ──────────────────────────────────────────────── */
-/* Uses global tokens from src/theme/global/index.css — no overrides */
+/* Используются глобальные токены из src/theme/global/index.css — без переопределений */
 
 .adminPage {
   height: 100vh;
@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 
-/* Background Elements */
+/* Фоновые элементы */
 .bgContainer {
   position: absolute;
   top: 0;
@@ -33,7 +33,7 @@
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 30px 30px; /* Reduced from 40px */
+  background-size: 30px 30px; /* Уменьшено с 40px */
   mask-image: radial-gradient(circle at center, black, transparent 80%);
 }
 
@@ -46,10 +46,10 @@
 
 .orb {
   position: absolute;
-  width: 300px; /* Reduced from 400px */
+  width: 300px; /* Уменьшено с 400px */
   height: 300px;
   border-radius: 50%;
-  filter: blur(80px); /* Reduced blur */
+  filter: blur(80px); /* Уменьшенное размытие */
   opacity: 0.12;
   animation: orbFloat 20s infinite alternate;
 }
@@ -63,7 +63,7 @@
   100% { transform: translate(40px, 30px) scale(1.1) rotate(10deg); }
 }
 
-/* Sidebar */
+/* Боковая панель */
 .sidebar {
   width: 240px; 
   background: var(--bg-secondary);
@@ -248,7 +248,7 @@
 }
 
 .mainHeader {
-  padding: 30px 0 20px; /* Reduced from 60px 0 40px */
+  padding: 30px 0 20px; /* Уменьшено с 60px 0 40px */
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -257,7 +257,7 @@
 }
 
 .mainTitle {
-  font-size: 1.6rem; /* Reduced from 2.2rem */
+  font-size: 1.6rem; /* Уменьшено с 2.2rem */
   font-weight: 950;
   margin: 0;
   letter-spacing: -0.03em;
@@ -270,7 +270,7 @@
 .mainSubtitle {
   color: rgba(255, 255, 255, 0.3);
   margin: 6px 0 0 0;
-  font-size: 0.85rem; /* Reduced from 1.05rem */
+  font-size: 0.85rem; /* Уменьшено с 1.05rem */
   font-weight: 500;
 }
 
@@ -369,7 +369,7 @@
   transform: translateY(-1px);
 }
 
-/* Global button disabled override for admin */
+/* Переопределение неактивного состояния кнопок для админ-панели */
 .sectionContainer button:disabled,
 .characterProfileOverlay button:disabled {
   opacity: 0.3 !important;
@@ -379,11 +379,11 @@
   box-shadow: none !important;
 }
 
-/* Sections */
+/* Секции */
 .sectionContainer {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Reduced from 30px */
+  gap: 20px; /* Уменьшено с 30px */
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   padding-bottom: 60px;
 }
@@ -397,7 +397,7 @@
 
 .searchWrapper {
   flex: 1;
-  max-width: 450px; /* Reduced from 600px */
+  max-width: 450px; /* Уменьшено с 600px */
   position: relative;
 }
 
@@ -449,12 +449,12 @@
 }
 
 .viewBtn {
-  padding: 6px 12px; /* Reduced */
+  padding: 6px 12px; /* Уменьшено */
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  font-size: 0.8rem; /* Reduced from 0.9rem */
+  font-size: 0.8rem; /* Уменьшено с 0.9rem */
   font-weight: 700;
   transition: all 0.2s ease;
 }
@@ -469,9 +469,9 @@
   background: linear-gradient(135deg, var(--accent-orange), #ff5e00);
   color: var(--white);
   border: none;
-  padding: 10px 20px; /* Reduced from 14px 30px */
+  padding: 10px 20px; /* Уменьшено с 14px 30px */
   font-weight: 800;
-  font-size: 0.8rem; /* Reduced */
+  font-size: 0.8rem; /* Уменьшено */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -485,9 +485,9 @@
   box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
 }
 
-/* Table View */
+/* Табличный вид */
 .tableWrapper {
-  background: rgba(10, 10, 15, 0.5); /* Darker background */
+  background: rgba(10, 10, 15, 0.5); /* Затемненный фон */
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.03);
   clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
@@ -501,21 +501,21 @@
 
 .compactTable th {
   text-align: left;
-  padding: 12px 16px; /* Reduced from 20px 24px */
+  padding: 12px 16px; /* Уменьшено с 20px 24px */
   background: rgba(255, 255, 255, 0.02);
   color: rgba(255, 255, 255, 0.25);
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 0.65rem; /* Reduced from 0.75rem */
+  font-size: 0.65rem; /* Уменьшено с 0.75rem */
   letter-spacing: 0.12em;
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .compactTable td {
-  padding: 10px 16px; /* Reduced from 18px 24px */
+  padding: 10px 16px; /* Уменьшено с 18px 24px */
   border-bottom: 1px solid rgba(255, 255, 255, 0.015);
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem; /* Reduced from 0.95rem */
+  font-size: 0.85rem; /* Уменьшено с 0.95rem */
 }
 
 .compactTable tr:hover td {
@@ -523,7 +523,7 @@
   color: var(--white);
 }
 
-/* Loading Indicators */
+/* Индикаторы загрузки */
 .contentArea {
   flex: 1;
   overflow-y: auto;
