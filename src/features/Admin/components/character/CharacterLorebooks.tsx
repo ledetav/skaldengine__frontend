@@ -51,7 +51,7 @@ export function CharacterLorebooks({
                 `} 
                 onClick={() => {
                   if (isOriginal && lb.tags?.includes('main')) return;
-                  isEditing && toggleLorebook(lb.id);
+                  if (isEditing) toggleLorebook(lb.id);
                 }}
                 style={{ 
                   cursor: isEditing ? (isOriginal && lb.tags?.includes('main') ? 'not-allowed' : 'pointer') : 'default' 

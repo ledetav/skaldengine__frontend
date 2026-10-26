@@ -54,7 +54,7 @@ export default function PersonaFormScreen() {
         try {
           const existing = await personasApi.getPersona(id)
           setForm(toFormData(existing))
-        } catch (err) {
+        } catch {
           setNotFound(true)
         }
       }
