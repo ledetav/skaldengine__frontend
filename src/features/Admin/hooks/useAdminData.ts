@@ -54,6 +54,14 @@ export function useAdminData(
     lorebooks_persona: true, users: true, personas: true, scenarios: true
   })
 
+  /**
+   * Загружает данные выбранной вкладки админ-панели с пагинацией (skip/limit)
+   * для персонажей, лорбуков разных типов, пользователей, персон или сценариев.
+   * 
+   * @param tab - Название текущей активной вкладки
+   * @param page - Номер страницы (1-indexed)
+   * @param isInitial - Флаг первоначальной загрузки первой страницы (заменяет стейт вместо конкатенации)
+   */
   const fetchTab = async (tab: string, page: number, isInitial = false) => {
     if (!isInitial && !hasMore[tab]) return
     setIsDataLoading(true)
@@ -147,6 +155,7 @@ export function useAdminData(
         } else if (payload.type === 'REFRESH_LOREBOOK_ENTRIES') {
           const { lorebook_id } = payload.data
           ApiClient.get<Lorebook>('core', `/lorebooks/${lorebook_id}`).then(updatedLb => {
+            /** Функция подмены обновленного лорбука в локальном состоянии */
             const upd = (p: Lorebook[]) => p.map(l => l.id === lorebook_id ? updatedLb : l)
             setLorebooksFandom(upd); setLorebooksCharacter(upd); setLorebooksPersona(upd)
           })

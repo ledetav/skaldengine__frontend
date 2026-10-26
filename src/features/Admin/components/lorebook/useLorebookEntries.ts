@@ -35,6 +35,11 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
   const [showEntryDeleteModal, setShowEntryDeleteModal] = useState(false)
   const [entryToDeleteId, setEntryToDeleteId] = useState<string | null>(null)
 
+  /**
+   * Загружает пагинированный список записей текущего лорбука с бэкенда с учетом сортировки.
+   * 
+   * @param page - Номер страницы (1-indexed)
+   */
   const fetchEntries = useCallback(async (page: number) => {
     if (!lb?.id || lb.id === 'create') return
     setIsEntriesLoading(true)
@@ -61,6 +66,8 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
     }
   }, [lb?.id, isDetailMode, entriesPage, fetchEntries])
 
+  // Реал-тайм синхронизация записей лорбука через WebSocket:
+  // При получении события REFRESH_LOREBOOK_ENTRIES или UPDATE_LOREBOOK обновляет список без перезагрузки страницы
   useEffect(() => {
     if (!lb?.id || lb.id === 'create') return
     const wsUrl = import.meta.env.VITE_CORE_API_URL?.replace('http', 'ws') || 'ws://localhost:8002/api/v1'
@@ -104,11 +111,19 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
     }
   }
 
+  /**
+   * Открывает диалог подтверждения удаления записи лорбука.
+   * 
+   * @param entryId - Идентификатор удаляемой записи
+   */
   const handleEntryDelete = (entryId: string) => {
     setEntryToDeleteId(entryId)
     setShowEntryDeleteModal(true)
   }
 
+  /**
+   * Выполняет удаление записи через административный API и повторно запрашивает текущую страницу.
+   */
   const confirmEntryDelete = async () => {
     if (!entryToDeleteId || !lb?.id) return
     const idToDelete = entryToDeleteId
@@ -129,6 +144,11 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
     }
   }
 
+  /**
+   * Инициализирует поля инлайн-редактирования выбранной записи лорбука.
+   * 
+   * @param entry - Редактируемая запись лорбука
+   */
   const handleEditStart = (entry: LorebookEntry) => {
     setEditingEntryId(entry.id)
     setEditEntryKeywords(entry.keywords.join(', '))

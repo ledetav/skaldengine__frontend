@@ -38,6 +38,11 @@ export function ScenarioSection({
     (s.location || '').toLowerCase().includes(search.toLowerCase())
   )
 
+  /**
+   * Возвращает имя персонажа по его идентификатору или fallback-значение.
+   * 
+   * @param id - Идентификатор персонажа
+   */
   const getCharName = (id?: string | null) => {
     if (!id) return 'Не привязан'
     return characters.find(c => c.id === id)?.name || 'Неизвестен'

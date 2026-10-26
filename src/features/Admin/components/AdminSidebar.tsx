@@ -103,6 +103,11 @@ export function AdminSidebar({ activeTab, role }: AdminSidebarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  /**
+   * Выполняет переход по маршрутам админ-панели с сохранением режима отладки (/debug), если он активен.
+   * 
+   * @param route - Целевой путь маршрута
+   */
   const handleNavigate = (route: string) => {
     // Если находимся в режиме отладки (debug) и целевой маршрут не содержит его, добавляем суффикс
     const isDebug = pathname.includes('/debug')

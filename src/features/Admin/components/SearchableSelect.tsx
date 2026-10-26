@@ -43,8 +43,14 @@ export function SearchableSelect({
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
+  /**
+   * Находит выбранный объект опции в массиве по значению идентификатора value.
+   */
   const selectedOption = useMemo(() => options.find(o => o.id === value), [options, value])
 
+  /**
+   * Фильтрует список доступных вариантов по поисковой строке (по имени и подтексту).
+   */
   const filteredOptions = useMemo(() => {
     return options.filter(o => 
       o.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -52,7 +58,13 @@ export function SearchableSelect({
     )
   }, [options, search])
 
+  // Логика позиционирования и закрытия выпадающего списка:
+  // Меню рендерится в document.body через createPortal, чтобы избежать обрезки контейнерами с overflow: hidden/auto.
+  // Экранные координаты (top, left, width) рассчитываются динамически через getBoundingClientRect().
   useEffect(() => {
+    /**
+     * Закрывает меню при клике за пределами селектора.
+     */
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
@@ -70,8 +82,11 @@ export function SearchableSelect({
       })
     }
 
+    /**
+     * Закрывает выпадающее меню при внешней прокрутке страницы,
+     * игнорируя события прокрутки внутри самого списка опций.
+     */
     const handleScroll = (event: Event) => {
-      // Не закрывать меню при прокрутке внутри самого выпадающего списка
       const target = event.target as HTMLElement
       if (target.closest(`.${styles.selectDropdown}`)) return
       setIsOpen(false)

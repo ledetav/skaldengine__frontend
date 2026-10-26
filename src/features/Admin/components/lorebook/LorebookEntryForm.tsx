@@ -24,6 +24,12 @@ export function LorebookEntryForm({ lorebookId, onSaved, onCancel }: LorebookEnt
   const [batchText, setBatchText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
+  /**
+   * Сохраняет записи лорбука в зависимости от активного режима:
+   * - 'single': одиночная запись с разделителем ключевых слов через запятую.
+   * - 'batch': текстовый формат построчного ввода (ключи | текст | категория).
+   * - 'json': прямой парсинг и импорт структуры массива объектов JSON.
+   */
   const handleSave = async () => {
     if (isSaving) return
     setIsSaving(true)

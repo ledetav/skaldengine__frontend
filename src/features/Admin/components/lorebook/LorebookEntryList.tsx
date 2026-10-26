@@ -61,6 +61,9 @@ export function LorebookEntryList({
 }: LorebookEntryListProps) {
   const badgeVariant = lorebookType === 'fandom' ? 'fuchsia' : lorebookType === 'persona' ? 'teal' : 'purple'
 
+  /**
+   * Отфильтрованный массив записей лорбука по выбранной категории и ключевым словам поиска.
+   */
   const filteredEntries = useMemo(() => {
     let result = entries
     if (entryCategoryFilter !== 'all') {

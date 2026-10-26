@@ -65,6 +65,9 @@ export function LorebookDetail({
   showDeleteModal, setShowDeleteModal, onDelete
 }: LorebookDetailProps) {
   
+  /**
+   * Находит персонажа, связанного с текущим лорбуком.
+   */
   const currentCharacter = useMemo(() => 
     characters.find(c => String(c.id) === String(selectedCharId || lb.character_id)),
     [characters, selectedCharId, lb.character_id]
@@ -72,11 +75,18 @@ export function LorebookDetail({
   
   const isOriginalChar = currentCharacter?.type === 'original'
   
+  /**
+   * Список персон, принадлежащих выбранному пользователю-владельцу.
+   */
   const userPersonas = useMemo(() => 
     personas.filter(p => p.owner_id === selectedUserId),
     [personas, selectedUserId]
   )
 
+  /**
+   * Проверяет допустимость снятия статуса основного лорбука ('main'):
+   * у оригинальных персонажей запрещено отключать единственный сохраненный основной лорбук.
+   */
   const canToggleMain = useMemo(() => {
     if (!isOriginalChar) return true
     if (!isMain) return true // Включить статус основного можно всегда

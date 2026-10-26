@@ -51,6 +51,9 @@ export function AdminFilterModal({
   const [filters, setFilters] = useState<FilterState>(initialFilters)
   const [fandomSearch, setFandomSearch] = useState('')
 
+  /**
+   * Уникальный отсортированный список всех фандомов из лорбуков и персонажей для фильтрации.
+   */
   const allFandoms = useMemo(() => {
     const s = new Set<string>()
     lorebooks.forEach(l => { if (l.fandom) s.add(l.fandom) })
@@ -60,6 +63,9 @@ export function AdminFilterModal({
 
   if (!isOpen) return null
 
+  /**
+   * Рендерит группу кнопок множественного выбора системных ролей пользователей (admin, moderator, user).
+   */
   const renderRoles = () => (
     <div className={styles.filterGroup}>
       <label className={styles.filterLabel}>Роль пользователя</label>
@@ -81,6 +87,9 @@ export function AdminFilterModal({
     </div>
   )
 
+  /**
+   * Рендерит диапазонные поля ввода (числовые значения или даты "От" — "До").
+   */
   const renderRange = (label: string, fieldMin: keyof FilterState, fieldMax: keyof FilterState, type: 'number' | 'date' = 'number') => (
     <div className={styles.filterGroup}>
       <label className={styles.filterLabel}>{label}</label>
@@ -104,6 +113,9 @@ export function AdminFilterModal({
     </div>
   )
 
+  /**
+   * Рендерит мультиселект с чипсами и строкой поиска (например, для фандомов).
+   */
   const renderMultiSelect = (label: string, field: keyof FilterState, options: {id: string, name: string}[], search: string, setSearch: (s:string)=>void) => {
     const selected = (filters[field] as string[]) || []
     const filteredOptions = options.filter(o => 
@@ -146,6 +158,9 @@ export function AdminFilterModal({
     )
   }
 
+  /**
+   * Рендерит переключатель три-стейт опций (например, Все / Да / Нет).
+   */
   const renderTriState = (label: string, field: keyof FilterState, options: {val: string, label: string}[]) => (
     <div className={styles.filterGroup}>
       <label className={styles.filterLabel}>{label}</label>

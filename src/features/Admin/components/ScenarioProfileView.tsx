@@ -63,6 +63,9 @@ export function ScenarioProfileView({
     }
   }, [scenarioId, scenarios, isCreate])
 
+  /**
+   * Валидирует и сохраняет сценарий (создает новый или обновляет существующий).
+   */
   const handleSave = async () => {
     if (!draft.character_id) {
       alert('Пожалуйста, выберите персонажа для сценария.')
@@ -77,6 +80,9 @@ export function ScenarioProfileView({
     }
   }
 
+  /**
+   * Удаляет сценарий через API после подтверждения пользователем.
+   */
   const handleDelete = async () => {
     if (!window.confirm('Вы уверены, что хотите удалить этот сценарий?')) return
     setIsDeleting(true)

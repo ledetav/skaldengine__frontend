@@ -129,6 +129,9 @@ export function LorebookDetailView({
     onLorebookUpdate,
   })
 
+  /**
+   * Сохраняет параметры лорбука (создание через createAdminLorebook или обновление через updateAdminLorebook).
+   */
   const handleSave = async () => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
@@ -158,6 +161,9 @@ export function LorebookDetailView({
     }
   }
 
+  /**
+   * Удаляет лорбук через административный API и уведомляет родительский компонент.
+   */
   const handleDelete = async () => {
     const targetId = lb?.id || id
     if (!targetId) return

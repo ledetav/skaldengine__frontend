@@ -44,6 +44,9 @@ export function LorebookListView({
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [lbToDeleteId, setLbToDeleteId] = useState<string | null>(null)
 
+  /**
+   * Отфильтрованный список лорбуков по подтипу (фандомный, персонажа или персоны) и строке поиска.
+   */
   const filteredLorebooks = useMemo(() => {
     return lorebooks.filter(l => {
       const s = search.toLowerCase()
@@ -58,11 +61,17 @@ export function LorebookListView({
     })
   }, [lorebooks, search, initialType])
 
+  /**
+   * Открывает диалог подтверждения удаления для выбранного лорбука.
+   */
   const handleDeleteRequest = (id: string) => {
     setLbToDeleteId(id)
     setShowDeleteModal(true)
   }
 
+  /**
+   * Подтверждает удаление лорбука и закрывает модальное окно.
+   */
   const handleConfirmDelete = async () => {
     if (lbToDeleteId) {
       await onDelete(lbToDeleteId)

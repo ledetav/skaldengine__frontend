@@ -43,6 +43,9 @@ export function UserProfileView({
     )
   }
 
+  /**
+   * Инициирует удаление пользователя: проверяет защиту от удаления собственной учетной записи администратора.
+   */
   const handleDeleteClick = () => {
     if (user.id === currentUser.id) {
       setErrorVisible(true)

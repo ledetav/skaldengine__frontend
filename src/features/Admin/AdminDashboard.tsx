@@ -102,6 +102,10 @@ export default function AdminDashboard() {
 
   const isAnyFilterActive = isFilterActiveForTab(activeFilters, activeTab)
 
+  /**
+   * Обработчик бесконечной прокрутки таблицы (infinite scroll):
+   * загружает следующую страницу сущностей, когда до низа списка остается менее 150px.
+   */
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
     const t = e.currentTarget
     if (t.scrollHeight - t.scrollTop - t.clientHeight < 150 && !isDataLoading) {
