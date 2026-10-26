@@ -115,6 +115,8 @@ export function SettingsSection({
                   className={`${styles.toggleSwitch} ${showThoughtsGlobal ? styles.toggleOn : ''}`}
                   onClick={onShowThoughtsToggle}
                 >
+                  <div className={styles.toggleKnob} />
+                </button>
               </div>
             </div>
           </motion.div>
