@@ -13,6 +13,10 @@ const EditIcon = () => (
   </svg>
 );
 
+/**
+ * Боковая панель-шапка профиля пользователя.
+ * Отображает обложку, аватар, имя, логин, статус роли и краткую статистику.
+ */
 export default function ProfileHeader({ user, isPublic = false, onEditClick }: ProfileHeaderProps) {
   const getRoleLabel = (role: string) => {
     switch(role) {

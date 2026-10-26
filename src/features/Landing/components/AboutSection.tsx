@@ -21,17 +21,22 @@ const HOW_IT_WORKS = [
   },
 ]
 
+/**
+ * Информационная секция "О системе" (About).
+ * Включает интерактивную превью-симуляцию генерации постов ИИ с мыслями персонажа
+ * и пошаговый блок "Как это работает".
+ */
 export default function AboutSection() {
   return (
     <section id="about" className={styles.section} aria-labelledby="about-heading">
-      {/* Divider */}
+      {/* Декоративный разделитель */}
       <div className={styles.divider} aria-hidden="true">
         <span className={styles.dividerLine} />
         <span className={styles.dividerIcon}>◈</span>
         <span className={styles.dividerLine} />
       </div>
 
-      {/* Top: What is SkaldEngine */}
+      {/* Верхний блок: Что такое SkaldEngine */}
       <div className={styles.intro}>
         <div className={styles.introText}>
           <span className={styles.eyebrow}>О системе</span>
@@ -46,10 +51,10 @@ export default function AboutSection() {
           </p>
         </div>
 
-        {/* Chat-style post preview */}
+        {/* Интерактивное превью чата с имитацией постов */}
         <div className={styles.chatPreview} aria-hidden="true">
           <div className={styles.chatHistory}>
-            {/* User Message */}
+            {/* Сообщение пользователя */}
             <div className={styles.userMessage}>
               <div className={styles.avatarUser}>U</div>
               <div className={styles.userContent}>
@@ -58,7 +63,7 @@ export default function AboutSection() {
               </div>
             </div>
 
-            {/* AI Message */}
+            {/* Ответ ИИ-модели */}
             <div className={styles.aiMessage}>
               <div className={styles.aiSide}>
                 <div className={styles.avatar}>S</div>
@@ -83,7 +88,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Fake Input */}
+          {/* Имитация поля ввода */}
           <div className={styles.chatInput}>
             <div className={styles.inputText}>
               <span className={styles.cursor} />
@@ -99,7 +104,7 @@ export default function AboutSection() {
         </div>
       </div>
 
-      {/* How it works */}
+      {/* Пошаговая схема работы */}
       <div className={styles.how}>
         <span className={styles.eyebrow} style={{ textAlign: 'center', display: 'block' }}>Как это работает</span>
         <div className={styles.steps}>

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   Lorebooks Common CSS — SkaldEngine Violet Core
+   Общие стили лорбуков — Фиолетовое ядро SkaldEngine
 ═══════════════════════════════════════════════════ */
 
 /* ─── Page ─────────────────────────────────────── */
@@ -36,7 +36,7 @@
   100% { transform: translate(40px, 30px) scale(1.08); }
 }
 
-/* ─── Content ──────────────────────────────────── */
+/* ─── Контент ──────────────────────────────────── */
 .content {
   position: relative;
   z-index: 1;
@@ -53,7 +53,7 @@
   z-index: 1;
 }
 
-/* ─── Two-column layout ────────────────────────── */
+/* ─── Двухколоночный макет ────────────────────────── */
 .layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -67,7 +67,7 @@
   }
 }
 
-/* ─── Preview card ─────────────────────────────── */
+/* ─── Карточка предпросмотра ──────────────────────── */
 .previewCard {
   background: rgba(18, 4, 29, 0.7);
   backdrop-filter: blur(16px);
@@ -149,7 +149,7 @@
   color: var(--white);
 }
 
-/* ─── Debug Banner ─────────────────────────────── */
+/* ─── Баннер отладки ──────────────────────────────── */
 .debugBanner {
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid var(--border-purple);
@@ -162,7 +162,7 @@
   text-align: center;
 }
 
-/* ─── Page Header ──────────────────────────────── */
+/* ─── Шапка страницы ──────────────────────────────── */
 .header {
   display: flex;
   align-items: flex-end;
@@ -208,7 +208,7 @@
   margin: 0;
 }
 
-/* ─── Create/Action Button ─────────────────────── */
+/* ─── Кнопка создания / действия ──────────────────── */
 .createBtn {
   display: inline-flex;
   align-items: center;
@@ -231,14 +231,14 @@
 }
 .createBtn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,0,0.5); }
 
-/* ─── Cards Grid ───────────────────────────────── */
+/* ─── Сетка карточек ──────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 
-/* ─── Lorebook Card ────────────────────────────── */
+/* ─── Карточка лорбука ────────────────────────────── */
 .lorebookCard {
   background: rgba(18, 4, 29, 0.65);
   backdrop-filter: blur(16px);
@@ -389,7 +389,7 @@
   margin-right: 4px;
 }
 
-/* ─── Empty State ──────────────────────────────── */
+/* ─── Пустое состояние ────────────────────────────── */
 .dangerBtnInline {
   border-color: rgba(239, 68, 68, 0.4) !important;
   color: var(--accent-red) !important;
@@ -400,7 +400,7 @@
   border-color: var(--accent-red) !important;
 }
 
-/* Modal styles (shared or copied) */
+/* Стили модального окна */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -485,7 +485,7 @@
 .emptyTitle { font-size: 1.2rem; font-weight: 800; color: rgba(255,255,255,0.7); margin: 0; }
 .emptyText  { font-size: 0.875rem; color: rgba(255,255,255,0.3); margin: 0; max-width: 320px; }
 
-/* ─── Detail Page ──────────────────────────────── */
+/* ─── Страница детальной информации ───────────────── */
 .detailTop {
   display: flex;
   align-items: flex-end;
@@ -520,7 +520,7 @@
 }
 .editBtn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2); }
 
-/* ─── Entries Table ────────────────────────────── */
+/* ─── Таблица записей ─────────────────────────────── */
 .entriesPanel {
   background: rgba(18,4,29,0.65);
   backdrop-filter: blur(16px);
@@ -644,7 +644,7 @@
   gap: 6px;
 }
 
-/* ─── Add Entry / Batch Form ───────────────────── */
+/* ─── Форма добавления / пакетного импорта записей ── */
 .addEntryPanel {
   background: rgba(18,4,29,0.65);
   backdrop-filter: blur(16px);
@@ -762,7 +762,7 @@
 }
 .cancelBtn:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
-/* ─── Batch Import ─────────────────────────────── */
+/* ─── Пакетный импорт ─────────────────────────────── */
 .tabs {
   display: flex;
   gap: 4px;
@@ -823,7 +823,7 @@
   margin-bottom: 10px;
 }
 
-/* ─── Modal ────────────────────────────────────── */
+/* ─── Модальное окно ──────────────────────────────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -870,7 +870,7 @@
 }
 .dangerBtn:hover { background: rgba(239,68,68,0.25); }
 
-/* ─── Export button ────────────────────────────── */
+/* ─── Кнопка экспорта ─────────────────────────────── */
 .exportBtn {
   display: inline-flex;
   align-items: center;
@@ -891,7 +891,7 @@
 }
 .exportBtn:hover { background: rgba(34,197,94,0.18); box-shadow: 0 4px 14px rgba(34,197,94,0.2); }
 
-/* ─── Lorebook form card ───────────────────────── */
+/* ─── Карточка формы лорбука ──────────────────────── */
 .formCard {
   background: rgba(18,4,29,0.65);
   backdrop-filter: blur(16px);
@@ -913,7 +913,7 @@
 .submitBtnOrange:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,0,0.5); }
 .submitBtnOrange:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ─── Mobile ───────────────────────────────────── */
+/* ─── Мобильная адаптивность ──────────────────────── */
 @media (max-width: 1024px) {
   .layout { grid-template-columns: 1fr; gap: 16px; }
   .previewCard { position: static; }

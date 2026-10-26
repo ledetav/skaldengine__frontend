@@ -9,6 +9,11 @@ interface SettingsTabProps {
   user: UserProfile;
 }
 
+/**
+ * Вкладка «Настройки» в профиле пользователя.
+ * Позволяет редактировать персональные данные (никнейм, логин, email, о себе, аватар)
+ * и изменять пароль учетной записи.
+ */
 export default function SettingsTab({ user }: SettingsTabProps) {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();

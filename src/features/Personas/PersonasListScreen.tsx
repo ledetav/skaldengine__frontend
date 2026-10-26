@@ -6,7 +6,8 @@ import type { UserPersona } from '@/core/types/chat'
 import { personasApi } from '@/core/api/personas'
 import { useToast } from '@/components/ui'
 
-/* ─── Confirm Delete Modal ─────────────────────── */
+/* ─── Модальное окно подтверждения удаления ──────── */
+/** Модальное окно подтверждения удаления игровой персоны пользователя */
 function ConfirmDeleteModal({ persona, onConfirm, onCancel }: {
   persona: UserPersona
   onConfirm: () => void
@@ -29,7 +30,8 @@ function ConfirmDeleteModal({ persona, onConfirm, onCancel }: {
   )
 }
 
-/* ─── Persona Card ─────────────────────────────── */
+/* ─── Карточка персоны ────────────────────────────── */
+/** Карточка персоны со статистикой привязанных диалогов и лорбуков */
 function PersonaCard({ persona, onEdit, onDelete }: {
   persona: UserPersona
   onEdit: () => void
@@ -90,7 +92,12 @@ function PersonaCard({ persona, onEdit, onDelete }: {
   )
 }
 
-/* ─── Main Component ───────────────────────────── */
+/* ─── Главный компонент экрана ─────────────────────── */
+/**
+ * Экран со списком игровых персон пользователя.
+ * Отображает статистику персон, список карточек с переходом к редактированию
+ * и удалению сущностей.
+ */
 export default function PersonasListScreen() {
   const navigate = useNavigate()
   const { success, error } = useToast()
@@ -159,7 +166,7 @@ export default function PersonasListScreen() {
           </button>
         </div>
 
-        {/* Stats */}
+        {/* Статистика персон */}
         <div className={styles.statsBar}>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Персон</span>

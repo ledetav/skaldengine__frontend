@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════
-   Personas Screen CSS — SkaldEngine Violet Core
+   Стили списка персон — Фиолетовое ядро SkaldEngine
 ═══════════════════════════════════════════════════ */
 
-/* ─── Page Layout ──────────────────────────────── */
+/* ─── Макет страницы ──────────────────────────────── */
 .page {
   min-height: 100vh;
   background: var(--bg-base);
@@ -12,7 +12,7 @@
   overflow-x: hidden;
 }
 
-/* ─── Background ───────────────────────────────── */
+/* ─── Фоновый слой ───────────────────────────────── */
 .bgOrbs {
   position: fixed;
   inset: 0;
@@ -56,7 +56,7 @@
   100% { transform: translate(40px, 30px) scale(1.08); }
 }
 
-/* ─── Content ──────────────────────────────────── */
+/* ─── Контент ──────────────────────────────────── */
 .content {
   position: relative;
   z-index: 1;
@@ -65,7 +65,7 @@
   padding: 40px 32px 80px;
 }
 
-/* ─── Header ───────────────────────────────────── */
+/* ─── Шапка ───────────────────────────────────── */
 .header {
   display: flex;
   align-items: flex-end;
@@ -144,7 +144,7 @@
   box-shadow: 0 8px 28px rgba(255, 107, 0, 0.5);
 }
 
-/* ─── Stats Bar ────────────────────────────────── */
+/* ─── Панель статистики ───────────────────────────── */
 .statsBar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -189,7 +189,7 @@
   gap: 20px;
 }
 
-/* ─── Persona Card ─────────────────────────────── */
+/* ─── Карточка персоны ────────────────────────────── */
 .personaCard {
   background: rgba(18, 4, 29, 0.65);
   backdrop-filter: blur(16px);
@@ -315,7 +315,7 @@
   color: #fff;
 }
 
-/* ─── Empty State ──────────────────────────────── */
+/* ─── Пустое состояние ────────────────────────────── */
 .emptyState {
   grid-column: 1 / -1;
   display: flex;
@@ -353,7 +353,7 @@
   max-width: 320px;
 }
 
-/* ─── Delete Confirm Modal ─────────────────────── */
+/* ─── Модальное окно подтверждения удаления ───────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -400,7 +400,7 @@
   justify-content: flex-end;
 }
 
-/* ─── Mobile ───────────────────────────────────── */
+/* ─── Мобильная адаптивность ──────────────────────── */
 @media (max-width: 1024px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 }

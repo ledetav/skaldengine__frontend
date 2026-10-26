@@ -8,7 +8,7 @@
   overflow-x: hidden;
 }
 
-/* Background elements copied/adapted from Dashboard */
+/* Фоновые элементы интерфейса */
 .bgContainer {
   position: fixed;
   inset: 0;
@@ -123,22 +123,22 @@
   to { transform: rotate(360deg); }
 }
 
-/* Sidebar */
+/* Боковая панель профиля */
 .sidebar {
-  flex: 0 0 280px; /* Reduced from 320px */
+  flex: 0 0 280px; /* Уменьшено с 320px */
   position: sticky;
   top: 90px;
 }
 
 .mainContent {
   flex: 1;
-  min-width: 0; /* Prevent flex overflow */
+  min-width: 0; /* Предотвращение переполнения flex */
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Header (now Sidebar Card) */
+/* Шапка профиля (боковая карточка) */
 .header {
   background: var(--bg-secondary);
   border: 1px solid var(--border-glass);
@@ -151,7 +151,7 @@
 }
 
 .cover {
-  height: 140px; /* Reduced from 160px */
+  height: 140px; /* Уменьшено со 160px */
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -198,7 +198,7 @@
 
 .userInfo {
   padding: 0 1.25rem 1.25rem;
-  margin-top: -35px; /* Offset to overlap cover - adjusted for smaller avatar */
+  margin-top: -35px; /* Смещение для наложения на обложку */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,7 +209,7 @@
 
 .avatarWrapper {
   position: relative;
-  width: 80px; /* Reduced from 100px */
+  width: 80px; /* Уменьшено со 100px */
   height: 80px;
   padding: 2px;
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-fuchsia));
@@ -245,21 +245,21 @@
 }
 
 .displayName {
-  font-size: 1.3rem; /* Reduced from 1.5rem */
+  font-size: 1.3rem; /* Уменьшено с 1.5rem */
   font-weight: 800;
   margin-bottom: 0.1rem;
   font-family: var(--font-ui);
 }
 
 .username {
-  font-size: 0.8rem; /* Reduced from 0.9rem */
+  font-size: 0.8rem; /* Уменьшено с 0.9rem */
   color: var(--text-secondary);
   font-weight: 600;
   letter-spacing: 0.04em;
   margin-bottom: 1.25rem;
 }
 
-/* Sidebar Stats */
+/* Статистика в боковой панели */
 .sidebarStats {
   width: 100%;
   border-top: 1px solid var(--border-glass);
@@ -285,7 +285,7 @@
 }
 
 .sidebarStatValue {
-  font-size: 1rem; /* Reduced from 1.1rem */
+  font-size: 1rem; /* Уменьшено с 1.1rem */
   font-weight: 900;
   color: #fff;
 }
@@ -306,7 +306,7 @@
 }
 
 .tabsNav::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none; /* Браузеры Chrome, Safari, Opera */
 }
 
 .tabBtn {
@@ -335,7 +335,7 @@
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
-/* Content Area */
+/* Область контента */
 .contentArea {
   background: var(--bg-glass);
   backdrop-filter: blur(24px);
@@ -352,7 +352,7 @@
   }
 }
 
-/* Grid & Cards */
+/* Сетка и карточки */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -385,7 +385,7 @@
   background: linear-gradient(90deg, var(--border-glass), transparent);
 }
 
-/* Card refinement */
+/* Стили карточек */
 .card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-glass);
@@ -394,7 +394,7 @@
   transition: all 0.3s var(--ease-smooth);
 }
 
-/* Interactive Cards */
+/* Интерактивные карточки */
 .interactiveCard {
   cursor: pointer;
 }
@@ -466,7 +466,7 @@
   font-size: 1.25rem;
 }
 
-/* Settings Form */
+/* Форма настроек */
 .settingsTabWrapper {
   width: 100%;
 }
@@ -499,7 +499,7 @@
   font-size: 0.95rem;
 }
 
-/* Mobile Responsive */
+/* Мобильная адаптивность */
 @media (max-width: 1024px) {
   .layoutWrapper {
     flex-direction: column;

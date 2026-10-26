@@ -25,6 +25,7 @@ interface FormData {
 
 const EMPTY: FormData = { name: '', type: 'fandom', description: '', fandom: '', character_id: '', user_persona_id: '', tags: [] }
 
+/** Преобразование сущности лорбука в структуру данных формы */
 function toForm(lb: Lorebook): FormData {
   // Определяем тип на основе имеющихся связей, так как бэкенд не хранит 'type'
   let type: LorebookType = 'fandom';
@@ -42,6 +43,11 @@ function toForm(lb: Lorebook): FormData {
   }
 }
 
+/**
+ * Экран создания и редактирования лорбука (базы знаний).
+ * Позволяет привязать лорбук к конкретному фандому, персонажу или персоне,
+ * а также настроить статус основного лорбука для оригинальных героев.
+ */
 export default function LorebookFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -77,7 +83,7 @@ export default function LorebookFormScreen() {
           const existing = await lorebooksApi.getLorebook(id)
           setForm(toForm(existing))
           
-          // Load other lorebooks for the character to check main status
+          // Загрузка остальных лорбуков персонажа для проверки статуса основного (main)
           if (existing.character_id) {
             const lbs = await lorebooksApi.getLorebooks(0, 50, undefined, undefined, existing.character_id)
             setCharLorebooks(lbs || [])
@@ -90,7 +96,7 @@ export default function LorebookFormScreen() {
     loadData()
   }, [id, isEdit])
 
-  // Fetch lorebooks if character_id changes in the form
+  // Запрос лорбуков при изменении выбранного персонажа в форме
   useEffect(() => {
     if (form.character_id && form.type === 'character') {
       lorebooksApi.getLorebooks(0, 50, undefined, undefined, form.character_id).then(setCharLorebooks)
@@ -100,7 +106,7 @@ export default function LorebookFormScreen() {
   }, [form.character_id, form.type])
 
   const mainLbsForChar = charLorebooks.filter((lb: Lorebook) => lb.tags?.includes('main'));
-  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id); // This specific lorebook is one of the main ones
+  const holdsMainTag = isMain && mainLbsForChar.some((lb: Lorebook) => lb.id === id); // Текущий лорбук является одним из основных
   const isToggleLocked = isEdit && holdsMainTag && isOriginalChar && mainLbsForChar.length === 1;
 
   const set = (field: keyof FormData) => (
@@ -124,7 +130,7 @@ export default function LorebookFormScreen() {
     try {
       const payload: Partial<Lorebook> & Record<string, any> = {
         name: form.name,
-        type: form.type, // Back-end DOES expect this field!
+        type: form.type, // Бэкенд ожидает поле type
         description: form.description || undefined,
         fandom: form.type === 'fandom' && form.fandom ? form.fandom : null,
         character_id: form.type === 'character' && form.character_id ? form.character_id : null,
@@ -183,7 +189,7 @@ export default function LorebookFormScreen() {
         </header>
 
         <div className={styles.layout}>
-          {/* LEFT: Preview */}
+          {/* ЛЕВАЯ КОЛОНКА: Предпросмотр карточки лорбука */}
           <aside className={styles.previewCard}>
             <div className={styles.previewIconArea}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -211,7 +217,7 @@ export default function LorebookFormScreen() {
             </div>
           </aside>
 
-          {/* RIGHT: Form */}
+          {/* ПРАВАЯ КОЛОНКА: Форма редактирования */}
           <main>
             <Card style={{ padding: '36px' }}>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

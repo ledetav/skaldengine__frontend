@@ -10,10 +10,15 @@ import Navbar from '@/components/ui/Navbar';
 import { useProfile } from '@/core/hooks/useProfile';
 import styles from './Profile.module.css';
 
-// --- Chats from useProfile ---
+// Получение данных профиля и истории чатов через хук useProfile
 
 import { useParams } from 'react-router-dom';
 
+/**
+ * Экран профиля пользователя (своего или публичного).
+ * Включает боковую панель с карточкой пользователя, переключение вкладок
+ * («Обзор», «Персоны», «Лорбуки», «Настройки») и историю последних диалогов.
+ */
 export default function ProfileScreen() {
   const { username } = useParams<{ username?: string }>();
   const [activeTab, setActiveTab] = useState<ProfileTabType>('main');
@@ -59,7 +64,7 @@ export default function ProfileScreen() {
     <div className={styles.profilePage}>
       <Navbar variant="dashboard" />
       
-      {/* Premium Background Elements */}
+      {/* Премиальные фоновые визуальные элементы */}
       <div className={styles.bgContainer}>
         <div className={styles.bgGrid} />
         <div className={styles.bgOverlay} />

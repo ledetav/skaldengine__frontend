@@ -25,6 +25,7 @@ const EMPTY_FORM: PersonaFormData = {
   facts: '',
 }
 
+/** Преобразование сущности персоны в данные формы */
 function toFormData(persona: UserPersona): PersonaFormData {
   return {
     name: persona.name,
@@ -37,6 +38,11 @@ function toFormData(persona: UserPersona): PersonaFormData {
   }
 }
 
+/**
+ * Экран создания и редактирования игровой персоны пользователя.
+ * Позволяет настроить личность игрока, внешность, манеру речи и факты,
+ * которые учитываются ИИ-собеседником во время ролевой игры.
+ */
 export default function PersonaFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -123,14 +129,14 @@ export default function PersonaFormScreen() {
 
   return (
     <div className={styles.page}>
-      {/* Background */}
+      {/* Фоновые декоративные сферы */}
       <div className={styles.bgOrbs}>
         <div className={`${styles.orb} ${styles.orbPurple}`} />
         <div className={`${styles.orb} ${styles.orbFuchsia}`} />
       </div>
 
       <div className={styles.content}>
-        {/* Header */}
+        {/* Заголовок страницы */}
         <div className={styles.header}>
           <button className={styles.backBtn} onClick={() => navigate('/personas')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +165,7 @@ export default function PersonaFormScreen() {
               </div>
             </div>
 
-            {/* ─── Core Identity ─── */}
+            {/* ─── Основная информация ─── */}
             <div className={styles.sectionTitle}>Основная информация</div>
 
             <div className={styles.formGroup}>
@@ -209,7 +215,7 @@ export default function PersonaFormScreen() {
               </div>
             </div>
 
-            {/* ─── Detailed Profile ─── */}
+            {/* ─── Детальный профиль ─── */}
             <div className={styles.sectionTitle}>Детальный профиль</div>
 
             <div className={styles.formGroup}>
@@ -248,7 +254,7 @@ export default function PersonaFormScreen() {
               </span>
             </div>
 
-            {/* ─── Actions ─── */}
+            {/* ─── Кнопки действий ─── */}
             <div className={styles.actions}>
               <button
                 type="button"
