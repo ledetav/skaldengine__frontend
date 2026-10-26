@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui'
 import { ConfirmModal } from '@/components/common'
 import styles from '../../styles'
