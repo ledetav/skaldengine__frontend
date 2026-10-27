@@ -1,6 +1,11 @@
+/**
+ * @fileoverview Стили секций боковой панели экрана чата (персонаж, персона, сценарий, настройки, лорбуки).
+ * Оформление в стиле инспектора параметров Google AI Studio с чистыми карточками и контрастным текстом.
+ */
+
 .sidebarSection {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-glass);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .sectionHeader {
@@ -10,59 +15,59 @@
   justify-content: space-between;
   background: none;
   border: none;
-  padding: 8px 0;
+  padding: 6px 0;
   cursor: pointer;
   color: var(--text-primary);
   transition: all 0.2s;
 }
 
 .sectionHeader:hover {
-  color: var(--accent-orange);
+  color: var(--accent-purple);
 }
 
 .sectionTitle {
   font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .sectionChevron {
-  transition: transform 0.3s;
+  transition: transform 0.2s;
   color: var(--text-muted);
 }
 
 .chevronRotate { transform: rotate(180deg); }
 
 .sectionContent {
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .profileBtn {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  transition: all 0.3s;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  transition: all 0.2s;
 }
 
 .profileBtn:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: var(--accent-purple);
-  transform: translateY(-2px);
+  border-color: var(--border-medium);
 }
 
 .profileAvatar {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 107, 0, 0.1));
-  border-radius: 8px;
+  background: var(--accent-purple-subtle);
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,7 +75,7 @@
 }
 
 .profileName {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   font-size: 13px;
 }
@@ -78,23 +83,23 @@
 .profileAction {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  color: var(--accent-orange);
-  font-weight: 600;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--accent-purple);
+  font-weight: 500;
 }
 
-/* Мини-карточка персонажа */
+/* ─── Мини-карточка персонажа ─── */
 .charCardMini {
-  background: rgba(30, 30, 45, 0.4);
-  border: 1px solid var(--border-glass);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
 }
 
 .charImageWrap {
   width: 100%;
-  height: 160px;
+  height: 150px;
   position: relative;
 }
 
@@ -107,7 +112,7 @@
 .charCoverGradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(18, 12, 33, 1) 0%, rgba(18, 12, 33, 0.4) 40%, transparent 100%);
+  background: linear-gradient(to top, rgba(14, 16, 21, 0.95) 0%, transparent 60%);
 }
 
 .charOverlayMini {
@@ -115,19 +120,20 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 16px;
+  padding: 12px 14px;
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .avatarCircleMini {
-  width: 54px;
-  height: 54px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  border: 2px solid var(--bg-main);
+  border: 2px solid var(--bg-card);
   overflow: hidden;
-  background: var(--bg-main);
+  background: var(--bg-card);
+  flex-shrink: 0;
 }
 
 .avatarCircleMini img {
@@ -137,126 +143,127 @@
 }
 
 .charMainInfoMini h4 {
-  font-size: 16px;
-  font-weight: 800;
-  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .fandomBadge {
-  font-size: 10px;
-  color: var(--accent-orange);
-  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .charDetailsMini {
-  padding: 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .charDescMini {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   margin: 0;
+  line-height: 1.5;
 }
 
 .statsGridMini {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .statItemMini {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  gap: 2px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
 }
 
 .statLabelMini {
-  font-size: 8px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
 }
 
 .statValueMini {
   font-size: 12px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .loreWarningMini {
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 8px 12px;
-  background: rgba(255, 107, 0, 0.05);
-  border: 1px solid rgba(255, 107, 0, 0.1);
-  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: var(--radius-xs);
   color: var(--accent-orange);
   font-size: 11px;
 }
 
 .relationshipBox {
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(139, 92, 246, 0.05);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  border-radius: 8px;
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
 }
 
 .relationshipHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .relationshipStatus {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--accent-purple);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
 }
 
 .relationshipText {
   font-size: 12px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.7);
-  font-style: italic;
+  color: var(--text-secondary);
   margin: 0;
 }
 
-/* Карточка персоны в боковой панели */
+/* ─── Карточка персоны в боковой панели ─── */
 .personaCardSidebar {
-  padding: 16px;
-  background: rgba(30, 30, 45, 0.4);
-  border: 1px solid var(--border-glass);
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
 }
 
 .personaHeaderSidebar {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
 .personaAvatarSidebar {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-xs);
   overflow: hidden;
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-subtle);
 }
 
 .personaNameSidebar {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -267,70 +274,63 @@
 
 .personaDescSidebar {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 12px 0 0;
-  font-style: italic;
+  color: var(--text-secondary);
+  margin: 8px 0 0;
+  line-height: 1.4;
 }
 
-/* Карточка сценария в боковой панели */
+/* ─── Карточка сценария в боковой панели ─── */
 .scenarioCardSidebar {
-  padding: 16px;
-  background: rgba(255, 107, 0, 0.03);
-  border: 1px solid rgba(255, 107, 0, 0.1);
-  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--accent-orange);
+  border-radius: var(--radius-sm);
   position: relative;
-}
-
-.scenarioCardSidebar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  background: var(--accent-orange);
 }
 
 .scenarioHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
   color: var(--accent-orange);
 }
 
 .scenarioBadge {
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .scenarioTitleSidebar {
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 6px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
 }
 
 .scenarioDescSidebar {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  margin: 0 0 16px 0;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+  line-height: 1.4;
 }
 
 .checkpointsList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .checkpointItem {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-start;
-  opacity: 0.6;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.65;
+  transition: opacity 0.2s;
 }
 
 .checkpointItem.completed {
@@ -338,36 +338,33 @@
 }
 
 .checkpointStatus {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.3s ease;
 }
 
 .checkpointItem.completed .checkpointStatus {
   background: rgba(16, 185, 129, 0.15);
-  border-color: #10b981;
-  color: #10b981;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
 }
 
 .checkpointNumber {
   font-size: 9px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .checkpointText {
   font-size: 11px;
   line-height: 1.4;
-  color: var(--text-muted);
-  transition: all 0.3s ease;
+  color: var(--text-secondary);
 }
 
 .checkpointItem.completed .checkpointText {
@@ -376,37 +373,36 @@
   opacity: 0.7;
 }
 
-.checkpointItem:not(.completed) .checkpointStatus {
-  border-style: dashed;
-}
-
-/* Стили настроек */
+/* ─── Стили настроек ─── */
 .settingsGrid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .localSettingsHint {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: rgba(139, 92, 246, 0.05);
-  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--accent-purple-subtle);
+  border-radius: var(--radius-xs);
+  color: var(--text-secondary);
+  font-size: 11px;
 }
 
 .settingItem {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .settingItem label {
   font-size: 10px;
-  font-weight: 800;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .fontSizeGroup {
@@ -417,17 +413,23 @@
 .sizeBtn {
   flex: 1;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-glass);
-  color: var(--text-muted);
-  padding: 8px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 6px;
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 11px;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  clip-path: var(--clip-cut-sm);
+  transition: all 0.2s;
+}
+
+.sizeBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
 }
 
 .activeSize {
-  background: rgba(139, 92, 246, 0.15);
+  background: var(--accent-purple-subtle);
   color: var(--accent-purple);
   border-color: var(--accent-purple);
 }
@@ -439,51 +441,49 @@
 }
 
 .toggleSwitch {
-  width: 40px;
+  width: 36px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   position: relative;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .toggleOn {
-  background: rgba(139, 92, 246, 0.2);
-  border-color: var(--accent-purple);
+  background: var(--accent-purple);
 }
 
 .toggleKnob {
   width: 14px;
   height: 14px;
-  background: var(--text-muted);
+  background: #ffffff;
   border-radius: 50%;
   position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s var(--ease-smooth);
 }
 
 .toggleOn .toggleKnob {
-  left: 22px;
-  background: var(--accent-purple);
+  transform: translateX(16px);
 }
 
-/* Стили лорбуков */
+/* ─── Стили лорбуков ─── */
 .loreList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .loreItem {
-  padding: 12px 14px;
-  background: rgba(30,30,45, 0.4);
-  border: 1px solid var(--border-glass);
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 
 .loreMainInfo {
@@ -493,26 +493,31 @@
 }
 
 .loreType {
-  font-size: 8px;
-  font-weight: 800;
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
-  color: var(--accent-orange);
+  color: var(--accent-purple);
 }
 
 .loreName {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .loreChangeBtn {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  color: var(--text-muted);
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
   padding: 4px 8px;
   cursor: pointer;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  clip-path: var(--clip-cut-sm);
+  transition: all 0.2s;
+}
+
+.loreChangeBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
 }

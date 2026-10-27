@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Стили для отдельного сообщения чата MessageItem.
+ * Оформление в стиле диалогов Character.AI: чистые мягкие бабблы сообщений,
+ * четкая контрастная типографика, аккуратные аватары и ненавязчивые кнопки действий.
+ */
+
 .aiMessage {
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  animation: slideIn 0.4s ease-out;
+  animation: slideIn 0.3s ease-out;
 }
 
 .aiSide {
@@ -10,73 +16,66 @@
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: var(--avatar-size);
+  width: var(--avatar-size, 38px);
 }
 
 .avatar {
-  width: var(--avatar-size);
-  height: var(--avatar-size);
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));
-  border-radius: 8px;
+  width: var(--avatar-size, 38px);
+  height: var(--avatar-size, 38px);
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  color: white;
-  font-size: calc(var(--avatar-size) * 0.45);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  font-weight: 700;
+  color: #ffffff;
+  font-size: calc(var(--avatar-size, 38px) * 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .aiContent {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 80%;
+  gap: 6px;
+  max-width: 82%;
   align-items: flex-start;
 }
 
 .authorName {
-  font-weight: 700;
-  font-size: var(--author-font-size);
-  color: var(--accent-orange);
-  margin-left: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.9;
+  font-weight: 600;
+  font-size: var(--author-font-size, 13px);
+  color: var(--text-primary);
+  margin-left: 4px;
+  letter-spacing: -0.01em;
 }
 
 .bubbleAI {
-  background: rgba(29, 9, 45, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-purple);
-  padding: var(--chat-bubble-padding);
-  font-size: var(--chat-font-base);
-  line-height: 1.7;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--accent-purple);
+  border-radius: var(--radius-md);
+  padding: var(--chat-bubble-padding, 16px 20px);
+  font-size: var(--chat-font-base, 14px);
+  line-height: 1.65;
   color: var(--text-primary);
   position: relative;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(139, 92, 246, 0.1);
-  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-  min-height: 50px;
+  min-height: 44px;
   width: fit-content;
   max-width: 100%;
-}
-
-.bubbleAI::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(to bottom, var(--accent-purple), transparent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .messageActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-top: 4px;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -90,10 +89,10 @@
 .swipeControls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-muted);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .swipeBtn {
@@ -101,15 +100,16 @@
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 2px;
+  padding: 2px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: color 0.2s;
+  border-radius: var(--radius-xs);
 }
 
 .swipeBtn:hover:not(:disabled) {
-  color: var(--accent-orange);
+  color: var(--text-primary);
 }
 
 .swipeBtn:disabled {
@@ -119,7 +119,7 @@
 
 .miniActionBtn {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   width: 28px;
   height: 28px;
@@ -127,8 +127,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  transition: all 0.2s var(--ease-smooth);
+  clip-path: var(--clip-cut-sm);
+}
+
+.miniActionBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
 }
 
 .userMessage {
@@ -137,7 +143,7 @@
   gap: 16px;
   align-self: flex-end;
   align-items: flex-start;
-  animation: slideInUser 0.4s ease-out;
+  animation: slideInUser 0.3s ease-out;
   width: 100%;
 }
 
@@ -146,121 +152,114 @@
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: var(--avatar-size);
+  width: var(--avatar-size, 38px);
 }
 
 .avatarUser {
-  width: var(--avatar-size);
-  height: var(--avatar-size);
-  background: linear-gradient(135deg, var(--bg-secondary), var(--accent-fuchsia));
-  border-radius: 8px;
+  width: var(--avatar-size, 38px);
+  height: var(--avatar-size, 38px);
+  background: linear-gradient(135deg, #1f222d, #2c3040);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  color: white;
-  font-size: calc(var(--avatar-size) * 0.45);
-  box-shadow: 0 4px 12px rgba(217, 70, 239, 0.3);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: calc(var(--avatar-size, 38px) * 0.42);
+  border: 1px solid var(--border-medium);
+  overflow: hidden;
+}
+
+.avatarUser img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .userContent {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 80%;
+  gap: 6px;
+  max-width: 82%;
   align-items: flex-end;
 }
 
 .authorNameUser {
-  font-weight: 700;
-  font-size: var(--author-font-size);
-  color: var(--accent-fuchsia);
-  margin-right: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.9;
+  font-weight: 600;
+  font-size: var(--author-font-size, 13px);
+  color: var(--text-secondary);
+  margin-right: 4px;
+  letter-spacing: -0.01em;
 }
 
 .bubbleUser {
-  background: rgba(45, 10, 50, 0.4);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  padding: var(--chat-bubble-padding);
-  font-size: var(--chat-font-base);
-  line-height: 1.7;
+  background: #222632;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--chat-bubble-padding, 16px 20px);
+  font-size: var(--chat-font-base, 14px);
+  line-height: 1.65;
   color: var(--text-primary);
   position: relative;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(217, 70, 239, 0.05);
-  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-  min-height: 50px;
+  min-height: 44px;
   width: fit-content;
   max-width: 100%;
-}
-
-.bubbleUser::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(to bottom, var(--accent-fuchsia), transparent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .editArea {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  min-width: 300px;
+  min-width: 320px;
 }
 
 .editTextarea {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-purple);
   color: var(--text-primary);
   padding: 12px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   resize: vertical;
   min-height: 80px;
   outline: none;
   font-family: inherit;
   font-size: inherit;
+  line-height: 1.5;
 }
 
 .editActions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .editActions button {
-  padding: 6px 16px;
-  border-radius: 4px;
-  border: 1px solid var(--border-glass);
-  background: rgba(45, 10, 50, 0.4);
+  padding: 6px 14px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
+  font-weight: 500;
   transition: all 0.2s;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  clip-path: var(--clip-cut-sm);
 }
 
 .editActions button:first-child {
-  background: var(--accent-purple);
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
   color: white;
   border: none;
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInUser {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .textContent p {
@@ -268,7 +267,7 @@
 }
 
 .textContent p + p {
-  margin-top: 1.5em;
+  margin-top: 1.1em;
 }
 
 .textContent ul {
@@ -287,13 +286,12 @@
 }
 
 .textContent strong {
-  color: var(--accent-orange);
+  color: var(--text-primary);
   font-weight: 700;
 }
 
 .textContent em {
   font-style: italic;
-  opacity: 0.85;
   color: var(--text-secondary);
 }
 
@@ -307,10 +305,9 @@
 .typingDot {
   width: 6px;
   height: 6px;
-  background: var(--accent-orange);
+  background: var(--accent-purple);
   border-radius: 50%;
   animation: typingBounce 1.4s infinite ease-in-out;
-  box-shadow: 0 0 8px var(--accent-orange);
 }
 
 .typingDot:nth-child(2) { animation-delay: 0.2s; }
@@ -318,18 +315,17 @@
 
 @keyframes typingBounce {
   0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1.2); opacity: 1; }
+  40% { transform: scale(1.1); opacity: 1; }
 }
 
 .cursor {
   display: inline-block;
-  width: 8px;
-  height: 16px;
-  background: var(--accent-orange);
+  width: 6px;
+  height: 15px;
+  background: var(--accent-purple);
   margin-left: 4px;
   animation: cursorBlink 0.8s infinite;
   vertical-align: middle;
-  box-shadow: 0 0 10px var(--accent-orange);
 }
 
 @keyframes cursorBlink {

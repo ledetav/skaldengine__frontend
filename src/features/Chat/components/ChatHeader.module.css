@@ -1,53 +1,55 @@
+/**
+ * @fileoverview Стили для верхней панели экрана чата ChatHeader.
+ * Реализует минималистичную шапку в стиле Google AI Studio: тонкая рамка,
+ * угловатая кнопка возврата, читаемый заголовок и компактные элементы управления.
+ */
+
 .header {
-  height: 72px;
+  height: 56px;
   display: flex;
   align-items: center;
-  z-index: 1000;
+  z-index: 100;
   flex-shrink: 0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
   position: relative;
-}
-
-.header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(18, 12, 33, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-glass);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 30px) 100%, 0 100%);
-  z-index: -1;
-  pointer-events: none;
 }
 
 .headerContent {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+@media (min-width: 768px) {
+  .headerContent {
+    padding: 0 24px;
+  }
+}
+
 .backBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s var(--ease-smooth);
+  padding: 6px 12px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  border: 1px solid var(--border-subtle);
+  clip-path: var(--clip-cut-sm);
 }
 
 .backBtn:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.07);
-  border-color: var(--border-glass);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-medium);
 }
 
 .chatInfo {
@@ -59,10 +61,11 @@
 
 .chatTitle {
   font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .saveStatus {
@@ -72,74 +75,76 @@
 }
 
 .saveTime {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--accent-orange);
-  font-weight: 700;
-  opacity: 0.8;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .infoWrapper {
   position: relative;
   display: flex;
   align-items: center;
-  color: var(--accent-orange);
+  color: var(--text-muted);
   cursor: help;
+  transition: color 0.2s;
+}
+
+.infoWrapper:hover {
+  color: var(--accent-purple);
 }
 
 .saveTooltip {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
-  background: rgba(18, 12, 33, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-purple);
-  padding: 10px 14px;
-  border-radius: 4px;
+  width: 220px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-size: 11px;
-  line-height: 1.5;
-  font-weight: 500;
+  line-height: 1.4;
+  font-weight: 400;
   pointer-events: none;
   opacity: 0;
   transition: all 0.2s ease;
   z-index: 9999;
-  text-transform: none;
-  letter-spacing: 0;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .infoWrapper:hover .saveTooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
 }
 
 .headerActions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .actionBtn {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 8px;
-  transition: all 0.2s;
-  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--ease-smooth);
+  clip-path: var(--clip-cut-sm);
 }
 
-.actionBtn:hover, .actionActive {
-  background: rgba(255, 255, 255, 0.05);
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
+  border-color: var(--border-medium);
 }
 
 .actionActive {
-  color: var(--accent-orange);
-  background: rgba(255, 107, 0, 0.1);
+  color: var(--accent-purple);
+  background: var(--accent-purple-subtle);
+  border-color: var(--border-purple);
 }

@@ -1,52 +1,57 @@
+/**
+ * @fileoverview Общие вспомогательные стили экрана чата Common.module.css.
+ * Содержит стили блока рассуждений (ThoughtBlock) в стиле Google AI Studio
+ * и аккуратные элементы кастомных выпадающих списков.
+ */
+
 .thoughtContainer {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
 }
 
 .thoughtTag {
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  padding: 0.5em 1.1em;
+  background: var(--accent-purple-subtle);
+  border: 1px solid var(--border-purple);
+  padding: 0.35em 0.85em;
   display: flex;
   align-items: center;
-  gap: 0.8em;
+  gap: 0.6em;
   cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
+  transition: all 0.2s var(--ease-smooth);
   width: fit-content;
   color: var(--accent-purple);
   font-family: inherit;
-  font-size: 0.85em;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  font-size: 0.8em;
+  font-weight: 500;
+  clip-path: var(--clip-cut-sm);
 }
 
 .thoughtTag:hover {
   background: rgba(139, 92, 246, 0.2);
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 15px var(--purple-glow);
+  color: #ffffff;
 }
 
 .thoughtTag svg {
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.1em;
+  height: 1.1em;
 }
 
 .chevron {
-  opacity: 0.6;
-  transition: transform 0.3s ease;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
 }
 
 .thoughtContent {
-  margin-top: 0.8em;
-  padding: 1em 1.2em;
-  background: rgba(139, 92, 246, 0.05);
+  margin-top: 0.6em;
+  padding: 0.8em 1.1em;
+  background: rgba(255, 255, 255, 0.02);
   border-left: 2px solid var(--accent-purple);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-family: var(--font-ui);
-  font-size: 0.9em;
+  font-size: 0.85em;
   line-height: 1.6;
   color: var(--text-secondary);
-  font-style: italic;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
 }
 
 .customSelectContainer {
@@ -56,9 +61,10 @@
 
 .customSelectTrigger {
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -67,12 +73,11 @@
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s;
-  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
 }
 
 .customSelectTrigger:hover, .isOpen {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: var(--border-purple);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-purple);
 }
 
 .rotate { transform: rotate(180deg); }
@@ -88,18 +93,17 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: rgba(18, 12, 33, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-purple);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
   z-index: 1001;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 .customSelectOption {
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: none;
   border: none;
   color: var(--text-secondary);
@@ -113,11 +117,11 @@
 }
 
 .customSelectOption:hover {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-primary);
 }
 
 .activeOption {
-  color: var(--accent-orange);
+  color: var(--accent-purple);
   font-weight: 600;
 }
