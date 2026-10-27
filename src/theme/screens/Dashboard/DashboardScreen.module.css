@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Стили витрины каталога персонажей DashboardScreen.
+ * Реализует минималистичную витрину в духе Character.AI и Google AI Studio:
+ * чистый нейтрально-тёмный фон без неоновых пятен, карточки с акцентом на портреты,
+ * аккуратные фильтры и фирменные угловатые кнопки перехода к диалогу.
+ */
+
 .dashboard {
   position: relative;
   min-height: 100vh;
@@ -8,7 +15,7 @@
   overflow-x: hidden;
 }
 
-/* Использование фонов лендинга */
+/* ─── Фоновые слои (чистая легкая текстура без размытых орбов) ─── */
 .bgContainer {
   position: fixed;
   inset: 0;
@@ -20,105 +27,81 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(217, 70, 239, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(217, 70, 239, 0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 80%);
 }
 
 .bgOverlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(139, 92, 246, 0.05) 0%,
-    transparent 80%
-  );
+  background: radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 70%);
 }
 
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
-  z-index: 1;
-  pointer-events: none;
+.orb, .orbPurple, .orbFuchsia {
+  display: none !important;
 }
 
-.orbPurple {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent 70%);
-  top: -100px;
-  right: -100px;
-}
-
-.orbFuchsia {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(217, 70, 239, 0.15), transparent 70%);
-  bottom: 10%;
-  left: -50px;
-}
-
-/* Макет */
+/* ─── Главный макет ─── */
 .mainLayout {
   position: relative;
   z-index: 2;
   display: flex;
-  padding: 120px 20px 40px;
-  gap: 24px;
-  max-width: 1920px;
+  padding: 84px 24px 40px;
+  gap: 28px;
+  max-width: 1560px;
   margin: 0 auto;
   width: 100%;
 }
 
 @media (max-width: 768px) {
   .mainLayout {
-    padding-top: 100px;
+    padding-top: 76px;
   }
 }
 
 @media (max-width: 640px) {
   .mainLayout {
-    padding-top: 70px;
+    padding-top: 68px;
   }
 }
 
-/* Боковая панель фильтров */
+/* ─── Боковая панель фильтров ─── */
 .sidebar {
-  width: 280px;
+  width: 270px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(24px);
-  border: 1px solid var(--border-glass);
-  border-radius: 4px; /* Срезанные безопасные углы */
-  padding: 32px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 24px 18px;
   height: fit-content;
   position: sticky;
-  top: 120px;
+  top: 84px;
   z-index: 20;
 }
 
 .filterGroup {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .filterTitle {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.5px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
+/* ─── Кастомный выпадающий список фильтров ─── */
 .customDropdown {
   position: relative;
   width: 100%;
@@ -127,166 +110,156 @@
 
 .dropdownToggle {
   width: 100%;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.25s var(--ease-smooth);
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .customDropdown:hover .dropdownToggle {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(139, 92, 246, 0.4);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-medium);
 }
 
 .isOpen .dropdownToggle {
-  border-color: var(--accent-fuchsia);
-  background: rgba(217, 70, 239, 0.05);
+  border-color: var(--accent-purple);
+  background: var(--accent-purple-subtle);
 }
 
 .chevron {
   font-size: 10px;
-  opacity: 0.5;
-  transition: transform 0.3s;
+  color: var(--text-muted);
+  transition: transform 0.2s;
 }
 
 .isOpen .chevron {
   transform: rotate(180deg);
-  opacity: 1;
-  color: var(--accent-fuchsia);
+  color: var(--accent-purple);
 }
 
 .dropdownMenu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--bg-secondary);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  border-radius: 4px;
-  clip-path: var(--clip-cut-sm);
-  padding: 6px;
-  z-index: 1000; /* Повышенный z-index для отображения поверх элементов карточки */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  animation: dropdownIn 0.2s ease-out;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  z-index: 1000;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  animation: dropdownIn 0.15s ease-out;
 }
 
 @keyframes dropdownIn {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdownItem {
-  padding: 8px 12px;
-  border-radius: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-xs);
   font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .dropdownItem:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: var(--white);
+  color: var(--text-primary);
 }
 
 .activeItem {
-  background: rgba(217, 70, 239, 0.1) !important;
-  color: var(--accent-fuchsia) !important;
+  background: var(--accent-purple-subtle) !important;
+  color: var(--accent-purple) !important;
   font-weight: 600;
 }
 
-/* Вариант шапки */
 .headerVariant {
   width: auto;
 }
 
 .headerVariant .dropdownToggle {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0 14px;
   height: 36px;
-  border-radius: 4px;
-  clip-path: var(--clip-cut-sm);
-  min-width: 170px;
-  font-weight: 600;
+  border-radius: var(--radius-sm);
+  min-width: 160px;
+  font-weight: 500;
   font-size: 12px;
 }
 
+/* ─── NSFW переключатель ─── */
 .nsfwToggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(139, 92, 246, 0.05);
-  border: 1px solid var(--border-purple);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .toggleLabel {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .toggleSwitch {
   width: 36px;
   height: 18px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
   position: relative;
-  transition: background 0.3s;
+  transition: background 0.2s;
 }
 
 .toggleSwitch.active {
-  background: var(--accent-orange);
-  box-shadow: 0 0 10px var(--orange-glow);
+  background: var(--accent-purple);
 }
 
 .toggleKnob {
   width: 14px;
   height: 14px;
-  background: var(--white);
+  background: #ffffff;
   border-radius: 50%;
   position: absolute;
   top: 2px;
   left: 2px;
-  transition: transform 0.3s;
+  transition: transform 0.2s var(--ease-smooth);
 }
 
 .toggleSwitch.active .toggleKnob {
   transform: translateX(18px);
 }
 
-/* Область контента */
+/* ─── Область контента каталога ─── */
 .contentArea {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: 8px; /* Безопасный срезанный угол */
-  padding: 32px;
+  gap: 20px;
+  background: transparent;
+  padding: 0;
   position: relative;
 }
 
 .contentHeader {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   position: sticky;
-  top: 80px; /* Десктоп: расположение под навбаром (~64px) + отступ */
+  top: 72px;
   z-index: 10;
   background: transparent;
 }
@@ -297,56 +270,57 @@
 
 .searchInput {
   width: 100%;
-  padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  padding: 11px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 15px;
+  font-family: var(--font-ui);
+  font-size: 14px;
   outline: none;
-  transition: all 0.3s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .searchInput:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--accent-fuchsia);
-  box-shadow: 0 0 30px rgba(217, 70, 239, 0.15);
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
 }
 
 .resultsRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  overflow: visible; /* Предотвращение обрезки выпадающих меню в headerActions */
 }
 
 .resultsCount {
   font-family: var(--font-ui);
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .viewToggles {
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0;
-  height: 36px;
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.03);
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
 .viewBtn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -354,68 +328,65 @@
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  border-radius: 6px;
-  font-size: 18px;
+  font-size: 15px;
   transition: all 0.2s;
-  line-height: 0;
 }
 
 .viewActive {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
 }
 
 .sortWrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .sortOrderBtn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .sortOrderBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
 }
 
 .sortLabel {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
-/* Здесь был селект сортировки, заменен кастомным дропдауном */
-
-/* Сетка персонажей */
+/* ─── Сетка карточек персонажей ─── */
 .characterGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
 }
 
 .characterList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .noResults {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 80px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 0;
-  clip-path: var(--clip-cut);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 60px 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-subtle);
 }
 
 .errorWrapper {
@@ -426,44 +397,43 @@
 }
 
 .noResults h3 {
-  font-size: 24px;
-  margin-bottom: 12px;
-  color: var(--white);
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .noResults p {
   color: var(--text-muted);
+  font-size: 13px;
 }
 
-/* Редизайн карточки персонажа */
+/* ─── Карточка персонажа в стиле Character.AI ─── */
 .characterCard {
-  background: var(--bg-secondary);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  transition: all 0.3s var(--ease-smooth);
+  transition: all 0.2s var(--ease-smooth);
   position: relative;
   overflow: hidden;
 }
 
 .characterCard:hover {
-  transform: translateY(-6px);
-  border-color: var(--accent-fuchsia);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  transform: translateY(-3px);
+  border-color: var(--border-medium);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
-/* 1. Область изображения (верх) */
+/* 1. Область портрета */
 .cardImageArea {
-  height: 110px; /* Уменьшено со 130px */
+  height: 124px;
   background: var(--bg-secondary);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 36px;
   overflow: hidden;
 }
 
@@ -471,69 +441,61 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s var(--ease-smooth);
+  transition: transform 0.4s var(--ease-smooth);
 }
 
 .characterCard:hover .cardAvatarLarge {
-  transform: scale(1.1);
+  transform: scale(1.04);
 }
 
 .cardIconGlow {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  background: var(--accent-fuchsia);
-  filter: blur(30px);
-  opacity: 0.2;
+  display: none;
 }
 
 .topBadgesRow {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 8px;
+  left: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   z-index: 4;
 }
 
 .newBadge, .hotBadge {
-  padding: 2px 8px;
-  backdrop-filter: blur(8px);
+  padding: 2px 6px;
   border-radius: 0;
+  clip-path: var(--clip-cut-sm);
   font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .newBadge {
-  background: var(--purple-glow);
-  border: 1px solid var(--border-glass);
-  color: var(--accent-fuchsia);
-  box-shadow: 0 0 15px var(--purple-glow);
+  background: var(--accent-purple-subtle);
+  border: 1px solid var(--border-purple);
+  color: var(--accent-purple);
 }
 
 .hotBadge {
-  background: var(--orange-glow);
+  background: rgba(249, 115, 22, 0.15);
   border: 1px solid var(--border-orange);
   color: var(--accent-orange);
-  box-shadow: 0 0 15px var(--orange-glow);
 }
 
 .nsfwBadge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 2px 8px;
-  background: var(--red-glow);
-  backdrop-filter: blur(8px);
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  background: rgba(239, 68, 68, 0.15);
   border: 1px solid var(--border-red);
-  border-radius: 0;
+  clip-path: var(--clip-cut-sm);
   color: var(--accent-red);
   font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   z-index: 4;
 }
@@ -541,13 +503,13 @@
 .cardHoverOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(7, 2, 13, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(14, 16, 21, 0.75);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.2s;
   z-index: 5;
 }
 
@@ -556,46 +518,46 @@
 }
 
 .startChatBtn {
-  padding: 10px 24px;
+  padding: 8px 18px;
   font-family: var(--font-ui);
   font-size: 13px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-  color: var(--white);
-  border: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  transition: transform 0.2s;
-  box-shadow: 0 0 20px var(--orange-glow);
+  clip-path: var(--clip-cut-sm);
+  transition: transform 0.2s, filter 0.2s;
+  box-shadow: 0 2px 10px var(--purple-glow);
 }
 
 .startChatBtn:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
+  transform: translateY(-1px);
+  filter: brightness(1.08);
 }
 
-/* 2. Блок создателя (центр) */
+/* 2. Блок создателя и статистики */
 .cardCreatorBar {
-  padding: 8px 14px; /* Уменьшено с 10px 16px */
+  padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .creatorAvatarMini {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-fuchsia));
+  background: var(--accent-purple-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  font-weight: 800;
-  color: var(--white);
+  font-weight: 700;
+  color: var(--accent-purple);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
 }
 
 .creatorAvatarImg {
@@ -606,22 +568,23 @@
 
 .creatorInfoStack {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   flex: 1;
 }
 
 .creatorNameMini {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--white);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .cardStats {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   font-size: 10px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .statItem {
@@ -633,28 +596,28 @@
 .statIcon {
   display: flex;
   align-items: center;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
-/* 3. Секция информации (низ) */
+/* 3. Описание и характеристики персонажа */
 .cardBody {
-  padding: 10px 14px;
+  padding: 10px 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  flex: 1; /* Позволяет телу расти и прижимать кнопку к низу */
+  gap: 6px;
+  flex: 1;
 }
 
 .cardHeader {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .cardName {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   line-height: 1.3;
 }
 
@@ -663,86 +626,85 @@
 }
 
 .fandomBadge {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--accent-orange);
-  background: rgba(255, 126, 35, 0.1);
-  padding: 2px 8px;
-  border: 1px solid rgba(255, 126, 35, 0.2);
-  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 6px;
+  border: 1px solid var(--border-subtle);
+  clip-path: var(--clip-cut-sm);
   width: fit-content;
 }
 
 .cardDesc {
-  font-size: 11px; /* Уменьшено с 12px */
+  font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.3;
-  height: 30px; /* Уменьшено с 34px */
+  line-height: 1.4;
+  height: 34px;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
-  opacity: 0.8;
 }
 
 .mobileStartChatBtn {
   display: none;
-  padding: 10px 24px;
+  padding: 8px 16px;
   font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-  color: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #ffffff;
   border: none;
   cursor: pointer;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  transition: transform 0.2s;
-  box-shadow: 0 0 20px var(--orange-glow);
+  clip-path: var(--clip-cut-sm);
+  text-align: center;
+  margin-top: auto;
 }
 
 .mobileFilterToggle {
   display: none;
-  width: 36px;
-  height: 36px;
-  background: var(--accent-purple);
-  color: var(--white);
-  border: none;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 0 20px var(--purple-glow);
 }
 
 .sidebarHeader, .drawerTitle, .closeDrawer, .sidebarOverlay, .applyFiltersBtn {
   display: none;
 }
 
-/* Стили карточки для режима списка */
+/* ─── Режим отображения в виде списка ─── */
 .characterCard.isListView {
   flex-direction: row;
-  height: 120px;
+  height: 110px;
 }
 
 .isListView .cardImageArea {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   flex-shrink: 0;
-  font-size: 40px;
+  font-size: 32px;
 }
 
 .isListView .cardCreatorBar {
-  width: 200px;
+  width: 180px;
   border-bottom: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 1px solid var(--border-subtle);
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .isListView .cardBody {
   flex: 1;
-  padding: 20px;
+  padding: 14px 18px;
   justify-content: center;
 }
 
@@ -752,44 +714,43 @@
   line-clamp: 1;
 }
 
-/* Мультивыбор фандома */
+/* ─── Фильтр фандомов (чипсы и поиск) ─── */
 .fandomFilterContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .selectedChips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  min-height: 24px;
+  min-height: 20px;
 }
 
 .chip {
-  padding: 4px 10px;
-  background: rgba(217, 70, 239, 0.1);
-  border: 1px solid rgba(217, 70, 239, 0.3);
-  border-radius: 0;
-  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-  color: var(--accent-fuchsia);
+  padding: 3px 8px;
+  background: var(--accent-purple-subtle);
+  border: 1px solid var(--border-purple);
+  clip-path: var(--clip-cut-sm);
+  color: var(--text-primary);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 6px;
-  animation: chipIn 0.2s ease-out;
+  animation: chipIn 0.15s ease-out;
 }
 
 @keyframes chipIn {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
 
 .chipRemove {
   cursor: pointer;
   opacity: 0.6;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
   transition: opacity 0.2s;
 }
@@ -800,26 +761,25 @@
 
 .fandomSearchInput {
   width: 100%;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
-  clip-path: var(--clip-cut-sm);
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 12px;
   outline: none;
   transition: border-color 0.2s;
 }
 
 .fandomSearchInput:focus {
-  border-color: rgba(139, 92, 246, 0.4);
+  border-color: var(--accent-purple);
 }
 
 .fandomList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 200px;
+  gap: 2px;
+  max-height: 180px;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -830,17 +790,17 @@
 
 .fandomList::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 2px;
 }
 
 .fandomOption {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 5px 6px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
   user-select: none;
 }
 
@@ -849,30 +809,30 @@
 }
 
 .fandomOption.selected {
-  background: rgba(217, 70, 239, 0.05);
+  background: var(--accent-purple-subtle);
 }
 
 .checkbox {
   width: 14px;
   height: 14px;
-  border: 1px solid var(--border-glass);
-  border-radius: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .fandomOption.selected .checkbox {
-  background: var(--accent-fuchsia);
-  border-color: var(--accent-fuchsia);
+  background: var(--accent-purple);
+  border-color: var(--accent-purple);
 }
 
 .checkboxInner {
-  color: var(--white);
+  color: #ffffff;
   font-size: 10px;
-  font-weight: 900;
+  font-weight: 700;
   display: none;
 }
 
@@ -881,7 +841,7 @@
 }
 
 .fandomName {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
   flex: 1;
   white-space: nowrap;
@@ -890,54 +850,42 @@
 }
 
 .fandomOption.selected .fandomName {
-  color: var(--white);
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .fandomCount {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
-  font-weight: 500;
+  color: var(--text-muted);
 }
 
-@media (max-width: 1800px) {
-  .characterGrid { grid-template-columns: repeat(5, 1fr); }
-}
-
+/* ─── Адаптивность ─── */
 @media (max-width: 1440px) {
   .characterGrid { grid-template-columns: repeat(4, 1fr); }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1180px) {
   .characterGrid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 1024px) {
-  .mainLayout { flex-direction: column; padding: 160px 16px 40px; gap: 24px; }
-  
-  .contentHeader {
-    top: 72px; /* Мобильные: расположение строго под шапкой навигации */
-  }
-  
+  .mainLayout { flex-direction: column; padding: 76px 16px 40px; gap: 20px; }
+  .contentHeader { top: 64px; }
   .mobileFilterToggle { display: flex; }
 
-  /* Трансформация боковой панели в мобильную шторку */
   .sidebar { 
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: 280px;
     height: 100vh;
-    z-index: 1000;
+    z-index: 1200;
     background: var(--bg-secondary);
-    backdrop-filter: blur(32px);
-    border-left: 1px solid var(--border-glass);
+    border-left: 1px solid var(--border-medium);
     border-radius: 0;
-    padding: 24px;
-    flex-direction: column;
-    gap: 24px;
+    padding: 20px;
     transform: translateX(100%);
-    transition: transform 0.4s var(--ease-smooth);
+    transition: transform 0.3s var(--ease-smooth);
     overflow-y: auto;
   }
 
@@ -949,82 +897,63 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
-    z-index: 999;
+    z-index: 1199;
   }
 
   .sidebarHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .drawerTitle {
     display: block;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--white);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
   }
 
   .closeDrawer {
     display: flex;
     background: transparent;
     border: none;
-    color: var(--text-secondary);
-    font-size: 20px;
+    color: var(--text-muted);
+    font-size: 18px;
     cursor: pointer;
   }
 
   .applyFiltersBtn {
     display: block;
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-    color: var(--white);
+    padding: 10px;
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    color: #ffffff;
     border: none;
-    border-radius: 0;
-    font-weight: 800;
+    font-weight: 600;
     margin-top: auto;
     clip-path: var(--clip-cut-sm);
   }
-
-  .contentArea {
-    padding: 0;
-    background: transparent;
-    backdrop-filter: none;
-    border: none;
-  }
-  
-  .filterGroup { flex: none; width: 100%; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 }
 
 @media (max-width: 640px) {
-  .mainLayout { padding: 70px 10px 40px; }
+  .mainLayout { padding: 68px 10px 32px; }
   
-  /* Коррекция шапки */
   .resultsRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
   }
-  .headerActions {
-    width: auto;
-    justify-content: flex-start;
-  }
+
   .viewToggles { display: none; }
-  .sortWrapper { width: auto; }
-  .headerVariant { width: auto; min-width: 150px; }
   
-  /* Сетка в 2 колонки (компактные элементы) */
   .characterGrid, .characterList {
-    display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px;
   }
   
-  /* Отображение списочных карточек в виде сетки на мобильных */
   .characterCard.isListView {
     flex-direction: column !important;
     height: auto !important;
@@ -1032,68 +961,30 @@
   
   .isListView .cardImageArea {
     width: 100% !important;
-    height: 100px !important;
+    height: 90px !important;
   }
   
   .isListView .cardCreatorBar {
     width: 100% !important;
     border-right: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
   }
   
   .isListView .cardBody {
     padding: 8px !important;
-    justify-content: flex-start !important;
   }
   
   .sortLabel { display: none; }
-  .sortWrapper { gap: 6px; }
   
-  .characterCount { font-size: 16px; font-weight: 800; }
-  
-  /* Масштабирование карточек и мобильная кнопка */
-  .characterCard {
-    border-radius: 0;
-    clip-path: var(--clip-cut-sm);
-  }
-  .cardImageArea {
-    height: 100px;
-    font-size: 40px;
-  }
-  .cardIconGlow { width: 40px; height: 40px; filter: blur(20px); }
-  
-  .cardCreatorBar { padding: 6px; gap: 4px; border-bottom: none; }
-  .creatorAvatarMini { width: 20px; height: 20px; font-size: 9px; }
-  .creatorNameMini { font-size: 10px; }
+  .cardImageArea { height: 90px; }
+  .cardCreatorBar { padding: 4px 8px; }
   .cardStats { display: none; }
-  
-  .cardBody { padding: 8px; gap: 4px; min-height: fit-content; }
-  .cardHeader { flex-direction: column; align-items: flex-start; gap: 2px; }
-  .cardName { font-size: 13px; line-height: 1.2; }
-  .fandomBadge { font-size: 8px; padding: 1px 6px; }
-  
-  .cardDesc { display: none; } /* Скрытие описания на мобильных устройствах */
+  .cardBody { padding: 6px 8px 10px; }
+  .cardDesc { display: none; }
   
   .mobileStartChatBtn {
     display: block !important;
-    width: 100%;
-    text-align: center;
-    margin-top: auto; /* Привязка к нижней части */
-    padding: 8px 12px;
-    font-size: 10px;
-    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-    background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
-    color: var(--white);
-    font-weight: 800;
   }
   
   .cardHoverOverlay { display: none !important; }
-}
-
-/* Сверхмалые экраны (360px и меньше) */
-@media (max-width: 480px) {
-  .mainLayout { padding: 64px 8px 32px; }
-  .cardCreatorBar { padding: 4px 6px; }
-  .mobileStartChatBtn { padding: 6px 8px; font-size: 9px; }
-  .cardName { font-size: 12px; }
 }
