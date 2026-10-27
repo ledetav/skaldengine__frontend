@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Шапка профиля пользователя с аватаром, ролью, краткими счетчиками и кнопкой настроек.
+ */
+
 import type { UserProfile } from '@/core/types/profile';
 import styles from './Profile.module.css';
 

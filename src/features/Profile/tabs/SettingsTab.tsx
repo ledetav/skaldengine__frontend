@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Вкладка «Настройки» в личном кабинете пользователя.
+ * Реализует формы редактирования профиля (никнейм, логин, email, о себе, аватар) и смены пароля.
+ */
+
 import { useState } from 'react';
 import styles from '../Profile.module.css';
 import type { UserProfile } from '@/core/types/profile';

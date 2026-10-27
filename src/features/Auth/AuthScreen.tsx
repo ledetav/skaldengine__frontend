@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран аутентификации пользователя (вход и регистрация).
+ * Управляет переключением режимов, валидацией формы, отправкой учетных данных в API и анимацией смены карточек.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation, useNavigate, Link } from 'react-router-dom'

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Форма регистрации нового аккаунта с подтверждением пароля и валидацией полей.
+ */
+
 import React from 'react'
 import { motion } from 'framer-motion'
 import { AuthInput } from './AuthInput'
@@ -13,6 +17,9 @@ interface RegisterFormProps {
   getErrorText: (name: string) => string | null
 }
 
+/**
+ * Компонент формы регистрации с полями логина, email, пароля, подтверждения пароля и согласия с правилами.
+ */
 export const RegisterForm: React.FC<RegisterFormProps> = ({ 
   formData, onChange, onSubmit, isLoading, isFormValid, globalError, getErrorText 
 }) => {

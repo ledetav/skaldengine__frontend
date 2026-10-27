@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Селектор сюжетных сценариев в конструкторе создания чата.
+ * Отображает список доступных квестов и сценариев с кратким описанием завязки.
+ */
+
 import React from 'react'
 import type { Scenario } from '@/core/types/chat'
 import styles from './ScenarioSelector.module.css'

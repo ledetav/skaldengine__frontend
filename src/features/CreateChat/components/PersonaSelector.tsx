@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Селектор пользовательской персоны в конструкторе создания чата.
+ * Позволяет выбрать персону игрока из выпадающего списка или перейти к созданию новой.
+ */
+
 import React, { useState } from 'react'
 import type { UserPersona, GameModeType } from '@/core/types/chat'
 import styles from './PersonaSelector.module.css'
@@ -10,6 +15,9 @@ interface PersonaSelectorProps {
   onCreateClick?: () => void
 }
 
+/**
+ * Выпадающий список выбора персоны игрока для ролевой сессии.
+ */
 export const PersonaSelector: React.FC<PersonaSelectorProps> = ({ 
   personas, 
   selectedPersonaId, 

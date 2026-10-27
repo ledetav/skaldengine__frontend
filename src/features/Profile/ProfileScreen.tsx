@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Главный экран профиля пользователя (своего или публичного).
+ * Интегрирует боковую карточку с аватаром, вкладки («Обзор», «Персоны», «Лорбуки», «Настройки») и загрузку данных.
+ */
+
 import { useState } from 'react';
 import type { ProfileTabType } from './ProfileTabs';
 import ProfileHeader from './ProfileHeader';

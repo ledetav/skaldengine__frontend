@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Главный промо-лендинг платформы SKALD Engine.
+ * Презентует интерактивные возможности ролевой игры, ключевые преимущества и точку входа в регистрацию.
+ */
+
 import Navbar from '@/components/ui/Navbar'
 import HeroSection from './components/HeroSection'
 import AboutSection from './components/AboutSection'

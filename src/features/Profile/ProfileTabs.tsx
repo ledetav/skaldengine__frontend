@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Панель переключения вкладок профиля («Обзор», «Персоны», «Лорбуки», «Настройки»).
+ */
+
 import styles from './Profile.module.css';
 
 export type ProfileTabType = 'main' | 'personas' | 'lorebooks' | 'settings';

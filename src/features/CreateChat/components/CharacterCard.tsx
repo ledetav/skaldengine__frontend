@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Карточка персонажа в боковой панели конструктора создания чата.
+ * Отображает портрет, фандом, теги, описание внешности и характера выбранного героя.
+ */
+
 import React from 'react'
 import type { Character } from '@/core/types/character'
 import type { UserProfile } from '@/core/types/profile'

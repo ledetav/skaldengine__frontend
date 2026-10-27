@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Секция настройки знакомства и стартового контекста в конструкторе чата.
+ * Содержит переключатель факта знакомства («Знакомы» / «Первая встреча»), описание отношений, локацию и зацепку сюжета.
+ */
+
 import React from 'react'
 import type { GameModeType, Lorebook } from '@/core/types/chat'
 import type { Character } from '@/core/types/character'

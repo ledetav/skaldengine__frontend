@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Промо-секция «Ключевые возможности» на лендинге.
+ * Демонстрирует карточки ключевых фич: ветвление диалогов, лорбуки, глубокая кастомизация и др.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from '@/theme/screens/Landing/FeaturesSection.module.css'
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Главный баннер (Hero Section) лендинга с эффектом печатной машинки и призывом к регистрации.
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import styles from '@/theme/screens/Landing/HeroSection.module.css'

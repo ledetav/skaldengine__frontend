@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Главный экран каталога персонажей (Dashboard).
+ * Объединяет боковую панель фильтров, верхнюю строку поиска и сортировки,
+ * динамическую сетку карточек персонажей и декоративный неоновый фон.
+ */
+
 import React from 'react'
 import Navbar from '@/components/ui/Navbar'
 import { useDashboard } from '@/core/hooks/useDashboard'

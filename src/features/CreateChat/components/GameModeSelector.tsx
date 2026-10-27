@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Селектор игрового режима диалога («Песочница» или «Сюжетный сценарий») в конструкторе чата.
+ */
+
 import React from 'react'
 import type { GameModeType } from '@/core/types/chat'
 import styles from './GameModeSelector.module.css'
@@ -14,6 +18,9 @@ interface GameModeSelectorProps {
   onModeChange: (mode: GameModeType) => void
 }
 
+/**
+ * Переключатель между свободной песочницей и сюжетным сценарием.
+ */
 export const GameModeSelector: React.FC<GameModeSelectorProps> = ({ 
   modes, 
   selectedMode, 

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран конструктора создания новой ролевой сессии чата.
+ * Позволяет сконфигурировать режим игры (песочница/сценарий), лицо повествования, персону игрока,
+ * прикрепленные лорбуки, длительность сессии и статус знакомства с персонажем.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'

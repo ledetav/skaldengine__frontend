@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Форма входа в систему по логину/email и паролю с поддержкой валидации.
+ */
+
 import React from 'react'
 import { motion } from 'framer-motion'
 import { AuthInput } from './AuthInput'
@@ -13,6 +17,9 @@ interface LoginFormProps {
   getErrorText: (name: string) => string | null
 }
 
+/**
+ * Компонент формы авторизации с полями логина и пароля, обработкой ошибок и кнопкой входа.
+ */
 export const LoginForm: React.FC<LoginFormProps> = ({ 
   formData, onChange, onSubmit, isLoading, isFormValid, globalError, getErrorText 
 }) => {

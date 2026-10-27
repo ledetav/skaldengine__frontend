@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Промо-секция «О платформе» на лендинге.
+ * Презентует пошаговый процесс взаимодействия с сервисом (выбор персонажа, настройка, игра).
+ */
+
 import styles from '@/theme/screens/Landing/AboutSection.module.css'
 
 const HOW_IT_WORKS = [

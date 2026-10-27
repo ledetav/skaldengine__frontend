@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Селектор баз знаний (лорбуков) в конструкторе создания чата.
+ * Поддерживает фильтрацию по типу (личный, персонаж, фандом) и кнопку быстрого создания лорбука.
+ */
+
 import React from 'react'
 import type { Lorebook } from '@/core/types/chat'
 import styles from './LorebookSelector.module.css'
@@ -20,6 +25,9 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
   onCreateClick,
   type = 'all'
 }) => {
+  /**
+   * Определяет тип привязки лорбука для отображения бейджа ('Личный', 'Персонаж', 'Фандом', 'Общий').
+   */
   const getLabel = (lib: Lorebook) => {
     if (lib.user_persona_id) return 'Личный'
     if (lib.character_id) return 'Персонаж'
