@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Базовый контейнер карточки дизайн-системы с вариантами формы и градиентного свечения.
+ */
+
 import React from 'react'
 import styles from './Card.module.css'
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Поле ввода поискового запроса с встроенной иконкой лупы и доступной разметкой.
+ */
+
 import React, { useId } from 'react'
 import styles from './SearchInput.module.css'
 

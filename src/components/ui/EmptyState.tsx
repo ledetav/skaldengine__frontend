@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Экран/блок пустого состояния (Empty State) при отсутствии данных или совпадений поиска.
+ */
+
 import React from 'react'
 import styles from './EmptyState.module.css'
 

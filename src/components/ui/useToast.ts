@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Кастомный React-хук для работы с системой всплывающих уведомлений (useToast).
+ */
+
 import { useContext } from 'react'
 import { ToastContext, type ToastContextValue } from './Toast'
 

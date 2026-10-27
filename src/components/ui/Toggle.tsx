@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Компонент двухпозиционного переключателя (Toggle Switch) дизайн-системы.
+ */
+
 import styles from './Toggle.module.css'
 
 interface ToggleProps {

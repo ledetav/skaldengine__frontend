@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Текстовое поле ввода дизайн-системы с поддержкой лейбла, ошибки и счетчика символов.
+ */
+
 import React from 'react'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -5,6 +9,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string
 }
 
+/**
+ * Базовое поле ввода текста с поддержкой индикации ошибок валидации и ограничения длины.
+ */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className = '', maxLength, ...props }, ref) => {
     const valueLength = props.value ? String(props.value).length : 0

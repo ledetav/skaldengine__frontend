@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Универсальное модальное окно подтверждения необратимых или критических действий.
+ */
+
 import React from 'react'
 import { Button } from '@/components/ui'
 import styles from './ConfirmModal.module.css'

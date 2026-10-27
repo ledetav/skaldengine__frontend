@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Кнопка вызова панели фильтрации со светящимся индикатором активности.
+ */
 
 import styles from './FilterButton.module.css'
 

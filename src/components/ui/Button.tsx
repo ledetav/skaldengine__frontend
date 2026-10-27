@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Универсальная кнопка дизайн-системы с поддержкой вариантов оформления, иконки и спиннера загрузки.
+ */
+
 import React from 'react'
 import styles from './Button.module.css'
 

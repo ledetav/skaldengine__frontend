@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран отображения системных и сетевых ошибок.
+ * Предоставляет кнопку повторной попытки (onRetry) и возврат на предыдущую страницу.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './ErrorScreen.module.css';
@@ -12,6 +17,9 @@ interface ErrorScreenProps {
   showActions?: boolean;
 }
 
+/**
+ * Унифицированный экран/блок отображения ошибок приложения.
+ */
 export const ErrorScreen: React.FC<ErrorScreenProps> = ({
   title = 'Упс! Что-то пошло не так',
   message,

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Кастомный выпадающий список выбора параметров (сортировка, пол и т.д.).
+ * Реализует анимацию раскрытия, стилизацию шеврона и автоматическое закрытие по клику вне элемента.
+ */
+
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 

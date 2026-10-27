@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Базовый компонент модального окна дизайн-системы.
+ * Рендерится через React Portal, блокирует прокрутку body и закрывается по клику на оверлей или крестик.
+ */
+
 import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'

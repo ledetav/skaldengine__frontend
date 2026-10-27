@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Сетка и список отображения каталога персонажей на витрине.
+ * Обрабатывает состояния загрузки, ошибок сети, пустого каталога и переключение вида (сетка/список).
+ */
+
 import React from 'react'
 import { CharacterCard } from './CharacterCard'
 import type { Character } from '@/core/types/character'
@@ -13,6 +18,9 @@ interface DashboardCharacterGridProps {
   hotIds: string[]
 }
 
+/**
+ * Контейнер каталога персонажей с поддержкой представлений сеткой или списком.
+ */
 export const DashboardCharacterGrid: React.FC<DashboardCharacterGridProps> = ({
   characters,
   isLoading,

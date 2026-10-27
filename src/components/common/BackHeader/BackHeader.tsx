@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Унифицированная шапка страницы с кнопкой возврата назад, заголовком и слотом действий.
+ */
+
 import React from 'react'
 import styles from './BackHeader.module.css'
 

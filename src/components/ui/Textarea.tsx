@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Многострочное поле ввода (Textarea) дизайн-системы с лейблом, ошибкой и счетчиком символов.
+ */
+
 import React from 'react'
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -5,6 +9,9 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   error?: string
 }
 
+/**
+ * Многострочное поле ввода текста с поддержкой ограничения максимального количества символов.
+ */
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, className = '', maxLength, ...props }, ref) => {
     const valueLength = props.value ? String(props.value).length : 0

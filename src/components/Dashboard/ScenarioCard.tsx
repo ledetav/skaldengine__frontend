@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Карточка сюжетного сценария на главной витрине приложения.
+ * Отображает заголовок, описание и бейдж популярности ('Hot!'/'New!').
+ */
+
 import React from 'react'
 import type { Scenario } from '@/core/types/chat'
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'

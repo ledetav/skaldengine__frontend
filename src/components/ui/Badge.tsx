@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Бейдж (тег / метка) дизайн-системы с цветовыми вариантами.
+ */
+
 import React from 'react'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

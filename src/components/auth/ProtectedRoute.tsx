@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент защиты маршрутов (Route Guard).
+ * Ограничивает доступ к экранам приложения для неавторизованных пользователей,
+ * а также выполняет проверку ролей (RBAC) для административных страниц.
+ */
+
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '@/core/contexts/AuthContext'

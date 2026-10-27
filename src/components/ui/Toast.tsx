@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Провайдер и стек всплывающих уведомлений (Toast Notifications).
+ * Поддерживает типы success/error/info, анимацию появления и автоисчезновение через таймаут.
+ */
+
 import { createContext, useState, useCallback } from 'react'
 import styles from './Toast.module.css'
 

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Боковая панель фильтрации каталога персонажей на витрине.
+ * Включает поиск по фандомам, выбор пола, переключатель NSFW и адаптивную шторку для мобильных устройств.
+ */
+
 import React from 'react'
 import { CustomDropdown } from './CustomDropdown'
 import { FandomFilter } from './FandomFilter'

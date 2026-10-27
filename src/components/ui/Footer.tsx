@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Подвал (Footer) веб-приложения с навигационными ссылками, соцсетями и копирайтом.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from '@/theme/components/Footer.module.css'
 

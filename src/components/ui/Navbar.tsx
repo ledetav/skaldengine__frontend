@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Главная навигационная панель (Navbar) приложения.
+ * Поддерживает гостевой и авторизованный режимы, выпадающее меню профиля,
+ * адаптивное мобильное меню (гамбургер), сохранение режима /debug и реакцию на скролл.
+ */
+
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/core/contexts/AuthContext'
@@ -38,6 +44,9 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    /**
+     * Отслеживает смещение страницы по вертикали для динамического добавления фона шапки.
+     */
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент фильтрации по фандомам в боковой панели витрины.
+ * Позволяет искать фандомы по названию, выбирать несколько значений одновременно и сбрасывать фильтр.
+ */
+
 import React, { useState } from 'react'
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 

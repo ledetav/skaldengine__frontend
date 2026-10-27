@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент карточки персонажа для главной витрины (Dashboard).
+ * Отображает портрет, фандом, бейджи новизны/популярности, автора, счетчик диалогов
+ * и формирует ссылку на создание чата (включая режим отладки /debug).
+ */
+
 import React from 'react'
 import type { Character } from '@/core/types/character'
 import { Link, useLocation } from 'react-router-dom'
@@ -18,11 +24,19 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, viewMod
   const { pathname } = useLocation()
   const isDebug = pathname.includes('/debug')
   
+  /**
+   * Корректирует ссылку перехода: если текущий маршрут находится в режиме отладки,
+   * добавляет суффикс /debug к целевому URL.
+   */
   const getDebugHref = (baseHref: string) => {
     if (!isDebug) return baseHref;
     if (baseHref.endsWith('/debug')) return baseHref;
     return baseHref.replace(/\/?$/, '/debug');
   }
+
+  /**
+   * Подбирает тематический эмодзи-аватар по ключевым словам названия фандома.
+   */
   const getIcon = () => {
     const fandom = character.fandom?.toLowerCase() || ''
     if (fandom.includes('cthulhu') || fandom.includes('horror')) return '👁️'

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Экран и индикатор загрузки с кольцевой неоновой анимацией и сменяющимися атмосферными фразами.
+ */
+
 import React, { useState, useEffect } from 'react';
 import styles from './LoadingScreen.module.css';
 
