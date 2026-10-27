@@ -1,110 +1,119 @@
-/* ═══════════════════════════════════════════════════
-   Дизайн-система SkaldEngine — Единый источник правды
-   (Консолидированные токены и вспомогательные классы)
-   Фиолетовое ядро и эстетика пламени Скальда
-═══════════════════════════════════════════════════ */
+/**
+ * @fileoverview Дизайн-система SkaldEngine — Единый источник правды (токены и базовые утилиты).
+ * Объединяет минималистичную эстетику нейтрально-тёмных поверхностей Google AI Studio
+ * с удобством взаимодействия Character.AI и фирменными угловатыми скошенными кнопками SkaldEngine.
+ */
 
 :root {
-  /* ─── Цвета (Фиолетовое ядро) ─────────────────────── */
-  --bg-base:        #07020d; /* Глубокая пустота */
-  --bg-secondary:   #12041d;
-  --bg-card:        rgba(18, 4, 29, 0.75);
-  --bg-glass:       rgba(29, 9, 45, 0.4);
+  /* ─── Базовые поверхности (в стиле Google AI Studio) ─────────────────── */
+  --bg-base:        #0e1015; /* Глубокий нейтральный графит холста */
+  --bg-main:        #0e1015; /* Псевдоним базового фона */
+  --bg-secondary:   #15171e; /* Боковые панели, навигация, разделители */
+  --bg-card:        #1a1d24; /* Карточки персонажей, диалоговые панели */
+  --bg-card-hover:  #222630; /* Ховер-состояние интерактивных карточек */
+  --bg-elevated:    #262a35; /* Всплывающие меню, модальные окна, дропдауны */
+  --bg-glass:       rgba(21, 23, 30, 0.85); /* Полупрозрачные плашки с размытием */
 
-  --accent-purple:  #8b5cf6; /* Основной акцент */
-  --accent-fuchsia: #d946ef; /* Энергия */
-  --accent-orange:  #ff6b00; /* Огонь / Действие (Акцент пламени Скальда) */
-  --accent-red:     #ef4444; /* Оповещение / NSFW (Предупреждение) */
-  --accent-pink:    #d946ef; /* Псевдоним для fuchsia */
-  --accent-blue:    #3b82f6; 
-  --accent-teal:    #14b8a6;
-  --accent-green:   #10b981;
+  /* ─── Фирменные акценты SkaldEngine ───────────────────────────────── */
+  --accent-purple:        #8b5cf6; /* Основной фирменный фиолетовый */
+  --accent-purple-hover:  #9d74f7; /* Осветленный фиолетовый для ховеров */
+  --accent-purple-subtle: rgba(139, 92, 246, 0.12); /* Мягкая акцентная подложка */
+  --accent-fuchsia:       #c084fc; /* Дополнительный мягкий акцент */
+  --accent-orange:        #f97316; /* Огонь Скальда (HOT бейджи, важные действия) */
+  --accent-red:           #ef4444; /* Оповещения, NSFW, удаление */
+  --accent-pink:          #ec4899;
+  --accent-blue:          #38bdf8; 
+  --accent-teal:          #14b8a6;
+  --accent-green:         #10b981;
 
-  --white:          #f0ece9;
-  --black:          #111010;
+  --white:                #f8fafc;
+  --black:                #090a0d;
 
-  /* ─── Свечения и эффекты ───────────────────────────── */
-  --purple-glow:    rgba(139, 92, 246, 0.3);
-  --fuchsia-glow:   rgba(217, 70, 239, 0.3);
-  --orange-glow:    rgba(255, 107, 0, 0.3);
-  --red-glow:       rgba(239, 68, 68, 0.3);
+  /* ─── Свечения и тени (сдержанные, без визуального шума) ──────────── */
+  --purple-glow:    rgba(139, 92, 246, 0.18);
+  --fuchsia-glow:   rgba(192, 132, 252, 0.15);
+  --orange-glow:    rgba(249, 115, 22, 0.2);
+  --red-glow:       rgba(239, 68, 68, 0.2);
 
-  /* ─── Текст ─────────────────────────────────────── */
-  --text-primary:   #f8fafc;
-  --text-secondary: #c084fc; /* Оттеночный вторичный текст */
-  --text-muted:     #6b21a8;
+  /* ─── Типографика (высокая читаемость, нейтральные тона) ──────────── */
+  --text-primary:   #f8fafc; /* Основной светлый текст высокой контрастности */
+  --text-secondary: #94a3b8; /* Спокойный нейтральный slate для вторичных данных */
+  --text-muted:     #64748b; /* Приглушенный нейтральный текст для подсказок и дат */
 
-  /* ─── Рамки и границы ──────────────────────────── */
-  --border-glass:   rgba(217, 70, 239, 0.15);
-  --border-purple:  rgba(139, 92, 246, 0.3);
-  --border-orange:  rgba(255, 107, 0, 0.4);
-  --border-red:     rgba(239, 68, 68, 0.4);
-  --border-blue:    rgba(59, 130, 246, 0.4);
-  --border-teal:    rgba(20, 184, 166, 0.4);
-  --border-green:   rgba(16, 185, 129, 0.4);
+  /* ─── Рамки и границы ────────────────────────────────────────────── */
+  --border-subtle:  rgba(255, 255, 255, 0.08); /* Тонкие разделители 1px */
+  --border-medium:  rgba(255, 255, 255, 0.14); /* Рамки карточек и инпутов */
+  --border-glass:   rgba(255, 255, 255, 0.08); /* Полупрозрачная граница плашек */
+  --border-purple:  rgba(139, 92, 246, 0.35); /* Фирменная фиолетовая граница */
+  --border-orange:  rgba(249, 115, 22, 0.35);  /* Оранжевая граница действий */
+  --border-red:     rgba(239, 68, 68, 0.35);   /* Граница предупреждений */
+  --border-blue:    rgba(56, 189, 248, 0.35);
+  --border-teal:    rgba(20, 184, 166, 0.35);
+  --border-green:   rgba(16, 185, 129, 0.35);
 
-  /* ─── Шрифты и типографика ──────────────────────── */
+  /* ─── Шрифты ──────────────────────────────────────────────────────── */
   --font-ui:        'Outfit', 'Inter', system-ui, sans-serif;
   --font-narrative: 'Lora', Georgia, serif;
-  --font-thought:   'Playfair Display', Georgia, serif;
+  --font-thought:   'Inter', system-ui, sans-serif;
 
-  /* ─── Формы со срезанными углами (Технические срезы) ─── */
-  --clip-cut: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-  --clip-cut-sm: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  --radius-angle: 4px;
+  /* ─── Фирменные угловатые срезы (для кнопок и бейджей) ────────────── */
+  --clip-cut:       polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  --clip-cut-sm:    polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  --clip-cut-btn:   polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  --radius-xs:      4px;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      14px;
+  --radius-angle:   4px;
 
-  /* ─── Плавность анимаций и переходов ───────────── */
+  /* ─── Плавность анимаций и переходов ──────────────────────────────── */
   --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ─── Макет и отступы ──────────────────────────── */
-  /* Высота навигационной панели — используется для отступов экранов */
-  --navbar-height:        64px;
-  --navbar-height-mobile: 56px; /* Компактная высота для мобильных экранов */
-
-  /* Универсальная высота окна просмотра (корректно обрабатывает адресную строку iOS Safari).
-     Использование: height: var(--full-vh);
-     Браузеры с поддержкой dvh получают точную видимую область,
-     устаревшие откатываются к 100vh. */
-  --full-vh: 100dvh;
+  /* ─── Макет и отступы ─────────────────────────────────────────────── */
+  --navbar-height:        60px;
+  --navbar-height-mobile: 54px;
+  --full-vh:              100dvh;
 }
 
 /* ──────────────────────────────────────────────────
    Вспомогательные утилитные классы (в стиле BEM)
 ────────────────────────────────────────────────── */
 
-/* ─── Кнопки ─────────────────────────────────── */
+/* ─── Кнопки с фирменными угловатыми скосами ─────────────────── */
 .ds-btn--primary, .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-fuchsia) 100%);
-  color: #fff;
-  border: none;
+  padding: 0.65rem 1.4rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0;
   clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.875rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s var(--ease-smooth);
-  box-shadow: 0 4px 20px var(--purple-glow);
+  box-shadow: 0 2px 10px var(--purple-glow);
   white-space: nowrap;
 }
 
 .ds-btn--primary:hover:not(:disabled), .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--fuchsia-glow);
-  filter: brightness(1.1);
+  background: linear-gradient(135deg, #8b5cf6 0%, #9d74f7 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--purple-glow);
+  filter: brightness(1.05);
 }
 
 .ds-btn--primary:disabled, .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .ds-btn--orange, .btn-orange {
@@ -112,25 +121,26 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, var(--accent-orange) 0%, #ff3e00 100%);
-  color: #fff;
-  border: none;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  padding: 0.65rem 1.4rem;
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s var(--ease-smooth);
-  box-shadow: 0 4px 20px var(--orange-glow);
+  box-shadow: 0 2px 10px var(--orange-glow);
   white-space: nowrap;
 }
 
 .ds-btn--orange:hover:not(:disabled), .btn-orange:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(255, 107, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--orange-glow);
+  filter: brightness(1.08);
 }
 
 .ds-btn--ghost, .btn-ghost {
@@ -138,13 +148,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.3rem;
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
   clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s var(--ease-smooth);
@@ -153,8 +163,8 @@
 
 .ds-btn--ghost:hover:not(:disabled), .btn-ghost:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
 }
 
 .ds-btn--danger, .btn-danger {
@@ -162,220 +172,216 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--accent-red);
+  padding: 0.65rem 1.3rem;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
   border: 1px solid var(--border-red);
   clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s var(--ease-smooth);
 }
 
 .ds-btn--danger:hover:not(:disabled), .btn-danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25);
-  box-shadow: 0 4px 16px var(--red-glow);
+  background: rgba(239, 68, 68, 0.22);
+  box-shadow: 0 2px 12px var(--red-glow);
 }
 
-/* ─── Элементы форм (Поля ввода) ───────────────────── */
+/* ─── Элементы форм (Чистые поля ввода) ─────────────────────────── */
 .ds-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 0.9rem;
-  padding: 0.75rem 1rem;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  padding: 0.7rem 0.95rem;
   outline: none;
-  transition: border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth);
+  transition: border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
 }
 
 .ds-input::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
 }
 
 .ds-input:focus {
-  border-color: var(--border-purple);
-  background: rgba(139, 92, 246, 0.06);
+  border-color: var(--accent-purple);
+  background: rgba(139, 92, 246, 0.04);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
 }
 
 .ds-input--error {
-  border-color: var(--border-red) !important;
+  border-color: var(--accent-red) !important;
   background: rgba(239, 68, 68, 0.04) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
 }
 
 .ds-textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 0.9rem;
-  padding: 0.75rem 1rem;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  padding: 0.75rem 0.95rem;
   outline: none;
   resize: vertical;
   min-height: 100px;
-  transition: border-color 0.2s var(--ease-smooth);
+  line-height: 1.5;
+  transition: border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+}
+
+.ds-textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .ds-textarea:focus {
-  border-color: var(--border-purple);
-  background: rgba(139, 92, 246, 0.06);
+  border-color: var(--accent-purple);
+  background: rgba(139, 92, 246, 0.04);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
 }
 
-/* ─── Карточки ───────────────────────────────────── */
+/* ─── Карточки ─────────────────────────────────────────────────── */
 .ds-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  clip-path: var(--clip-cut);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .ds-card-sm {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
 }
 
-/* ─── Метки полей ────────────────────────────────── */
+/* ─── Метки полей ──────────────────────────────────────────────── */
 .ds-label {
-  font-size: 0.65rem;
-  font-weight: 800;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.3);
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 0.45rem;
   display: block;
 }
 
-/* ─── Группы форм ────────────────────────────────── */
+/* ─── Группы форм ──────────────────────────────────────────────── */
 .ds-form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
 }
 
 .ds-error-msg {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--accent-red);
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
 }
 
-/* ─── Бейджи ─────────────────────────────────────── */
+/* ─── Бейджи со скошенным углом ────────────────────────────────── */
 .ds-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.2rem 0.75rem;
-  background: rgba(139, 92, 246, 0.08);
+  padding: 0.25rem 0.65rem;
+  background: rgba(139, 92, 246, 0.1);
   border: 1px solid var(--border-purple);
   color: var(--accent-purple);
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+  clip-path: var(--clip-cut-sm);
   position: relative;
   transition: all 0.2s ease;
 }
 
-.ds-badge::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid currentColor;
-  opacity: 0.2;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
-  pointer-events: none;
-}
-
 .ds-badge--orange {
-  background: rgba(255, 107, 0, 0.08);
+  background: rgba(249, 115, 22, 0.1);
   border-color: var(--border-orange);
   color: var(--accent-orange);
 }
 
 .ds-badge--fuchsia {
-  background: rgba(217, 70, 239, 0.08);
-  border-color: var(--border-glass);
+  background: rgba(192, 132, 252, 0.1);
+  border-color: rgba(192, 132, 252, 0.3);
   color: var(--accent-fuchsia);
 }
 
 .ds-badge--purple {
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(139, 92, 246, 0.1);
   border-color: var(--border-purple);
   color: var(--accent-purple);
 }
 
 .ds-badge--red {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(239, 68, 68, 0.1);
   border-color: var(--border-red);
   color: var(--accent-red);
 }
 
 .ds-badge--blue {
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(56, 189, 248, 0.1);
   border-color: var(--border-blue);
   color: var(--accent-blue);
 }
 
 .ds-badge--teal {
-  background: rgba(20, 184, 166, 0.08);
+  background: rgba(20, 184, 166, 0.1);
   border-color: var(--border-teal);
   color: var(--accent-teal);
 }
 
 .ds-badge--green {
-  background: rgba(16, 185, 129, 0.08);
+  background: rgba(16, 185, 129, 0.1);
   border-color: var(--border-green);
   color: var(--accent-green);
 }
 
-/* ─── Элементы бокового меню ──────────────────────── */
+/* ─── Элементы бокового меню ────────────────────────────────────── */
 .ds-sidebar-item, .ds-nav-item {
   width: 100%;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   gap: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
   font-family: var(--font-ui);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.25s var(--ease-smooth);
-  position: relative;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .ds-sidebar-item:hover, .ds-nav-item:hover {
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.8);
-  transform: translateX(4px);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
 }
 
 .ds-sidebar-item--active, .ds-nav-item--active {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #fff !important;
+  background: var(--accent-purple-subtle) !important;
+  color: var(--white) !important;
+  border-color: var(--border-purple) !important;
 }
 
-/* ─── Прочие утилиты ──────────────────────────────── */
+/* ─── Прочие утилиты ────────────────────────────────────────────── */
 .ds-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-glass), transparent);
+  background: var(--border-subtle);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-fuchsia) 50%, var(--accent-orange) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
