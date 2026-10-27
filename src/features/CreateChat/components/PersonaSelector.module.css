@@ -1,15 +1,21 @@
+/**
+ * @fileoverview Стили селектора персоны для экрана создания чата.
+ * Выдержаны в эстетике AI Studio: четкие карточки со скруглениями, нейтральные темные поверхности,
+ * аккуратное выпадающее меню выбора и акцентные фиолетовые маркеры активности.
+ */
+
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .groupLabel {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -19,15 +25,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
-}
-
-.modeSandbox .groupLabel::after {
-  background: linear-gradient(90deg, rgba(217, 70, 239, 0.3), transparent);
-}
-
-.modeScenario .groupLabel::after {
-  background: linear-gradient(90deg, rgba(255, 107, 0, 0.3), transparent);
+  background: var(--border-subtle);
 }
 
 .personaSelector {
@@ -40,47 +38,33 @@
 }
 
 .personaActiveCard {
-  background: rgba(30, 30, 45, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 14px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.personaActiveCard:hover, .personaActiveCard.isOpen {
-  background: rgba(40, 40, 60, 0.8);
-  transform: translateY(-1px);
+.personaActiveCard:hover,
+.personaActiveCard.isOpen {
+  background: var(--bg-secondary);
+  border-color: var(--border-medium);
 }
 
-.modeSandbox .personaActiveCard:hover {
-  border-color: var(--accent-fuchsia);
-  box-shadow: 0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 10px rgba(217, 70, 239, 0.1);
-}
-
-.modeSandbox .personaActiveCard.isOpen {
-  border-color: var(--accent-fuchsia);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-.modeScenario .personaActiveCard:hover {
-  border-color: var(--accent-orange);
-  box-shadow: 0 0 25px rgba(255, 107, 0, 0.4), inset 0 0 10px rgba(255, 107, 0, 0.1);
-}
-
-.modeScenario .personaActiveCard.isOpen {
-  border-color: var(--accent-orange);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+.personaActiveCard.isOpen {
+  border-color: var(--accent-purple);
 }
 
 .personaAvatarSquare {
-  width: 54px;
-  height: 54px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 48px;
+  height: 48px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -100,23 +84,23 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .personaName {
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .personaMeta {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
 }
 
 .personaDesc {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -124,129 +108,95 @@
 }
 
 .dropdownArrow {
-  padding: 0 10px;
-  color: rgba(255, 255, 255, 0.3);
-  transition: transform 0.3s ease;
+  padding: 0 8px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .isOpen .dropdownArrow {
   transform: rotate(180deg);
+  color: var(--text-primary);
 }
 
 .personaDropdown {
-  margin-top: 8px;
-  background: rgba(26, 26, 46, 0.98);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  margin-top: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: var(--shadow-md);
   z-index: 101;
   display: flex;
   flex-direction: column;
-  max-height: 400px;
+  max-height: 380px;
   overflow-y: auto;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: dropdownSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: dropdownSlideDown 0.2s ease;
 }
 
 @keyframes dropdownSlideDown {
-  from { 
-    max-height: 0; 
+  from {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-4px);
   }
-  to { 
-    max-height: 400px; 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.modeSandbox .personaDropdown {
-  border-color: rgba(217, 70, 239, 0.4);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(217, 70, 239, 0.25);
-}
-
-.modeScenario .personaDropdown {
-  border-color: rgba(255, 107, 0, 0.4);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 107, 0, 0.25);
-}
-
-.personaOptionCard, .personaOptionCreate {
-  padding: 12px;
+.personaOptionCard,
+.personaOptionCreate {
+  padding: 12px 14px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.personaOptionCard:hover, .personaOptionCreate:hover {
-  background: rgba(255, 255, 255, 0.08);
+.personaOptionCard:last-child,
+.personaOptionCreate:last-child {
+  border-bottom: none;
 }
 
-.modeSandbox .personaOptionCard:hover, 
-.modeSandbox .personaOptionCreate:hover {
-  background: rgba(217, 70, 239, 0.05);
+.personaOptionCard:hover,
+.personaOptionCreate:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.modeScenario .personaOptionCard:hover, 
-.modeScenario .personaOptionCreate:hover {
-  background: rgba(255, 107, 0, 0.05);
-}
-
-.modeSandbox .personaOptionCard.selected {
-  background: rgba(217, 70, 239, 0.08);
-  border-bottom-color: var(--accent-fuchsia);
-}
-
-.modeScenario .personaOptionCard.selected {
-  background: rgba(255, 107, 0, 0.08);
-  border-bottom-color: var(--accent-orange);
+.personaOptionCard.selected {
+  background: rgba(139, 92, 246, 0.08);
 }
 
 .createAvatarDash {
-  width: 54px;
-  height: 54px;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  width: 48px;
+  height: 48px;
+  border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-md, 8px);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.modeSandbox .createAvatarDash {
-  color: var(--accent-fuchsia);
-  border-color: rgba(217, 70, 239, 0.3);
-}
-
-.modeScenario .createAvatarDash {
-  color: var(--accent-orange);
-  border-color: rgba(255, 107, 0, 0.3);
+  color: var(--accent-purple);
 }
 
 .createLabel {
   font-weight: 500;
   font-size: 0.9rem;
-}
-
-.modeSandbox .createLabel {
-  color: var(--accent-fuchsia);
-}
-
-.modeScenario .createLabel {
-  color: var(--accent-orange);
+  color: var(--text-primary);
 }
 
 .personaBackdrop {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
   z-index: 90;
 }
 
 .placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
   font-style: italic;
 }

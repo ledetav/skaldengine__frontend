@@ -1,15 +1,20 @@
+/**
+ * @fileoverview Стили селектора продолжительности диалога/сессии.
+ * Выдержаны в стилистике AI Studio: строгие карточки с мягкими углами и фиолетовой подсветкой выбора.
+ */
+
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .groupLabel {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -19,7 +24,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+  background: var(--border-subtle);
 }
 
 .durationGrid {
@@ -29,44 +34,45 @@
 }
 
 @media (max-width: 480px) {
-  .durationGrid { grid-template-columns: 1fr; }
+  .durationGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .durationCard {
-  background: rgba(30, 30, 45, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .durationCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--bg-secondary);
+  border-color: var(--border-medium);
 }
 
 .isDurationActive {
-  background: rgba(255, 107, 0, 0.1);
-  border-color: var(--primary-orange);
-  box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+  background: rgba(139, 92, 246, 0.08);
+  border-color: var(--accent-purple);
 }
 
 .durationTitle {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .durationDesc {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  color: var(--text-muted);
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .isDurationActive .durationTitle {
-  color: var(--primary-orange);
+  color: var(--accent-purple);
 }

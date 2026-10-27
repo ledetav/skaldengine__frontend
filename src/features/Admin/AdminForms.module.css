@@ -247,9 +247,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: #1a1b23;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  clip-path: polygon(25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%, 0 25px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
   pointer-events: none;
   z-index: -1;
 }
@@ -409,18 +409,10 @@
   padding: 10px 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0; /* Без скругления */
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 48px;
-  clip-path: polygon(
-    0 0, 
-    calc(100% - 10px) 0, 
-    100% 10px, 
-    100% 100%, 
-    10px 100%, 
-    0 calc(100% - 10px)
-  );
+  min-height: 44px;
   position: relative;
 }
 
@@ -505,16 +497,8 @@
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
   z-index: 2000;
   overflow: hidden;
-  border-radius: 0;
-  clip-path: polygon(
-    0 10px, 
-    10px 0, 
-    100% 0, 
-    100% calc(100% - 10px), 
-    calc(100% - 10px) 100%, 
-    0 100%
-  );
-  animation: dropdownFadeIn 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  border-radius: var(--radius-sm);
+  animation: dropdownFadeIn 0.2s ease-out;
 }
 
 @keyframes dropdownFadeIn {

@@ -1,6 +1,8 @@
-/* ═══════════════════════════════════════════════════
-   Стили формы персоны — Фиолетовое ядро SkaldEngine
-═══════════════════════════════════════════════════ */
+/**
+ * @fileoverview Стили для формы создания и редактирования персоны пользователя.
+ * Реализован чистый и нейтральный интерфейс в стиле AI Studio с аккуратными карточками,
+ * сбалансированной типографикой и акцентными скошенными кнопками SkaldEngine.
+ */
 
 /* ─── Макет страницы ──────────────────────────────── */
 .page {
@@ -12,40 +14,27 @@
 }
 
 .bgOrbs {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+  display: none !important;
 }
 
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  animation: orbFloat 20s infinite alternate ease-in-out;
-}
-
-.orbPurple { width: 500px; height: 500px; background: var(--accent-purple); opacity: 0.08; top: -100px; left: -100px; }
-.orbFuchsia { width: 400px; height: 400px; background: var(--accent-fuchsia); opacity: 0.06; bottom: -50px; right: 10%; animation-delay: -8s; }
-
-@keyframes orbFloat {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(40px, 30px) scale(1.08); }
+.orb,
+.orbPurple,
+.orbFuchsia {
+  display: none !important;
 }
 
 /* ─── Контент ──────────────────────────────────── */
 .content {
   position: relative;
   z-index: 1;
-  max-width: 840px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 40px 32px 80px;
+  padding: 48px 24px 80px;
 }
 
 /* ─── Шапка ───────────────────────────────────── */
 .header {
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
 
 .backBtn {
@@ -54,68 +43,65 @@
   gap: 8px;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-family: var(--font-ui);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   padding: 0;
   margin-bottom: 16px;
-  transition: color 0.2s;
+  transition: color 0.15s ease;
 }
 
-.backBtn:hover { color: var(--accent-purple); }
+.backBtn:hover {
+  color: var(--text-primary);
+}
 
 .title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin: 0 0 6px;
-  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.5));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 /* ─── Баннер отладки ─────────────────────────────── */
 .debugBanner {
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid var(--border-purple);
-  padding: 10px 16px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--accent-purple);
   text-align: center;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  margin-bottom: 28px;
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: 24px;
 }
 
 /* ─── Область карточки ────────────────────────────── */
 .formCard {
-  background: rgba(18, 4, 29, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-  padding: 20px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-sm);
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
 @media (min-width: 768px) {
   .formCard {
-    padding: 36px;
-    gap: 28px;
-    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    padding: 32px;
+    gap: 24px;
   }
 }
 
@@ -127,66 +113,82 @@
 }
 
 .label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .required {
-  color: var(--accent-orange);
+  color: var(--accent-purple);
 }
 
 .input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 0.9rem;
-  padding: 12px 16px;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  padding: 10px 14px;
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.input::placeholder { color: rgba(255, 255, 255, 0.2); }
-.input:focus { border-color: var(--border-purple); background: rgba(139, 92, 246, 0.06); }
-.input.inputError { border-color: var(--border-red); }
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+.input.inputError {
+  border-color: #ef4444;
+}
 
 .textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 0.9rem;
-  padding: 12px 16px;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  padding: 12px 14px;
   outline: none;
   resize: vertical;
-  min-height: 100px;
-  transition: border-color 0.2s;
+  min-height: 110px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.textarea::placeholder { color: rgba(255, 255, 255, 0.2); }
-.textarea:focus { border-color: var(--border-purple); background: rgba(139, 92, 246, 0.06); }
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.textarea:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
 
 .hint {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 .errorMsg {
   font-size: 0.75rem;
-  color: var(--accent-red);
+  color: #ef4444;
 }
 
-/* ─── Row ──────────────────────────────────────── */
+/* ─── Сетка полей ──────────────────────────────── */
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -195,22 +197,22 @@
 
 /* ─── Разделитель секций ──────────────────────────── */
 .sectionTitle {
-  font-size: 0.7rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .sectionTitle::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, var(--border-glass), transparent);
+  background: var(--border-subtle);
 }
 
 /* ─── Кнопки действий ──────────────────────────── */
@@ -218,56 +220,80 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-glass);
-  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 6px;
 }
 
 .cancelBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  padding: 10px 20px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.cancelBtn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
 
 .submitBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 28px;
-  background: linear-gradient(135deg, var(--accent-orange) 0%, #ff3e00 100%);
-  color: #fff;
+  padding: 10px 24px;
+  background: var(--accent-purple);
+  color: #ffffff;
   border: none;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  clip-path: var(--clip-cut-sm);
   font-family: var(--font-ui);
-  font-weight: 800;
+  font-weight: 600;
   font-size: 0.85rem;
-  letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 20px var(--orange-glow);
+  transition: background 0.15s ease, opacity 0.15s ease;
 }
 
-.submitBtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,0,0.5); }
-.submitBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.submitBtn:hover:not(:disabled) {
+  background: #7c3aed;
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* ─── Мобильная адаптивность ──────────────────────── */
 @media (max-width: 768px) {
-  .content { padding: 24px 16px 60px; }
-  .formCard { padding: 24px 20px; gap: 20px; }
-  .row { grid-template-columns: 1fr; gap: 16px; }
-  .title { font-size: 1.4rem; }
-  .actions { flex-direction: column-reverse; }
-  .submitBtn, .cancelBtn { width: 100%; justify-content: center; }
+  .content {
+    padding: 24px 16px 60px;
+  }
+  .formCard {
+    padding: 20px 16px;
+    gap: 18px;
+  }
+  .row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .title {
+    font-size: 1.4rem;
+  }
+  .actions {
+    flex-direction: column-reverse;
+  }
+  .submitBtn,
+  .cancelBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

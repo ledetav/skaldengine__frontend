@@ -6,19 +6,18 @@
 }
 
 .adminCard {
-  background: rgba(25, 25, 35, 0.4);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 12px 20px 20px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px 18px;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .adminCard:hover {
-  transform: translateY(-6px); /* Уменьшено с 10px */
-  background: rgba(30, 30, 45, 0.5);
-  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--border-medium);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .cardTop {

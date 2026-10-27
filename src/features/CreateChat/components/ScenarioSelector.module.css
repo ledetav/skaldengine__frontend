@@ -1,15 +1,21 @@
+/**
+ * @fileoverview Стили селектора сценария на экране создания чата.
+ * Выдержаны в эстетике AI Studio: чистые карточки со скруглениями, нейтральные темные поверхности,
+ * аккуратная типографика и акцентные фиолетовые маркеры активности.
+ */
+
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .groupLabel {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -19,7 +25,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+  background: var(--border-subtle);
 }
 
 .lorebookGrid {
@@ -28,29 +34,29 @@
   gap: 12px;
 }
 
-.lorebookCard, .lorebookCardCreate {
-  background: rgba(30, 30, 45, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px;
+.lorebookCard,
+.lorebookCardCreate {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
+  padding: 14px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  transition: background 0.15s ease, border-color 0.15s ease;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 80px;
+  min-height: 84px;
 }
 
-.lorebookCard:hover, .lorebookCardCreate:hover {
-  background: rgba(40, 40, 60, 0.7);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+.lorebookCard:hover,
+.lorebookCardCreate:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-medium);
 }
 
 .isSelectedScenario {
-  background: rgba(255, 107, 0, 0.08);
-  border: 2px solid var(--accent-orange);
-  box-shadow: 0 0 15px rgba(255, 107, 0, 0.25);
+  background: rgba(139, 92, 246, 0.08);
+  border-color: var(--accent-purple);
 }
 
 .lorebookHeader {
@@ -61,13 +67,13 @@
 
 .lorebookName {
   font-size: 0.9rem;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .lorebookDesc {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -77,25 +83,35 @@
 }
 
 .lorebookCardCreate {
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border: 1px dashed var(--border-medium);
   align-items: center;
   justify-content: center;
+  background: transparent;
 }
 
 .lorebookCreateIcon {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.lorebookCardCreate:hover .lorebookCreateIcon {
+  color: var(--accent-purple);
 }
 
 .lorebookCreateLabel {
   font-size: 0.75rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
+}
+
+.lorebookCardCreate:hover .lorebookCreateLabel {
+  color: var(--text-primary);
 }
 
 .emptyHint {
   grid-column: 1 / -1;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
   text-align: center;
   padding: 20px;
 }
