@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Кастомный React-хук управления настройками отображения и генерации чата.
+ * Сохраняет параметры (лицо, язык, размер шрифта, автоскролл, мысли) в localStorage и на бэкенде.
+ */
+
 import { useState } from 'react'
 import { logger } from '@/core/utils/logger'
 import { chatsApi } from '@/core/api/chats'
@@ -9,6 +14,10 @@ interface UseChatSettingsOptions {
   onLastSavedUpdate?: () => void
 }
 
+/**
+ * Хук для локального и серверного управления настройками сессии чата
+ * (лицо повествования, язык генерации, размер шрифта, автоскролл, скрытие мыслей).
+ */
 export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: UseChatSettingsOptions) {
   const [perspective, setPerspective] = useState<ChatType['narrative_voice']>(() =>
     (localStorage.getItem('skald_perspective') as ChatType['narrative_voice']) || 'third'
@@ -26,6 +35,11 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     localStorage.getItem('skald_showThoughts') !== 'false'
   )
 
+  /**
+   * Синхронизирует измененные параметры чата с бэкендом и обновляет метаданные сессии.
+   * 
+   * @param updates - Частичный объект обновлений чата
+   */
   const handleSettingsUpdate = async (updates: Partial<ChatType>) => {
     if (!chatId) return
     try {
@@ -41,17 +55,27 @@ export function useChatSettings({ chatId, onChatUpdate, onLastSavedUpdate }: Use
     }
   }
 
+  /**
+   * Сохраняет локальную UI-настройку (размер шрифта, автоскролл) в localStorage и обновляет стейт.
+   */
   const handleLocalSettingChange = <T,>(key: string, value: T, setter: (val: T) => void) => {
     setter(value)
     localStorage.setItem(key, String(value))
   }
 
+  /**
+   * Переключает лицо повествования нейросети (первое, второе или третье лицо)
+   * с сохранением в чате на сервере.
+   */
   const handlePerspectiveChange = (val: string) => {
     const voice = val as NarrativeVoiceType
     setPerspective(voice)
     handleSettingsUpdate({ narrative_voice: voice })
   }
 
+  /**
+   * Переключает основной язык генерации (RU / EN) с сохранением на сервере.
+   */
   const handleLanguageChange = (val: string) => {
     const lang = val as 'RU' | 'EN'
     setLanguage(lang)

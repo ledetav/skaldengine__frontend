@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран подробного профиля персонажа в панели администратора.
+ * Позволяет редактировать системные параметры персонажа, аватар, фандом,
+ * привязанные лорбуки, системный промпт и атрибуты ролевой игры.
+ */
+
 import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../styles'
@@ -16,6 +22,11 @@ interface CharacterProfileViewProps {
   onDelete?: (id: string) => void
 }
 
+/**
+ * Экран подробного профиля персонажа в панели администратора.
+ * Включает боковую карточку с аватаром, блок детальной конфигурации
+ * личности и список связанных лорбуков.
+ */
 export function CharacterProfileView({ 
   characterId, 
   characters, 
@@ -30,6 +41,9 @@ export function CharacterProfileView({
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  /**
+   * Выполняет переход по маршрутам с сохранением пути режима отладки (/debug).
+   */
   const navigateDebug = (route: string) => {
     const isDebug = pathname.includes('/debug')
     const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
@@ -59,6 +73,10 @@ export function CharacterProfileView({
 
   const character = isCreate ? draftCharacter : characters.find((c: Character) => c.id === characterId)
 
+  /**
+   * Список доступных для выбора фандомов из всех существующих лорбуков,
+   * исключая зарезервированные системные теги 'original' / 'оригинальный'.
+   */
   const availableFandoms = useMemo(() => {
     const forbidden = ['original', 'оригинальный']
     const fandoms = new Set(
@@ -69,10 +87,16 @@ export function CharacterProfileView({
     return Array.from(fandoms as Set<string>).sort()
   }, [allLorebooks])
 
+  /**
+   * Признак того, что персонаж является оригинальным (Original/ОС), а не персонажем существующего фандома.
+   */
   const isOriginal = useMemo(() => 
     character?.type?.toLowerCase() === 'original' || character?.fandom?.toLowerCase() === 'original' || character?.fandom?.toLowerCase() === 'оригинальный',
   [character?.type, character?.fandom])
 
+  /**
+   * Массив лорбуков, подключенных к персонажу напрямую по ID, принадлежащих ему лично или привязанных через фандом.
+   */
   const charLorebooks = useMemo(() => {
     if (!character) return []
     const linkedIds = character.lorebook_ids || []
@@ -83,6 +107,9 @@ export function CharacterProfileView({
     )
   }, [allLorebooks, character, isOriginal])
   
+  /**
+   * Массив лорбуков того же фандома, которые администратор может дополнительно привязать к персонажу.
+   */
   const attachableLorebooks = useMemo(() => {
     if (!character) return []
     return allLorebooks.filter((lb: Lorebook) => {
@@ -108,7 +135,20 @@ export function CharacterProfileView({
     )
   }
 
+  /**
+   * Обновляет поле персонажа с каскадной синхронизацией:
+   * при переключении на Original очищаются фандомные лорбуки,
+   * при смене фандома подменяются соответствующие фандомные базы знаний.
+   */
   const handleChange = (field: keyof Character, value: any) => {
+    /**
+     * Вычисляет обновленное состояние персонажа с каскадной синхронизацией лорбуков фандома.
+     *
+     * @param prev - Текущее состояние персонажа
+     * @param field - Имя обновляемого свойства
+     * @param value - Новое значение свойства
+     * @returns Новый объект персонажа
+     */
     const updateChar = (prev: Character, field: keyof Character, value: any): Character => {
       if (field === 'type') {
         const isFandom = value === 'fandom';
@@ -145,12 +185,17 @@ export function CharacterProfileView({
     }
   }
 
+  /**
+   * Прикрепляет или открепляет лорбук от персонажа.
+   * Защита: для оригинального персонажа запрещено откреплять основной лорбук (с тегом main).
+   */
   const toggleLorebook = (lbId: string) => {
     const currentIds = character.lorebook_ids || []
     const isAttached = currentIds.includes(lbId)
     let newIds: string[]
     if (isAttached) {
       const lb = allLorebooks.find((l: Lorebook) => l.id === lbId)
+      // Защита от удаления основного лорбука у оригинального персонажа
       if (isOriginal && lb?.tags?.includes('main')) return;
       newIds = currentIds.filter((id: string) => id !== lbId)
     } else {
@@ -164,6 +209,9 @@ export function CharacterProfileView({
     }
   }
 
+  /**
+   * Удаляет персонажа через административный API и уведомляет родительский список.
+   */
   const handleDelete = async () => {
     try {
       const { charactersApi } = await import('@/core/api/characters')

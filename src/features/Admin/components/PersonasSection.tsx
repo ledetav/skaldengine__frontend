@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент таблицы игровых персон пользователей в панели администратора.
+ * Отображает список персон с их характеристиками, владельцами, статистикой и поиском.
+ */
+
 import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchInput, FilterButton } from '@/components/common'
@@ -16,6 +21,10 @@ interface PersonasSectionProps {
   onSearchChange: (v: string) => void
 }
 
+/**
+ * Секция каталога игровых персон пользователей в панели администратора.
+ * Отображает таблицу персон с привязкой к владельцу, счетчиками чатов и лорбуков.
+ */
 export function PersonasSection({
   personas, users, onSelectPersona, onToggleFilter, isFilterActive,
   onSort, renderSortIcon, search, onSearchChange,

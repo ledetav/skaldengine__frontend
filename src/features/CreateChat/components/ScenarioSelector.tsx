@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Селектор сюжетных сценариев в конструкторе создания чата.
+ * Отображает список доступных квестов и сценариев с кратким описанием завязки.
+ */
+
 import React from 'react'
 import type { Scenario } from '@/core/types/chat'
 import styles from './ScenarioSelector.module.css'
@@ -9,6 +14,9 @@ interface ScenarioSelectorProps {
   onCreateClick?: () => void
 }
 
+/**
+ * Компонент выбора сценария для сюжетной игры с персонажем.
+ */
 export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({ 
   scenarios, 
   selectedScenarioId, 
@@ -19,7 +27,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
     <div className={styles.formGroup}>
       <label className={styles.groupLabel}>Выберите сюжет (Сценарий)</label>
       <div className={styles.lorebookGrid}>
-        {/* Create Button */}
+        {/* Кнопка создания нового сюжета */}
         {onCreateClick && (
           <div className={styles.lorebookCardCreate} onClick={onCreateClick}>
             <div className={styles.lorebookCreateIcon}>
@@ -29,7 +37,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
           </div>
         )}
 
-        {/* Real Scenarios */}
+        {/* Карточки доступных сценариев */}
         {scenarios.map(scen => (
           <div 
             key={scen.id} 

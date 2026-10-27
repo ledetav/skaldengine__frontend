@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Вкладка «Персоны» в личном кабинете пользователя.
+ * Отображает список пользовательских персон с параметрами характера и кнопку добавления новой персоны.
+ */
+
 import type { ProfilePersona } from '@/core/types/profile';
 import styles from '../Profile.module.css';
 
@@ -5,13 +10,23 @@ interface PersonasTabProps {
   personas: ProfilePersona[];
 }
 
+/**
+ * Вкладка «Персоны» в профиле пользователя.
+ * Отображает список созданных пользователем игровых личностей и кнопку быстрого добавления.
+ */
 export default function PersonasTab({ personas }: PersonasTabProps) {
+  /**
+   * Иконка карандаша для действия редактирования персоны.
+   */
   const EditIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
     </svg>
   );
 
+  /**
+   * Иконка корзины для действия удаления персоны.
+   */
   const DeleteIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />

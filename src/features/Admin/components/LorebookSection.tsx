@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент раздела управления лорбуками (базами знаний) в панели администратора.
+ * Поддерживает фандомные, персонажные и персонные лорбуки, отображение списков
+ * и переключение на детальный редактор статей.
+ */
+
 import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useToast } from '@/components/ui'
@@ -17,6 +23,10 @@ interface LorebookSectionProps {
   renderSortIcon?: (field: string) => ReactNode
 }
 
+/**
+ * Секция управления лорбуками в панели администратора.
+ * Переключается между списком баз знаний и детальным экраном редактирования записей.
+ */
 export function LorebookSection({
   type: initialType,
   lorebooks,
@@ -33,6 +43,9 @@ export function LorebookSection({
   const { pathname } = useLocation()
   const { success } = useToast()
 
+  /**
+   * Выполняет переход по маршрутам админ-панели с сохранением суффикса /debug.
+   */
   const navigateDebug = (route: string) => {
     const isDebug = pathname.includes('/debug')
     const finalRoute = isDebug && !route.endsWith('/debug') ? route.replace(/\/?$/, '/debug') : route
@@ -43,6 +56,9 @@ export function LorebookSection({
   const isEditMode = pathname.includes('/edit') || isCreateMode
   const isDetailMode = !!id
 
+  /**
+   * Черновик нового лорбука для режима создания.
+   */
   const draftLb = useMemo(() => isCreateMode ? {
     id: 'create',
     name: 'Новый лорбук',
@@ -56,12 +72,18 @@ export function LorebookSection({
 
   const [fetchedLb, setFetchedLb] = useState<Lorebook | null>(null)
 
+  /**
+   * Активный лорбук (из кэша списка, загруженный с сервера или черновик).
+   */
   const lb = useMemo(() => {
     if (isCreateMode) return draftLb
     return lorebooks.find(l => l.id === id) || fetchedLb
   }, [lorebooks, id, isCreateMode, draftLb, fetchedLb])
 
   useEffect(() => {
+    /**
+     * Подгружает полную информацию о лорбуке, если его нет в предварительно загруженном списке.
+     */
     const loadLb = async () => {
       if (id && id !== 'create' && !lorebooks.find(l => l.id === id)) {
         try {
@@ -75,6 +97,9 @@ export function LorebookSection({
     loadLb()
   }, [id, lorebooks])
 
+  /**
+   * Список уникальных фандомов для привязки лорбука, исключая оригинальные.
+   */
   const allFandoms = useMemo(() => {
     const s = new Set<string>()
     lorebooks.forEach(l => { if (l.fandom) s.add(l.fandom) })
@@ -82,13 +107,27 @@ export function LorebookSection({
     return Array.from(s).filter(Boolean).filter(f => !['original', 'оригинальный'].includes(f.toLowerCase())).sort()
   }, [lorebooks, characters])
 
+  /**
+   * Переход в режим редактирования лорбука.
+   */
   const handleEdit = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}/edit`)
+
+  /**
+   * Переход в режим просмотра лорбука.
+   */
   const handleView = (lbId: string) => navigateDebug(`/admin/lorebooks/${lbId}`)
+
+  /**
+   * Возврат к соответствующей вкладке списка лорбуков.
+   */
   const handleBack = () => {
     const tab = initialType === 'fandom' ? 'fandom' : initialType === 'persona' ? 'personas' : 'characters'
     navigateDebug(`/admin/lorebooks/${tab}`)
   }
 
+  /**
+   * Удаляет лорбук через административный API и возвращает пользователя к списку.
+   */
   const handleDelete = async (targetId: string) => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')

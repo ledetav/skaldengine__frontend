@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Двухколоночный макет страницы детального просмотра сущностей в панели администратора.
+ * Разделяет интерфейс на фиксированную боковую панель (sidebar) и основную рабочую область (main).
+ */
+
 import React from 'react'
 import styles from './AdminProfileLayout.module.css'
 

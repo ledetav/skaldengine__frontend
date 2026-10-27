@@ -28,14 +28,14 @@
   pointer-events: none;
 }
 
-/* Header */
+/* Шапка чата */
 .header {
   height: 60px;
   display: flex;
   align-items: center;
   z-index: 1000;
   flex-shrink: 0;
-  position: relative; /* Container for children and pseudo-bg */
+  position: relative; /* Контейнер для содержимого и псевдофона */
 }
 
 @media (min-width: 768px) {
@@ -156,7 +156,7 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* For mobile touch */
+/* Сенсорная область для мобильных */
 @media (hover: none) {
   .infoWrapper:active .saveTooltip {
     opacity: 1;
@@ -188,7 +188,7 @@
   background: rgba(255, 107, 0, 0.1);
 }
 
-/* Message Area */
+/* Область сообщений */
 .messageArea {
   flex: 1;
   overflow-y: auto;
@@ -227,17 +227,17 @@
   --chat-font-base: 12px !important;
   --chat-bubble-padding: 14px 18px !important;
   --avatar-size: 28px !important;
-  --author-font-size: 0px !important; /* Hide name */
+  --author-font-size: 0px !important; /* Скрытие имени */
 }
 
 .fontLarge {
   --chat-font-base: 20px !important;
   --chat-bubble-padding: 32px 40px !important;
-  --avatar-size: 0px !important; /* Hide avatar */
+  --avatar-size: 0px !important; /* Скрытие аватара */
   --author-font-size: 16px !important;
 }
 
-/* Shared bubble properties */
+/* Общие свойства пузыря сообщения */
 .bubbleAI, .bubbleUser, .textarea {
   font-size: var(--chat-font-base) !important;
   line-height: 1.6;
@@ -279,7 +279,7 @@
 
 .fontSmall .messageItem {
   gap: 12px;
-  align-items: flex-start; /* Align bubble to top of avatar */
+  align-items: flex-start; /* Выравнивание пузыря по верху аватара */
 }
 
 .textContent {
@@ -295,7 +295,7 @@
   gap: 32px;
 }
 
-/* AI Message */
+/* Сообщение ассистента (ИИ) */
 .aiMessage {
   display: flex;
   gap: 16px;
@@ -460,7 +460,7 @@
   width: fit-content;
   color: var(--accent-purple);
   font-family: inherit;
-  font-size: 0.85em; /* Slightly smaller than base content */
+  font-size: 0.85em; /* Немного меньше основного контента */
   clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
 }
 
@@ -486,7 +486,7 @@
   background: rgba(139, 92, 246, 0.05);
   border-left: 2px solid var(--accent-purple);
   font-family: var(--font-ui);
-  font-size: 0.9em; /* Slightly smaller than main text */
+  font-size: 0.9em; /* Немного меньше основного текста */
   line-height: 1.6;
   color: var(--text-secondary);
   font-style: italic;
@@ -570,10 +570,10 @@
   min-width: 20px;
 }
 
-/* User Message */
+/* Сообщение пользователя */
 .userMessage {
   display: flex;
-  flex-direction: row-reverse; /* Flip: Content then Avatar */
+  flex-direction: row-reverse; /* Изменение порядка: текст, затем аватар */
   gap: 16px;
   align-self: flex-end;
   align-items: flex-start;
@@ -633,7 +633,7 @@
   box-shadow: 
     0 10px 30px rgba(0, 0, 0, 0.3),
     inset 0 0 20px rgba(217, 70, 239, 0.05);
-  /* Symmetrical to AI: cut top-right and bottom-left */
+  /* Симметрично ИИ: срез правого верхнего и левого нижнего угла */
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   min-height: 50px;
   width: fit-content;
@@ -655,7 +655,7 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* Footer & Input */
+/* Подвал и поле ввода */
 .footer {
   padding: 12px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
@@ -697,7 +697,7 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  min-width: 0; /* Allow flexbox to shrink below content size on narrow screens */
+  min-width: 0; /* Возможность flexbox сжиматься на узких экранах */
 }
 
 .editTextarea {
@@ -817,8 +817,8 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Animations */
-/* Sidebar Right */
+/* Анимации */
+/* Правая боковая панель */
 .sidebar {
   width: 380px;
   height: 100%;
@@ -950,11 +950,11 @@
   transform: translateX(4px);
 }
 
-/* Char Card Mini */
+/* Мини-карточка персонажа */
 .charCardMini {
   background: rgba(30, 30, 45, 0.4);
   border: 1px solid var(--border-glass);
-  border-radius: 4px; /* We'll use clip-path for beveled look */
+  border-radius: 4px; /* Использование clip-path для скошенных углов */
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
@@ -1084,7 +1084,7 @@
   font-weight: 600;
 }
 
-/* Persona Sidebar Card */
+/* Карточка персоны в боковой панели */
 .personaCardSidebar {
   padding: 16px;
   background: rgba(30, 30, 45, 0.4);
@@ -1137,7 +1137,7 @@
   font-style: italic;
 }
 
-/* Scenario Sidebar Card */
+/* Карточка сценария в боковой панели */
 .scenarioCardSidebar {
   padding: 16px;
   background: rgba(255, 107, 0, 0.03);
@@ -1187,7 +1187,7 @@
   margin: 0;
 }
 
-/* Settings Styles */
+/* Стили настроек чата */
 .settingsGrid {
   display: flex;
   flex-direction: column;
@@ -1324,7 +1324,7 @@
   box-shadow: 0 0 10px var(--accent-purple);
 }
 
-/* Lorebook Styles */
+/* Стили базы знаний (лорбука) */
 .loreList {
   display: flex;
   flex-direction: column;
@@ -1391,7 +1391,7 @@
   border-color: var(--accent-purple);
 }
 
-/* Custom Select Styles */
+/* Стили кастомного выпадающего списка */
 .customSelectContainer {
   position: relative;
   width: 100%;
@@ -1622,7 +1622,7 @@
   }
 }
 
-/* Ultra-narrow: 360px and below (small Android phones) */
+/* Сверхмалые экраны: 360px и меньше */
 @media (max-width: 360px) {
   .headerContent {
     padding: 0 8px;
@@ -1657,7 +1657,7 @@
     gap: 6px;
   }
 
-  /* Tighter message bubbles */
+  /* Компактные пузыри сообщений */
   .bubbleAI, .bubbleUser {
     padding: 10px 12px;
   }

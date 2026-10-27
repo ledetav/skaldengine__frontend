@@ -1,6 +1,21 @@
+/**
+ * @fileoverview Доменные типы и интерфейсы чатов, сообщений, сценариев и баз знаний.
+ * Определяет структуры сессий диалога, параметров генерации, дерева реплик и потокового SSE.
+ */
+
+/**
+ * Режим чата: 'sandbox' (свободная песочница) или 'scenario' (сюжетная игра).
+ */
 export type GameModeType = 'sandbox' | 'scenario'
+
+/**
+ * Лицо повествования: 'first' (от 1-го лица), 'second' (от 2-го лица), 'third' (от 3-го лица).
+ */
 export type NarrativeVoiceType = 'first' | 'second' | 'third'
 
+/**
+ * Сценарий ролевой игры с персонажем.
+ */
 export interface Scenario {
   id: string
   title: string
@@ -14,6 +29,9 @@ export interface Scenario {
   image_url?: string
 }
 
+/**
+ * Сообщение в древовидной истории диалога.
+ */
 export interface Message {
   id: string
   role: 'user' | 'assistant'
@@ -24,12 +42,15 @@ export interface Message {
   is_edited?: boolean
   created_at?: string
   
-  // UI-specific additions (mapped in frontend)
+  // Дополнительные вычисляемые поля для отображения в UI
   author?: string
   siblings_count?: number
   current_sibling_index?: number
 }
 
+/**
+ * Персона игрока для ролевой игры.
+ */
 export interface UserPersona {
   id: string
   name: string
@@ -46,6 +67,9 @@ export interface UserPersona {
   created_at: string
 }
 
+/**
+ * Сессия чата между пользователем и персонажем.
+ */
 export interface Chat {
   id: string
   user_id: string
@@ -66,12 +90,15 @@ export interface Chat {
   created_at: string
   updated_at?: string
   
-  // Enriched fields
+  // Обогащенные поля для витрины и карточек
   character_name?: string
   user_persona_name?: string
   last_message_preview?: string
 }
 
+/**
+ * Схема обновления настроек или метаданных чата.
+ */
 export interface ChatUpdate {
   title?: string
   language?: string
@@ -82,6 +109,9 @@ export interface ChatUpdate {
   active_leaf_id?: string
 }
 
+/**
+ * Схема создания нового чата.
+ */
 export interface ChatCreate {
   character_id: string
   user_persona_id: string
@@ -96,16 +126,25 @@ export interface ChatCreate {
   checkpoints_count: number
 }
 
+/**
+ * Схема отправки нового сообщения.
+ */
 export interface MessageCreate {
   content: string
   parent_id?: string
 }
 
+/**
+ * Схема редактирования сообщения.
+ */
 export interface MessageEdit {
   content: string
   new_content?: string
 }
 
+/**
+ * Запись в базе знаний (лорбуке).
+ */
 export interface LorebookEntry {
   id: string
   lorebook_id: string
@@ -117,8 +156,14 @@ export interface LorebookEntry {
   created_at: string
 }
 
+/**
+ * Тип базы знаний: по фандому, персонажу или персоне игрока.
+ */
 export type LorebookType = 'fandom' | 'character' | 'persona'
 
+/**
+ * База знаний (лорбук).
+ */
 export interface Lorebook {
   id: string
   name: string
@@ -136,6 +181,9 @@ export interface Lorebook {
   created_at: string
 }
 
+/**
+ * Контрольная точка (чекпоинт) сценария.
+ */
 export interface Checkpoint {
   id: string
   order_num: number

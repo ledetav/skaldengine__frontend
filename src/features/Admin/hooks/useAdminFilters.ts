@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Пользовательский хук для расширенной фильтрации и сортировки сущностей админ-панели.
+ * Выполняет фильтрацию пользователей, персон, персонажей и лорбуков по множественным критериям
+ * (роли, даты, лимиты счетчиков, фандомы, флаги приватности и NSFW).
+ */
+
 import { useMemo } from 'react'
 import type { Character, Lorebook, User, UserPersona } from '../types'
 import type { AdminTab } from '../components/AdminSidebar'
@@ -34,6 +40,7 @@ interface UseAdminFiltersParams {
   personaSearch: string
 }
 
+/** Вспомогательная функция универсальной сортировки массива объектов */
 function applySort<T extends Record<string, any>>(data: T[], field: string, dir: 'asc' | 'desc'): T[] {
   if (!field) return data
   return [...data].sort((a, b) => {
@@ -49,12 +56,19 @@ function applySort<T extends Record<string, any>>(data: T[], field: string, dir:
   })
 }
 
+/**
+ * Хук фильтрации и клиентской сортировки списков сущностей административной панели
+ * (пользователи, персоны, персонажи, лорбуки).
+ */
 export function useAdminFilters({
   characters, users, personas,
   lorebooksFandom, lorebooksCharacter, lorebooksPersona,
   activeTab, activeFilters, sortField, sortDir,
   userSearch, personaSearch,
 }: UseAdminFiltersParams) {
+  /**
+   * Отфильтрованный и отсортированный список пользователей платформы.
+   */
   const filteredUsers = useMemo(() => {
     const list = users.filter(u => {
       const s = userSearch.toLowerCase()
@@ -70,6 +84,9 @@ export function useAdminFilters({
     return applySort(list, sortField, sortDir)
   }, [users, activeFilters, sortField, sortDir, userSearch])
 
+  /**
+   * Отфильтрованный и отсортированный список персон пользователей (по владельцу, счетчикам чатов и лорбуков).
+   */
   const filteredPersonas = useMemo(() => {
     const list = personas.filter(p => {
       if (!p.name.toLowerCase().includes(personaSearch.toLowerCase())) return false
@@ -83,6 +100,9 @@ export function useAdminFilters({
     return applySort(list, sortField, sortDir)
   }, [personas, activeFilters, sortField, sortDir, personaSearch])
 
+  /**
+   * Отфильтрованный и отсортированный список персонажей каталога (по фандому, публичности, NSFW).
+   */
   const filteredCharacters = useMemo(() => {
     const list = characters.filter(c => {
       if (activeFilters.fandoms?.length && !activeFilters.fandoms.includes(c.fandom || '')) return false
@@ -95,6 +115,9 @@ export function useAdminFilters({
     return applySort(list, sortField, sortDir)
   }, [characters, activeFilters, sortField, sortDir])
 
+  /**
+   * Отфильтрованный и отсортированный список лорбуков выбранного типа (по количеству записей).
+   */
   const filteredLorebooks = useMemo(() => {
     const list = activeTab === 'lorebooks_fandom' ? lorebooksFandom
       : activeTab === 'lorebooks_persona' ? lorebooksPersona
@@ -107,6 +130,12 @@ export function useAdminFilters({
     }), sortField, sortDir)
   }, [lorebooksFandom, lorebooksCharacter, lorebooksPersona, activeFilters, activeTab, sortField, sortDir])
 
+  /**
+   * Проверяет, активен ли хотя бы один фильтр для указанной вкладки (для подсветки индикатора кнопки фильтра).
+   * 
+   * @param filters - Текущее состояние фильтров
+   * @param tab - Проверяемая вкладка админ-панели
+   */
   const isFilterActiveForTab = (filters: FilterState, tab: AdminTab): boolean => {
     if (tab === 'users') return !!(filters.roles?.length || filters.regDateStart || filters.regDateEnd)
     if (tab === 'personas') return !!(filters.userIds?.length || filters.chatCountMin !== undefined || filters.chatCountMax !== undefined || filters.lorebookCountMin !== undefined || filters.lorebookCountMax !== undefined)

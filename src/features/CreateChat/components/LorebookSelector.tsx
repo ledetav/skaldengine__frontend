@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Селектор баз знаний (лорбуков) в конструкторе создания чата.
+ * Поддерживает фильтрацию по типу (личный, персонаж, фандом) и кнопку быстрого создания лорбука.
+ */
+
 import React from 'react'
 import type { Lorebook } from '@/core/types/chat'
 import styles from './LorebookSelector.module.css'
@@ -10,6 +15,9 @@ interface LorebookSelectorProps {
   type?: 'all' | 'persona' | 'character' | 'fandom'
 }
 
+/**
+ * Компонент выбора прикрепляемой к чату базы знаний (лорбука).
+ */
 export const LorebookSelector: React.FC<LorebookSelectorProps> = ({ 
   lorebooks, 
   selectedLorebookId, 
@@ -17,6 +25,9 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
   onCreateClick,
   type = 'all'
 }) => {
+  /**
+   * Определяет тип привязки лорбука для отображения бейджа ('Личный', 'Персонаж', 'Фандом', 'Общий').
+   */
   const getLabel = (lib: Lorebook) => {
     if (lib.user_persona_id) return 'Личный'
     if (lib.character_id) return 'Персонаж'
@@ -36,7 +47,7 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
     <div className={styles.formGroup}>
       <label className={styles.groupLabel}>Локальная база знаний (Lorebook)</label>
       <div className={styles.lorebookGrid}>
-        {/* Create Button */}
+        {/* Кнопка создания новой базы знаний */}
         {onCreateClick && (
           <div className={styles.lorebookCardCreate} onClick={onCreateClick}>
             <div className={styles.lorebookCreateIcon}>
@@ -46,7 +57,7 @@ export const LorebookSelector: React.FC<LorebookSelectorProps> = ({
           </div>
         )}
 
-        {/* Real Lorebooks */}
+        {/* Карточки существующих лорбуков */}
         {filteredLorebooks.map(lib => (
           <div 
             key={lib.id} 

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран детального профиля пользователя в панели администратора.
+ * Предоставляет просмотр сведений об аккаунте, изменение прав/роли пользователя
+ * (user, moderator, admin) и удаление пользователя.
+ */
+
 import { useState } from 'react'
 import styles from '../styles'
 import type { User } from '../types'
@@ -12,6 +18,10 @@ interface UserProfileViewProps {
   onChangeRole: (id: string, role: string) => void
 }
 
+/**
+ * Экран детального профиля пользователя в панели администратора.
+ * Позволяет просматривать профиль, менять роль (пользователь, модератор, администратор) и удалять аккаунт.
+ */
 export function UserProfileView({ 
   userId, 
   users, 
@@ -39,6 +49,9 @@ export function UserProfileView({
     )
   }
 
+  /**
+   * Инициирует удаление пользователя: проверяет защиту от удаления собственной учетной записи администратора.
+   */
   const handleDeleteClick = () => {
     if (user.id === currentUser.id) {
       setErrorVisible(true)

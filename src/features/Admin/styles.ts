@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Агрегатор стилей панели администратора.
+ * Объединяет модульные CSS-стили (базовые, профили, таблицы, формы)
+ * в единый объект styles для удобства использования в компонентах.
+ */
+
 import baseStyles from './Admin.module.css'
 import profilesStyles from './AdminProfiles.module.css'
 import tablesStyles from './AdminTables.module.css'

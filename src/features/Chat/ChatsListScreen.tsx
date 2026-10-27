@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран каталога всех активных и сохраненных чатов пользователя.
+ * Реализует поиск по заголовку и последнему сообщению, фильтры по персонажам и режимам игры, а также удаление диалогов.
+ */
+
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '@/components/ui/Navbar'
@@ -6,6 +11,9 @@ import { type Chat } from '@/core/types/chat'
 import { Input, Badge, Button } from '@/components/ui'
 import styles from './Chat.module.css'
 
+/**
+ * Экран списка всех диалогов пользователя с поиском, фильтрами по персонажам и режимам.
+ */
 export default function ChatsListScreen() {
   const navigate = useNavigate()
   const [chats, setChats] = useState<Chat[]>([])
@@ -16,6 +24,9 @@ export default function ChatsListScreen() {
   const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
+    /**
+     * Загружает историю чатов текущего пользователя с бэкенда.
+     */
     const fetchChats = async () => {
       try {
         const data = await chatsApi.getChats(0, 50)
@@ -29,6 +40,9 @@ export default function ChatsListScreen() {
     fetchChats()
   }, [])
 
+  /**
+   * Отфильтрованный список чатов согласно строке поиска, выбранному режиму и персонажу.
+   */
   const filteredChats = useMemo(() => {
     return chats.filter((chat: Chat) => {
       const matchesSearch = 
@@ -43,6 +57,9 @@ export default function ChatsListScreen() {
     })
   }, [chats, searchTerm, modeFilter, characterFilter])
 
+  /**
+   * Форматирует дату ISO в локализованную строку вида DD.MM.YY HH:MM.
+   */
   const formatDate = (dateStr: string | undefined) => {
     if (!dateStr) return ''
     const date = new Date(dateStr)
@@ -55,6 +72,9 @@ export default function ChatsListScreen() {
     })
   }
 
+  /**
+   * Извлекает список уникальных персонажей из истории чатов для селектора фильтрации.
+   */
   const uniqueCharacters = useMemo(() => {
     const seen = new Set()
     return chats.reduce((acc: {id: string, name: string}[], chat: Chat) => {

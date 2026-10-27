@@ -1,6 +1,13 @@
+/**
+ * @fileoverview Подвал (Footer) веб-приложения с навигационными ссылками, соцсетями и копирайтом.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from '@/theme/components/Footer.module.css'
 
+/**
+ * Подвал сайта (Footer) с ссылками на разделы платформы, социальные сети и правовую информацию.
+ */
 export default function Footer() {
   const year = new Date().getFullYear()
 
@@ -9,7 +16,7 @@ export default function Footer() {
       <div className={styles.topGlow} aria-hidden="true" />
 
       <div className={styles.inner}>
-        {/* Brand */}
+        {/* Логотип и описание платформы */}
         <div className={styles.brand}>
           <Link to="/" className={styles.logo} aria-label="SkaldEngine Home">
             <span className={styles.logoIcon}>⚙</span>
@@ -31,7 +38,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links */}
+        {/* Навигационные ссылки */}
         <div className={styles.linksGroup}>
           <h3 className={styles.groupTitle}>Платформа</h3>
           <ul className={styles.linkList}>
@@ -52,7 +59,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
+      {/* Нижняя полоса с копирайтом */}
       <div className={styles.bottom}>
         <span>© {year} SkaldEngine. Все права защищены.</span>
         <span className={styles.madeWith}>Сделано с ♥ на базе Polza.ai</span>
@@ -61,6 +68,9 @@ export default function Footer() {
   )
 }
 
+/**
+ * SVG-иконка Telegram для ссылок в подвале сайта.
+ */
 function TelegramIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -69,6 +79,9 @@ function TelegramIcon() {
   )
 }
 
+/**
+ * SVG-иконка GitHub для ссылок на репозиторий проекта.
+ */
 function GitHubIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -77,6 +90,9 @@ function GitHubIcon() {
   )
 }
 
+/**
+ * SVG-иконка Discord для ссылок на сообщество.
+ */
 function DiscordIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

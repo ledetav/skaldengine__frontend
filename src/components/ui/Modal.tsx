@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Базовый компонент модального окна дизайн-системы.
+ * Рендерится через React Portal, блокирует прокрутку body и закрывается по клику на оверлей или крестик.
+ */
+
 import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'
@@ -11,6 +16,15 @@ interface ModalProps {
   size?: 'small' | 'medium' | 'large'
 }
 
+/**
+ * Базовое модальное окно с блокировкой прокрутки страницы и рендерингом через React Portal.
+ * 
+ * @param props.isOpen - Флаг видимости модального окна
+ * @param props.onClose - Коллбэк закрытия окна при клике на оверлей или крестик
+ * @param props.title - Опциональный заголовок в шапке модального окна
+ * @param props.children - Содержимое тела модального окна
+ * @param props.size - Размер окна ('small', 'medium', 'large')
+ */
 export function Modal({ 
   isOpen, 
   onClose, 

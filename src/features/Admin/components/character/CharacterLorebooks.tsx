@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент управления прикрепленными к персонажу лорбуками (базами знаний).
+ * Отображает список активных баз знаний и выпадающий список для прикрепления новых.
+ */
+
 import styles from '../../styles'
 import type { Character, Lorebook } from '../../types'
 
@@ -12,6 +17,9 @@ interface CharacterLorebooksProps {
   toggleLorebook: (lbId: string) => void
 }
 
+/**
+ * Блок списка прикрепленных и доступных для прикрепления лорбуков персонажа.
+ */
 export function CharacterLorebooks({
   character,
   charLorebooks,

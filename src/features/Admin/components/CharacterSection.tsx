@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент раздела управления персонажами в панели администратора.
+ * Предоставляет режимы отображения (таблица / карточки), поиск по имени и фандому,
+ * сортировку и переход к детальному профилю персонажа.
+ */
+
 import { useState } from 'react'
 import { Badge } from '@/components/ui'
 import styles from '../styles'
@@ -14,6 +20,10 @@ interface CharacterSectionProps {
 
 type ViewMode = 'grid' | 'table'
 
+/**
+ * Секция каталога персонажей в панели администратора.
+ * Поддерживает переключение сетка/таблица, локальный поиск, фильтрацию и сортировку.
+ */
 export function CharacterSection({ 
   characters, 
   onSelectCharacter,

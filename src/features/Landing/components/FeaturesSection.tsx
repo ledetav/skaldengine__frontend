@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Промо-секция «Ключевые возможности» на лендинге.
+ * Демонстрирует карточки ключевых фич: ветвление диалогов, лорбуки, глубокая кастомизация и др.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from '@/theme/screens/Landing/FeaturesSection.module.css'
 
@@ -50,10 +55,15 @@ const FEATURES = [
   },
 ]
 
+/**
+ * Секция ключевых особенностей системы (Features).
+ * Демонстрирует карточки архитектурных достоинств платформы (художественный текст,
+ * долгосрочная память, персоны пользователя) и призыв к регистрации.
+ */
 export default function FeaturesSection() {
   return (
     <section id="features" className={styles.section} aria-labelledby="features-heading">
-      {/* Section Header */}
+      {/* Заголовок секции */}
       <div className={styles.header}>
         <span className={styles.eyebrow}>Фундамент системы</span>
         <h2 id="features-heading" className={styles.title}>
@@ -65,7 +75,7 @@ export default function FeaturesSection() {
         </p>
       </div>
 
-      {/* Feature Cards */}
+      {/* Карточки возможностей */}
       <div className={styles.grid}>
         {FEATURES.map((f, i) => (
           <article
@@ -90,7 +100,7 @@ export default function FeaturesSection() {
         ))}
       </div>
 
-      {/* CTA Banner */}
+      {/* Баннер призыва к действию (CTA) */}
       <div className={styles.ctaBanner}>
         <div className={styles.bannerGlow} aria-hidden="true" />
         <div className={styles.bannerContent}>

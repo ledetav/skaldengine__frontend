@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент выпадающего списка с поисковой строкой (Searchable Select).
+ * Использует React Portal для позиционирования меню поверх окон и предотвращения обрезки overflow,
+ * поддерживает фильтрацию вариантов и создание новой сущности.
+ */
+
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -22,6 +28,11 @@ interface SearchableSelectProps {
   customValueLabel?: string
 }
 
+/**
+ * Компонент выпадающего списка с поиском (Searchable Select).
+ * Рендерит выпадающее меню через React Portal, автоматически вычисляет экранные
+ * координаты и фильтрует доступные элементы по введенному тексту.
+ */
 export function SearchableSelect({
   options,
   value,
@@ -38,8 +49,14 @@ export function SearchableSelect({
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
+  /**
+   * Находит выбранный объект опции в массиве по значению идентификатора value.
+   */
   const selectedOption = useMemo(() => options.find(o => o.id === value), [options, value])
 
+  /**
+   * Фильтрует список доступных вариантов по поисковой строке (по имени и подтексту).
+   */
   const filteredOptions = useMemo(() => {
     return options.filter(o => 
       o.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -47,7 +64,13 @@ export function SearchableSelect({
     )
   }, [options, search])
 
+  // Логика позиционирования и закрытия выпадающего списка:
+  // Меню рендерится в document.body через createPortal, чтобы избежать обрезки контейнерами с overflow: hidden/auto.
+  // Экранные координаты (top, left, width) рассчитываются динамически через getBoundingClientRect().
   useEffect(() => {
+    /**
+     * Закрывает меню при клике за пределами селектора.
+     */
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
@@ -55,7 +78,7 @@ export function SearchableSelect({
     }
     document.addEventListener('mousedown', handleClickOutside)
     
-    // Update coordinates when opening
+    // Обновление экранных координат выпадающего списка при открытии
     if (isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
       setCoords({
@@ -65,8 +88,11 @@ export function SearchableSelect({
       })
     }
 
+    /**
+     * Закрывает выпадающее меню при внешней прокрутке страницы,
+     * игнорируя события прокрутки внутри самого списка опций.
+     */
     const handleScroll = (event: Event) => {
-      // Don't close if scrolling inside the dropdown
       const target = event.target as HTMLElement
       if (target.closest(`.${styles.selectDropdown}`)) return
       setIsOpen(false)
@@ -115,7 +141,7 @@ export function SearchableSelect({
                 top: coords.top,
                 left: coords.left,
                 width: coords.width,
-                zIndex: 9999, // Super high to be over everything
+                zIndex: 9999, // Поверх всех элементов интерфейса
                 pointerEvents: 'auto'
               }}
             >

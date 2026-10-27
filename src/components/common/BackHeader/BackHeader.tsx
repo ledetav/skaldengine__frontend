@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Унифицированная шапка страницы с кнопкой возврата назад, заголовком и слотом действий.
+ */
+
 import React from 'react'
 import styles from './BackHeader.module.css'
 
@@ -8,6 +12,14 @@ interface BackHeaderProps {
   actions?: React.ReactNode
 }
 
+/**
+ * Шапка страницы с кнопкой возврата назад, заголовком и опциональными действиями.
+ * 
+ * @param props.onBack - Обработчик нажатия на кнопку "Назад"
+ * @param props.label - Опциональный надзаголовок/бейдж
+ * @param props.title - Основной заголовок экрана
+ * @param props.actions - Дополнительные кнопки или элементы управления справа
+ */
 export function BackHeader({ onBack, label, title, actions }: BackHeaderProps) {
   return (
     <header className={styles.backHeader}>

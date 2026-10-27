@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Панель переключения вкладок профиля («Обзор», «Персоны», «Лорбуки», «Настройки»).
+ */
+
 import styles from './Profile.module.css';
 
 export type ProfileTabType = 'main' | 'personas' | 'lorebooks' | 'settings';
@@ -8,6 +12,9 @@ interface ProfileTabsProps {
   isPublic?: boolean;
 }
 
+/**
+ * Компонент переключения вкладок в профиле пользователя.
+ */
 export default function ProfileTabs({ activeTab, setActiveTab, isPublic = false }: ProfileTabsProps) {
   const tabs: { id: ProfileTabType; label: string }[] = [
     { id: 'main', label: 'Основная информация' },

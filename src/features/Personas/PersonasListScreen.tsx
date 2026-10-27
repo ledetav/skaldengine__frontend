@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран управления списком игровых персон пользователя.
+ * Предоставляет просмотр карточек персон, сводную статистику (чаты, лорбуки)
+ * и возможность удаления персоны с модальным подтверждением.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -6,7 +12,8 @@ import type { UserPersona } from '@/core/types/chat'
 import { personasApi } from '@/core/api/personas'
 import { useToast } from '@/components/ui'
 
-/* ─── Confirm Delete Modal ─────────────────────── */
+/* ─── Модальное окно подтверждения удаления ──────── */
+/** Модальное окно подтверждения удаления игровой персоны пользователя */
 function ConfirmDeleteModal({ persona, onConfirm, onCancel }: {
   persona: UserPersona
   onConfirm: () => void
@@ -29,7 +36,8 @@ function ConfirmDeleteModal({ persona, onConfirm, onCancel }: {
   )
 }
 
-/* ─── Persona Card ─────────────────────────────── */
+/* ─── Карточка персоны ────────────────────────────── */
+/** Карточка персоны со статистикой привязанных диалогов и лорбуков */
 function PersonaCard({ persona, onEdit, onDelete }: {
   persona: UserPersona
   onEdit: () => void
@@ -90,7 +98,12 @@ function PersonaCard({ persona, onEdit, onDelete }: {
   )
 }
 
-/* ─── Main Component ───────────────────────────── */
+/* ─── Главный компонент экрана ─────────────────────── */
+/**
+ * Экран со списком игровых персон пользователя.
+ * Отображает статистику персон, список карточек с переходом к редактированию
+ * и удалению сущностей.
+ */
 export default function PersonasListScreen() {
   const navigate = useNavigate()
   const { success, error } = useToast()
@@ -100,6 +113,7 @@ export default function PersonasListScreen() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    /** Загружает список персон и агрегированную статистику использования */
     const fetchData = async () => {
       try {
         setIsLoading(true)
@@ -119,6 +133,11 @@ export default function PersonasListScreen() {
     fetchData()
   }, [error])
 
+  /**
+   * Удаляет выбранную персону пользователя на сервере и исключает её из карточек на экране.
+   * 
+   * @param persona - Удаляемая персона
+   */
   const handleDelete = async (persona: UserPersona) => {
     try {
       await personasApi.deletePersona(persona.id)
@@ -159,7 +178,7 @@ export default function PersonasListScreen() {
           </button>
         </div>
 
-        {/* Stats */}
+        {/* Статистика персон */}
         <div className={styles.statsBar}>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Персон</span>

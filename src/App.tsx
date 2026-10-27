@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Корневой компонент приложения SKALD Engine.
+ * Определяет маршрутизацию (React Router), ленивую загрузку экранов (Code Splitting),
+ * глобальные провайдеры контекстов (авторизация, всплывающие уведомления) и защиту маршрутов.
+ */
+
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import '@/theme/global/index.css'
@@ -5,34 +11,36 @@ import { ToastProvider } from '@/components/ui'
 import { AuthProvider, useAuth } from '@/core/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
-// --- Lazy loaded screens ---
+// --- Экраны с ленивой загрузкой (Code Splitting) ---
 
-// Guest
+// Гостевые экраны
 const LandingScreen = lazy(() => import('@/features/Landing/LandingScreen'))
 const AuthScreen = lazy(() => import('@/features/Auth/AuthScreen'))
 
-// Main
+// Основные экраны приложения
 const DashboardScreen = lazy(() => import('@/features/Dashboard/DashboardScreen'))
 const ProfileScreen = lazy(() => import('@/features/Profile/ProfileScreen'))
 
-// Chat
+// Чат и создание диалога
 const CreateChatScreen = lazy(() => import('@/features/CreateChat/CreateChatScreen'))
 const ChatScreen = lazy(() => import('@/features/Chat/ChatScreen'))
 const ChatsListScreen = lazy(() => import('@/features/Chat/ChatsListScreen'))
 
-// Personas
+// Персоны пользователя
 const PersonasListScreen = lazy(() => import('@/features/Personas/PersonasListScreen'))
 const PersonaFormScreen = lazy(() => import('@/features/Personas/PersonaFormScreen'))
 
-// Lorebooks
+// Базы знаний (лорбуки)
 const LorebooksListScreen = lazy(() => import('@/features/Lorebooks/LorebooksListScreen'))
 const LorebookDetailScreen = lazy(() => import('@/features/Lorebooks/LorebookDetailScreen'))
 const LorebookFormScreen = lazy(() => import('@/features/Lorebooks/LorebookFormScreen'))
 
-// Admin
+// Панель управления администратора
 const AdminDashboard = lazy(() => import('@/features/Admin/AdminDashboard'))
 
-// Simple fallback loader
+/**
+ * Запасной индикатор загрузки при переключении динамических страниц.
+ */
 const PageLoader = () => (
   <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', fontFamily: 'system-ui, sans-serif' }}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
@@ -45,18 +53,21 @@ const PageLoader = () => (
   </div>
 )
 
+/**
+ * Конфигурация маршрутизации приложения.
+ */
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth()
 
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        {/* ─── Guest Routes ─── */}
+        {/* ─── Гостевые маршруты (доступны без авторизации) ─── */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingScreen />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthScreen />} />
 
-        {/* ─── Protected Routes ─── */}
+        {/* ─── Защищенные пользовательские маршруты ─── */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardScreen /></ProtectedRoute>} />
 
         <Route path="/chat/create/:characterId" element={<ProtectedRoute><CreateChatScreen /></ProtectedRoute>} />
@@ -66,7 +77,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
         <Route path="/profile/:username" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
 
-        {/* ─── Admin Routes (Protected — Admin/Moderator Only) ─── */}
+        {/* ─── Маршруты панели администратора (только Admin/Moderator) ─── */}
         <Route path="/admin" element={<Navigate to="/admin/characters" replace />} />
         <Route path="/admin/characters" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/characters/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
@@ -84,7 +95,7 @@ const AppRoutes = () => {
         <Route path="/admin/scenarios" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/scenarios/:id" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
 
-        {/* ─── User (Persona & Lorebook) Routes (Protected) ─── */}
+        {/* ─── Маршруты пользовательских сущностей (персоны и лорбуки) ─── */}
         <Route path="/personas" element={<ProtectedRoute><PersonasListScreen /></ProtectedRoute>} />
         <Route path="/personas/create" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
         <Route path="/personas/:id/edit" element={<ProtectedRoute><PersonaFormScreen /></ProtectedRoute>} />
@@ -94,13 +105,16 @@ const AppRoutes = () => {
         <Route path="/lorebooks/:id" element={<ProtectedRoute><LorebookDetailScreen /></ProtectedRoute>} />
         <Route path="/lorebooks/:id/edit" element={<ProtectedRoute><LorebookFormScreen /></ProtectedRoute>} />
 
-        {/* ─── Fallback ─── */}
+        {/* ─── Перенаправление по умолчанию для неизвестных маршрутов ─── */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   )
 }
 
+/**
+ * Корневой компонент клиентского приложения SKALD Engine.
+ */
 export default function App() {
   return (
     <ToastProvider>

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Боковая панель фильтрации каталога персонажей на витрине.
+ * Включает поиск по фандомам, выбор пола, переключатель NSFW и адаптивную шторку для мобильных устройств.
+ */
+
 import React from 'react'
 import { CustomDropdown } from './CustomDropdown'
 import { FandomFilter } from './FandomFilter'
@@ -15,6 +20,10 @@ interface DashboardSidebarProps {
   setNsfwEnabled: (enabled: boolean) => void
 }
 
+/**
+ * Боковая панель фильтрации каталога персонажей.
+ * Включает мультивыбор фандомов, фильтрацию по полу и переключатель контента 18+ (NSFW).
+ */
 export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   isOpen,
   setIsOpen,
@@ -28,12 +37,12 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 }) => {
   return (
     <>
-      {/* Overlay for mobile drawer */}
+      {/* Затемнение фона для мобильной шторки */}
       {isOpen && (
         <div className={styles.sidebarOverlay} onClick={() => setIsOpen(false)} />
       )}
 
-      {/* Sidebar Filters */}
+      {/* Боковая панель фильтров */}
       <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarVisible : ''}`}>
         <div className={styles.sidebarHeader}>
           <h3 className={styles.drawerTitle}>Фильтры</h3>

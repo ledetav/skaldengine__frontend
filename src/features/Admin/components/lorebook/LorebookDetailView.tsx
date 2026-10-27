@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран детального управления лорбуком и его статьями (записями) в панели администратора.
+ * Объединяет просмотр/редактирование общих свойств базы знаний, список записей и форму создания статьи.
+ */
+
 import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui'
 import { ConfirmModal } from '@/components/common'
@@ -26,6 +31,9 @@ export interface LorebookDetailViewProps {
   onLorebookUpdate?: (updated: Partial<Lorebook>) => void
 }
 
+/**
+ * Экран детального управления лорбуком и его записями в админ-панели.
+ */
 export function LorebookDetailView({
   id,
   lb,
@@ -126,6 +134,9 @@ export function LorebookDetailView({
     onLorebookUpdate,
   })
 
+  /**
+   * Сохраняет параметры лорбука (создание через createAdminLorebook или обновление через updateAdminLorebook).
+   */
   const handleSave = async () => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')
@@ -155,6 +166,9 @@ export function LorebookDetailView({
     }
   }
 
+  /**
+   * Удаляет лорбук через административный API и уведомляет родительский компонент.
+   */
   const handleDelete = async () => {
     const targetId = lb?.id || id
     if (!targetId) return

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент текстовых полей персонажа (описание, личность, внешность)
+ * для формы редактирования и детального просмотра профиля.
+ */
+
 import { Textarea } from '@/components/ui'
 import styles from '../../styles'
 import type { Character } from '../../types'
@@ -8,6 +13,9 @@ interface CharacterDetailsProps {
   handleChange: (field: keyof Character, value: any) => void
 }
 
+/**
+ * Блок подробных текстовых полей персонажа (описание, личность, сценарий, первое сообщение).
+ */
 export function CharacterDetails({ character, isEditing, handleChange }: CharacterDetailsProps) {
   return (
     <>

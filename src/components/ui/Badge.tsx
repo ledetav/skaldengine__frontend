@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Бейдж (тег / метка) дизайн-системы с цветовыми вариантами.
+ */
+
 import React from 'react'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -5,6 +9,12 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children?: React.ReactNode
 }
 
+/**
+ * Компонент бейджа/метки дизайн-системы с цветовыми вариантами.
+ * 
+ * @param props.variant - Цветовая палитра бейджа (purple, orange, red, green и др.)
+ * @param props.children - Текстовое или иконочное содержимое
+ */
 export function Badge({ 
   children, 
   variant = 'purple', 

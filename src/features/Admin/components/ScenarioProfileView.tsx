@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран создания и редактирования сценария в панели администратора.
+ * Позволяет настраивать стартовую завязку, условия победы/завершения, привязку к персонажу
+ * и метаданные сценария.
+ */
+
 import { useState, useEffect } from 'react'
 import { Button, Input, Textarea, Badge, useToast } from '@/components/ui'
 import styles from '../styles'
@@ -15,6 +21,11 @@ interface ScenarioProfileViewProps {
   onSave: (scenario: Partial<Scenario>) => Promise<void>
 }
 
+/**
+ * Экран создания и редактирования сценария в админ-панели.
+ * Позволяет настроить стартовую ситуацию (Точку А), целевую кульминацию (Точку Б),
+ * привязку к персонажу и базовые метаданные.
+ */
 export function ScenarioProfileView({ 
   scenarioId, 
   scenarios, 
@@ -58,6 +69,9 @@ export function ScenarioProfileView({
     }
   }, [scenarioId, scenarios, isCreate])
 
+  /**
+   * Валидирует и сохраняет сценарий (создает новый или обновляет существующий).
+   */
   const handleSave = async () => {
     if (!draft.character_id) {
       alert('Пожалуйста, выберите персонажа для сценария.')
@@ -72,6 +86,9 @@ export function ScenarioProfileView({
     }
   }
 
+  /**
+   * Удаляет сценарий через API после подтверждения пользователем.
+   */
   const handleDelete = async () => {
     if (!window.confirm('Вы уверены, что хотите удалить этот сценарий?')) return
     setIsDeleting(true)
@@ -105,7 +122,7 @@ export function ScenarioProfileView({
       </header>
 
       <div className={styles.characterProfileContent}>
-        {/* LEFT CARD: Sidebar/Metadata */}
+        {/* ЛЕВАЯ КОЛОНКА: Метаданные и привязка к персонажу */}
         <aside className={styles.sidebarWrapper}>
           <div className={styles.charSidebarCard}>
             <div className={styles.charBasicInfo} style={{ paddingTop: '24px' }}>
@@ -191,7 +208,7 @@ export function ScenarioProfileView({
           </div>
         </aside>
 
-        {/* RIGHT CARD: Points and Actions */}
+        {/* ПРАВАЯ КОЛОНКА: Сюжетные точки и действия */}
         <main className={styles.mainContentWrapper}>
           <div className={styles.detailsCard}>
             <div className={styles.detailGroup}>

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Компонент двухпозиционного переключателя (Toggle Switch) дизайн-системы.
+ */
+
 import styles from './Toggle.module.css'
 
 interface ToggleProps {
@@ -8,6 +12,15 @@ interface ToggleProps {
   className?: string
 }
 
+/**
+ * Интерактивный тумблер-переключатель (свитчер) с опциональной текстовой меткой.
+ * 
+ * @param props.label - Текстовая подпись переключателя
+ * @param props.checked - Булево состояние включено/выключено
+ * @param props.onChange - Обработчик изменения состояния
+ * @param props.disabled - Флаг блокировки взаимодействия
+ * @param props.className - Дополнительный CSS класс
+ */
 export function Toggle({ 
   label, 
   checked, 

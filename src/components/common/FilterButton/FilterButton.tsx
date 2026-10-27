@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Кнопка вызова панели фильтрации со светящимся индикатором активности.
+ */
 
 import styles from './FilterButton.module.css'
 
@@ -7,6 +10,13 @@ interface FilterButtonProps {
   className?: string
 }
 
+/**
+ * Кнопка-иконка вызова панели фильтрации со светодиодным индикатором активности.
+ * 
+ * @param props.isActive - Флаг активности фильтров (отображает индикатор)
+ * @param props.onClick - Обработчик нажатия на кнопку
+ * @param props.className - Дополнительный CSS класс
+ */
 export function FilterButton({ isActive = false, onClick, className = '' }: FilterButtonProps) {
   return (
     <button

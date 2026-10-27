@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Карточка сюжетного сценария на главной витрине приложения.
+ * Отображает заголовок, описание и бейдж популярности ('Hot!'/'New!').
+ */
+
 import React from 'react'
 import type { Scenario } from '@/core/types/chat'
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
@@ -6,8 +11,11 @@ interface ScenarioCardProps {
   scenario: Scenario
 }
 
+/**
+ * Карточка сценария на главной витрине приложения.
+ */
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  // Use deterministic logic to avoid impure Math.random during render
+  // Детерминированное вычисление бейджа для избежания нечистых функций при рендеринге
   const isHot = (scenario.id.length + scenario.title.length) % 2 === 0
   
   return (

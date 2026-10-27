@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Кастомный React-хук управления профилем пользователя.
+ * Загружает и объединяет информацию учетной записи (своей или публичной),
+ * список персон, привязанных лорбуков, недавних чатов и агрегированную статистику.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { authApi } from '@/core/api/auth'
@@ -6,6 +12,12 @@ import { lorebooksApi } from '@/core/api/lorebooks'
 import { chatsApi } from '@/core/api/chats'
 import type { UserProfile, ProfilePersona, ProfileLorebook } from '@/core/types/profile'
 import type { Chat } from '@/core/types/chat'
+
+/**
+ * Хук для загрузки и управления данными профиля пользователя (своего или публичного).
+ *
+ * @param username - Опциональный никнейм для просмотра публичного профиля
+ */
 export const useProfile = (username?: string) => {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [personas, setPersonas] = useState<ProfilePersona[]>([])
@@ -15,15 +27,19 @@ export const useProfile = (username?: string) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    /**
+     * Асинхронно запрашивает комплексные данные профиля:
+     * если передан username — запрашивается публичный профиль, иначе — профиль текущего пользователя.
+     */
     const fetchProfileData = async () => {
       try {
         setIsLoading(true)
         setError(null)
 
         if (username) {
-          // Fetch public profile
+          // Загрузка публичного профиля стороннего пользователя
           const publicResponse = await authApi.getPublicProfile(username)
-          if (!publicResponse) throw new Error('User not found')
+          if (!publicResponse) throw new Error('Пользователь не найден')
           
           const publicUser = publicResponse
           
@@ -43,13 +59,13 @@ export const useProfile = (username?: string) => {
           setLorebooks([])
           setLastChats([])
         } else {
-          // Fetch current user Info, Stats, Personas, Lorebooks and Chats in parallel
+          // Параллельная загрузка данных текущего пользователя, статистики, персон, лорбуков и последних чатов
           const [userData, statsResponse, personasResponse, lorebooksResponse, chatsResponse] = await Promise.all([
             authApi.getMe(),
             personasApi.getStats(),
             personasApi.getPersonas(),
             lorebooksApi.getLorebooks(),
-            chatsApi.getChats(0, 5) // Fetch last 5 chats
+            chatsApi.getChats(0, 5) // Загрузка последних 5 диалогов
           ])
           
           const personasData = personasResponse || []
@@ -91,7 +107,7 @@ export const useProfile = (username?: string) => {
         }
 
       } catch (err: any) {
-        logger.error('Error fetching profile data:', err)
+        logger.error('Ошибка загрузки данных профиля:', err)
         setError('Не удалось загрузить данные профиля. Пожалуйста, попробуйте позже.')
       } finally {
         setIsLoading(false)
@@ -99,11 +115,11 @@ export const useProfile = (username?: string) => {
     }
 
     fetchProfileData()
-  }, [])
+  }, [username])
 
   return {
     user,
-    profile: user, // Alias used by AdminDashboard
+    profile: user, // Псевдоним для совместимости с AdminDashboard
     personas,
     lorebooks,
     lastChats,

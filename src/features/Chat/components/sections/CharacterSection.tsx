@@ -1,9 +1,16 @@
+/**
+ * @fileoverview Секция персонажа в боковой панели чата: имя, фандом, описание характера и внешности.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Character } from '@/core/types/character'
 import type { Chat } from '@/core/types/chat'
 import styles from './Sections.module.css'
 
+/**
+ * Секция с информацией о персонаже в боковой панели чата.
+ */
 export function CharacterSection({ 
   character,
   chat
@@ -88,7 +95,7 @@ export function CharacterSection({
                       </div>
                     )}
 
-                    {/* Scerarios count check as proxy or just remove the warning */}
+                    {/* Предупреждение об отсутствии прикрепленных сценариев */}
                     {(!character.scenarios_count) && (
                       <div className={styles.loreWarningMini}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

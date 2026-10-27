@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Стилизованное поле ввода для форм аутентификации.
+ * Поддерживает лейбл, описание, индикацию обязательности поля и текст ошибки валидации.
+ */
+
 import React from 'react'
 import styles from '@/theme/screens/Auth/AuthScreen.module.css'
 
@@ -9,6 +14,9 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string
 }
 
+/**
+ * Поле ввода учетных данных с лейблом и сообщением об ошибке.
+ */
 export const AuthInput: React.FC<AuthInputProps> = ({ 
   label, 
   description,

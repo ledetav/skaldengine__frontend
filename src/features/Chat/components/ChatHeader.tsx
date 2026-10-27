@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Верхняя панель (Header) экрана чата с навигацией назад, статусом генерации и кнопкой сайдбара.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from './ChatHeader.module.css'
 
@@ -9,6 +13,15 @@ interface ChatHeaderProps {
   onToggleSidebar: () => void
 }
 
+/**
+ * Верхняя шапка окна чата с кнопкой возврата в хаб, названием диалога, статусом автосохранения и вызовом сайдбара.
+ * 
+ * @param props.title - Название чата
+ * @param props.isGenerating - Флаг процесса генерации ответа моделью
+ * @param props.lastSaved - Время последнего сохранения состояния диалога
+ * @param props.isSidebarOpen - Открыт ли правый сайдбар параметров
+ * @param props.onToggleSidebar - Обработчик переключения видимости сайдбара
+ */
 export function ChatHeader({ title, isGenerating, lastSaved, isSidebarOpen, onToggleSidebar }: ChatHeaderProps) {
   return (
     <header className={styles.header}>

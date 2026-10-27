@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Выдвижная боковая панель настроек диалога с кнопкой закрытия.
+ */
+
 import React from 'react'
 import styles from './Sidebar.module.css'
 
@@ -7,6 +11,13 @@ interface SidebarProps {
   children: React.ReactNode
 }
 
+/**
+ * Выдвижная боковая панель с кнопкой закрытия (крестиком) для мобильных и десктопных экранов.
+ * 
+ * @param props.isOpen - Флаг открытого состояния сайдбара
+ * @param props.onClose - Коллбэк закрытия сайдбара
+ * @param props.children - Внутренние секции сайдбара
+ */
 export function Sidebar({ isOpen, onClose, children }: SidebarProps) {
   return (
     <aside className={`${styles.sidebar} ${!isOpen ? styles.sidebarClosed : ''}`}>

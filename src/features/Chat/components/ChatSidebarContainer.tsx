@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Контейнер боковой панели параметров активного чата.
+ * Агрегирует секции персонажа, персоны игрока, сценария, лорбуков и настроек форматирования (размер шрифта, автоскролл, мысли).
+ */
+
 import type { Character } from '@/core/types/character'
 import type { UserPersona, Scenario, Chat as ChatType, Lorebook, Checkpoint } from '@/core/types/chat'
 
@@ -30,6 +35,9 @@ interface ChatSidebarContainerProps {
   onShowThoughtsToggle: () => void
 }
 
+/**
+ * Контейнер боковой панели параметров чата (персонаж, персона пользователя, лорбуки, контрольные точки и настройки).
+ */
 export function ChatSidebarContainer({
   isOpen,
   onClose,

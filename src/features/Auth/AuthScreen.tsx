@@ -1,20 +1,28 @@
+/**
+ * @fileoverview Экран аутентификации пользователя (вход и регистрация).
+ * Управляет переключением режимов, валидацией формы, отправкой учетных данных в API и анимацией смены карточек.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { authApi } from '@/core/api/auth'
 import styles from '@/theme/screens/Auth/AuthScreen.module.css'
 
-// Split components
+// Дочерние компоненты
 import { LoginForm } from './components/LoginForm'
 import { RegisterForm } from './components/RegisterForm'
 import { AuthPanel } from './components/AuthPanel'
 
+/**
+ * Экран авторизации и регистрации пользователей с переключением форм и клиентской валидацией.
+ */
 export default function AuthScreen() {
   const location = useLocation()
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(location.pathname.startsWith('/login'))
 
-  // Form State
+  // Состояние полей формы
   const [formData, setFormData] = useState({
     login: '', 
     email: '',
@@ -25,7 +33,7 @@ export default function AuthScreen() {
     handle: '',
   })
 
-  // Errors State
+  // Состояние ошибок валидации
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [globalError, setGlobalError] = useState<string | null>(null)
@@ -36,11 +44,19 @@ export default function AuthScreen() {
     setGlobalError(null)
   }, [location.pathname])
 
+  /**
+   * Переключает режим экрана между входом (/login) и регистрацией (/register).
+   */
   const toggleAuth = () => {
     navigate(isLogin ? '/register' : '/login')
   }
 
-  // Validation Logic
+  /**
+   * Выполняет клиентскую валидацию отдельного поля формы по регулярным выражениям и правилам безопасности.
+   * 
+   * @param name - Имя проверяемого поля
+   * @param value - Текущее строковое значение поля
+   */
   const validateField = (name: string, value: string) => {
     const fieldErrors: string[] = []
 
@@ -65,7 +81,7 @@ export default function AuthScreen() {
         else if (!/^[a-zA-Z0-9_-]+$/.test(value)) fieldErrors.push('Только латиница, цифры, "-" и "_"')
       }
       if (name === 'fullName') {
-        // Optional field
+        // Необязательное поле
       }
       if (name === 'password') {
         if (!value) fieldErrors.push('Обязательное поле')
@@ -99,12 +115,16 @@ export default function AuthScreen() {
     setErrors(prev => ({ ...prev, [name]: fieldErrors }))
   }
 
+  /**
+   * Обработчик ввода в поля формы: форматирует дату по маске ДД.ММ.ГГГГ,
+   * обновляет стейт и запускает валидацию.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name
     let value = e.target.value
     
     if (name === 'birthDate') {
-      // Input mask: dd.mm.yyyy
+      // Маска ввода: дд.мм.гггг
       const digits = value.replace(/\D/g, '')
       let formatted = ''
       if (digits.length > 0) {
@@ -128,11 +148,17 @@ export default function AuthScreen() {
     }
   }
 
+  /**
+   * Возвращает объединенную строку ошибок для указанного поля или null.
+   */
   const getErrorText = (name: string) => {
     const fieldErrors = errors[name]
     return fieldErrors && fieldErrors.length > 0 ? fieldErrors.join(', ') : null
   }
 
+  /**
+   * Проверяет готовность формы к отправке (заполненность обязательных полей и отсутствие ошибок валидации).
+   */
   const isFormValid = () => {
     if (isLogin) {
       return !!(formData.login && formData.password && !errors.login?.length && !errors.password?.length)
@@ -143,6 +169,10 @@ export default function AuthScreen() {
     )
   }
 
+  /**
+   * Отправляет форму авторизации или регистрации на бэкенд, сохраняет полученный JWT
+   * и выполняет редирект в приложение.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isFormValid() || isLoading) return
@@ -157,7 +187,7 @@ export default function AuthScreen() {
         window.dispatchEvent(new Event('auth-change'))
         navigate('/dashboard')
       } else {
-        // Convert dd.mm.yyyy to yyyy-mm-dd for the API
+        // Преобразование дд.мм.гггг в формат гггг-мм-дд для API
         const [d, m, y] = formData.birthDate.split('.')
         const isoDate = `${y}-${m}-${d}`
         
@@ -197,7 +227,7 @@ export default function AuthScreen() {
         className={`${styles.authContainer} ${!isLogin ? styles.reverse : ''}`}
         transition={{ layout: { type: 'spring', stiffness: 200, damping: 25 }, opacity: { duration: 0.3 } }}
       >
-        {/* Forms Side */}
+        {/* Сторона с формами */}
         <motion.div layout className={`${styles.side} ${styles.formSide}`}>
           <AnimatePresence mode="wait">
             {isLogin ? (
@@ -208,7 +238,7 @@ export default function AuthScreen() {
           </AnimatePresence>
         </motion.div>
 
-        {/* Panel Side */}
+        {/* Информационная панель */}
         <AuthPanel isLogin={isLogin} onToggle={toggleAuth} />
       </motion.div>
     </div>

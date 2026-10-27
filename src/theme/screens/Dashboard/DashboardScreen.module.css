@@ -8,7 +8,7 @@
   overflow-x: hidden;
 }
 
-/* Reusing Landing Backgrounds */
+/* Использование фонов лендинга */
 .bgContainer {
   position: fixed;
   inset: 0;
@@ -61,7 +61,7 @@
   left: -50px;
 }
 
-/* Layout */
+/* Макет */
 .mainLayout {
   position: relative;
   z-index: 2;
@@ -85,7 +85,7 @@
   }
 }
 
-/* Sidebar Filters */
+/* Боковая панель фильтров */
 .sidebar {
   width: 280px;
   flex-shrink: 0;
@@ -95,7 +95,7 @@
   background: var(--bg-glass);
   backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
-  border-radius: 4px; /* Sharp but slightly safe */
+  border-radius: 4px; /* Срезанные безопасные углы */
   padding: 32px 20px;
   height: fit-content;
   position: sticky;
@@ -175,7 +175,7 @@
   border-radius: 4px;
   clip-path: var(--clip-cut-sm);
   padding: 6px;
-  z-index: 1000; /* Higher z-index to stay above other card elements */
+  z-index: 1000; /* Повышенный z-index для отображения поверх элементов карточки */
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   animation: dropdownIn 0.2s ease-out;
 }
@@ -205,7 +205,7 @@
   font-weight: 600;
 }
 
-/* Header Variant */
+/* Вариант шапки */
 .headerVariant {
   width: auto;
 }
@@ -267,7 +267,7 @@
   transform: translateX(18px);
 }
 
-/* Content Area */
+/* Область контента */
 .contentArea {
   flex: 1;
   display: flex;
@@ -276,7 +276,7 @@
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-glass);
-  border-radius: 8px; /* Safe sharp-ish corner */
+  border-radius: 8px; /* Безопасный срезанный угол */
   padding: 32px;
   position: relative;
 }
@@ -286,7 +286,7 @@
   flex-direction: column;
   gap: 20px;
   position: sticky;
-  top: 80px; /* Desktop: Sit under navbar (~64px) + margin */
+  top: 80px; /* Десктоп: расположение под навбаром (~64px) + отступ */
   z-index: 10;
   background: transparent;
 }
@@ -318,7 +318,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  overflow: visible; /* Ensure dropdowns in headerActions are not clipped */
+  overflow: visible; /* Предотвращение обрезки выпадающих меню в headerActions */
 }
 
 .resultsCount {
@@ -393,9 +393,9 @@
   color: var(--text-secondary);
 }
 
-/* Sort select was here, now replaced by custom dropdown in JS */
+/* Здесь был селект сортировки, заменен кастомным дропдауном */
 
-/* Character Grid */
+/* Сетка персонажей */
 .characterGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -435,7 +435,7 @@
   color: var(--text-muted);
 }
 
-/* Character Card Redesign (Axies style) */
+/* Редизайн карточки персонажа */
 .characterCard {
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
@@ -455,9 +455,9 @@
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* 1. Image Area (TOP) */
+/* 1. Область изображения (верх) */
 .cardImageArea {
-  height: 110px; /* Reduced from 130px */
+  height: 110px; /* Уменьшено со 130px */
   background: var(--bg-secondary);
   position: relative;
   display: flex;
@@ -574,9 +574,9 @@
   filter: brightness(1.1);
 }
 
-/* 2. Creator Bar (MIDDLE) */
+/* 2. Блок создателя (центр) */
 .cardCreatorBar {
-  padding: 8px 14px; /* Reduced from 10px 16px */
+  padding: 8px 14px; /* Уменьшено с 10px 16px */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -636,13 +636,13 @@
   opacity: 0.8;
 }
 
-/* 3. Info Section (BOTTOM) */
+/* 3. Секция информации (низ) */
 .cardBody {
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  flex: 1; /* Allow body to grow and push buttons to bottom */
+  flex: 1; /* Позволяет телу расти и прижимать кнопку к низу */
 }
 
 .cardHeader {
@@ -676,10 +676,10 @@
 }
 
 .cardDesc {
-  font-size: 11px; /* Reduced from 12px */
+  font-size: 11px; /* Уменьшено с 12px */
   color: var(--text-secondary);
   line-height: 1.3;
-  height: 30px; /* Reduced from 34px */
+  height: 30px; /* Уменьшено с 34px */
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -721,7 +721,7 @@
   display: none;
 }
 
-/* List View Specific Card Overrides */
+/* Стили карточки для режима списка */
 .characterCard.isListView {
   flex-direction: row;
   height: 120px;
@@ -752,7 +752,7 @@
   line-clamp: 1;
 }
 
-/* Fandom Multi-select Filter */
+/* Мультивыбор фандома */
 .fandomFilterContainer {
   display: flex;
   flex-direction: column;
@@ -916,12 +916,12 @@
   .mainLayout { flex-direction: column; padding: 160px 16px 40px; gap: 24px; }
   
   .contentHeader {
-    top: 72px; /* Mobile: Sit right under the navbar header */
+    top: 72px; /* Мобильные: расположение строго под шапкой навигации */
   }
   
   .mobileFilterToggle { display: flex; }
 
-  /* Sidebar transformed into Drawer */
+  /* Трансформация боковой панели в мобильную шторку */
   .sidebar { 
     position: fixed;
     top: 0;
@@ -1003,7 +1003,7 @@
 @media (max-width: 640px) {
   .mainLayout { padding: 70px 10px 40px; }
   
-  /* Header Fix */
+  /* Коррекция шапки */
   .resultsRow {
     flex-direction: column;
     align-items: flex-start;
@@ -1017,14 +1017,14 @@
   .sortWrapper { width: auto; }
   .headerVariant { width: auto; min-width: 150px; }
   
-  /* Grid 2-columns (smaller items) */
+  /* Сетка в 2 колонки (компактные элементы) */
   .characterGrid, .characterList {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px;
   }
   
-  /* Force list cards to look like grid cards on mobile */
+  /* Отображение списочных карточек в виде сетки на мобильных */
   .characterCard.isListView {
     flex-direction: column !important;
     height: auto !important;
@@ -1051,7 +1051,7 @@
   
   .characterCount { font-size: 16px; font-weight: 800; }
   
-  /* Card Scaling & Mobile Button */
+  /* Масштабирование карточек и мобильная кнопка */
   .characterCard {
     border-radius: 0;
     clip-path: var(--clip-cut-sm);
@@ -1072,13 +1072,13 @@
   .cardName { font-size: 13px; line-height: 1.2; }
   .fandomBadge { font-size: 8px; padding: 1px 6px; }
   
-  .cardDesc { display: none; } /* Ubrat opisanie */
+  .cardDesc { display: none; } /* Скрытие описания на мобильных устройствах */
   
   .mobileStartChatBtn {
     display: block !important;
     width: 100%;
     text-align: center;
-    margin-top: auto; /* Anchor to bottom */
+    margin-top: auto; /* Привязка к нижней части */
     padding: 8px 12px;
     font-size: 10px;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
@@ -1090,7 +1090,7 @@
   .cardHoverOverlay { display: none !important; }
 }
 
-/* Ultra-narrow devices (360px and below) */
+/* Сверхмалые экраны (360px и меньше) */
 @media (max-width: 480px) {
   .mainLayout { padding: 64px 8px 32px; }
   .cardCreatorBar { padding: 4px 6px; }

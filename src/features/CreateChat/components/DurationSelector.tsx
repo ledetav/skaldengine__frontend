@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Селектор планируемой длительности кампании (короткий / средний / длинный) в конструкторе чата.
+ */
+
 import React from 'react'
 import styles from './DurationSelector.module.css'
 
@@ -20,6 +24,9 @@ const DURATION_OPTIONS: DurationOption[] = [
   { id: 'long', title: 'Длинный', desc: 'Эпический сюжет. Максимальная детализация мира.' }
 ]
 
+/**
+ * Компонент выбора ожидаемой длительности ролевой кампании диалога.
+ */
 export const DurationSelector: React.FC<DurationSelectorProps> = ({ 
   selectedDuration, 
   onChange 

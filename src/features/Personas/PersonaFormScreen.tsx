@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран создания и редактирования пользовательской персоны.
+ * Позволяет задать имя, описание, возраст, пол, внешность, характер и факты биографии
+ * персоны, используемые в контексте ролевых диалогов.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './PersonaForm.module.css'
@@ -25,6 +31,7 @@ const EMPTY_FORM: PersonaFormData = {
   facts: '',
 }
 
+/** Преобразование сущности персоны в данные формы */
 function toFormData(persona: UserPersona): PersonaFormData {
   return {
     name: persona.name,
@@ -37,6 +44,11 @@ function toFormData(persona: UserPersona): PersonaFormData {
   }
 }
 
+/**
+ * Экран создания и редактирования игровой персоны пользователя.
+ * Позволяет настроить личность игрока, внешность, манеру речи и факты,
+ * которые учитываются ИИ-собеседником во время ролевой игры.
+ */
 export default function PersonaFormScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -50,6 +62,9 @@ export default function PersonaFormScreen() {
 
   useEffect(() => {
     if (isEdit && id) {
+      /**
+       * Загружает существующую персону пользователя для заполнения полей формы при редактировании.
+       */
       const fetchPersona = async () => {
         try {
           const existing = await personasApi.getPersona(id)
@@ -62,6 +77,9 @@ export default function PersonaFormScreen() {
     }
   }, [id, isEdit])
 
+  /**
+   * Каррированная функция-сеттер значений текстовых полей формы с очисткой сообщений об ошибках.
+   */
   const set = (field: keyof PersonaFormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -69,6 +87,9 @@ export default function PersonaFormScreen() {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
   }
 
+  /**
+   * Валидирует обязательные поля формы персоны (имя).
+   */
   const validate = (): boolean => {
     const newErrors: Partial<PersonaFormData> = {}
     if (!form.name.trim()) newErrors.name = 'Имя обязательно'
@@ -76,6 +97,9 @@ export default function PersonaFormScreen() {
     return Object.keys(newErrors).length === 0
   }
 
+  /**
+   * Отправляет созданную или отредактированную персону пользователя на бэкенд.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
@@ -123,14 +147,14 @@ export default function PersonaFormScreen() {
 
   return (
     <div className={styles.page}>
-      {/* Background */}
+      {/* Фоновые декоративные сферы */}
       <div className={styles.bgOrbs}>
         <div className={`${styles.orb} ${styles.orbPurple}`} />
         <div className={`${styles.orb} ${styles.orbFuchsia}`} />
       </div>
 
       <div className={styles.content}>
-        {/* Header */}
+        {/* Заголовок страницы */}
         <div className={styles.header}>
           <button className={styles.backBtn} onClick={() => navigate('/personas')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +183,7 @@ export default function PersonaFormScreen() {
               </div>
             </div>
 
-            {/* ─── Core Identity ─── */}
+            {/* ─── Основная информация ─── */}
             <div className={styles.sectionTitle}>Основная информация</div>
 
             <div className={styles.formGroup}>
@@ -209,7 +233,7 @@ export default function PersonaFormScreen() {
               </div>
             </div>
 
-            {/* ─── Detailed Profile ─── */}
+            {/* ─── Детальный профиль ─── */}
             <div className={styles.sectionTitle}>Детальный профиль</div>
 
             <div className={styles.formGroup}>
@@ -248,7 +272,7 @@ export default function PersonaFormScreen() {
               </span>
             </div>
 
-            {/* ─── Actions ─── */}
+            {/* ─── Кнопки действий ─── */}
             <div className={styles.actions}>
               <button
                 type="button"

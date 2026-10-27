@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Кастомный React-хук управления сообщениями и потоковой генерацией в чате.
+ * Инкапсулирует SSE-стриминг, построение дерева веток реплик, свайпы вариантов, редактирование и форки.
+ */
+
 import { useState, useCallback } from 'react'
 import { logger } from '@/core/utils/logger'
 import { chatsApi } from '@/core/api/chats'
@@ -13,6 +18,12 @@ interface UseChatMessagesOptions {
   onCheckpointsUpdate?: (checkpoints: Checkpoint[]) => void
 }
 
+/**
+ * Хук управления сообщениями чата.
+ * Реализует отправку сообщений с потоковым SSE-стримингом,
+ * регенерацию ответов, переключение альтернативных вариантов (свайпы),
+ * создание новых веток (форки) и редактирование реплик.
+ */
 export function useChatMessages({
   chatId,
   persona,
@@ -27,6 +38,15 @@ export function useChatMessages({
   const [isGenerating, setIsGenerating] = useState(false)
   const [chatError, setChatError] = useState<string | null>(null)
 
+  /**
+   * Преобразует сырые узлы сообщений активной ветки с бэкенда в UI-модели Message,
+   * подставляя актуальные имена персоны пользователя и ИИ-персонажа.
+   * 
+   * @param branch - Массив узлов активной ветки диалога
+   * @param userPersona - Активная персона пользователя
+   * @param aiCharacter - Персонаж, с которым ведется диалог
+   * @returns Массив сообщений для отображения в ленте чата
+   */
   const mapHistoryMessages = useCallback((
     branch: any[],
     userPersona: UserPersona | null,
@@ -47,6 +67,12 @@ export function useChatMessages({
     }))
   }, [])
 
+  /**
+   * Создает ответвление (форк) чата начиная с выбранного сообщения.
+   * Позволяет начать новую сюжетную линию без потери текущего прогресса.
+   * 
+   * @param messageId - Идентификатор сообщения-чекпоинта
+   */
   const handleForkChat = useCallback(async (messageId: string) => {
     try {
       const newChat = await messagesApi.forkChat(messageId)
@@ -57,11 +83,24 @@ export function useChatMessages({
     }
   }, [])
 
+  /**
+   * Переключает варианты генерации ответа ("свайпы") среди соседних узлов с общим parent_id.
+   * 
+   * Архитектура дерева сообщений:
+   * 1. Каждое сообщение хранит ссылку на своего предка (parent_id).
+   * 2. При повторной генерации создается sibling-узел с тем же parent_id.
+   * 3. При переключении на соседний узел необходимо найти его самый глубокий лист (leaf),
+   *    чтобы полностью восстановить нижележащую цепочку реплик данной сюжетной ветки.
+   * 
+   * @param msgId - Идентификатор текущего сообщения
+   * @param direction - Направление переключения ('prev' - предыдущий вариант, 'next' - следующий)
+   */
   const handleSiblingSwitch = async (msgId: string, direction: 'prev' | 'next') => {
     if (isGenerating || !chatId) return
     const targetMsg = messageTree.find(m => m.id === msgId)
     if (!targetMsg) return
 
+    // Поиск всех вариантов ответа от того же родителя, отсортированных по времени создания
     const siblings = messageTree
       .filter(m => m.parent_id === targetMsg.parent_id)
       .sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime())
@@ -71,6 +110,10 @@ export function useChatMessages({
     if (newIndex < 0 || newIndex >= siblings.length) return
 
     const nextMsg = siblings[newIndex]
+
+    /**
+     * Рекурсивно спускается по дереву от указанного сообщения к самому последнему дочернему узлу (листу).
+     */
     const findLeaf = (mId: string): string => {
       const children = messageTree.filter(m => m.parent_id === mId)
       return children.length === 0 ? mId : findLeaf(children[children.length - 1].id)
@@ -79,6 +122,7 @@ export function useChatMessages({
     const newLeafId = findLeaf(nextMsg.id)
 
     try {
+      // Сохраняем выбранный активный лист на бэкенде и перезагружаем активную ветку
       await chatsApi.updateChat(chatId, { active_leaf_id: newLeafId })
       const historyData = await chatsApi.getChatHistory(chatId)
       setActiveLeafId(historyData.active_leaf_id)
@@ -89,6 +133,16 @@ export function useChatMessages({
     }
   }
 
+  /**
+   * Отправляет новое сообщение пользователя и инициирует потоковую генерацию ответа ассистента.
+   * 
+   * Логика работы:
+   * 1. Оптимистично добавляет сообщение пользователя и пустую плашку ответа ассистента в UI.
+   * 2. Вызывает SSE-стриминг (sendMessageStream), наполняя плашку ассистента поступающими чанками.
+   * 3. После завершения генерации синхронизирует состояние с бэкендом: обновляет active_leaf_id,
+   *    получает скрытые мысли модели (hidden_thought) и обновляет контрольные точки (чекпоинты).
+   * 4. В случае сбоя удаляет оптимистичное сообщение и показывает баннер ошибки.
+   */
   const handleSend = async () => {
     if (!inputValue.trim() || isGenerating || !chatId) return
     const userMsgContent = inputValue
@@ -153,6 +207,12 @@ export function useChatMessages({
     }
   }
 
+  /**
+   * Инициирует повторную генерацию ответа ассистента для выбранного сообщения.
+   * Создает новую ветку-сиблинг от родительского сообщения пользователя.
+   * 
+   * @param msgId - Идентификатор сообщения ассистента, которое необходимо перегенерировать
+   */
   const handleRegenerate = async (msgId: string) => {
     if (isGenerating || !chatId) return
     setIsGenerating(true)
@@ -200,6 +260,13 @@ export function useChatMessages({
     }
   }
 
+  /**
+   * Редактирует текст существующего сообщения.
+   * На бэкенде создается новая ветка диалога с обновленным текстом.
+   * 
+   * @param msgId - Идентификатор редактируемого сообщения
+   * @param newContent - Новый отредактированный текст
+   */
   const handleEditMessage = async (msgId: string, newContent: string) => {
     if (isGenerating || !chatId) return
     try {

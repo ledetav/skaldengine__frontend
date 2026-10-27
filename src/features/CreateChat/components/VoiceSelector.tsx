@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Селектор лица повествования (1-е, 2-е или 3-е лицо) в конструкторе создания чата.
+ */
+
 import React from 'react'
 import type { NarrativeVoiceType } from '@/core/types/chat'
 import styles from './VoiceSelector.module.css'
@@ -19,6 +23,9 @@ const VOICE_OPTIONS: VoiceOption[] = [
   { id: 'third', title: '3-е лицо', desc: '«Он медленно обернулся...»' }
 ]
 
+/**
+ * Компонент выбора грамматического лица повествования для ответов модели.
+ */
 export const VoiceSelector: React.FC<VoiceSelectorProps> = ({ 
   selectedVoice, 
   onVoiceChange 

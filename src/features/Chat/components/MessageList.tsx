@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Контейнер ленты сообщений чата со скролл-областью.
+ */
+
 import React from 'react'
 import styles from './MessageList.module.css'
 
@@ -6,6 +10,12 @@ interface MessageListProps {
   scrollRef: React.RefObject<HTMLDivElement | null>
 }
 
+/**
+ * Скроллируемая область отображения ленты сообщений чата.
+ * 
+ * @param props.children - Список отрендеренных компонентов MessageItem
+ * @param props.scrollRef - Ref-ссылка на HTML-элемент контейнера для управления прокруткой
+ */
 export function MessageList({ children, scrollRef }: MessageListProps) {
   return (
     <main className={styles.messageArea} ref={scrollRef}>

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент постраничной навигации для списков и таблиц панели администратора.
+ * Рассчитывает доступные страницы, диапазон отображения и обеспечивает переключение страниц.
+ */
+
 import React from 'react'
 import styles from './Pagination.module.css'
 
@@ -8,6 +13,9 @@ interface PaginationProps {
   onPageChange: (page: number) => void
 }
 
+/**
+ * Компонент пагинации для таблиц панели администратора.
+ */
 export function Pagination({ currentPage, totalItems, pageSize, onPageChange }: PaginationProps): React.JSX.Element | null {
   const totalPages = Math.ceil(totalItems / pageSize)
   

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент раздела сценариев ролевой игры в панели администратора.
+ * Поддерживает табличный и сеточный вид, локальный поиск и переход к редактированию сценария.
+ */
+
 import React, { useState } from 'react'
 import { Badge } from '@/components/ui'
 import styles from '../styles'
@@ -16,6 +21,10 @@ interface ScenarioSectionProps {
 
 type ViewMode = 'grid' | 'table'
 
+/**
+ * Секция каталога сценариев в панели администратора.
+ * Позволяет просматривать сценарии в виде таблицы или карточек, фильтровать и сортировать.
+ */
 export function ScenarioSection({ 
   scenarios, 
   characters,
@@ -34,6 +43,11 @@ export function ScenarioSection({
     (s.location || '').toLowerCase().includes(search.toLowerCase())
   )
 
+  /**
+   * Возвращает имя персонажа по его идентификатору или fallback-значение.
+   * 
+   * @param id - Идентификатор персонажа
+   */
   const getCharName = (id?: string | null) => {
     if (!id) return 'Не привязан'
     return characters.find(c => c.id === id)?.name || 'Неизвестен'

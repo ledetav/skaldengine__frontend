@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент списка и инлайн-редактирования записей (статей) лорбука.
+ * Предоставляет поиск, фильтрацию по категориям, сортировку по приоритету/дате
+ * и модальное подтверждение удаления записи.
+ */
+
 import { useMemo, type ChangeEvent } from 'react'
 import { Badge, Input, Textarea } from '@/components/ui'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
@@ -45,6 +51,11 @@ interface LorebookEntryListProps {
   onEditPriorityChange: (v: number) => void
 }
 
+/**
+ * Таблица списка записей лорбука в админ-панели.
+ * Поддерживает inline-редактирование, поиск, фильтрацию по категориям,
+ * сортировку и пагинацию.
+ */
 export function LorebookEntryList({
   lorebookType,
   entries, entriesTotal, entriesPage, entrySort, entryCategoryFilter, entrySearch, isLoading,
@@ -56,6 +67,9 @@ export function LorebookEntryList({
 }: LorebookEntryListProps) {
   const badgeVariant = lorebookType === 'fandom' ? 'fuchsia' : lorebookType === 'persona' ? 'teal' : 'purple'
 
+  /**
+   * Отфильтрованный массив записей лорбука по выбранной категории и ключевым словам поиска.
+   */
   const filteredEntries = useMemo(() => {
     let result = entries
     if (entryCategoryFilter !== 'all') {
@@ -73,11 +87,11 @@ export function LorebookEntryList({
 
   return (
     <div className={styles.detailGroup}>
-      {/* Header */}
+      {/* Шапка списка записей */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
         <div className={styles.detailTitle}>Записи ({entriesTotal})</div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Search */}
+          {/* Поиск по записям */}
           <div className={styles.searchWrapper} style={{ margin: 0, height: '36px', width: '170px' }}>
             <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -92,7 +106,7 @@ export function LorebookEntryList({
             />
           </div>
 
-          {/* Sort */}
+          {/* Переключатель сортировки */}
           <div className={styles.roleBtnGroup} style={{ margin: 0 }}>
             <button
               className={`${styles.roleBtn} ${entrySort === 'created_at' ? styles.roleBtnActive : ''}`}
@@ -110,7 +124,7 @@ export function LorebookEntryList({
             </button>
           </div>
 
-          {/* Category filter */}
+          {/* Фильтр по категории */}
           <div style={{ width: '170px' }}>
             <SearchableSelect
               options={[{ id: 'all', name: 'Все категории' }, ...ENTRY_CATEGORIES]}
@@ -123,7 +137,7 @@ export function LorebookEntryList({
         </div>
       </header>
 
-      {/* Table */}
+      {/* Таблица записей */}
       <div className={styles.tableWrapper}>
         <table className={styles.compactTable}>
           <thead>
@@ -140,7 +154,7 @@ export function LorebookEntryList({
               const isEditing = editingEntryId === entry.id
               return (
                 <tr key={entry.id || i} className={isEditing ? styles.tableEditingRow : ''}>
-                  {/* Keywords */}
+                  {/* Ключевые слова */}
                   <td>
                     {isEditing ? (
                       <Input
@@ -160,7 +174,7 @@ export function LorebookEntryList({
                     )}
                   </td>
 
-                  {/* Content */}
+                  {/* Содержание записи */}
                   <td>
                     {isEditing ? (
                       <Textarea
@@ -177,7 +191,7 @@ export function LorebookEntryList({
                     )}
                   </td>
 
-                  {/* Category */}
+                  {/* Категория */}
                   <td>
                     {isEditing ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -230,14 +244,14 @@ export function LorebookEntryList({
                     )}
                   </td>
 
-                  {/* Priority */}
+                  {/* Приоритет */}
                   <td>
                     <div style={{ fontSize: '0.8rem', fontWeight: '600', color: entry.priority >= 4 ? 'var(--accent-orange)' : 'inherit', opacity: entry.priority === 1 ? 0.4 : 0.9 }}>
                       {entry.priority}
                     </div>
                   </td>
 
-                  {/* Actions */}
+                  {/* Кнопки действий */}
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
                       {isEditing ? (

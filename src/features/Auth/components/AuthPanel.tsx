@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Боковая декоративная панель экрана авторизации.
+ * Отображает приветственный текст, анимированные сферы и кнопку переключения между формами входа и регистрации.
+ */
+
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '@/theme/screens/Auth/AuthScreen.module.css'
@@ -7,6 +12,9 @@ interface AuthPanelProps {
   onToggle: () => void
 }
 
+/**
+ * Интерактивная боковая панель с кнопкой переключения режима (Вход / Регистрация).
+ */
 export const AuthPanel: React.FC<AuthPanelProps> = ({ isLogin, onToggle }) => {
   const panelTitle = isLogin ? 'Нет аккаунта?' : 'Уже с нами?'
   const panelText = isLogin 

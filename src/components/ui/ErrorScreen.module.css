@@ -205,7 +205,7 @@
   box-shadow: 0 0 30px rgba(255, 107, 0, 0.4);
 }
 
-/* Particles */
+/* Частицы фонового эффекта */
 .particleLayer {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;

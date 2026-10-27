@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Вкладка «Обзор» в личном кабинете пользователя.
+ * Отображает блок «О себе», числовую статистику активности и список последних диалогов.
+ */
+
 import type { UserProfile } from '@/core/types/profile';
 import type { Chat } from '@/core/types/chat';
 import styles from '../Profile.module.css';
@@ -7,7 +12,15 @@ interface MainTabProps {
   lastChats: Chat[];
 }
 
+/**
+ * Вкладка «Обзор» в профиле пользователя.
+ * Отображает блок «О себе», числовую статистику (чаты, персоны, лорбуки, сообщения)
+ * и список последних активных диалогов.
+ */
 export default function MainTab({ user, lastChats }: MainTabProps) {
+  /**
+   * Иконка чата для карточек недавних диалогов пользователя.
+   */
   const ChatIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -16,7 +29,7 @@ export default function MainTab({ user, lastChats }: MainTabProps) {
 
   return (
     <div className={styles.aboutSection}>
-      {/* Bio Section */}
+      {/* Секция описания "О себе" */}
       <div className={`${styles.card} angular-card`} style={{ padding: '1.5rem', marginBottom: '2rem' }}>
         <h3 className={styles.sectionTitle} style={{ marginTop: 0 }}>О себе</h3>
         <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
@@ -24,7 +37,7 @@ export default function MainTab({ user, lastChats }: MainTabProps) {
         </p>
       </div>
 
-      {/* Statistics Section */}
+      {/* Секция статистики активности */}
       <h3 className={styles.sectionTitle}>Статистика</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         <div className={`${styles.card} angular-card`} style={{ padding: '1rem', textAlign: 'center' }}>

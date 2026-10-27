@@ -1,4 +1,12 @@
+/**
+ * @fileoverview Определение типов данных профиля пользователя.
+ * Включает модели учетных записей, агрегированной статистики активности,
+ * а также облегченные проекции персон и лорбуков для вкладок личного кабинета.
+ */
 
+/**
+ * Агрегированная статистика активности пользователя.
+ */
 export interface UserStatistics {
   total_chats: number;
   total_personas: number;
@@ -6,6 +14,9 @@ export interface UserStatistics {
   total_messages: number;
 }
 
+/**
+ * Профиль пользователя с учетными данными и статистикой.
+ */
 export interface UserProfile {
   id: string;
   email: string;
@@ -21,6 +32,9 @@ export interface UserProfile {
   statistics: UserStatistics;
 }
 
+/**
+ * Краткая информация о персоне в профиле пользователя.
+ */
 export interface ProfilePersona {
   id: string;
   name: string;
@@ -28,13 +42,16 @@ export interface ProfilePersona {
   avatar_url: string | null;
   age: number | null;
   gender: string | null;
-  lorebook_count: number; // Missing in backend
-  chat_count: number; // Missing in backend
+  lorebook_count: number;
+  chat_count: number;
   appearance: string | null;
   personality: string | null;
   facts: string | null;
 }
 
+/**
+ * Краткая информация о лорбуке в профиле пользователя.
+ */
 export interface ProfileLorebook {
   id: string;
   name: string;

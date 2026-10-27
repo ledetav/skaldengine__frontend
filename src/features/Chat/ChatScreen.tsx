@@ -1,9 +1,15 @@
+/**
+ * @fileoverview Главный экран интерактивного диалога (Chat Screen).
+ * Интегрирует потоковый SSE-стриминг реплик, дерево ветвления сообщений,
+ * чекпоинты сценария, боковую панель настроек контекста и панель ввода сообщений.
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from './ChatScreen.module.css'
 import { logger } from "@/core/utils/logger"
 
-// API & Types
+// API и типизация
 import { chatsApi } from '@/core/api/chats'
 import { scenariosApi } from '@/core/api/scenarios'
 import { charactersApi } from '@/core/api/characters'
@@ -12,7 +18,7 @@ import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Character } from '@/core/types/character'
 import type { UserPersona, Scenario, Chat as ChatType, Lorebook, Checkpoint } from '@/core/types/chat'
 
-// Components
+// Вспомогательные компоненты чата
 import { ChatHeader } from './components/ChatHeader'
 import { ChatInput } from './components/ChatInput'
 import { MessageList } from './components/MessageList'
@@ -20,10 +26,15 @@ import { MessageItem } from './components/MessageItem'
 import { ChatErrorBanner } from './components/ChatErrorBanner'
 import { ChatSidebarContainer } from './components/ChatSidebarContainer'
 
-// Custom Hooks
+// Пользовательские хуки состояния и сообщений
 import { useChatSettings } from './hooks/useChatSettings'
 import { useChatMessages } from './hooks/useChatMessages'
 
+/**
+ * Основной экран диалога (чат) с персонажем.
+ * Поддерживает потоковый SSE-стриминг, парсинг мыслей персонажа,
+ * древовидную навигацию свайпами, форки и редактирование истории.
+ */
 export default function ChatScreen() {
   const { chatId } = useParams<{ chatId: string }>()
 
@@ -34,13 +45,13 @@ export default function ChatScreen() {
   const [lorebooks, setLorebooks] = useState<Lorebook[]>([])
   const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([])
 
-  // UI States
+  // Состояние интерфейса
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024)
   const [lastSaved, setLastSaved] = useState<Date>(new Date())
 
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Settings hook
+  // Управление настройками отображения и параметрами чата
   const {
     perspective,
     setPerspective,
@@ -60,7 +71,7 @@ export default function ChatScreen() {
     onLastSavedUpdate: () => setLastSaved(new Date()),
   })
 
-  // Messages hook
+  // Управление сообщениями, ветками диалога и стримингом
   const {
     messages,
     setMessages,
@@ -86,6 +97,12 @@ export default function ChatScreen() {
     onCheckpointsUpdate: setCheckpoints,
   })
 
+  /**
+   * Выполняет плавную или мгновенную прокрутку ленты сообщений вниз к последней реплике,
+   * если включен режим автоматического скролла.
+   * 
+   * @param behavior - Тип прокрутки ('smooth' или 'auto')
+   */
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current && autoScrollEnabled) {
       scrollRef.current.scrollTo({
@@ -99,10 +116,13 @@ export default function ChatScreen() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Initial Data Loading
+  // Первоначальная загрузка данных диалога
   useEffect(() => {
     if (!chatId) return
 
+    /**
+     * Загружает метаданные чата, сценарий, персонажа и дерево истории сообщений.
+     */
     const loadData = async () => {
       try {
         const chatData = await chatsApi.getChat(chatId)
@@ -117,7 +137,7 @@ export default function ChatScreen() {
         ])
 
         if (chatData.scenario_id) {
-          scenariosApi.getScenario(chatData.scenario_id).then(setScenario).catch(err => logger.error('Failed to get scenario', err))
+          scenariosApi.getScenario(chatData.scenario_id).then(setScenario).catch(err => logger.error('Не удалось загрузить сценарий', err))
         }
 
         setCharacter(charData)
@@ -127,7 +147,7 @@ export default function ChatScreen() {
         setCheckpoints(historyData.checkpoints || [])
         setMessages(mapHistoryMessages(historyData.active_branch, personaData, charData))
 
-        // Load Lorebooks
+        // Загрузка прикрепленных баз знаний (лорбуков)
         const lb_ids = charData.lorebook_ids || []
         const lb_promises = lb_ids.map((id: string) => lorebooksApi.getLorebook(id))
         if (chatData.persona_lorebook_id) {
@@ -136,7 +156,7 @@ export default function ChatScreen() {
         const loadedLbs = await Promise.all(lb_promises)
         setLorebooks(loadedLbs)
       } catch (err: unknown) {
-        logger.error('Failed to load chat data:', err)
+        logger.error('Ошибка загрузки данных чата:', err)
       }
     }
 

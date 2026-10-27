@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент редактирования метаданных лорбука (базы знаний) в панели администратора.
+ * Позволяет настраивать название, описание, тип, категорию, фандом и привязку к персонажу или персоне.
+ */
+
 import { useMemo } from 'react'
 import { Badge, Button, Card, Input } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
@@ -15,7 +20,7 @@ interface LorebookDetailProps {
   personas: UserPersona[]
   allFandoms: string[]
   
-  // State from parent
+  // Состояние, переданное от родительского компонента
   editName: string
   setEditName: (v: string) => void
   editDescription: string
@@ -38,17 +43,22 @@ interface LorebookDetailProps {
   isMain: boolean
   setIsMain: (v: boolean) => void
   
-  // Actions
+  // Обработчики действий
   onView: () => void
   onEdit: () => void
   onSave: () => void
   
-  // Delete
+  // Удаление лорбука
   showDeleteModal: boolean
   setShowDeleteModal: (v: boolean) => void
   onDelete: () => void
 }
 
+/**
+ * Блок детальной информации о лорбуке в панели администратора.
+ * Позволяет редактировать название, описание, привязку к фандомам/персонажам/персонам,
+ * категорию лорбука и статус основного лорбука персонажа.
+ */
 export function LorebookDetail({
   lb, isEditMode, initialType, characters, users, personas, allFandoms,
   editName, setEditName, editDescription, setEditDescription,
@@ -60,6 +70,9 @@ export function LorebookDetail({
   showDeleteModal, setShowDeleteModal, onDelete
 }: LorebookDetailProps) {
   
+  /**
+   * Находит персонажа, связанного с текущим лорбуком.
+   */
   const currentCharacter = useMemo(() => 
     characters.find(c => String(c.id) === String(selectedCharId || lb.character_id)),
     [characters, selectedCharId, lb.character_id]
@@ -67,21 +80,27 @@ export function LorebookDetail({
   
   const isOriginalChar = currentCharacter?.type === 'original'
   
+  /**
+   * Список персон, принадлежащих выбранному пользователю-владельцу.
+   */
   const userPersonas = useMemo(() => 
     personas.filter(p => p.owner_id === selectedUserId),
     [personas, selectedUserId]
   )
 
+  /**
+   * Проверяет допустимость снятия статуса основного лорбука ('main'):
+   * у оригинальных персонажей запрещено отключать единственный сохраненный основной лорбук.
+   */
   const canToggleMain = useMemo(() => {
     if (!isOriginalChar) return true
-    if (!isMain) return true // Can always turn ON
+    if (!isMain) return true // Включить статус основного можно всегда
     
-    // Check if the current lorebook is already main in the database
+    // Проверка, является ли текущий лорбук основным в базе данных
     const isStoredAsMain = lb.tags?.includes('main')
     
     if (isStoredAsMain) {
-      // In real scenario we need all lorebooks to know if there's another main one.
-      // Here we simplify: if it's main for original char, lock it (require another to become main first).
+      // Для оригинального персонажа должен оставаться хотя бы один основной лорбук
       return false 
     }
     return true
@@ -93,7 +112,7 @@ export function LorebookDetail({
       <Card className={styles.detailsCard} style={{ padding: '16px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
           
-          {/* Name */}
+          {/* Название */}
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Название</div>
             {isEditMode ? (
@@ -103,7 +122,7 @@ export function LorebookDetail({
             )}
           </div>
 
-          {/* Type / Binding */}
+          {/* Тип / Привязка */}
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Тип / Привязка</div>
             {isEditMode ? (
@@ -123,7 +142,7 @@ export function LorebookDetail({
                   >Персона</button>
                 </div>
 
-                {/* Binding Inputs */}
+                {/* Поля ввода привязки */}
                 {editType === 'fandom' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <SearchableSelect 
@@ -216,7 +235,7 @@ export function LorebookDetail({
             )}
           </div>
 
-          {/* Description */}
+          {/* Описание */}
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Описание</div>
             {isEditMode ? (
@@ -226,7 +245,7 @@ export function LorebookDetail({
             )}
           </div>
 
-          {/* Category */}
+          {/* Категория */}
           <div className={styles.detailGroup}>
             <div className={styles.detailTitle} style={{ fontSize: '0.6rem', letterSpacing: '0.1em' }}>Категория лорбука</div>
             {isEditMode ? (
@@ -244,7 +263,7 @@ export function LorebookDetail({
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Кнопки действий */}
         <div className={styles.actionRow} style={{ border: 'none', padding: 0, marginTop: 0, justifyContent: 'space-between', alignItems: 'flex-end' }}>
           {isEditMode ? (
             <div style={{ display: 'flex', gap: '12px' }}>

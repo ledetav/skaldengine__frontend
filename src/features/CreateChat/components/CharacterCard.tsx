@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Карточка персонажа в боковой панели конструктора создания чата.
+ * Отображает портрет, фандом, теги, описание внешности и характера выбранного героя.
+ */
+
 import React from 'react'
 import type { Character } from '@/core/types/character'
 import type { UserProfile } from '@/core/types/profile'
@@ -11,6 +16,10 @@ interface CharacterCardProps {
   hasFullLorebook?: boolean
 }
 
+/**
+ * Карточка персонажа в конструкторе создания чата.
+ * Отображает обложку, аватар, фандом, характеристики и счетчики активности.
+ */
 export const CharacterCard: React.FC<CharacterCardProps> = ({ 
   character, 
   scenariosCount, 
@@ -25,7 +34,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
 
   return (
     <div className={styles.characterCard}>
-      {/* Top Part: Cover */}
+      {/* Верхняя часть: Обложка */}
       <div className={styles.characterCoverContainer}>
         <img 
           src={character.card_image_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop'} 
@@ -35,10 +44,10 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         <div className={styles.characterCoverGradient} />
       </div>
 
-      {/* Content Part */}
+      {/* Контентная часть */}
       <div className={styles.characterDetails}>
         
-        {/* Profile Header (Moved from Overlay) */}
+        {/* Шапка профиля */}
         <div className={styles.profileHeader}>
           <div className={styles.avatarCircle}>
             <img src={character.avatar_url} alt={character.name} />

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент отдельного сообщения в чате (реплики пользователя или ассистента).
+ * Реализует рендеринг Markdown, вынос скрытых мыслей (ThoughtBlock), переключение вариантов веток (siblings),
+ * инлайн-редактирование, регенерацию и форк (ветвление) нового диалога.
+ */
+
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -20,6 +26,10 @@ interface MessageItemProps {
   scrollToBottom: (behavior?: ScrollBehavior) => void
 }
 
+/**
+ * Элемент единичного сообщения диалога (пользователя или ИИ)
+ * с поддержкой Markdown, блока скрытых рассуждений, пагинатора вариантов ответа и инлайн-редактирования.
+ */
 export function MessageItem({ 
   msg, 
   isLast, 
@@ -36,16 +46,25 @@ export function MessageItem({
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(msg.content)
 
+  /**
+   * Открывает режим инлайн-редактирования реплики.
+   */
   const handleEditClick = () => {
     setEditValue(msg.content)
     setIsEditing(true)
   }
 
+  /**
+   * Сохраняет отредактированный текст сообщения и передает его наверх для создания новой ветки.
+   */
   const handleSaveEdit = () => {
     onEdit(msg.id, editValue)
     setIsEditing(false)
   }
 
+  /**
+   * Отменяет режим редактирования без сохранения внесенных изменений.
+   */
   const handleCancelEdit = () => {
     setIsEditing(false)
   }

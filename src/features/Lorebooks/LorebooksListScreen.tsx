@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Экран списка всех доступных пользователю лорбуков (баз знаний) с поиском и удалением.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { logger } from "@/core/utils/logger";
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +10,7 @@ import type { Lorebook } from '@/core/types/chat'
 import { lorebooksApi } from '@/core/api/lorebooks'
 import { useToast } from '@/components/ui'
 
+/** Иконка книги для лорбуков */
 function BookIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -14,6 +19,7 @@ function BookIcon() {
   )
 }
 
+/** Модальное окно подтверждения удаления лорбука */
 function ConfirmDelete({ lorebook, onConfirm, onCancel }: {
   lorebook: Lorebook; onConfirm: () => void; onCancel: () => void
 }) {
@@ -45,6 +51,7 @@ function ConfirmDelete({ lorebook, onConfirm, onCancel }: {
   )
 }
 
+/** Карточка лорбука со статистикой записей и кнопками управления */
 function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
   lorebook: Lorebook
   onOpen: () => void
@@ -54,7 +61,7 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
 }) {
   const isMain = lorebook.tags?.includes('main');
   const isOriginal = lorebook.fandom?.toLowerCase() === 'original' || lorebook.fandom?.toLowerCase() === 'оригинальный';
-  // Protection applies to main lorebooks of Original type characters
+  // Защита от удаления распространяется на основные лорбуки оригинальных персонажей
   const deleteDisabled = isMain && (isOriginal || lorebook.type === 'character');
 
   return (
@@ -122,6 +129,11 @@ function LorebookCard({ lorebook, onOpen, onEdit, onDelete }: {
   )
 }
 
+/**
+ * Экран со списком всех лорбуков (баз знаний) пользователя.
+ * Позволяет просматривать каталог лорбуков, переходить к деталям,
+ * создавать новые лорбуки и удалять пользовательские базы знаний.
+ */
 export default function LorebooksListScreen() {
   const navigate = useNavigate()
   const { success, error } = useToast()
@@ -130,6 +142,9 @@ export default function LorebooksListScreen() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    /**
+     * Асинхронно запрашивает каталог пользовательских лорбуков с бэкенда.
+     */
     const fetchLorebooks = async () => {
       try {
         setIsLoading(true)
@@ -145,6 +160,11 @@ export default function LorebooksListScreen() {
     fetchLorebooks()
   }, [error])
 
+  /**
+   * Удаляет выбранный лорбук на сервере и исключает его из отображаемого списка.
+   * 
+   * @param lb - Объект удаляемого лорбука
+   */
   const handleDelete = async (lb: Lorebook) => {
     console.log(`[Frontend] Попытка удалить лорбук с ID:`, lb.id);
     

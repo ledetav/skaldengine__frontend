@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Главный баннер (Hero Section) лендинга с эффектом печатной машинки и призывом к регистрации.
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import styles from '@/theme/screens/Landing/HeroSection.module.css'
@@ -9,6 +13,11 @@ const TYPEWRITER_PHRASES = [
   'Раскрой творческий потенциал...',
 ]
 
+/**
+ * Главная секция лендинга (Hero).
+ * Содержит анимированный эффект печатной машинки, фоновые эффекты,
+ * описание возможностей платформы и кнопки призыва к действию.
+ */
 export default function HeroSection() {
   const [displayText, setDisplayText] = useState('')
   const [phraseIdx, setPhraseIdx] = useState(0)
@@ -53,18 +62,18 @@ export default function HeroSection() {
 
   return (
     <section id="hero" className={styles.hero} aria-labelledby="hero-heading">
-      {/* Background */}
+      {/* Фоновые подложки */}
       <div className={styles.bg}>
         <div className={styles.bgOverlay} />
         <div className={styles.bgGrid} aria-hidden="true" />
       </div>
 
-      {/* Orbs */}
+      {/* Декоративные световые сферы */}
       <div className={`${styles.orb} ${styles.orbOrange}`} aria-hidden="true" />
       <div className={`${styles.orb} ${styles.orbFuchsia}`} aria-hidden="true" />
       <div className={`${styles.orb} ${styles.orbPurple}`} aria-hidden="true" />
 
-      {/* Content */}
+      {/* Основной контент */}
       <div className={styles.content}>
 
         <h1 id="hero-heading" className={styles.heading}>
@@ -89,7 +98,7 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Features bar */}
+        {/* Панель ключевых преимуществ */}
         <div className={styles.stats} aria-label="Преимущества SkaldEngine">
           {[
             'Без амнезии.',
@@ -103,7 +112,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Индикатор прокрутки */}
       <a href="#about" className={styles.scrollHint} aria-label="Прокрутить вниз">
         <span className={styles.scrollDot} />
       </a>

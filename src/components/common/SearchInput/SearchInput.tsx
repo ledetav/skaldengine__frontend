@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Поле ввода поискового запроса с встроенной иконкой лупы и доступной разметкой.
+ */
+
 import React, { useId } from 'react'
 import styles from './SearchInput.module.css'
 
@@ -9,6 +13,15 @@ interface SearchInputProps {
   style?: React.CSSProperties
 }
 
+/**
+ * Поле текстового поиска с иконкой лупы.
+ * 
+ * @param props.value - Текущее текстовое значение
+ * @param props.onChange - Обработчик изменения значения
+ * @param props.placeholder - Текст подсказки
+ * @param props.className - Дополнительный CSS класс
+ * @param props.style - Дополнительные inline стили
+ */
 export function SearchInput({ value, onChange, placeholder = 'Поиск...', className = '', style }: SearchInputProps) {
   const id = useId()
   return (

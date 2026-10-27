@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран детального просмотра и управления записями лорбука (базы знаний).
+ * Поддерживает создание единичных записей, пакетный импорт из JSON, экспорт, фильтрацию и удаление.
+ */
+
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
@@ -5,7 +10,8 @@ import { lorebooksApi } from '@/core/api/lorebooks'
 import type { Lorebook, LorebookEntry } from '@/core/types/chat'
 import { useToast, Button, Card, Input, Textarea } from '@/components/ui'
 
-/* ─── Add Single Entry Panel ───────────────────── */
+/* ─── Панель добавления одной записи ───────────────── */
+/** Компонент создания единичной записи лорбука */
 function AddSingleEntry({ onAdd, onCancel }: {
   onAdd: (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => void
   onCancel: () => void
@@ -18,6 +24,9 @@ function AddSingleEntry({ onAdd, onCancel }: {
   const [submitting, setSubmitting] = useState(false)
   const { error } = useToast()
 
+  /**
+   * Валидирует и отправляет новую запись лорбука с приоритетом (1-5) и ключевыми словами.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!keywords.trim() || !content.trim()) {
@@ -116,12 +125,13 @@ function AddSingleEntry({ onAdd, onCancel }: {
   )
 }
 
-/* ─── Batch Import Panel ───────────────────────── */
+/* ─── Панель пакетного импорта ─────────────────────── */
 const BATCH_EXAMPLE = JSON.stringify([
   { keywords: ['пример', 'ключ'], content: 'Описание факта...', priority: 5 },
   { keywords: ['другой'], content: 'Ещё один факт.', priority: 8 },
 ], null, 2)
 
+/** Компонент для пакетного импорта записей через JSON */
 function BatchImportPanel({ onImport, onCancel }: {
   onImport: (entries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => void
   onCancel: () => void
@@ -130,6 +140,9 @@ function BatchImportPanel({ onImport, onCancel }: {
   const [result, setResult] = useState<string | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
 
+  /**
+   * Парсит введенный JSON-массив записей, валидирует типы полей и вызывает обработчик импорта.
+   */
   const handleImport = () => {
     setResult(null)
     setParseError(null)
@@ -180,7 +193,8 @@ function BatchImportPanel({ onImport, onCancel }: {
   )
 }
 
-/* ─── Entries Table ────────────────────────────── */
+/* ─── Таблица записей лорбука ──────────────────────── */
+/** Таблица отображения всех записей лорбука с фильтрацией и удалением */
 function EntriesTable({ entries, onDelete }: {
   entries: LorebookEntry[]
   onDelete: (id: string) => void
@@ -248,9 +262,10 @@ function EntriesTable({ entries, onDelete }: {
   )
 }
 
-/* ─── Main Component ───────────────────────────── */
+/* ─── Главный компонент экрана ─────────────────────── */
 type AddMode = 'none' | 'single' | 'batch'
 
+/** Модальное окно подтверждения удаления лорбука */
 function ConfirmDeleteLorebook({ name, onConfirm, onCancel }: { name: string, onConfirm: () => void, onCancel: () => void }) {
   return (
     <div className={styles.modalOverlay}>
@@ -268,6 +283,11 @@ function ConfirmDeleteLorebook({ name, onConfirm, onCancel }: { name: string, on
   )
 }
 
+/**
+ * Экран детального просмотра и управления записями лорбука.
+ * Поддерживает единичное добавление, пакетный импорт через JSON,
+ * экспорт в JSON и удаление записей.
+ */
 export default function LorebookDetailScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -280,6 +300,9 @@ export default function LorebookDetailScreen() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /**
+     * Загружает детальные данные лорбука и все связанные с ним записи.
+     */
     async function load() {
       if (!id) return
       try {
@@ -315,6 +338,11 @@ export default function LorebookDetailScreen() {
     )
   }
 
+  /**
+   * Добавляет одиночную запись лорбука с временным ID для мгновенного обновления таблицы.
+   * 
+   * @param entry - Поля создаваемой записи (keywords, content, category, priority, is_always_included)
+   */
   const handleAddEntry = async (entry: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>) => {
     try {
       if (!id) return;
@@ -325,9 +353,9 @@ export default function LorebookDetailScreen() {
         is_always_included: entry.is_always_included,
         priority: entry.priority
       });
-      // We can refetch or just push to local state loosely for now:
+      // Сохраняем в локальное состояние до повторной синхронизации:
       const newEntry: LorebookEntry = {
-        id: `entry-${Date.now()}`, // Temporary ID if we don't return the full model right away
+        id: `entry-${Date.now()}`, // Временный ID для немедленного отображения в интерфейсе
         lorebook_id: lorebook.id,
         ...entry,
         created_at: new Date().toISOString(),
@@ -340,6 +368,11 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Выполняет пакетный импорт массива записей в лорбук через Bulk API.
+   * 
+   * @param newEntries - Массив импортируемых записей
+   */
   const handleBatchImport = async (newEntries: Omit<LorebookEntry, 'id' | 'lorebook_id' | 'created_at'>[]) => {
     try {
       if (!id) return;
@@ -353,10 +386,15 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Удаляет запись лорбука на сервере и исключает её из локального списка таблицы.
+   * 
+   * @param entryId - Идентификатор удаляемой записи
+   */
   const handleDeleteEntry = async (entryId: string) => {
     try {
       if (!id) return;
-      // Depending on structure sometimes fake ids are generated, but if it has a real UUID it comes from GET
+      // Удаление записи на сервере и локальное исключение из таблицы
       await lorebooksApi.deleteLorebookEntry(id, entryId);
       setEntries(entries.filter(e => e.id !== entryId))
       success('Запись удалена')
@@ -365,6 +403,9 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Удаляет текущий лорбук целиком и перенаправляет пользователя к каталогу лорбуков.
+   */
   const handleDeleteLorebook = async () => {
     try {
       if (!id) return;
@@ -378,6 +419,9 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Экспортирует записи текущего лорбука в файл формата JSON для бэкапа или переноса в другие миры.
+   */
   const handleExport = () => {
     const data = entries.map(({ keywords, content, priority }) => ({ keywords, content, priority }))
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -398,7 +442,7 @@ export default function LorebookDetailScreen() {
       </div>
 
       <div className={styles.content}>
-        {/* Header */}
+        {/* Шапка лорбука */}
         <div className={styles.detailTop}>
           <div className={styles.headerLeft}>
             <button className={styles.backBtn} onClick={() => navigate('/lorebooks')}>
@@ -429,7 +473,7 @@ export default function LorebookDetailScreen() {
           </div>
         </div>
 
-        {/* Entries panel */}
+        {/* Панель записей лорбука */}
         <div className={styles.entriesPanel}>
           <div className={styles.entriesHeader}>
             <div className={styles.entriesTitle}>
@@ -464,7 +508,7 @@ export default function LorebookDetailScreen() {
           <EntriesTable entries={entries} onDelete={handleDeleteEntry} />
         </div>
 
-        {/* Add forms */}
+        {/* Формы добавления */}
         {addMode === 'single' && (
           <AddSingleEntry
             onAdd={handleAddEntry}

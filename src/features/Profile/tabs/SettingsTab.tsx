@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Вкладка «Настройки» в личном кабинете пользователя.
+ * Реализует формы редактирования профиля (никнейм, логин, email, о себе, аватар) и смены пароля.
+ */
+
 import { useState } from 'react';
 import styles from '../Profile.module.css';
 import type { UserProfile } from '@/core/types/profile';
@@ -9,6 +14,11 @@ interface SettingsTabProps {
   user: UserProfile;
 }
 
+/**
+ * Вкладка «Настройки» в профиле пользователя.
+ * Позволяет редактировать персональные данные (никнейм, логин, email, о себе, аватар)
+ * и изменять пароль учетной записи.
+ */
 export default function SettingsTab({ user }: SettingsTabProps) {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
@@ -30,6 +40,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  /**
+   * Отправляет обновленные персональные данные профиля (имя, логин, email, био, аватар) на сервер.
+   */
   const handleUpdateProfile = async () => {
     try {
       setIsUpdating(true);
@@ -50,6 +63,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     }
   };
 
+  /**
+   * Выполняет процедуру смены текущего пароля на новый.
+   */
   const handleChangePassword = async () => {
     if (!passwordData.oldPassword || !passwordData.newPassword) {
       showError('Введите оба пароля');
@@ -67,6 +83,9 @@ export default function SettingsTab({ user }: SettingsTabProps) {
     }
   };
 
+  /**
+   * Удаляет аккаунт текущего пользователя, очищает токены авторизации в браузере и перенаправляет на лендинг.
+   */
   const handleDeleteAccount = async () => {
     try {
       await authApi.deleteMe();

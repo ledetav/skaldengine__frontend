@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Универсальная кнопка дизайн-системы с поддержкой вариантов оформления, иконки и спиннера загрузки.
+ */
+
 import React from 'react'
 import styles from './Button.module.css'
 
@@ -9,6 +13,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
 }
 
+/**
+ * Базовая кнопка дизайн-системы с поддержкой вариантов оформления, иконки и спиннера загрузки.
+ * 
+ * @param props.variant - Стилевой вариант кнопки ('primary', 'ghost', 'danger', 'orange')
+ * @param props.loading - Флаг состояния загрузки (блокирует нажатие и показывает спиннер)
+ * @param props.icon - Опциональная иконка перед текстом кнопки
+ */
 export function Button({
   children,
   className = '',
@@ -18,6 +29,9 @@ export function Button({
   icon,
   ...props
 }: ButtonProps) {
+  /**
+   * Возвращает глобальный CSS класс стилизации кнопки в зависимости от варианта.
+   */
   const getVariantClass = () => {
     switch (variant) {
       case 'primary': return 'ds-btn--primary'

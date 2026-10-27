@@ -1,14 +1,25 @@
+/**
+ * @fileoverview Кастомный React-хук витрины персонажей (Dashboard).
+ * Инкапсулирует загрузку персонажей с бэкенда, клиентскую фильтрацию по тегам и фандомам,
+ * текстовый поиск, сортировку, режим отображения (сетка/список) и WebSocket-синхронизацию.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useMemo, useEffect } from 'react'
 import { charactersApi } from '@/core/api/characters'
 import type { Character } from '@/core/types/character'
 
+/**
+ * Хук управления витриной персонажей дашборда.
+ * Обеспечивает загрузку персонажей, фильтрацию по фандомам, полу, NSFW,
+ * живой поиск, сортировку и синхронизацию обновлений через WebSocket в реальном времени.
+ */
 export const useDashboard = () => {
   const [characters, setCharacters] = useState<Character[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // ... rest of state
+  // Параметры фильтрации, сортировки и отображения витрины
   const [nsfwEnabled, setNsfwEnabled] = useState(false)
   const [selectedFandoms, setSelectedFandoms] = useState<string[]>([])
   const [gender, setGender] = useState('Любой')
@@ -19,6 +30,9 @@ export const useDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
+    /**
+     * Асинхронно запрашивает каталог персонажей с бэкенда при инициализации компонента.
+     */
     const fetchCharacters = async () => {
       try {
         setIsLoading(true)
@@ -26,7 +40,7 @@ export const useDashboard = () => {
         setCharacters(data)
         setError(null)
       } catch (err: any) {
-        logger.error('Error fetching characters:', err)
+        logger.error('Ошибка загрузки персонажей:', err)
         setError('Не удалось загрузить персонажей. Пожалуйста, попробуйте позже.')
       } finally {
         setIsLoading(false)
@@ -35,6 +49,7 @@ export const useDashboard = () => {
 
     fetchCharacters()
 
+    // Формирование WebSocket URL: замена протокола http(s) -> ws(s) для поддержки проксирования через Vite/Gateway
     const rawApiUrl = import.meta.env.VITE_CORE_API_URL || '';
     let wsBaseUrl: string;
     
@@ -46,11 +61,13 @@ export const useDashboard = () => {
       wsBaseUrl = `${protocol}//${host}${rawApiUrl || '/api/v1'}`;
     }
 
+    // Подписка на канал реал-тайм обновлений сущностей каталога персонажей
     const socket = new WebSocket(`${wsBaseUrl}/ws/updates`)
 
     socket.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data)
+        // Обработка создания, модификации и удаления персонажей без полной перезагрузки витрины
         if (payload.type === 'NEW_CHARACTER') {
           const newChar = payload.data
           setCharacters(prev => {
@@ -65,17 +82,21 @@ export const useDashboard = () => {
           setCharacters(prev => prev.filter(c => c.id !== id))
         }
       } catch (err) {
-        logger.error('WS Message parsing error:', err)
+        logger.error('Ошибка парсинга сообщения WebSocket:', err)
       }
     }
 
-    socket.onerror = (err) => logger.error('WS Error:', err)
+    socket.onerror = (err) => logger.error('Ошибка соединения WebSocket:', err)
     
     return () => {
       socket.close()
     }
   }, [])
 
+  /**
+   * Список уникальных фандомов с подсчетом количества персонажей в каждом,
+   * отсортированный по убыванию популярности (числа персонажей).
+   */
   const availableFandoms = useMemo(() => {
     const counts: Record<string, number> = {}
     if (!Array.isArray(characters)) return []
@@ -90,6 +111,10 @@ export const useDashboard = () => {
       .sort((a, b) => b.count - a.count)
   }, [characters])
 
+  /**
+   * Отфильтрованный и отсортированный массив персонажей согласно текущим
+   * пользовательским фильтрам (NSFW, фандомы, пол, поисковый запрос, порядок сортировки).
+   */
   const filteredCharacters = useMemo(() => {
     if (!Array.isArray(characters)) return []
     let result = [...characters]
@@ -130,6 +155,10 @@ export const useDashboard = () => {
     return result
   }, [characters, nsfwEnabled, selectedFandoms, gender, searchQuery, sortBy, sortOrder])
 
+  /**
+   * Набор идентификаторов топ-5 наиболее активных персонажей за последний месяц
+   * для отображения бейджа популярности ("огонек" / HOT).
+   */
   const hotIds = useMemo(() => {
     if (!Array.isArray(characters)) return []
     return [...characters]
@@ -138,6 +167,13 @@ export const useDashboard = () => {
       .map(c => c.id)
   }, [characters])
 
+  /**
+   * Вычисляет правильную грамматическую форму слова "персонаж"
+   * в зависимости от переданного числительного (1 персонаж, 2 персонажа, 5 персонажей).
+   * 
+   * @param n - Количество найденных персонажей
+   * @returns Корректная форма существительного на русском языке
+   */
   const getPlural = (n: number) => {
     const l1 = n % 10;
     const l2 = n % 100;

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Боковая панель профиля персонажа в панели администратора.
+ * Отображает аватар, обложку, имя, фандом, счетчики чатов и переключатели публичности/NSFW.
+ */
+
 import { Badge, Input, Textarea } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import styles from '../../styles'
@@ -13,6 +18,10 @@ interface CharacterSidebarProps {
   onEditClick: () => void
 }
 
+/**
+ * Боковая карточка персонажа в панели администратора.
+ * Отображает обложку, аватар, фандом, имя, тип (оригинальный / каноничный) и статистику.
+ */
 export function CharacterSidebar({
   character,
   isEditing,

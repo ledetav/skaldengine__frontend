@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Главный экран каталога персонажей (Dashboard).
+ * Объединяет боковую панель фильтров, верхнюю строку поиска и сортировки,
+ * динамическую сетку карточек персонажей и декоративный неоновый фон.
+ */
+
 import React from 'react'
 import Navbar from '@/components/ui/Navbar'
 import { useDashboard } from '@/core/hooks/useDashboard'
 
-// Components
+// Дочерние компоненты дашборда
 import { DashboardSidebar } from '@/components/Dashboard/DashboardSidebar'
 import { DashboardContentHeader } from '@/components/Dashboard/DashboardContentHeader'
 import { DashboardCharacterGrid } from '@/components/Dashboard/DashboardCharacterGrid'
@@ -10,6 +16,11 @@ import { DashboardBackground } from '@/components/Dashboard/DashboardBackground'
 
 import styles from '@/theme/screens/Dashboard/DashboardScreen.module.css'
 
+/**
+ * Главный экран витрины персонажей (Dashboard).
+ * Обеспечивает каталог с фильтрацией по фандомам, полу, контенту 18+,
+ * переключение видов (сетка/список) и быстрый переход к созданию диалога.
+ */
 const DashboardScreen: React.FC = () => {
   const {
     isLoading,

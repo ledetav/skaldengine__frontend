@@ -1,8 +1,17 @@
+/**
+ * @fileoverview Секция персоны игрока в боковой панели параметров чата.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { UserPersona } from '@/core/types/chat'
 import styles from './Sections.module.css'
 
+/**
+ * Секция отображения карточки активной персоны пользователя (имя, возраст, пол, описание и аватар).
+ * 
+ * @param props.persona - Выбранная персона пользователя или null, если чат анонимный
+ */
 export function PersonaSection({ persona }: { persona: UserPersona | null }) {
   const [isExpanded, setIsExpanded] = useState(false)
 

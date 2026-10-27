@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Главная навигационная панель (Navbar) приложения.
+ * Поддерживает гостевой и авторизованный режимы, выпадающее меню профиля,
+ * адаптивное мобильное меню (гамбургер), сохранение режима /debug и реакцию на скролл.
+ */
+
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/core/contexts/AuthContext'
@@ -13,18 +19,24 @@ interface NavbarProps {
   variant?: 'landing' | 'dashboard'
 }
 
+/**
+ * Верхняя навигационная панель (Navbar).
+ * Поддерживает два варианта:
+ * - 'landing' — гостевой режим с промо-ссылками, кнопками входа и регистрации;
+ * - 'dashboard' — авторизованный режим с переходами к персонажам, чатам, персонам, лорбукам и меню профиля.
+ */
 export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { user, logout } = useAuth()
   
   const isDebug = pathname.includes('/debug')
-  // Helper to ensure links maintain debug mode if active
+  // Вспомогательная функция для сохранения режима отладки (/debug) в ссылках
   const getDebugHref = (baseHref: string) => {
     if (!isDebug) return baseHref;
-    // Don't append if already there
+    // Не добавлять, если суффикс /debug уже присутствует
     if (baseHref.endsWith('/debug')) return baseHref;
-    // Append /debug, considering trailing slash
+    // Добавление /debug с учетом завершающего слэша
     return baseHref.replace(/\/?$/, '/debug');
   }
 
@@ -32,12 +44,18 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    /**
+     * Отслеживает смещение страницы по вертикали для динамического добавления фона шапки.
+     */
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  /**
+   * Сбрасывает текущую сессию пользователя и перенаправляет на главную страницу.
+   */
   const handleLogout = () => {
     logout()
     navigate('/')
@@ -48,7 +66,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
   return (
     <header className={`${styles.navbar} ${scrolled || isDashboard ? styles.scrolled : ''} ${isDashboard ? styles.dashboardMode : ''}`}>
       <div className={styles.inner}>
-        {/* Logo - Always on the Left */}
+        {/* Логотип приложения (всегда слева) */}
         <Link to={getDebugHref(isDashboard ? "/dashboard" : "/")} className={styles.logo} aria-label="SkaldEngine Home">
           <span className={styles.logoIcon}>⚙</span>
           <span className={styles.logoText}>
@@ -56,7 +74,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           </span>
         </Link>
 
-        {/* Desktop Nav Tools */}
+        {/* Навигационные ссылки для десктопа */}
         {!isDashboard ? (
           <>
             <nav className={styles.nav} aria-label="Основная навигация">
@@ -103,7 +121,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
           </div>
         )}
 
-        {/* Burger Button */}
+        {/* Кнопка бургер-меню для мобильных экранов */}
         <button
           className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
           onClick={() => setMenuOpen(v => !v)}
