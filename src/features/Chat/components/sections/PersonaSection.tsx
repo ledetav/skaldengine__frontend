@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Секция персоны игрока в боковой панели параметров чата.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { UserPersona } from '@/core/types/chat'

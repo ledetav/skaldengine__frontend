@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Экран списка всех доступных пользователю лорбуков (баз знаний) с поиском и удалением.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { logger } from "@/core/utils/logger";
 import { useNavigate } from 'react-router-dom'
@@ -138,6 +142,9 @@ export default function LorebooksListScreen() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    /**
+     * Асинхронно запрашивает каталог пользовательских лорбуков с бэкенда.
+     */
     const fetchLorebooks = async () => {
       try {
         setIsLoading(true)

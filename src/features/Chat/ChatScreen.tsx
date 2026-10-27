@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Главный экран интерактивного диалога (Chat Screen).
+ * Интегрирует потоковый SSE-стриминг реплик, дерево ветвления сообщений,
+ * чекпоинты сценария, боковую панель настроек контекста и панель ввода сообщений.
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from './ChatScreen.module.css'

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Раскрывающийся аккордеон внутренних рассуждений AI-персонажа (Thought Block).
+ * Парсит и рендерит блоки размышлений нейросети (<thought>), скрытые по умолчанию.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'

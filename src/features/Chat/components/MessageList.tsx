@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Контейнер ленты сообщений чата со скролл-областью.
+ */
+
 import React from 'react'
 import styles from './MessageList.module.css'
 

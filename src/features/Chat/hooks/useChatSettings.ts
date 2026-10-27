@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Кастомный React-хук управления настройками отображения и генерации чата.
+ * Сохраняет параметры (лицо, язык, размер шрифта, автоскролл, мысли) в localStorage и на бэкенде.
+ */
+
 import { useState } from 'react'
 import { logger } from '@/core/utils/logger'
 import { chatsApi } from '@/core/api/chats'

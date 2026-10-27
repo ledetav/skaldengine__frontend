@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Кастомный React-хук управления сообщениями и потоковой генерацией в чате.
+ * Инкапсулирует SSE-стриминг, построение дерева веток реплик, свайпы вариантов, редактирование и форки.
+ */
+
 import { useState, useCallback } from 'react'
 import { logger } from '@/core/utils/logger'
 import { chatsApi } from '@/core/api/chats'

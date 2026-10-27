@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Баннер индикации ошибок отправки или генерации сообщений в чате.
+ */
+
 interface ChatErrorBannerProps {
   error: string | null
   onClose: () => void

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент отдельного сообщения в чате (реплики пользователя или ассистента).
+ * Реализует рендеринг Markdown, вынос скрытых мыслей (ThoughtBlock), переключение вариантов веток (siblings),
+ * инлайн-редактирование, регенерацию и форк (ветвление) нового диалога.
+ */
+
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'

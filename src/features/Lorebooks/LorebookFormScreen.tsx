@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Экран создания и редактирования метаданных лорбука (название, описание, привязка к фандому, персонажу или персоне).
+ */
+
 import { logger } from "@/core/utils/logger";
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран создания и редактирования пользовательской персоны.
+ * Позволяет задать имя, описание, возраст, пол, внешность, характер и факты биографии
+ * персоны, используемые в контексте ролевых диалогов.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './PersonaForm.module.css'

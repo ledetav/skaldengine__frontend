@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Секция подключенных баз знаний (лорбуков) в боковой панели параметров чата.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Sections.module.css'

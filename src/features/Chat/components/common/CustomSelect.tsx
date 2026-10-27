@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Анимированный выпадающий список (CustomSelect) для боковой панели настроек чата.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Common.module.css'

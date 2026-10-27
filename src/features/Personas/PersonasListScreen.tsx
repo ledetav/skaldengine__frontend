@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран управления списком игровых персон пользователя.
+ * Предоставляет просмотр карточек персон, сводную статистику (чаты, лорбуки)
+ * и возможность удаления персоны с модальным подтверждением.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -107,6 +113,7 @@ export default function PersonasListScreen() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    /** Загружает список персон и агрегированную статистику использования */
     const fetchData = async () => {
       try {
         setIsLoading(true)

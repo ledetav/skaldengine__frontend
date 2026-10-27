@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Верхняя панель (Header) экрана чата с навигацией назад, статусом генерации и кнопкой сайдбара.
+ */
+
 import { Link } from 'react-router-dom'
 import styles from './ChatHeader.module.css'
 

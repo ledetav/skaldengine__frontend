@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран каталога всех активных и сохраненных чатов пользователя.
+ * Реализует поиск по заголовку и последнему сообщению, фильтры по персонажам и режимам игры, а также удаление диалогов.
+ */
+
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '@/components/ui/Navbar'

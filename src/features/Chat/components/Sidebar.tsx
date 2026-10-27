@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Выдвижная боковая панель настроек диалога с кнопкой закрытия.
+ */
+
 import React from 'react'
 import styles from './Sidebar.module.css'
 

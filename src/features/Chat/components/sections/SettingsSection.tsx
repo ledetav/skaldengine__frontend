@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Секция персональных настроек отображения и генерации чата.
+ * Управляет лицом повествования, языком, размером шрифта, автопрокруткой и показом блоков мыслей.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CustomSelect } from '../common/CustomSelect'

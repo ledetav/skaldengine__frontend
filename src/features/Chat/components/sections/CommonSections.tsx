@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Общие вспомогательные секции сайдбара чата (переход в профиль и сюжетный сценарий с чекпоинтами).
+ */
+
 import { Link } from 'react-router-dom'
 import styles from './Sections.module.css'
 

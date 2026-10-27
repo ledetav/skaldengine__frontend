@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран детального просмотра и управления записями лорбука (базы знаний).
+ * Поддерживает создание единичных записей, пакетный импорт из JSON, экспорт, фильтрацию и удаление.
+ */
+
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Lorebooks.module.css'
@@ -135,6 +140,9 @@ function BatchImportPanel({ onImport, onCancel }: {
   const [result, setResult] = useState<string | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
 
+  /**
+   * Парсит введенный JSON-массив записей, валидирует типы полей и вызывает обработчик импорта.
+   */
   const handleImport = () => {
     setResult(null)
     setParseError(null)
@@ -395,6 +403,9 @@ export default function LorebookDetailScreen() {
     }
   }
 
+  /**
+   * Удаляет текущий лорбук целиком и перенаправляет пользователя к каталогу лорбуков.
+   */
   const handleDeleteLorebook = async () => {
     try {
       if (!id) return;

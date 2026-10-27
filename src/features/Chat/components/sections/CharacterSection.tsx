@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Секция персонажа в боковой панели чата: имя, фандом, описание характера и внешности.
+ */
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Character } from '@/core/types/character'
