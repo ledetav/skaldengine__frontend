@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент раздела управления пользователями в панели администратора.
+ * Отображает список зарегистрированных аккаунтов, их роли, даты регистрации и статистику.
+ */
+
 import React from 'react'
 import { Badge } from '@/components/ui'
 import { SearchInput } from '@/components/common'

@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Главный экран панели администратора (Admin Dashboard).
+ * Организует управление всеми ресурсами приложения: персонажи, лорбуки,
+ * пользователи, персоны и сценарии с поддержкой сортировки, пагинации,
+ * расширенной фильтрации и открытия детальных профилей.
+ */
+
 import { useState } from 'react'
 import { useParams, useLocation, useNavigate, Navigate } from 'react-router-dom'
 
@@ -60,10 +67,22 @@ export default function AdminDashboard() {
   // Состояние сортировки таблиц
   const [sortField, setSortField] = useState('')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+
+  /**
+   * Переключает направление или целевое поле сортировки данных.
+   *
+   * @param field - Имя поля для сортировки
+   */
   const handleSort = (field: string) => {
     if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
     else { setSortField(field); setSortDir('asc') }
   }
+
+  /**
+   * Отображает индикатор направления сортировки для указанного поля.
+   *
+   * @param props.field - Поле таблицы
+   */
   const SortIcon = ({ field }: { field: string }) => {
     if (sortField !== field) return <span style={{ opacity: 0.2, marginLeft: '4px' }}>⇅</span>
     return sortDir === 'asc'

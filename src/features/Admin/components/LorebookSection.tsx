@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент раздела управления лорбуками (базами знаний) в панели администратора.
+ * Поддерживает фандомные, персонажные и персонные лорбуки, отображение списков
+ * и переключение на детальный редактор статей.
+ */
+
 import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useToast } from '@/components/ui'

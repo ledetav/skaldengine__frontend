@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Пользовательский хук для синхронизации вкладок панели администратора с URL-маршрутами.
+ * Автоматически переключает активный таб и сбрасывает страницу пагинации при переходах пользователя.
+ */
+
 import { useEffect } from 'react'
 import type { AdminTab } from '../components/AdminSidebar'
 import type { Lorebook } from '../types'

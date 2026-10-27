@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент текстовых полей персонажа (описание, личность, внешность)
+ * для формы редактирования и детального просмотра профиля.
+ */
+
 import { Textarea } from '@/components/ui'
 import styles from '../../styles'
 import type { Character } from '../../types'

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Пользовательский хук для управления статьями (записями) конкретного лорбука.
+ * Обеспечивает постраничную загрузку статей, их сохранение, инлайн-редактирование,
+ * удаление и подписку на WebSocket-события обновления.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { ApiClient } from '@/core/api/client'
 import { useToast } from '@/components/ui'
@@ -88,6 +94,11 @@ export function useLorebookEntries({ lb, isDetailMode, onLorebookUpdate }: UseLo
     return () => { socket.close() }
   }, [lb?.id, entriesPage, fetchEntries, onLorebookUpdate])
 
+  /**
+   * Сохраняет отредактированные поля статьи лорбука на сервере и обновляет локальное состояние.
+   *
+   * @param entryId - Идентификатор обновляемой статьи
+   */
   const handleEntrySave = async (entryId: string) => {
     try {
       const { lorebooksApi } = await import('@/core/api/lorebooks')

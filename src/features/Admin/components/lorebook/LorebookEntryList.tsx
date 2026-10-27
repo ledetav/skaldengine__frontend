@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент списка и инлайн-редактирования записей (статей) лорбука.
+ * Предоставляет поиск, фильтрацию по категориям, сортировку по приоритету/дате
+ * и модальное подтверждение удаления записи.
+ */
+
 import { useMemo, type ChangeEvent } from 'react'
 import { Badge, Input, Textarea } from '@/components/ui'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'

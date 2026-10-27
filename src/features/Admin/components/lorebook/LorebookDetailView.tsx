@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Экран детального управления лорбуком и его статьями (записями) в панели администратора.
+ * Объединяет просмотр/редактирование общих свойств базы знаний, список записей и форму создания статьи.
+ */
+
 import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui'
 import { ConfirmModal } from '@/components/common'

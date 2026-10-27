@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран детального профиля пользователя в панели администратора.
+ * Предоставляет просмотр сведений об аккаунте, изменение прав/роли пользователя
+ * (user, moderator, admin) и удаление пользователя.
+ */
+
 import { useState } from 'react'
 import styles from '../styles'
 import type { User } from '../types'

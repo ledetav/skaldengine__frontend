@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Пользовательский хук для расширенной фильтрации и сортировки сущностей админ-панели.
+ * Выполняет фильтрацию пользователей, персон, персонажей и лорбуков по множественным критериям
+ * (роли, даты, лимиты счетчиков, фандомы, флаги приватности и NSFW).
+ */
+
 import { useMemo } from 'react'
 import type { Character, Lorebook, User, UserPersona } from '../types'
 import type { AdminTab } from '../components/AdminSidebar'

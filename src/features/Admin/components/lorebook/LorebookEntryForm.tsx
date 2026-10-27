@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент формы создания записей лорбука в панели администратора.
+ * Поддерживает одиночное создание записи, пакетный импорт (batch) и импорт в формате сырого JSON.
+ */
+
 import { useState, type ChangeEvent } from 'react'
 import { Button, Card, Input } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'

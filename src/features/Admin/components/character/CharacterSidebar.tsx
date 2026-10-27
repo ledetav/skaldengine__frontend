@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Боковая панель профиля персонажа в панели администратора.
+ * Отображает аватар, обложку, имя, фандом, счетчики чатов и переключатели публичности/NSFW.
+ */
+
 import { Badge, Input, Textarea } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'
 import styles from '../../styles'

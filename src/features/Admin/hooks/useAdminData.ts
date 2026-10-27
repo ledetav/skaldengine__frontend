@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Пользовательский хук для управления загрузкой и синхронизацией данных админ-панели.
+ * Обеспечивает получение списков сущностей (персонажи, лорбуки, пользователи, персоны, сценарии),
+ * пагинацию и обработку входящих событий WebSocket для реактивного обновления состояния в реальном времени.
+ */
+
 import { useState, useEffect } from 'react'
 import { ApiClient } from '@/core/api/client'
 import type { Character, Lorebook, User, UserPersona } from '../types'
@@ -147,9 +153,11 @@ export function useAdminData(
           else if (t === 'character') setLorebooksCharacter(p => p.some(l => l.id === payload.data.id) ? p : [payload.data, ...p])
           else if (t === 'persona') setLorebooksPersona(p => p.some(l => l.id === payload.data.id) ? p : [payload.data, ...p])
         } else if (payload.type === 'UPDATE_LOREBOOK') {
+          /** Функция обновления измененного лорбука в локальном состоянии */
           const upd = (p: Lorebook[]) => p.map(l => l.id === payload.data.id ? { ...l, ...payload.data } : l)
           setLorebooksFandom(upd); setLorebooksCharacter(upd); setLorebooksPersona(upd)
         } else if (payload.type === 'DELETE_LOREBOOK') {
+          /** Функция удаления лорбука из локального состояния */
           const del = (p: Lorebook[]) => p.some(l => l.id === payload.data.id) ? p.filter(l => l.id !== payload.data.id) : p
           setLorebooksFandom(del); setLorebooksCharacter(del); setLorebooksPersona(del)
         } else if (payload.type === 'REFRESH_LOREBOOK_ENTRIES') {

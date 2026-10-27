@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Компонент выпадающего списка с поисковой строкой (Searchable Select).
+ * Использует React Portal для позиционирования меню поверх окон и предотвращения обрезки overflow,
+ * поддерживает фильтрацию вариантов и создание новой сущности.
+ */
+
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'

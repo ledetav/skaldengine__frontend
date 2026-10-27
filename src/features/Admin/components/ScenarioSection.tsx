@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент раздела сценариев ролевой игры в панели администратора.
+ * Поддерживает табличный и сеточный вид, локальный поиск и переход к редактированию сценария.
+ */
+
 import React, { useState } from 'react'
 import { Badge } from '@/components/ui'
 import styles from '../styles'

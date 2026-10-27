@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Модальное окно расширенной фильтрации списков панели администратора.
+ * Позволяет фильтровать пользователей, персонажей и лорбуки по диапазонам дат,
+ * ролям, лимитам счетчиков, NSFW-меткам и другим параметрам.
+ */
+
 import { useState, useMemo } from 'react'
 import styles from '../styles'
 import { Button, Input } from '@/components/ui'

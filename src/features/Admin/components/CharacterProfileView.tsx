@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран подробного профиля персонажа в панели администратора.
+ * Позволяет редактировать системные параметры персонажа, аватар, фандом,
+ * привязанные лорбуки, системный промпт и атрибуты ролевой игры.
+ */
+
 import { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import styles from '../styles'
@@ -135,6 +141,14 @@ export function CharacterProfileView({
    * при смене фандома подменяются соответствующие фандомные базы знаний.
    */
   const handleChange = (field: keyof Character, value: any) => {
+    /**
+     * Вычисляет обновленное состояние персонажа с каскадной синхронизацией лорбуков фандома.
+     *
+     * @param prev - Текущее состояние персонажа
+     * @param field - Имя обновляемого свойства
+     * @param value - Новое значение свойства
+     * @returns Новый объект персонажа
+     */
     const updateChar = (prev: Character, field: keyof Character, value: any): Character => {
       if (field === 'type') {
         const isFandom = value === 'fandom';

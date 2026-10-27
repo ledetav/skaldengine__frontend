@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент редактирования метаданных лорбука (базы знаний) в панели администратора.
+ * Позволяет настраивать название, описание, тип, категорию, фандом и привязку к персонажу или персоне.
+ */
+
 import { useMemo } from 'react'
 import { Badge, Button, Card, Input } from '@/components/ui'
 import { SearchableSelect } from '../SearchableSelect'

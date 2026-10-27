@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Компонент таблицы и карточек списка баз знаний (лорбуков) в панели администратора.
+ * Поддерживает переключение режимов представления (сетка / таблица), локальный поиск, сортировку и создание нового лорбука.
+ */
+
 import { useState, useMemo, type ChangeEvent, type ReactNode } from 'react'
 import { Badge } from '@/components/ui'
 import { ConfirmModal } from '@/components/common'

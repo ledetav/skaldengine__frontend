@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран детального просмотра персоны пользователя в панели администратора.
+ * Отображает личные атрибуты (внешность, характер, факты), привязанные лорбуки
+ * и действия модерации (удаление персоны).
+ */
+
 import { useState } from 'react'
 import styles from '../styles'
 import type { UserPersona, User, Lorebook } from '../types'

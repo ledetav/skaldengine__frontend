@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Экран создания и редактирования сценария в панели администратора.
+ * Позволяет настраивать стартовую завязку, условия победы/завершения, привязку к персонажу
+ * и метаданные сценария.
+ */
+
 import { useState, useEffect } from 'react'
 import { Button, Input, Textarea, Badge, useToast } from '@/components/ui'
 import styles from '../styles'
