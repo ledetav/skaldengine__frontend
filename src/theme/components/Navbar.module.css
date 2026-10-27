@@ -1,38 +1,45 @@
+/**
+ * @fileoverview Стили для главной навигационной панели Navbar.
+ * Реализует минималистичную шапку в стиле Google AI Studio с поддержкой мобильного меню,
+ * поисковой строки, пользовательского профиля и фирменных угловатых кнопок действий.
+ */
+
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1100; /* Выше мобильных шторок дашборда */
+  z-index: 1100;
   padding: 0;
-  transition: background 0.4s var(--ease-smooth), border-color 0.4s;
+  transition: background 0.3s var(--ease-smooth), border-color 0.3s;
   border-bottom: 1px solid transparent;
+  background: transparent;
 }
 
 .navbar.scrolled {
-  background: rgba(5, 7, 10, 0.85);
-  backdrop-filter: blur(12px); /* Снижено с 24px для более плавного скролла */
-  -webkit-backdrop-filter: blur(12px);
-  border-color: var(--border-glass);
+  background: rgba(14, 16, 21, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: var(--border-subtle);
 }
 
 .inner {
-  max-width: 1280px;
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 @media (min-width: 768px) {
   .inner {
-    padding: 20px 32px;
-    gap: 40px;
+    padding: 12px 32px;
+    gap: 36px;
   }
 }
 
-/* Логотип */
+/* ─── Логотип ─── */
 .logo {
   display: flex;
   align-items: center;
@@ -41,92 +48,90 @@
 }
 
 .logoIcon {
-  font-size: 22px;
-  background: linear-gradient(135deg, var(--accent-fuchsia), var(--accent-orange));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 8px var(--orange-glow));
-  animation: spin 12s linear infinite;
+  font-size: 20px;
+  color: var(--accent-purple);
+  filter: drop-shadow(0 0 6px var(--purple-glow));
+  transition: transform 0.3s var(--ease-bounce);
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.logo:hover .logoIcon {
+  transform: rotate(15deg) scale(1.05);
 }
 
 .logoText {
   font-family: var(--font-ui);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   text-transform: uppercase;
 }
 
 .logoAccent {
-  color: var(--accent-orange);
+  color: var(--accent-purple);
 }
 
-/* Навигация */
+/* ─── Навигационные ссылки ─── */
 .nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-left: auto;
 }
 
 .navLink {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: color 0.2s, background 0.2s;
 }
 
 .navLink:hover {
   color: var(--text-primary);
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* Кнопки действий */
+/* ─── Кнопки действий ─── */
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .btnPrimary {
-  padding: 10px 24px;
+  padding: 8px 18px;
   font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-fuchsia));
+  font-size: 13px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  transition: transform 0.2s, filter 0.2s;
+  clip-path: var(--clip-cut-sm);
+  transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  box-shadow: 0 2px 8px var(--purple-glow);
 }
 
 .btnPrimary:hover {
-  filter: brightness(1.1);
-  transform: translateY(-2px);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--purple-glow);
 }
 
 .btnSecondary {
-  padding: 10px 24px;
+  padding: 8px 18px;
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
-  border: 1px solid var(--border-purple);
+  border: 1px solid var(--border-subtle);
   cursor: pointer;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  clip-path: var(--clip-cut-sm);
   transition: all 0.2s var(--ease-smooth);
   display: inline-flex;
   align-items: center;
@@ -134,11 +139,11 @@
 
 .btnSecondary:hover {
   color: var(--text-primary);
-  border-color: var(--accent-purple);
-  background: rgba(139, 92, 246, 0.08);
+  border-color: var(--border-medium);
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* Кнопка бургер-меню */
+/* ─── Кнопка бургер-меню ─── */
 .burger {
   display: none;
   flex-direction: column;
@@ -152,37 +157,37 @@
 
 .burger span {
   display: block;
-  width: 22px;
+  width: 20px;
   height: 2px;
   background: var(--text-secondary);
   border-radius: 2px;
-  transition: transform 0.3s, opacity 0.3s;
+  transition: transform 0.25s, opacity 0.25s;
 }
 
 .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .burger.active span:nth-child(2) { opacity: 0; }
 .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Мобильное меню */
+/* ─── Мобильное меню ─── */
 .mobileMenu {
   display: none;
   flex-direction: column;
-  padding: 16px 20px 32px;
-  padding-bottom: calc(32px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border-glass);
-  background: rgba(5, 7, 10, 0.98);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  padding: 16px 20px 28px;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(14, 16, 21, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   gap: 4px;
   max-height: 85vh;
   overflow-y: auto;
 }
 
 .mobileLink {
-  padding: 12px 8px;
-  font-size: 16px;
+  padding: 10px 8px;
+  font-size: 15px;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-glass);
+  border-bottom: 1px solid var(--border-subtle);
   transition: color 0.2s;
 }
 
@@ -192,8 +197,8 @@
 
 .mobileActions {
   display: flex;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 14px;
   flex-direction: column;
   width: 100%;
 }
@@ -206,7 +211,7 @@
 
 .mobileDivider {
   height: 1px;
-  background: var(--border-glass);
+  background: var(--border-subtle);
   margin: 8px 0;
 }
 
@@ -219,57 +224,59 @@
   width: 100%;
 }
 
-/* Специфика дашборда */
+/* ─── Специфика дашборда ─── */
 .dashboardMode {
-  border-bottom: 1px solid var(--border-glass);
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(14, 16, 21, 0.9);
+  backdrop-filter: blur(12px);
 }
 
 .dashboardActions {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   margin-left: auto;
 }
 
 .userMenu {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .profileLink {
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   transition: background 0.2s;
 }
 
- .profileLink:hover {
+.profileLink:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
 .userName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .avatarMini {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-fuchsia), var(--accent-purple));
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: 0 0 10px rgba(217, 70, 239, 0.3);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
 
@@ -282,27 +289,25 @@
 .logoutBtn {
   background: none;
   border: none;
-  color: var(--text-secondary);
-  padding: 8px;
+  color: var(--text-muted);
+  padding: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   transition: all 0.2s;
-  opacity: 0.6;
 }
 
 .logoutBtn:hover {
-  opacity: 1;
-  color: var(--accent-orange);
-  background: rgba(249, 115, 22, 0.1);
+  color: var(--accent-red);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .navSearch {
   flex: 1;
-  max-width: 400px;
-  margin: 0 40px;
+  max-width: 380px;
+  margin: 0 24px;
   position: relative;
   display: flex;
   align-items: center;
@@ -310,27 +315,27 @@
 
 .searchIcon {
   position: absolute;
-  left: 16px;
-  font-size: 14px;
-  opacity: 0.5;
+  left: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
 .navSearchInput {
   width: 100%;
-  padding: 10px 16px 10px 44px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-glass);
-  border-radius: 12px;
+  padding: 7px 14px 7px 34px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
-  transition: all 0.3s;
+  font-size: 13px;
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .navSearchInput:focus {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--accent-purple);
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
   outline: none;
 }
 
@@ -345,10 +350,9 @@
     right: 0;
     z-index: 1001;
   }
-  .inner { padding: 16px 20px; }
+  .inner { padding: 12px 20px; }
 }
 
-/* Альбомная ориентация телефонов: компактное меню */
 @media (max-width: 1024px) and (orientation: landscape) and (max-height: 480px) {
   .mobileMenu {
     max-height: 70vh;

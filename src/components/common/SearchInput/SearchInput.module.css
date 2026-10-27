@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Стили для универсального поля поиска SearchInput.
+ * Обеспечивает аккуратное оформление в стиле Google AI Studio с иконкой и мягким фокусом.
+ */
+
 .wrapper {
   position: relative;
   flex: 1;
@@ -6,37 +11,41 @@
 
 .icon {
   position: absolute;
-  left: 13px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
   pointer-events: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wrapper:focus-within .icon {
-  color: var(--accent-orange);
+  color: var(--accent-purple);
 }
 
 .input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 9px 16px 9px 38px;
-  color: var(--white);
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px 8px 36px;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 400;
+  transition: all 0.2s var(--ease-smooth);
 }
 
 .input:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent-orange);
-  box-shadow: 0 0 20px rgba(255, 140, 66, 0.1);
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
 }

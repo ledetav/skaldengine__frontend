@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Стили для компонента переключателя Toggle.
+ * Обеспечивает аккуратный свитч с плавной анимацией и акцентным цветом SkaldEngine.
+ */
+
 .toggleRow {
   display: flex;
   align-items: center;
@@ -17,12 +22,12 @@
 }
 
 .toggleSwitch {
-  width: 44px;
+  width: 40px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 11px;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s var(--ease-smooth);
 }
 
 .toggleSwitch::after {
@@ -32,30 +37,28 @@
   left: 3px;
   width: 16px;
   height: 16px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 50%;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.3s var(--ease-smooth);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .toggleActive .toggleSwitch {
-  background: linear-gradient(135deg, var(--accent-orange), #ff5e00);
-  box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+  background: var(--accent-purple);
+  box-shadow: 0 0 8px var(--purple-glow);
 }
 
 .toggleActive .toggleSwitch::after {
-  left: 25px;
+  left: 21px;
 }
 
 .toggleLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
   transition: color 0.2s;
 }
 
 .toggleActive .toggleLabel {
-  color: #fff;
+  color: var(--text-primary);
 }
