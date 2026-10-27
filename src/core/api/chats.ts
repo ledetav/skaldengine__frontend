@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Сервисный модуль API чатов и сессий диалогов.
+ * Предоставляет методы для создания диалога, получения списка чатов пользователя,
+ * загрузки истории сообщений, обновления параметров чата и его удаления.
+ */
+
 import { type Chat, type ChatUpdate, type ChatCreate, type Message } from '@/core/types/chat'
 import { ApiClient } from './client'
 

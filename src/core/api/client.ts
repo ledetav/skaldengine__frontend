@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Базовый сетевой HTTP-клиент платформы SKALD Engine.
+ * Централизует вызовы к микросервисам Core API и Auth API, автоматически подставляет
+ * токены аутентификации Bearer, логирует запросы/ответы и транслирует событие истечения сессии (401).
+ */
+
 import { logger } from '../utils/logger'
 
 const CORE_API_URL = import.meta.env.VITE_CORE_API_URL || 'http://localhost:8002/api/v1'

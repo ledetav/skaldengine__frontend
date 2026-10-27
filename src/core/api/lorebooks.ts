@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Сервисный модуль API лорбуков (баз знаний) и их записей.
+ * Предоставляет методы для создания, чтения, редактирования и удаления лорбуков,
+ * а также привязки их к персонам, персонажам или пользователям.
+ */
+
 import { type Lorebook, type LorebookEntry } from '@/core/types/chat'
 import { ApiClient } from './client'
 

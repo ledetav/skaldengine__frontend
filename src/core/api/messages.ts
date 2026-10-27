@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Сервисный модуль API сообщений, потоковой генерации и ветвления диалогов.
+ * Предоставляет методы для отправки сообщений со стримингом ответа по SSE,
+ * редактирования сообщений, ветвления истории и регенерации ответов AI-персонажа.
+ */
+
 import { type Message, type MessageCreate, type MessageEdit, type Chat } from '@/core/types/chat'
 import { ApiClient } from './client'
 

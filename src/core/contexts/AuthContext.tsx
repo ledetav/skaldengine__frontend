@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Провайдер и контекст глобальной аутентификации пользователя.
+ * Управляет состоянием входа, хранением токена доступа, получением данных учетной записи,
+ * межвкладочной синхронизацией сессии и реакцией на истечение авторизации (401).
+ */
+
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { authApi } from '@/core/api/auth';
@@ -44,6 +50,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Синхронизация изменения токена (между вкладками браузера и при выходе) ──
   useEffect(() => {
+    /**
+     * Обработчик событий смены токена в локальном хранилище.
+     * Синхронизирует статус аутентификации между вкладками и очищает состояние при выходе.
+     */
     const handleAuthChange = () => {
       const token = localStorage.getItem('token');
       setIsAuthenticated(!!token);
@@ -63,6 +73,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Обработка истечения срока действия сессии (401 от любого запроса к API) ──
   useEffect(() => {
+    /**
+     * Обрабатывает глобальное системное событие истечения срока сессии (401 Unauthorized).
+     * Дедуплицирует вывод тоста об ошибке и сбрасывает состояние пользователя.
+     */
     const handleSessionExpired = () => {
       if (!sessionExpiredShown.current) {
         sessionExpiredShown.current = true;
@@ -89,6 +103,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
+    /**
+     * Загружает данные авторизованного профиля пользователя с бэкенда.
+     * Если токен отсутствует, мгновенно сбрасывает индикатор загрузки.
+     */
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
 

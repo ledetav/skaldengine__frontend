@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Кастомный React-хук витрины персонажей (Dashboard).
+ * Инкапсулирует загрузку персонажей с бэкенда, клиентскую фильтрацию по тегам и фандомам,
+ * текстовый поиск, сортировку, режим отображения (сетка/список) и WebSocket-синхронизацию.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useMemo, useEffect } from 'react'
 import { charactersApi } from '@/core/api/characters'

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Точка входа в клиентское веб-приложение SKALD Engine.
+ * Выполняет монтирование корневого React-компонента в DOM, импорт глобальных стилей
+ * и регистрирует глобальные обработчики необработанных ошибок и отклонений Promise.
+ */
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@/theme/global/index.css'

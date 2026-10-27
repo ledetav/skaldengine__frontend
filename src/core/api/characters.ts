@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Сервисный модуль API персонажей.
+ * Предоставляет методы для получения витрины публичных персонажей,
+ * детальной информации о персонаже по ID и его связанных данных.
+ */
+
 import type { Character } from '@/core/types/character'
 import { ApiClient } from './client'
 

@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Корневой компонент приложения SKALD Engine.
+ * Определяет маршрутизацию (React Router), ленивую загрузку экранов (Code Splitting),
+ * глобальные провайдеры контекстов (авторизация, всплывающие уведомления) и защиту маршрутов.
+ */
+
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import '@/theme/global/index.css'

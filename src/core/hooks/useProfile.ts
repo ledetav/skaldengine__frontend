@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Кастомный React-хук управления профилем пользователя.
+ * Загружает и объединяет информацию учетной записи (своей или публичной),
+ * список персон, привязанных лорбуков, недавних чатов и агрегированную статистику.
+ */
+
 import { logger } from "@/core/utils/logger";
 import { useState, useEffect } from 'react'
 import { authApi } from '@/core/api/auth'
@@ -21,6 +27,10 @@ export const useProfile = (username?: string) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    /**
+     * Асинхронно запрашивает комплексные данные профиля:
+     * если передан username — запрашивается публичный профиль, иначе — профиль текущего пользователя.
+     */
     const fetchProfileData = async () => {
       try {
         setIsLoading(true)
