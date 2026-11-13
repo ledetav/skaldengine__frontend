@@ -1,0 +1,103 @@
+name: Fullstack Verify & Visual Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - 'feat/**'
+      - 'fix/**'
+      - 'refactor/**'
+  repository_dispatch:
+    types: [backend-updated]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fullstack-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout frontend
+        uses: actions/checkout@v4
+        with:
+          path: frontend
+
+      - name: Checkout matching backend branch
+        env:
+          GH_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+          TARGET_BRANCH: ${{ github.event.client_payload.branch || github.head_ref || github.ref_name }}
+          BACKEND_REPO: ledetav/skaldengine__backend
+        run: |
+          if git ls-remote --heads "https://x-access-token:${GH_TOKEN}@github.com/${BACKEND_REPO}.git" "$TARGET_BRANCH" | grep -q "$TARGET_BRANCH"; then
+            BRANCH_TO_USE="$TARGET_BRANCH"
+          else
+            BRANCH_TO_USE="main"
+          fi
+          echo "Using backend branch: $BRANCH_TO_USE"
+          git clone --depth 1 --branch "$BRANCH_TO_USE" "https://x-access-token:${GH_TOKEN}@github.com/${BACKEND_REPO}.git" backend
+
+      - name: Setup Python & Node
+        run: |
+          pip install -r backend/gateway/requirements.txt playwright
+          playwright install --with-deps chromium
+
+      - name: Lint & Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://localhost:8000
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+      - name: Start servers & run Playwright audit
+        env:
+          ENVIRONMENT: test
+          SECRET_KEY: ci-test-secret-key
+          JWT_SECRET: ci-test-secret-key
+          AUDIT_BASE_URL: http://localhost:4173
+        run: |
+          uvicorn gateway.main:app --app-dir backend --host 0.0.0.0 --port 8000 &
+          npm --prefix frontend run preview -- --host 0.0.0.0 --port 4173 &
+
+          for i in $(seq 1 30); do
+            if curl -s "$AUDIT_BASE_URL" >/dev/null; then break; fi
+            sleep 1
+          done
+
+          python frontend/scripts/ui_audit.py --out-dir audit_out
+
+      - name: Publish screenshots & report to ci-reports branch
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git clone --depth 1 "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" /tmp/reports-repo
+          cd /tmp/reports-repo
+          git checkout --orphan ci-reports
+          git rm -rf . >/dev/null 2>&1 || true
+          mkdir -p latest
+          cp -r "${{ github.workspace }}/audit_out/"* latest/ || true
+          git add latest
+          git commit -m "ci: visual audit for ${{ github.ref_name }} (${{ github.sha }})"
+          git push -f origin ci-reports
+
+      - name: Comment summary on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryPath = 'audit_out/ci-summary.md';
+            const body = fs.existsSync(summaryPath)
+              ? fs.readFileSync(summaryPath, 'utf8')
+              : 'Сборка завершилась, но файл `ci-summary.md` не был сформирован.';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
