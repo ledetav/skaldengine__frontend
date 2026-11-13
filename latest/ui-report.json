@@ -1,0 +1,62 @@
+[
+  {
+    "route": "/",
+    "viewport": "desktop",
+    "screenshot": "desktop_landing.png",
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "dom_checks": {
+      "hasHorizontalOverflow": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "brokenImagesCount": 0,
+      "brokenImages": []
+    }
+  },
+  {
+    "route": "/login",
+    "viewport": "desktop",
+    "screenshot": "desktop_login.png",
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "dom_checks": {
+      "hasHorizontalOverflow": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "brokenImagesCount": 0,
+      "brokenImages": []
+    }
+  },
+  {
+    "route": "/",
+    "viewport": "mobile",
+    "screenshot": "mobile_landing.png",
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "dom_checks": {
+      "hasHorizontalOverflow": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "brokenImagesCount": 0,
+      "brokenImages": []
+    }
+  },
+  {
+    "route": "/login",
+    "viewport": "mobile",
+    "screenshot": "mobile_login.png",
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "dom_checks": {
+      "hasHorizontalOverflow": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "brokenImagesCount": 0,
+      "brokenImages": []
+    }
+  }
+]
